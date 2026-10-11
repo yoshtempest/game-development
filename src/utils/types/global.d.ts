@@ -435,6 +435,16 @@ declare global {
   type PlayerLaserState = "laser";
   /** "Gran Rey Cero" do marcelo. */
   type PlayerGranReyCeroState = "granReyCero";
+  /**
+   * Esferas do riquelme (habilidades "blue"/"red"): a sequência de Setup
+   * (`one.svg` → `two.svg` → `three.svg`) é conduzida pelo hook
+   * `useRiquelmeSpheres`, não pelo `animationFlow`.
+   */
+  type PlayerSphereState =
+    | "sphereCast"
+    | "sphereMove"
+    | "sphereFire"
+    | "blueSphereControl";
   /** Passiva "O Abençoado" (riquelme) — invencível enquanto sobe. */
   type PlayerHonoredState = "mostHonored";
   /** Locomoção com compromisso: dash e carga de ki. */
@@ -447,14 +457,16 @@ declare global {
   /**
    * Estados que seguram o personagem e travam novas ações: qualquer
    * `PlayerChargeState`, o O Abençoado e as habilidades de cast longas
-   * (Genki Dama, o Laser da Forma Vastolord e o Gran Rey Cero).
+   * (Genki Dama, o Laser da Forma Vastolord, o Gran Rey Cero e as esferas do
+   * riquelme).
    */
   type PlayerActionLockState =
     | PlayerChargeState
     | PlayerHonoredState
     | PlayerGenkiDamaState
     | PlayerLaserState
-    | PlayerGranReyCeroState;
+    | PlayerGranReyCeroState
+    | PlayerSphereState;
 
   /** O jogador não age: trava de ação, defesa ou reação a dano. */
   type PlayerCantActState =

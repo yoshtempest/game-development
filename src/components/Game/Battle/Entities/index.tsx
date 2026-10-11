@@ -26,6 +26,7 @@ import { DeiseDashAfterimage } from "@/components/Game/Battle/Effects/DeiseDashA
 import { AtomicEffects } from "@/components/Game/Battle/Effects/Marshadow/Atomic";
 import { DomainExpansionEffects } from "@/components/Game/Battle/Effects/DomainExpansion";
 import { MugetsuDisintegration } from "@/components/Game/Battle/Effects/Marshadow/MugetsuDisintegration";
+import { RiquelmeSphere } from "@/components/Game/Battle/Entities/RiquelmeSphere";
 import type { BattleEntitiesBattle, MainNpcState } from "./types";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 import type { PetState } from "@/hooks/battle/player/pets/usePet";
@@ -167,7 +168,10 @@ export function BattleEntities({
   lucauaAttackVariant,
   lucauaShieldSides,
   onLucauaShieldEnd,
-}: Props) {
+  sphere = null,
+}: Props & {
+  sphere?: import("@/utils/types/character/riquelme").RiquelmeSphere | null;
+}) {
   const battleScaleX = getViewportSize().width / ProjectileConstants.MAP_WIDTH;
   const battleScaleY =
     getViewportSize().height / ProjectileConstants.MAP_HEIGHT;
@@ -381,6 +385,12 @@ export function BattleEntities({
           npcClass={npcClass}
         />
       ))}
+
+      <RiquelmeSphere
+        sphere={sphere ?? null}
+        battleScaleX={battleScaleX}
+        battleScaleY={battleScaleY}
+      />
     </>
   );
 }

@@ -38,6 +38,7 @@ import { useEmanuelKiCharge } from "@/hooks/battle/player/characters/ematron/use
 import { useEmanuelGenkiDama } from "@/hooks/battle/player/characters/ematron/useEmanuelGenkiDama";
 import { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
 import { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
+import { useRiquelmeSpheres } from "@/hooks/battle/player/characters/riquelme/useRiquelmeSpheres";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import {
   useAtomic,
@@ -1524,7 +1525,32 @@ export function useBattleCombat({
     cooldownReduction: battle.char.stats.cooldownReduction,
   });
 
+  // Esferas do riquelme (blue/red) ---------------------------------------------
+  const riquelmeSpheres = useRiquelmeSpheres({
+    player,
+    setPlayer,
+    battle,
+    npc,
+    summons,
+    setSummons,
+    playerClass,
+    progress,
+    giveSummonRewards,
+    battleManaRef,
+    freezeActionsUntilRef,
+    timeRef: refs.timeRef,
+    refs,
+    playSound,
+    startSpecialIntro,
+    onUsed: onAbilityUsed,
+    isPausedRef,
+    disabledRef: cloneDisabledRef,
+    battleEndedRef: battle.isEnding,
+    specialDamageRatio,
+  });
+
   return {
+    ...riquelmeSpheres,
     battle,
     npc,
     charge,

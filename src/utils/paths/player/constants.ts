@@ -93,3 +93,17 @@ export const GRAN_REY_CERO_SPRITES: Partial<
 > = {
   granReyCero: "granReyCero",
 };
+
+/**
+ * Sequência de Setup das esferas do riquelme (blue/red), em `habilities/Setup/`:
+ * `one.svg` é o surgimento com blink, `two.svg` o deslocamento/controle e
+ * `three.svg` o arremesso da red.
+ */
+export const RIQUELME_SPHERE_SETUP_SPRITES: Partial<
+  Record<PlayerSphereState, string>
+> = {
+  sphereCast: "one",
+  sphereMove: "two",
+  blueSphereControl: "two",
+  sphereFire: "three",
+};

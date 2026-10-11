@@ -6,9 +6,11 @@ import { CHARACTER_STATE_FOLDER_ALT } from "@/utils/paths/player/constants";
 import { DOMAIN_EXPANSION_SPRITES } from "@/utils/paths/player/constants";
 import { GRAN_REY_CERO_SPRITES } from "@/utils/paths/player/constants";
 import { MARCELO_VASTOLORD_SPRITES } from "@/utils/paths/player/constants";
+import { RIQUELME_SPHERE_SETUP_SPRITES } from "@/utils/paths/player/constants";
 import { playerPath } from "@/utils/paths/player/playerPath";
 import { playerPathMarshadowHabilities } from "@/utils/paths/characters/marcelo/playerPathMarshadowHabilities";
 import { playerPathArturHabilities } from "@/utils/paths/characters/artur/playerPathArturHabilities";
+import { playerPathRiquelmeHabilities } from "@/utils/paths/characters/riquelme/playerPathRiquelmeHabilities";
 import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
 import type { LucauaAttackVariant } from "@/utils/types/character/lucaua";
 
@@ -24,6 +26,14 @@ export function resolveBattleSprite(
   }
   if (state === "mostHonored" && character === "riquelme") {
     return playerPath(`/riquelme/inFight/mostHonored.svg`);
+  }
+  // Esferas do riquelme (blue/red): a sequência de Setup vive em
+  // `inFight/habilities/Setup/` (one/two/three), fora do `STATE_FOLDER`.
+  if (character === "riquelme") {
+    const sphereSprite = stateData(RIQUELME_SPHERE_SETUP_SPRITES, state);
+    if (sphereSprite) {
+      return playerPathRiquelmeHabilities(`/Setup/${sphereSprite}.svg`);
+    }
   }
   // Genki Dama do emanuel: a fase de subida usa o sprite `falling.svg` (não
   // existe `genkiDamaRising.svg`) — o custo fica na pasta de movimento/jump.

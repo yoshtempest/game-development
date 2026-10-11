@@ -12,6 +12,7 @@ const EXTERNAL_SHAKE_INTENSITY = 1;
 export function useCameraShake(
   damageNumbers: DamageNumber[],
   externalShake = false,
+  burstActive = false,
 ) {
   const intensityRef = useRef(0);
   const runningRef = useRef(false);
@@ -53,6 +54,13 @@ export function useCameraShake(
       startLoop();
     }
   }, [externalShake, startLoop]);
+
+  useEffect(() => {
+    if (burstActive && !runningRef.current) {
+      intensityRef.current = EXTERNAL_SHAKE_INTENSITY * 0.8;
+      startLoop();
+    }
+  }, [burstActive, startLoop]);
 
   useEffect(() => {
     const seen = seenIdsRef.current;

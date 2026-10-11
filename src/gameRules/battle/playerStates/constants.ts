@@ -114,6 +114,16 @@ export const LASER_STATES = stateSet<PlayerLaserState>("laser");
 /** "Gran Rey Cero" (marcelo). */
 export const GRAN_REY_CERO_STATES =
   stateSet<PlayerGranReyCeroState>("granReyCero");
+/**
+ * Esferas do riquelme (blue/red): a sequência de Setup é conduzida pelo hook
+ * `useRiquelmeSpheres`; `blueSphereControl` é o Hold do controle da blue.
+ */
+export const SPHERE_STATES = stateSet<PlayerSphereState>(
+  "sphereCast",
+  "sphereMove",
+  "sphereFire",
+  "blueSphereControl",
+);
 
 // ── Defesa e reação ───────────────────────────────────────
 /** Defesa: bloqueio e a contra-ofensiva que sai dele. */
@@ -128,16 +138,19 @@ const BLOCK_OR_STUN_STATES = stateSet<PlayerState>("blocked", "stun");
 
 // ── Travamento ────────────────────────────────────────────
 /** Estados que seguram o personagem e travam novas ações. */
-export const ACTION_LOCK_STATES = stateSet<PlayerActionLockState>(
-  "dash",
-  "charging",
-  "chargingKi",
-  "mostHonored",
-  "genkiDamaRising",
-  "preparingGenkiDama",
-  "throwGenkiDama",
-  "laser",
-  "granReyCero",
+export const ACTION_LOCK_STATES = unionOf(
+  stateSet<PlayerActionLockState>(
+    "dash",
+    "charging",
+    "chargingKi",
+    "mostHonored",
+    "genkiDamaRising",
+    "preparingGenkiDama",
+    "throwGenkiDama",
+    "laser",
+    "granReyCero",
+  ),
+  SPHERE_STATES,
 );
 /** O jogador não age: trava de ação, defesa ou reação a dano. */
 export const CANNOT_ACT_STATES = unionOf(
@@ -215,6 +228,7 @@ export const ALL_STATES = {
   DOMAIN_EXPANSION_STATES,
   LASER_STATES,
   GRAN_REY_CERO_STATES,
+  SPHERE_STATES,
 
   // Defesa e reação
   BLOCK_STATES,

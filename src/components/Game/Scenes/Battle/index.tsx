@@ -4,6 +4,8 @@ import { WeaponSwitchButton } from "@/components/Game/Battle/Buttons/WeaponSwitc
 import { CursedEnergyButton } from "@/components/Game/Battle/Buttons/Natsuki/CursedEnergy";
 import { BlinkButton } from "@/components/Game/Battle/Buttons/Natsuki/Blink";
 import { DivergentFistButton } from "@/components/Game/Battle/Buttons/Natsuki/DivergentFist";
+import { BlueSphereButton } from "@/components/Game/Battle/Buttons/Natsuki/BlueSphere";
+import { RedSphereButton } from "@/components/Game/Battle/Buttons/Natsuki/RedSphere";
 import { EmanuelCloneButton } from "@/components/Game/Battle/Buttons/Ematron/Clone";
 import { EmanuelKiChargeButton } from "@/components/Game/Battle/Buttons/Ematron/KiCharge";
 import { EmanuelGenkiDamaButton } from "@/components/Game/Battle/Buttons/Ematron/GenkiDama";
@@ -203,6 +205,13 @@ export function BattleScene(props: Props) {
     lucauaAttackVariant,
     lucauaShieldSides,
     onLucauaShieldEnd,
+    sphere,
+    sphereFocus,
+    castActive,
+    bluePress,
+    blueUsable,
+    redPress,
+    redUsable,
   } = useBattleScene({ ...props, isAlfa, PLAYER_SIZE });
 
   // Domínio do personagem atual: nome/cor/efeito saem de DOMAIN_EXPANSIONS e
@@ -253,7 +262,9 @@ export function BattleScene(props: Props) {
   // câmera de mais e esconderia o jogador, que está em BATTLE_SPAWN.player.y.
   const focus = mugetsuSweep
     ? { x: mugetsuSweep.x, y: player.y }
-    : { x: focusEntity.x, y: focusEntity.y };
+    : sphereFocus
+      ? { x: sphereFocus.x, y: sphereFocus.y }
+      : { x: focusEntity.x, y: focusEntity.y };
 
   const targetBgX = Math.max(
     bgXMin,
@@ -276,7 +287,7 @@ export function BattleScene(props: Props) {
   const worldOffsetY =
     (containerHeight * 0.5 * (bgPosY - initialBgPosRef.current.y)) / 100;
 
-  const baseZoom = cameraFocus?.zoom ?? 1;
+  const baseZoom = sphereFocus ? 1 : (cameraFocus?.zoom ?? 1);
   // Expansão de Domínio: leve zoomOut de 1.4x enquanto a habilidade está ativa
   // — o mugetsuEffect é gigante em altura e o zoom revela mais do mapa.
   const domainZoom = domainExpansionActive ? 1 / 1.4 : 1;
@@ -319,7 +330,7 @@ export function BattleScene(props: Props) {
       (p.dirX > 0 ? p.x < player.x : p.x > player.x),
   );
 
-  const shake = useCameraShake(battle.damageNumbers, groundShakeActive);
+  const shake = useCameraShake(battle.damageNumbers, groundShakeActive, castActive);
 
   const bgBaseW = containerWidth * 1.5;
   const bgBaseH = containerHeight * 1.5;
@@ -578,6 +589,7 @@ export function BattleScene(props: Props) {
             lucauaAttackVariant={lucauaAttackVariant}
             lucauaShieldSides={lucauaShieldSides}
             onLucauaShieldEnd={onLucauaShieldEnd}
+            sphere={sphere}
           />
 
           <ChargeParticles
@@ -711,15 +723,26 @@ export function BattleScene(props: Props) {
       )}
 
       {player.character === "riquelme" && (
-        <DivergentFistButton
-          energy={battleMana?.playerMana ?? 0}
-          active={divergentFistActive}
-          disabled={
-            controlsDisabled ||
-            (battleMana?.playerMana ?? 0) < DIVERGENT_FIST_COST
-          }
-          onClick={activateDivergentFist}
-        />
+        <>
+          <BlueSphereButton
+            active={sphere?.variant === "blue" && sphere.phase !== "dismissing"}
+            disabled={controlsDisabled || !blueUsable}
+            onClick={bluePress}
+          />
+          <RedSphereButton
+            disabled={controlsDisabled || !redUsable}
+            onClick={redPress}
+          />
+          <DivergentFistButton
+            energy={battleMana?.playerMana ?? 0}
+            active={divergentFistActive}
+            disabled={
+              controlsDisabled ||
+              (battleMana?.playerMana ?? 0) < DIVERGENT_FIST_COST
+            }
+            onClick={activateDivergentFist}
+          />
+        </>
       )}
 
       {player.character === "riquelme" &&

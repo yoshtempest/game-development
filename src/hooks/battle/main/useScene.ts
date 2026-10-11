@@ -498,6 +498,13 @@ export function useBattleScene({
     lucauaAttackVariant,
     lucauaShieldSides,
     onLucauaShieldEnd,
+    sphere,
+    sphereFocus,
+    castActive,
+    bluePress,
+    blueUsable,
+    redPress,
+    redUsable,
   } = combat;
 
   vastolordEndingRef.current = battle.isEnding;
@@ -828,5 +835,12 @@ export function useBattleScene({
     lucauaAttackVariant,
     lucauaShieldSides,
     onLucauaShieldEnd,
+    sphere,
+    sphereFocus,
+    castActive,
+    bluePress,
+    blueUsable,
+    redPress,
+    redUsable,
   });
 }

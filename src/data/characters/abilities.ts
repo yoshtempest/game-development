@@ -126,6 +126,22 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
       description: `Converte energia amaldiçoada em vida (${CURSED_ENERGY_HEAL_RATIO} de energia por 1 de HP).`,
       requires: "some enquanto O Abençoado estiver ativo",
     },
+    {
+      kind: "active",
+      id: "blueSphere",
+      name: "Esfera Azul",
+      description:
+        "Invoca a esfera azul controlável: ela atrai os inimigos e causa dano mágico contínuo, consumindo energia amaldiçoada enquanto está em campo. Aperte de novo para parar a esfera e, mais uma vez, para dissipá-la.",
+      damageType: "magical",
+    },
+    {
+      kind: "active",
+      id: "redSphere",
+      name: "Esfera Vermelha",
+      description:
+        "Invoca e arremessa a esfera vermelha nos inimigos, causando dano mágico e empurrando-os.",
+      damageType: "magical",
+    },
     domainBurstAbility("riquelme"),
   ],
   emanuel: [

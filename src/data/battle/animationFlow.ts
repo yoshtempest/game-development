@@ -98,6 +98,13 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
   // (useDomainExpansion), que restaura o idle quando o mugetsuEffect termina.
   preMugetsu: null,
   mugetsu: null,
+
+  // Esferas do riquelme (blue/red): estados da sequência Setup controlados pelo
+  // hook (useRiquelmeSpheres), que restaura o idle ao fim do cast/arremesso.
+  sphereCast: null,
+  sphereMove: null,
+  sphereFire: null,
+  blueSphereControl: null,
 };
 
 type SpecialFlowOverride = {
