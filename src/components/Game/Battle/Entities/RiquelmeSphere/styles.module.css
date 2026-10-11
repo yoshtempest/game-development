@@ -1,0 +1,20 @@
+.container {
+    position: absolute;
+    transform-origin: center top;
+    pointer-events: none;
+    will-change: transform, opacity;
+    z-index: 25,
+}
+
+.silhouette,
+.image {
+    width: var(--size-77);
+    height: auto;
+}
+
+.silhouette {
+    position: absolute;
+    filter: brightness(10);
+    inset: 0;
+    mix-blend-mode: screen;
+}

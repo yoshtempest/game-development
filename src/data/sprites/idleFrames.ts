@@ -1,4 +1,4 @@
-import { FOUR_HUNDRED_MS } from "@/data/ms";
+import { TWO_THOUSAND_MS } from "@/data/ms";
 import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
 
 /**
@@ -6,7 +6,7 @@ import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
  * corrida de sprites — 400ms por frame mantém o movimento sutil e evita que
  * o olhar do jogador preste atenção no loop em vez da luta.
  */
-export const IDLE_FRAME_MS = FOUR_HUNDRED_MS;
+export const IDLE_FRAME_MS = TWO_THOUSAND_MS;
 
 /**
  * Fallback da sequência: um único frame (o `idle.svg` base). Personagem/fora
@@ -29,6 +29,7 @@ const IDLE_FRAMES_BY_CHARACTER: Partial<
   Record<CharacterId, readonly string[]>
 > = {
   marcelo: MARCELO_IDLE_FRAMES,
+  riquelme: MARCELO_IDLE_FRAMES,
 };
 
 /**

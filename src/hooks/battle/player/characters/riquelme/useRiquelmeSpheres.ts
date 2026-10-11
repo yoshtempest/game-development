@@ -220,7 +220,7 @@ export function useRiquelmeSpheres({
     sphereRef.current = null;
     setSphere(null);
     cooldownUntilRef.current = Date.now() + SPHERE_MIN_COOLDOWN_MS;
-  }, [freezeActionsUntilRef, releaseWorldFreeze, resetPlayerIfSphere]);
+  }, [freezeActionsUntilRef, releaseWorldFreeze, resetPlayerIfSphere, releaseControl]);
 
   /** Libera o controle/player já no início do fade da dissipação. */
   const startDismiss = useCallback(() => {
@@ -234,7 +234,7 @@ export function useRiquelmeSpheres({
     sphereRef.current = next;
     setSphere(next);
     phaseStartRef.current = Date.now();
-  }, [freezeActionsUntilRef, releaseWorldFreeze, resetPlayerIfSphere]);
+  }, [freezeActionsUntilRef, releaseWorldFreeze, resetPlayerIfSphere, releaseControl]);
 
   // ── Tick principal (fases, movimento, atração, dano) ───────
   const tick = () => {

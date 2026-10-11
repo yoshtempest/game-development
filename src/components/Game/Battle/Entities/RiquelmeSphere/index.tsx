@@ -1,5 +1,6 @@
 import type { RiquelmeSphere } from "@/utils/types/character/riquelme";
 import { playerProjectilePath } from "@/utils/paths";
+import styles from "./styles.module.css";
 
 type Props = {
   sphere: RiquelmeSphere | null;
@@ -12,30 +13,25 @@ export function RiquelmeSphere({ sphere, battleScaleX, battleScaleY }: Props) {
 
   const src =
     sphere.variant === "blue"
-      ? playerProjectilePath("/blueSphere.svg")
-      : playerProjectilePath("/redSphere.svg");
+      ? playerProjectilePath("blueSphere.svg")
+      : playerProjectilePath("redSphere.svg");
 
   const blinkOpacity = sphere.blink;
   return (
     <div
+      className={styles.container}
       style={{
-        position: "absolute",
         left: `${sphere.x * battleScaleX}px`,
         bottom: `${sphere.y * battleScaleY}px`,
         transform: `translateX(-50%) translateY(50%) scale(${sphere.scale})`,
-        transformOrigin: "center bottom",
         opacity: sphere.opacity,
-        pointerEvents: "none",
-        willChange: "transform, opacity",
-        zIndex: 25,
       }}
     >
       <img
+        className={styles.image}
         src={src}
         alt="Esfera do Riquelme"
         style={{
-          width: "80px",
-          height: "auto",
           opacity: Math.max(0, 1 - blinkOpacity),
           mixBlendMode: blinkOpacity > 0.05 ? "screen" : "normal",
           filter:
@@ -46,18 +42,10 @@ export function RiquelmeSphere({ sphere, battleScaleX, battleScaleY }: Props) {
       />
       {blinkOpacity > 0.05 && (
         <img
+          className={styles.silhouette}
           src={src}
           alt="Esfera do Riquelme (silhueta)"
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "80px",
-            height: "auto",
-            opacity: blinkOpacity,
-            mixBlendMode: "screen",
-            filter: "brightness(10)",
-            pointerEvents: "none",
-          }}
+          style={{ opacity: blinkOpacity }}
         />
       )}
     </div>
