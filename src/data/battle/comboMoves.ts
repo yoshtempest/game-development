@@ -7,15 +7,7 @@ const BASE_COMBOS: ComboMove[] = [
     sequence: ["Z"],
     states: ["attack"],
     description: "Ataque rápido com dano moderado.",
-    situation: "Use para construir o deliciômetro e manter pressão.",
-  },
-  {
-    id: "specialAttack",
-    name: "Ataque Especial",
-    sequence: ["G"],
-    states: ["preSpecial", "preSpecial2", "special"],
-    description: "Ataque poderoso que consome toda a delícia acumulada.",
-    situation: "Use com o deliciômetro cheio para causar dano massivo.",
+    situation: "Use para construir a barra e manter pressão.",
   },
   {
     id: "fallingAttack",
@@ -24,14 +16,6 @@ const BASE_COMBOS: ComboMove[] = [
     states: ["falling", "fallingAttack"],
     description: "Golpe ao cair. causa 1.2× de dano.",
     situation: "Use ao cair de um pulo para acertar o inimigo de surpresa.",
-  },
-  {
-    id: "airSpecial",
-    name: "Especial Aéreo",
-    sequence: ["↑", "G"],
-    states: ["jump", "preSpecialInAir", "specialInAir"],
-    description: "Especial executado no ar. causa 1.2× de dano.",
-    situation: "Use no ar com deliciômetro cheio.",
   },
   {
     id: "blockAttack",
@@ -44,20 +28,7 @@ const BASE_COMBOS: ComboMove[] = [
   },
 ];
 
-const CHAR_COMBOS: Partial<Record<CharacterId, ComboMove[]>> = {
-  larissa: [
-    {
-      id: "stackExplosion",
-      name: "Explosão de Stacks",
-      sequence: ["Z (5×)", "G"],
-      states: ["attack", "special"],
-      description:
-        "Acumule stacks com ataques básicos e consuma tudo com o especial para uma explosão.",
-      situation:
-        "Use contra inimigos lentos para maximizar o dano do especial.",
-    },
-  ],
-};
+const CHAR_COMBOS: Partial<Record<CharacterId, ComboMove[]>> = {};
 
 export function getComboMoves(characterId: CharacterId): ComboMove[] {
   return [...BASE_COMBOS, ...(CHAR_COMBOS[characterId] ?? [])];

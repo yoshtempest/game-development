@@ -2,7 +2,7 @@ import { CHARACTERS } from "@/data/characters/list";
 import type { Character } from "@/utils/types/player/player";
 import { CHARACTERS as CHAR_OPTIONS } from "@/data/options/characters";
 
-type CharRewardType = "level" | "damage" | "specials" | "hits" | "attacks";
+type CharRewardType = "level" | "damage" | "hits" | "attacks";
 
 type StaticRewardId =
   | "kill_enemies"
@@ -17,7 +17,6 @@ type StaticRewardId =
   | "blocks"
   | "misses"
   | "hits_used"
-  | "specials_used"
   | "attacks_used";
 
 export type RewardId = StaticRewardId | `${CharRewardType}_${Character}`;
@@ -40,12 +39,6 @@ const CHAR_REWARD_TEMPLATES = [
     type: "damage",
     label: "Cause {req} de dano com {char}",
     getRequirement: (stage: number) => 1000 * (stage + 1),
-    getReward: (stage: number) => 5 * (stage + 1),
-  },
-  {
-    type: "specials",
-    label: "Use {req} especiais com {char}",
-    getRequirement: (stage: number) => 25 * (stage + 1),
     getReward: (stage: number) => 5 * (stage + 1),
   },
   {
@@ -89,13 +82,7 @@ function generateCharRewards(): RewardDef[] {
 export function isCharRewardId(
   id: string,
 ): { charId: Character; type: CharRewardType } | null {
-  const types: CharRewardType[] = [
-    "level",
-    "damage",
-    "specials",
-    "hits",
-    "attacks",
-  ];
+  const types: CharRewardType[] = ["level", "damage", "hits", "attacks"];
   for (const t of types) {
     const prefix = t + "_";
     if (id.startsWith(prefix)) {
@@ -180,12 +167,6 @@ export const REWARDS: RewardDef[] = [
     label: "Use {req} golpes",
     getRequirement: (stage) => 1000 * (stage + 1),
     getReward: (stage) => 5 * (stage + 1),
-  },
-  {
-    id: "specials_used",
-    label: "Use {req} especiais",
-    getRequirement: (stage) => 100 * (stage + 1),
-    getReward: (stage) => 10 * (stage + 1),
   },
   {
     id: "attacks_used",

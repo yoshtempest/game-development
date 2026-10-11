@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { playerPath, npcPathProjectile } from "@/utils/paths";
+import { playerPathArturHabilities, npcPathProjectile } from "@/utils/paths";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { getProjectileCenter } from "@/gameRules/npc/projectile/projectileDamage";
 import { isProjectileId } from "@/gameRules/npc/projectile/projectileId";
@@ -254,8 +254,8 @@ export function useArturKillerQueen({
     killerQueen,
     bombTargets,
     killerQueenSprite: (sprite: KillerQueenOverlay["sprite"]) =>
-      playerPath(
-        `/artur/inFight/special/${KILLER_QUEEN_SPRITE_FILE[sprite]}.svg`,
+      playerPathArturHabilities(
+        `/bitesTheDust/${KILLER_QUEEN_SPRITE_FILE[sprite]}.svg`,
       ),
     bombSprite: npcPathProjectile("/bomb.svg"),
     explosionSprite: npcPathProjectile("/explosion.svg"),

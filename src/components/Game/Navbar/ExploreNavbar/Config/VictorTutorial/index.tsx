@@ -179,9 +179,8 @@ export function VictorTutorial() {
             <button className={styles.open} />
             <p>
               Ao clicar em "G" pelo teclado ou nesse quadrado retangular, você
-              consegue abrir os menus, assim como você fez agora, caso esteja em
-              batalha, após cumprir certas condições você poderá utilizar o
-              ataque especial.
+              consegue abrir os menus, assim como você fez agora. Em batalha, as
+              habilidades ativas de cada personagem aparecem em botões na tela.
             </p>
           </div>
         </>

@@ -1,6 +1,5 @@
 import { attackBattle } from "./attack/attack";
 import { isPlayerAttackHolding } from "./attack/isPlayerAttackHolding";
-import { specialBattle } from "./attack/special";
 import { blockStart } from "./block/blockStart";
 import { blockEnd } from "./block/blockEnd";
 import { canAct } from "./can/act";
@@ -27,7 +26,6 @@ export {
   idleBattle,
   resolveMovementState,
   crouchToggle,
-  specialBattle,
   blockStart,
   blockEnd,
   canAct,

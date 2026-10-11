@@ -44,7 +44,7 @@ O escopo atual abrange:
 - **Inventário**: gerenciamento de itens coletados em mapa
 - **Diálogo**: sistema de diálogo com fallback condicional baseado em estado do jogo (quests, items, flags, personagem)
 - **Progressão**: stats do jogador (Força, Resistência, Sorte, Técnica, Espírito, Tenacidade, armadura física/mágica, escudo, vampirismo, vampirismo universal, reflexão, redução de cooldown) modificáveis por pontos de nível, equipamentos, títulos e classe
-- **Vampirismo**: existem dois modelos, e a diferença é _quais golpes pagam_. O **vampirismo** normal cura só a partir do **ataque básico**; o **vampirismo universal** cura a partir de qualquer dano que o **próprio jogador** cause — básico, special, dash, habilidades ativas (Genki Dama, I Am Atomic, Gran Rey Cero, Laser Vastolord, Expansão de Domínio) e reflexão de dano. Nenhum dos dois paga por dano de terceiro: ticks de DoT, dano de pet e de aliados não são golpes do jogador. Todo caminho de dano do jogador converte dano em cura por uma regra única (`applyVampirism`)
+- **Vampirismo**: existem dois modelos, e a diferença é _quais golpes pagam_. O **vampirismo** normal cura só a partir do **ataque básico**; o **vampirismo universal** cura a partir de qualquer dano que o **próprio jogador** cause — básico, dash, habilidades ativas (Genki Dama, I Am Atomic, Gran Rey Cero, Laser Vastolord, Killer Queen, Explosão de Stacks, Expansão de Domínio) e reflexão de dano. Nenhum dos dois paga por dano de terceiro: ticks de DoT, dano de pet e de aliados não são golpes do jogador. Todo caminho de dano do jogador converte dano em cura por uma regra única (`applyVampirism`)
 - **Salvamento**: save automático com múltiplas chaves em localStorage
 - **Configurações**: dificuldade, volumes de áudio, velocidade de diálogo
 - **Indicador de missões**: seta dourada apontando tiles de saída que levam à missão ativa + "!" amarelo sobre NPCs relevantes
@@ -110,7 +110,7 @@ O escopo atual abrange:
 | RF33 | A armadura é aplicada antes do multiplicador elemental                                                                                          | Alta       |
 | RF34 | O menu de Status distribui 5 stats primários — Força, Resistência, Sorte, Técnica e Espírito — e cada um lista os status derivados que ele move | Alta       |
 | RF35 | A vida máxima é derivada da Resistência (não existe mais stat primário de HP)                                                                   | Alta       |
-| RF36 | O special físico escala com Técnica e o special mágico com Espírito, derivados da natureza do golpe                                             | Alta       |
+| RF36 | O golpe de habilidade físico escala com Técnica e o mágico com Espírito, derivados da natureza do golpe                                              | Alta       |
 | RF37 | O menu de Status mostra, sob cada stat, quanto o próximo ponto move cada status derivado                                                        | Alta       |
 | RF38 | Sorte governa Crítico, Chance de esquiva e a chance de drop extra                                                                               | Média      |
 | RF39 | Espírito aumenta a energia máxima                                                                                                               | Média      |
@@ -162,13 +162,13 @@ O escopo atual abrange:
 | RN25 | O medidor de block consome o golpe bruto e projeta as duas colunas num número (`getBlockArmor`)                                                                                                                                                                                                                                         |
 | RN26 | A armadura de um summon é resolvida no spawn e guardada em `SummonedNpc.armor` (inclusive no frame de rewind)                                                                                                                                                                                                                           |
 | RN28 | A soma bruta de CDR passa por `raw * 100 / (100 + raw)` com teto de 90%; `applyCooldownReduction` aplica a curva internamente para nenhum call site converter errado                                                                                                                                                                    |
-| RN29 | A natureza do special decide o stat que o escala: `magical` lê Espírito, o resto lê Técnica — a mesma decisão que escolhe a coluna de armadura furada                                                                                                                                                                                   |
+| RN29 | A natureza do golpe de habilidade decide o stat que o escala: `magical` lê Espírito, o resto lê Técnica — a mesma decisão que escolhe a coluna de armadura furada                                                                                                                                                                        |
 | RN30 | `STATS` é a única fonte de ordem do menu; `STAT_EFFECTS` é indexado por `StatPrimaryKey`, então stat novo não compila sem efeito declarado                                                                                                                                                                                              |
 | RN31 | O level up sobe Força, Resistência, Espírito e Tenacidade; Sorte e Técnica ficam de fora por alimentarem curvas não-lineares                                                                                                                                                                                                            |
 | RN32 | Save antigo migra em `normalizeProgress`: `hp` vira Resistência e `intelligence` vira Técnica **e** Espírito, sem nerf de nenhuma build existente                                                                                                                                                                                       |
 | RN33 | Vida e armadura não são somadas em dobro: o bônus de equipamento de armadura mora em `getTotalArmor`, não no bônus somado                                                                                                                                                                                                               |
 | RN27 | Dano verdadeiro está implementado e sem uso: nenhum golpe passa `"true"` pelo funil; a Expansão de Domínio declara a natureza no dado mas é um _execute_ (`setNpcHP(0)`)                                                                                                                                                                |
-| RN34 | O special virou botão no HUD (`SpecialButton`) com cooldown próprio de 20s (`SPECIAL_ABILITY_COOLDOWN_MS`, reduzido pela CDR); `g`/`Tab` abrem a BattleNavbar e o gear de config saiu do HUD de batalha                                                                                                                                 |
+| RN34 | O "special" universal saiu do jogo: só Artur (`KillerQueenButton`) e Larissa (`StackExplosionButton`) têm habilidade ativa própria, com cooldown de 20s reduzido pela CDR; `g`/`Tab` abrem a BattleNavbar e o gear de config saiu do HUD de batalha                                                                                                                                 |
 | RN35 | A barra da Expansão de Domínio vai de 0 a 40: ataque básico rende +1, uso de habilidade rende +5 e o uso da Expansão consome as 40 cargas — errar golpe não zera a barra                                                                                                                                                                |
 | RN36 | A Expansão de Domínio é universal: todo personagem tem botão (`DOMAIN_EXPANSIONS`); o marcelo roda o mugetsu bespoke (`kind: "mugetsu"`) e os demais o burst de dano especial em área (`kind: "burst"`), sem intro de background (só marcelo tem arte)                                                                                  |
 | RN37 | Todo NPC declara seus quatro multiplicadores de status (`NPC_STATUS_MULTIPLIERS` em `data/npc/statusMultipliers.ts`: dano, armadura física, armadura mágica e vida) sobre o status calculado por nível × classe × dificuldade; tabela exaustiva (NPC novo não compila sem entrada) e valor padrão 1.0 — o ajuste fino é manual, por NPC |
@@ -201,7 +201,7 @@ O escopo atual abrange:
 | UC03 | Atravessar Porta   | Jogador           | Pisar em tile de transição para mudar de cena                |
 | UC04 | Iniciar Batalha    | Jogador / Sistema | Encontrar NPC hostil e entrar em modo de combate             |
 | UC05 | Atacar em Batalha  | Jogador           | Pressionar botão de ataque durante batalha                   |
-| UC06 | Usar Special       | Jogador           | Usar o especial pelo botão Special (cooldown de 20s com CDR) |
+| UC06 | Usar Habilidade Ativa | Jogador           | Acionar a habilidade própria do personagem pelo botão no HUD (cooldown de 20s com CDR) |
 | UC07 | Receber Missão     | Jogador / NPC     | Interagir com NPC que concede uma missão                     |
 | UC08 | Progredir Missão   | Sistema           | Sistema atualiza progresso da missão ao cumprir objetivo     |
 | UC09 | Coletar Item       | Jogador           | Interagir com tile que contém um item coletável              |
@@ -321,7 +321,7 @@ O jogo utiliza renderização posicional absoluta sobre um container central. Ab
 - Barra de HP do jogador e do NPC
 - Deliciômetro / barra da Expansão de Domínio (0–40; ataque +1, habilidade +5, uso da Expansão consome tudo)
 - Projéteis animados (comum, pull com seta de atração, rain com aviso de área)
-- Botões de ação: ataque, special (cooldown 20s), defesa, item, habilidades e Expansão de Domínio
+- Botões de ação: ataque, defesa, item, habilidades ativas (cooldown 20s) e Expansão de Domínio
 - Tela de transição ao entrar/sair de batalha
 
 ### Menu de Configurações (Config)

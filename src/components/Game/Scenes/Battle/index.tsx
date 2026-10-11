@@ -9,7 +9,8 @@ import { EmanuelKiChargeButton } from "@/components/Game/Battle/Buttons/Ematron/
 import { EmanuelGenkiDamaButton } from "@/components/Game/Battle/Buttons/Ematron/GenkiDama";
 import { VastolordLaserButton } from "@/components/Game/Battle/Buttons/Marshadow/VastolordLaser";
 import { AtomicButton } from "@/components/Game/Battle/Buttons/Marshadow/Atomic";
-import { SpecialButton } from "@/components/Game/Battle/Buttons/Special";
+import { KillerQueenButton } from "@/components/Game/Battle/Buttons/Artur/KillerQueen";
+import { StackExplosionButton } from "@/components/Game/Battle/Buttons/Larissa/StackExplosion";
 import { DomainExpansionButton } from "@/components/Game/Battle/Buttons/DomainExpansion";
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
 import { GameMap } from "@/components/Game/Map/Game";
@@ -184,9 +185,9 @@ export function BattleScene(props: Props) {
     atomicPress,
     atomicUsable,
     atomicRemaining,
-    specialPress,
-    specialUsable,
-    specialRemaining,
+    activeAbilityPress,
+    activeAbilityUsable,
+    activeAbilityRemaining,
     mugetsuSweep,
     domainExpansionActive,
     mugetsuBlink,
@@ -789,12 +790,23 @@ export function BattleScene(props: Props) {
         />
       )}
 
-      <SpecialButton
-        ready={specialUsable}
-        remaining={specialRemaining}
-        disabled={controlsDisabled}
-        onClick={specialPress}
-      />
+      {player.character === "artur" && (
+        <KillerQueenButton
+          ready={activeAbilityUsable}
+          remaining={activeAbilityRemaining}
+          disabled={controlsDisabled}
+          onClick={activeAbilityPress}
+        />
+      )}
+
+      {player.character === "larissa" && (
+        <StackExplosionButton
+          ready={activeAbilityUsable}
+          remaining={activeAbilityRemaining}
+          disabled={controlsDisabled}
+          onClick={activeAbilityPress}
+        />
+      )}
 
       {!vastolordActive && (
         <DomainExpansionButton

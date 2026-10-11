@@ -8,6 +8,7 @@ import { GRAN_REY_CERO_SPRITES } from "@/utils/paths/player/constants";
 import { MARCELO_VASTOLORD_SPRITES } from "@/utils/paths/player/constants";
 import { playerPath } from "@/utils/paths/player/playerPath";
 import { playerPathMarshadowHabilities } from "@/utils/paths/characters/marcelo/playerPathMarshadowHabilities";
+import { playerPathArturHabilities } from "@/utils/paths/characters/artur/playerPathArturHabilities";
 import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
 import type { LucauaAttackVariant } from "@/utils/types/character/lucaua";
 
@@ -19,7 +20,7 @@ export function resolveBattleSprite(
   lucauaAttackVariant?: LucauaAttackVariant,
 ): string {
   if (character === "artur" && ALL_PREDICATES.isSpecialTrigger(state)) {
-    return playerPath(`/artur/inFight/special/arturSeeing.svg`);
+    return playerPathArturHabilities(`/bitesTheDust/arturSeeing.svg`);
   }
   if (state === "mostHonored" && character === "riquelme") {
     return playerPath(`/riquelme/inFight/mostHonored.svg`);

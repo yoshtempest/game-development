@@ -3,7 +3,6 @@ export type Task =
   | "moveRight"
   | "jump"
   | "attack"
-  | "special"
   | "crounch"
   | "block"
   | "done";
@@ -13,7 +12,6 @@ export const TASKS: Task[] = [
   "moveRight",
   "jump",
   "attack",
-  "special",
   "crounch",
   "block",
   "done",
@@ -24,10 +22,9 @@ export const TASK_ORDER: Record<Task, number> = {
   moveRight: 2,
   jump: 3,
   attack: 4,
-  special: 5,
-  crounch: 6,
-  block: 7,
-  done: 8,
+  crounch: 5,
+  block: 6,
+  done: 7,
 };
 
 export interface TaskInstruction {
@@ -46,9 +43,6 @@ export const TASK_INSTRUCTIONS: Record<Task, TaskInstruction> = {
   },
   attack: {
     text: "Faça o L para atacar",
-  },
-  special: {
-    text: "Pressione G para utilizar o especial",
   },
   crounch: {
     text: "Pressione S ou ↓ para agachar e desviar de projéteis",

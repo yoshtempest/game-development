@@ -9,7 +9,7 @@ import {
   emanuelSoundPath,
   playerSoundPath,
   xpLevelPath,
-  useItemPath,
+  usedItemPath,
   npcSoundPath
 } from "@/utils/paths";
 
@@ -21,7 +21,7 @@ export function createSounds() {
     cantMove: playerSoundPath("/cantMove.mp3"),
     tryAgain: battleDefault("tryAgain.mp3"),
     receivedItem: receiveOrUnlock("receivedAnItem.mp3"),
-    usedItem: useItemPath("usedAnItem.mp3"),
+    usedItem: usedItemPath("usedAnItem.mp3"),
     deliciometroIsFull: battleDefault("deliciometroIsFull.mp3"),
     questUpdated: receiveOrUnlock("questUpdated.mp3"),
     levelUp: xpLevelPath("levelUp.mp3"),
@@ -58,12 +58,12 @@ export function createSounds() {
     equip: new Audio(transitionPath("equip.mp3")),
     unequip: new Audio(transitionPath("unequip.mp3")),
     unlockedTitle: playerSoundPath("unlockedTitle.mp3"),
-    eating: useItemPath("eating.mp3"),
-    drinkingPotion: useItemPath("drinkingPotion.mp3"),
+    eating: usedItemPath("eating.mp3"),
+    drinkingPotion: usedItemPath("drinkingPotion.mp3"),
     jhowsimarJooj: npcSoundPath("jhowsimar/throw.mp3"),
     boom: npcSoundPath("slimita/boom.mp3"),
     gainXp: xpLevelPath("gainXp.mp3"),
-    chestOpening: useItemPath("chestOpening.mp3"),
+    chestOpening: usedItemPath("chestOpening.mp3"),
     goatJump: npcSoundPath("goat/jump.mp3"),
     hungryDeath: npcSoundPath("hungryDeath/giveMeAPlate.mp3"),
     bite: npcSoundPath("hungryDeath/bite.mp3"),

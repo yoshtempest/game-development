@@ -13,7 +13,11 @@ import {
   GRAN_REY_CERO_COOLDOWN_MS,
 } from "@/data/characters/granReyCero";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
-import { SPECIAL_ABILITY_COOLDOWN_MS } from "@/data/cooldowns";
+import {
+  KILLER_QUEEN_COOLDOWN_MS,
+  TOTAL_FREEZE_MS,
+} from "@/data/characters/srGuaxinim";
+import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa";
 import { LUCAS_WEAPONS } from "@/data/characters/lucasWeapons";
 import { LUCAS_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import {
@@ -37,14 +41,33 @@ import type { DamageKind } from "@/utils/types/battle/damageKind";
  * battle e para o menu de Status concordarem sobre o que existe.
  */
 
-/** Special universal: todos os personagens têm, com cooldown de 20s. */
-function specialAbility(): ActiveAbility {
+/**
+ * Killer Queen do Artur: o "special" dele virou habilidade própria. A
+ * coreografia (time-freeze, bombas e explosão) vive em `useArturKillerQueen`;
+ * aqui ficam só nome, descrição e cooldown, como em qualquer ativa.
+ */
+function killerQueenAbility(): ActiveAbility {
   return {
     kind: "active",
-    id: "special",
-    name: "Special",
-    description: `Golpe especial do personagem, acionado pelo botão SPECIAL na tela. Cooldown de ${SPECIAL_ABILITY_COOLDOWN_MS / 1000}s.`,
-    cooldownMs: SPECIAL_ABILITY_COOLDOWN_MS,
+    id: "killerQueen",
+    name: "Killer Queen",
+    description: `Congela o tempo por ${TOTAL_FREEZE_MS / 1000}s, marca cada inimigo e projétil destrutível com uma bomba e detona todos em área. Cooldown de ${KILLER_QUEEN_COOLDOWN_MS / 1000}s.`,
+    cooldownMs: KILLER_QUEEN_COOLDOWN_MS,
+  };
+}
+
+/**
+ * Explosão de Stacks da Larissa: o "special" dela virou habilidade própria. O
+ * dano é `stacks * 5` (ver `calculateSpecialHitDamage`) e o efeito/visual
+ * continuam no `larissaBehavior`; aqui ficam só nome, descrição e cooldown.
+ */
+function stackExplosionAbility(): ActiveAbility {
+  return {
+    kind: "active",
+    id: "stackExplosion",
+    name: "Explosão de Stacks",
+    description: `Consome os stacks acumulados pelos ataques básicos numa explosão (5 de dano por stack). Cooldown de ${STACK_EXPLOSION_COOLDOWN_MS / 1000}s.`,
+    cooldownMs: STACK_EXPLOSION_COOLDOWN_MS,
   };
 }
 
@@ -76,7 +99,6 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
       description: `Troca a arma aleatoriamente entre ${LUCAS_WEAPONS.length} armas, cada uma com seu próprio alcance.`,
       cost: LUCAS_WEAPON_SWITCH_MANA_COST,
     },
-    specialAbility(),
     domainBurstAbility("lucas"),
   ],
   riquelme: [
@@ -104,7 +126,6 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
       description: `Converte energia amaldiçoada em vida (${CURSED_ENERGY_HEAL_RATIO} de energia por 1 de HP).`,
       requires: "some enquanto O Abençoado estiver ativo",
     },
-    specialAbility(),
     domainBurstAbility("riquelme"),
   ],
   emanuel: [
@@ -127,7 +148,6 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
       description: `Segure para flutuar e reunir energia na esfera (cresce a cada segundo); solte para arremessar. Custa ${GENKI_DAMA_INITIAL_COST} de Ki na largada mais dreno contínuo. Dano máximo: ${GENKI_DAMA_MAX_DAMAGE_MULTIPLIER}x o ataque básico.`,
       damageType: "magical",
     },
-    specialAbility(),
     domainBurstAbility("emanuel"),
   ],
   marcelo: [
@@ -170,16 +190,15 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
       cooldownMs: GRAN_REY_CERO_COOLDOWN_MS,
       damageType: "physical",
     },
-    specialAbility(),
   ],
-  eduarda: [specialAbility(), domainBurstAbility("eduarda")],
-  samuel: [specialAbility(), domainBurstAbility("samuel")],
-  artur: [specialAbility(), domainBurstAbility("artur")],
-  mayra: [specialAbility(), domainBurstAbility("mayra")],
-  lucaua: [specialAbility(), domainBurstAbility("lucaua")],
-  larissa: [specialAbility(), domainBurstAbility("larissa")],
-  camilly: [specialAbility(), domainBurstAbility("camilly")],
-  levi: [specialAbility(), domainBurstAbility("levi")],
+  eduarda: [domainBurstAbility("eduarda")],
+  samuel: [domainBurstAbility("samuel")],
+  artur: [killerQueenAbility(), domainBurstAbility("artur")],
+  mayra: [domainBurstAbility("mayra")],
+  lucaua: [domainBurstAbility("lucaua")],
+  larissa: [stackExplosionAbility(), domainBurstAbility("larissa")],
+  camilly: [domainBurstAbility("camilly")],
+  levi: [domainBurstAbility("levi")],
 };
 
 function toPassiveAbility(

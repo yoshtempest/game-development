@@ -30,7 +30,6 @@ type SummaryStatsProps = {
   damageTaken: number;
   blocks: number;
   hitsUsed: number;
-  specialsUsed: number;
   attacksUsed: number;
 };
 
@@ -47,7 +46,6 @@ type CharacterStatsProps = {
   damageTaken: number;
   blocks: number;
   hitsUsed: number;
-  specialsUsed: number;
   attacksUsed: number;
 };
 
@@ -100,7 +98,6 @@ export function getSummaryStats(data: SummaryStatsProps) {
     stat("Dano total recebido", data.damageTaken),
     stat("Bloqueios", data.blocks),
     stat("Golpes usados", data.hitsUsed),
-    stat("Especiais usados", data.specialsUsed),
     stat("Ataques comuns", data.attacksUsed),
     stat("Dias Jogados", data.loginDays),
   ];
@@ -120,7 +117,6 @@ export function getCharacterStats(data: CharacterStatsProps) {
     stat("Dano total recebido", data.damageTaken),
     stat("Bloqueios", data.blocks),
     stat("Golpes usados", data.hitsUsed),
-    stat("Especiais usados", data.specialsUsed),
     stat("Ataques comuns", data.attacksUsed),
   ];
 }

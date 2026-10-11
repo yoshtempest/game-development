@@ -1,4 +1,7 @@
-import { Zap } from "lucide-react";
+import { Bomb } from "lucide-react";
+
+import { KILLER_QUEEN_COOLDOWN_MS, TOTAL_FREEZE_MS } from "@/data/characters/srGuaxinim";
+
 import styles from "./styles.module.css";
 
 type Props = {
@@ -9,12 +12,11 @@ type Props = {
 };
 
 /**
- * Botão Special do HUD: o especial saiu de g/Tab (que agora abre a
- * BattleNavbar) e virou botão próprio, com cooldown único de 20s reduzido
- * pela redução de cooldown do personagem. As cargas da barra não têm mais a
- * ver com ele — a barra é só da Expansão de Domínio.
+ * Botão da "Killer Queen" (Artur): congela o tempo, marca cada inimigo e
+ * projétil destrutível com uma bomba e detona todos em área. Era o special do
+ * Artur; virou habilidade própria, com o mesmo cooldown de 20s.
  */
-export function SpecialButton({
+export function KillerQueenButton({
   ready,
   remaining,
   disabled = false,
@@ -29,11 +31,11 @@ export function SpecialButton({
       }`}
       onClick={onClick}
       disabled={locked}
-      title="Especial: ataque especial do personagem. Cooldown de 20s."
+      title={`Killer Queen: congela o tempo por ${TOTAL_FREEZE_MS / 1000}s e explode todos os alvos marcados. Cooldown de ${KILLER_QUEEN_COOLDOWN_MS / 1000}s.`}
     >
       <span className={`abilityLabel ${styles.label}`}>
-        <Zap size={13} />
-        SPECIAL
+        <Bomb size={13} />
+        KILLER QUEEN
       </span>
       {!ready && remaining > 0 && (
         <span className={styles.cooldown}>{remaining.toFixed(1)}s</span>

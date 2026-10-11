@@ -1,5 +1,5 @@
 import { playerSoundPath } from "./playerSoundPath";
 
-export function useItemPath(path: string) {
+export function usedItemPath(path: string) {
   return playerSoundPath(`useItem/${path}`);
 }

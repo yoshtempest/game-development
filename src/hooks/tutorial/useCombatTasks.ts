@@ -44,12 +44,7 @@ export function useCombatTasks() {
 
   useEffect(() => {
     if (currentTask !== "attack") return;
-    if (ALL_PREDICATES.isAttackPose(player.state)) setCurrentTask("special");
-  }, [player.state, currentTask]);
-
-  useEffect(() => {
-    if (currentTask !== "special") return;
-    if (player.state === "special") setCurrentTask("crounch");
+    if (ALL_PREDICATES.isAttackPose(player.state)) setCurrentTask("crounch");
   }, [player.state, currentTask]);
 
   useEffect(() => {

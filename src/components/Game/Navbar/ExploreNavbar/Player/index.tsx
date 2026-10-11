@@ -24,7 +24,6 @@ import {
   getDamageDealtStats,
   getDamageTakenStats,
   getHitsUsedStats,
-  getSpecialsUsedStats,
   getAttacksUsedStats,
 } from "@/utils/rewards";
 import { getCharacterUnlockDate } from "@/utils/character/unlockDate";
@@ -110,7 +109,6 @@ export function Player() {
   const damageDealtStats = getDamageDealtStats();
   const damageTakenStats = getDamageTakenStats();
   const hitsUsedStats = getHitsUsedStats();
-  const specialsUsedStats = getSpecialsUsedStats();
   const attacksUsedStats = getAttacksUsedStats();
   const blockCount = getBlockCount();
 
@@ -141,7 +139,6 @@ export function Player() {
     damageTaken: damageTakenStats.total,
     blocks: blockCount.total,
     hitsUsed: hitsUsedStats.total,
-    specialsUsed: specialsUsedStats.total,
     attacksUsed: attacksUsedStats.total,
   });
 
@@ -160,7 +157,6 @@ export function Player() {
     damageTaken: damageTakenStats.perCharacter[selectedChar] ?? 0,
     blocks: blockCount.perCharacter[selectedChar] ?? 0,
     hitsUsed: hitsUsedStats.perCharacter[selectedChar] ?? 0,
-    specialsUsed: specialsUsedStats.perCharacter[selectedChar] ?? 0,
     attacksUsed: attacksUsedStats.perCharacter[selectedChar] ?? 0,
   });
 

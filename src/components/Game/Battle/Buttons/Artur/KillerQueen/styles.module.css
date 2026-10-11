@@ -1,7 +1,9 @@
+/* Habilidade própria do Artur: ocupa o slot que era do botão SPECIAL (só um
+   dos dois personagens tem botão de habilidade ativa por vez). */
 .button {
   right: var(--size-300);
   border: var(--size-2) solid rgba(253, 230, 138, 0.55);
-  animation: specialGlow 1.5s ease-in-out infinite;
+  animation: killerQueenGlow 1.5s ease-in-out infinite;
 }
 
 .button:hover:not(:disabled) {
@@ -22,7 +24,7 @@
   color: var(--ability-aurora);
 }
 
-@keyframes specialGlow {
+@keyframes killerQueenGlow {
   0%,
   100% {
     box-shadow: 0 0 var(--size-4) rgba(253, 230, 138, 0.3);

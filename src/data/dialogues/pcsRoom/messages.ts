@@ -20,5 +20,5 @@ export const pcsRoomMessages: Record<string, string> = {
   "15,4": "Foram 40 horas de trabalho em 4 dias, ",
   "16,4": "O jogo tem auto-save então não se preoucupe em perde progresso.",
   "17,4":
-    "Ataque normal, especial, habilidades, classes, leveis, posição, alcance, bloqueio, pulo... Há muitas variáveis durante a batalha.",
+    "Ataque normal, habilidades, classes, leveis, posição, alcance, bloqueio, pulo... Há muitas variáveis durante a batalha.",
 };

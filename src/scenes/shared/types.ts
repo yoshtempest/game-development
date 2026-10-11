@@ -156,10 +156,14 @@ export type BattleSceneApi = {
   atomicPress: () => void;
   atomicUsable: boolean;
   atomicRemaining: number;
-  /** Special universal (todos os personagens): 20s de cooldown com CDR. */
-  specialPress: () => void;
-  specialUsable: boolean;
-  specialRemaining: number;
+  /**
+   * Habilidade ativa própria do personagem (Artur/Killer Queen,
+   * Larissa/Explosão de Stacks): 20s de cooldown com CDR. Substitui o antigo
+   * "special" universal, que não existe mais.
+   */
+  activeAbilityPress: () => void;
+  activeAbilityUsable: boolean;
+  activeAbilityRemaining: number;
   mugetsuSweep: ReturnType<typeof useDomainExpansion>["mugetsuSweep"];
   domainExpansionActive: ReturnType<
     typeof useDomainExpansion

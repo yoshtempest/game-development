@@ -11,7 +11,6 @@ import {
   SEVEN_THOUSAND_MS,
   TEN_MINUTES_MS,
   SIX_HOURS_MS,
-  TWENTY_THOUSAND_MS,
 } from "@/data/ms";
 
 export const PLAYER_BASIC_COOLDOWN = FOUR_HUNDRED_MS;
@@ -41,8 +40,5 @@ export const DAILY_CHEST_COOLDOWN_MS = SIX_HOURS_MS;
 export const UI_BUTTON_L_COOLDOWN = FOUR_HUNDRED_MS;
 export const UI_BUTTON_B_COOLDOWN = SIX_HUNDRED_MS;
 export const UI_BUTTON_G_COOLDOWN = FOUR_HUNDRED_MS;
-
-/** Cooldown do botão Special na tela (com CDR aplicado em tempo de uso). */
-export const SPECIAL_ABILITY_COOLDOWN_MS = TWENTY_THOUSAND_MS;
 
 export const COMBAT_SYSTEM_COOLDOWN = FIVE_HUNDRED_MS;

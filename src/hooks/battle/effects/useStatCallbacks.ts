@@ -6,7 +6,6 @@ import {
   incrementDamageTakenStats,
   incrementHitsUsedStats,
   incrementMissesStats,
-  incrementSpecialsUsedStats,
 } from "@/utils/rewards";
 
 import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
@@ -56,7 +55,6 @@ export function useStatCallbacks({
   });
 
   const onSpecialRef = useLatestRef(() => {
-    incrementSpecialsUsedStats(playerCharacter);
     incrementHitsUsedStats(playerCharacter);
   });
 

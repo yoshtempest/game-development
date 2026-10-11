@@ -7,7 +7,6 @@ import {
   getDamageTakenStats,
   getMissesStats,
   getHitsUsedStats,
-  getSpecialsUsedStats,
   getAttacksUsedStats,
 } from "@/utils/rewards";
 
@@ -97,7 +96,6 @@ const CURRENT_BY_ID: Record<string, (ctx: ProgressContext) => number> = {
   blocks: () => getBlockCount().total,
   misses: () => getMissesStats().total,
   hits_used: () => getHitsUsedStats().total,
-  specials_used: () => getSpecialsUsedStats().total,
   attacks_used: () => getAttacksUsedStats().total,
 };
 
@@ -107,7 +105,6 @@ const CURRENT_BY_CHAR_TYPE: Record<
 > = {
   level: (charId, charsProgress) => charsProgress[charId]?.level ?? 0,
   damage: (charId) => getDamageDealtStats().perCharacter[charId] ?? 0,
-  specials: (charId) => getSpecialsUsedStats().perCharacter[charId] ?? 0,
   hits: (charId) => getHitsUsedStats().perCharacter[charId] ?? 0,
   attacks: (charId) => getAttacksUsedStats().perCharacter[charId] ?? 0,
 };

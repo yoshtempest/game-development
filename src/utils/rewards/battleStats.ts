@@ -14,7 +14,6 @@ type BattleStatsData = {
   misses: PerCharacterStats;
   equipmentDrops: { total: number };
   hitsUsed: PerCharacterStats;
-  specialsUsed: PerCharacterStats;
   attacksUsed: PerCharacterStats;
 };
 
@@ -29,7 +28,6 @@ function createDefault(): BattleStatsData {
     misses: createDefaultPerChar(),
     equipmentDrops: { total: 0 },
     hitsUsed: createDefaultPerChar(),
-    specialsUsed: createDefaultPerChar(),
     attacksUsed: createDefaultPerChar(),
   };
 }
@@ -142,7 +140,7 @@ export function incrementEquipmentDropsStats(count: number): void {
   });
 }
 
-// Hits used (golpes - total of attacks + specials)
+// Hits used (golpes - total of attacks)
 export function incrementHitsUsedStats(character: string): void {
   mutate((data) => {
     data.hitsUsed.total += 1;
@@ -153,19 +151,6 @@ export function incrementHitsUsedStats(character: string): void {
 
 export function getHitsUsedStats(): PerCharacterStats {
   return stats().hitsUsed;
-}
-
-// Specials used
-export function incrementSpecialsUsedStats(character: string): void {
-  mutate((data) => {
-    data.specialsUsed.total += 1;
-    data.specialsUsed.perCharacter[character] =
-      (data.specialsUsed.perCharacter[character] ?? 0) + 1;
-  });
-}
-
-export function getSpecialsUsedStats(): PerCharacterStats {
-  return stats().specialsUsed;
 }
 
 // Common attacks used

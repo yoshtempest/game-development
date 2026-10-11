@@ -76,9 +76,9 @@ import {
   ENCHANTMENT_DURATION_MS,
   type Enchantment,
 } from "@/data/equipment/enchantments";
-import { getSpecialFlowOverride } from "@/data/battle/animationFlow";
 import { CHARGE_ATTACK_MIN_LEVEL } from "@/data/battle/charge";
-import { SPECIAL_ABILITY_COOLDOWN_MS } from "@/data/cooldowns";
+import { KILLER_QUEEN_COOLDOWN_MS } from "@/data/characters/srGuaxinim";
+import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa";
 import { LUCAS_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import { cursedEnergyFromDamage } from "@/gameRules/battle/cursedEnergy";
 import { PET_ROOT_DURATION_MS } from "@/data/characters/petSkills";
@@ -960,9 +960,6 @@ export function useBattleCombat({
     startSpecialIntro,
   } = useSpecialIntro({ setTimeScale, resetTimeScale });
 
-  const skipSpecialHitOnPress =
-    getSpecialFlowOverride(player.character) !== null;
-
   // Artur não usa o charge (segurar onConfirm = ORA ORA). Os demais mantêm.
   const canCharge =
     player.character !== "artur" && playerLevel >= CHARGE_ATTACK_MIN_LEVEL;
@@ -974,42 +971,56 @@ export function useBattleCombat({
     alfaIntroActive ||
     isDragging;
 
-  const activateSpecial = useCallback(() => {
-    if (freezeActionsUntilRef.current > Date.now()) return;
-    if (isGrabbedRef.current && grabFlippedRef.current) return;
+  // ── Habilidades ativas do Artur e da Larissa ──────────────────────────
+  // O "special" universal saiu do jogo: só Artur (Killer Queen) e Larissa
+  // (Explosão de Stacks) têm habilidade própria, cada uma com o seu botão e
+  // cooldown. Por baixo elas reaproveitam o pipeline do golpe especial (os
+  // estados `preSpecial`/`special` e o `handleSpecialHit`), que continua
+  // existindo para a mecânica das esferas do Riquelme — mas nenhum personagem
+  // ganha mais um "special" genérico.
+
+  const activateArturKillerQueen = useCallback(() => {
+    // O Artur não dá o golpe no press: `useArturKillerQueen` dispara quando o
+    // estado entra em `preSpecial`.
     special();
-    if (!skipSpecialHitOnPress) {
-      handleSpecialHit();
-    }
-  }, [
-    freezeActionsUntilRef,
-    isGrabbedRef,
-    grabFlippedRef,
-    special,
-    handleSpecialHit,
-    skipSpecialHitOnPress,
-  ]);
+  }, [special]);
 
-  // Cooldown do botão Special (20s com CDR) — o especial saiu de g/Tab e
-  // virou habilidade de canal único no HUD, como as demais.
-  const [specialRemaining, setSpecialRemaining] = useState(0);
-  const specialReadyAtRef = useRef(0);
+  const activateLarissaExplosion = useCallback(() => {
+    // A Larissa dá o golpe na hora (dano `stacks * 5` + explosão), como fazia
+    // o special antigo quando não havia override de fluxo.
+    special();
+    handleSpecialHit();
+  }, [special, handleSpecialHit]);
 
-  const openSpecial = useCallback(() => {
+  const [activeAbilityRemaining, setActiveAbilityRemaining] = useState(0);
+  const activeAbilityReadyAtRef = useRef(0);
+
+  const openActiveAbility = useCallback(() => {
     if (freezeActionsUntilRef.current > Date.now()) return;
     if (isGrabbedRef.current && grabFlippedRef.current) return;
-    if (specialReadyAtRef.current > Date.now()) return;
+    if (activeAbilityReadyAtRef.current > Date.now()) return;
+
+    const activate =
+      player.character === "artur"
+        ? activateArturKillerQueen
+        : player.character === "larissa"
+          ? activateLarissaExplosion
+          : null;
+    if (!activate) return;
+
     // `startSpecialIntro` devolve false só quando já existe um intro em
     // andamento (nesse caso o onActivate nunca roda): o cooldown não arma,
-    // senão o especial sumiria junto com o cooldown pago.
-    const started = startSpecialIntro(player.character, activateSpecial);
+    // senão a habilidade sumiria junto com o cooldown pago.
+    const started = startSpecialIntro(player.character, activate);
     if (!started) return;
     const cooldownMs = applyCooldownReduction(
-      SPECIAL_ABILITY_COOLDOWN_MS,
+      player.character === "artur"
+        ? KILLER_QUEEN_COOLDOWN_MS
+        : STACK_EXPLOSION_COOLDOWN_MS,
       battle.char.stats.cooldownReduction,
     );
-    specialReadyAtRef.current = Date.now() + cooldownMs;
-    setSpecialRemaining(cooldownMs / 1000);
+    activeAbilityReadyAtRef.current = Date.now() + cooldownMs;
+    setActiveAbilityRemaining(cooldownMs / 1000);
     // Habilidade ativa usada: a barra da Expansão de Domínio rende +5.
     battle.setDelicia((d) => gainAbilityCharge(d, battle.hitsToSpecial));
   }, [
@@ -1018,16 +1029,17 @@ export function useBattleCombat({
     grabFlippedRef,
     startSpecialIntro,
     player.character,
-    activateSpecial,
+    activateArturKillerQueen,
+    activateLarissaExplosion,
     battle,
   ]);
 
-  // Tick do cooldown restante do botão Special (mesmo intervalo dos
-  // cooldowns do marcelo).
+  // Tick do cooldown restante do botão de habilidade ativa (mesmo intervalo
+  // dos cooldowns do marcelo).
   useEffect(() => {
     const id = setInterval(() => {
-      setSpecialRemaining(
-        Math.max(0, (specialReadyAtRef.current - Date.now()) / 1000),
+      setActiveAbilityRemaining(
+        Math.max(0, (activeAbilityReadyAtRef.current - Date.now()) / 1000),
       );
     }, TWO_HUNDRED_MS);
     return () => clearInterval(id);
@@ -1568,9 +1580,9 @@ export function useBattleCombat({
     atomicPress,
     atomicUsable,
     atomicRemaining,
-    specialPress: openSpecial,
-    specialUsable: specialRemaining <= 0,
-    specialRemaining,
+    activeAbilityPress: openActiveAbility,
+    activeAbilityUsable: activeAbilityRemaining <= 0,
+    activeAbilityRemaining,
     specialIntroAbility,
     mugetsuSweep,
     domainExpansionActive,
