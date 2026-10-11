@@ -19,7 +19,7 @@ import {
   GENKI_DAMA_MAX_DAMAGE_MULTIPLIER,
   GENKI_DAMA_RISE_MS,
   GENKI_DAMA_THROW_MS,
-} from "@/data/characters/emanuel";
+} from "@/data/characters/emanuel/emanuel";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { SoundId } from "@/utils/audio/soundId";
 import type { GenkiDamaVisual } from "@/utils/types/character/emanuel";

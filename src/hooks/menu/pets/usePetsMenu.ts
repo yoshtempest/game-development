@@ -7,14 +7,14 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import { useMenuSFX } from "@/hooks/menu/useMenuSFX";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { PETS } from "@/data/equipment/pets";
-import { PET_DROPS } from "@/data/characters/petDrops";
+import { PET_DROPS } from "@/data/characters/pets/petDrops";
 import {
   getPetSkillDefinition,
   getPetRole,
   type PetRole,
-} from "@/data/characters/petSkills";
+} from "@/data/characters/pets/petSkills";
 import type { EquipmentRank } from "@/utils/types/player/equipment";
-import { PET_STAR_MAX } from "@/data/characters/petProgress";
+import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
 import { gridMove } from "@/gameRules/menu/navigation";
 
 export type PetEntry = {

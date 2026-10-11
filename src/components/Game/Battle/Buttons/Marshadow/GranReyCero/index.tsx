@@ -2,7 +2,7 @@ import { Sword } from "lucide-react";
 
 import { playerPathMarshadowHabilities } from "@/utils/paths";
 
-import { GRAN_REY_CERO_AOE_RADIUS } from "@/data/characters/granReyCero";
+import { GRAN_REY_CERO_AOE_RADIUS } from "@/data/characters/marcelo/granReyCero";
 
 import styles from "./styles.module.css";
 

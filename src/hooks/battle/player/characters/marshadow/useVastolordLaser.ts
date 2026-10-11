@@ -32,7 +32,7 @@ import {
   VASTOLORD_LASER_BEAM_HEIGHT,
   VASTOLORD_LASER_START_STACKS,
   VASTOLORD_LASER_TICK_MS,
-} from "@/data/characters/marshadowLaser";
+} from "@/data/characters/marcelo/marshadowLaser";
 import {
   vastolordLaserTop,
   type VastolordLaserBeam,

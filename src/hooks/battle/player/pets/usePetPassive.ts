@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from "react";
-import type { PetPassiveEffect } from "@/data/characters/petSkills";
+import type { PetPassiveEffect } from "@/data/characters/pets/petSkills";
 
 type Props = {
   passiveEffect: PetPassiveEffect | null;

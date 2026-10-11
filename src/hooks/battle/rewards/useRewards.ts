@@ -12,7 +12,7 @@ import { calculateXP } from "@/gameRules/battle/calculateXp";
 import {
   PET_XP_MULTIPLIER,
   petStarsFromEnhance,
-} from "@/data/characters/petProgress";
+} from "@/data/characters/pets/petProgress";
 import {
   getUnlockedCharacters,
   distributeSharedXp,

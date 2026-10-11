@@ -3,7 +3,7 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import {
   EMANUEL_KI_CHARGE_PER_TICK,
   EMANUEL_KI_CHARGE_TICK_MS,
-} from "@/data/characters/emanuel";
+} from "@/data/characters/emanuel/emanuel";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import type { SoundId } from "@/utils/audio/soundId";

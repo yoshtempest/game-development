@@ -8,7 +8,7 @@ import {
   type SetStateAction,
 } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
-import { ATOMIC_COOLDOWN_MS } from "@/data/characters/marshadow";
+import { ATOMIC_COOLDOWN_MS } from "@/data/characters/marcelo/marshadow";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
 import {
   ONE_HUNDRED_MS,

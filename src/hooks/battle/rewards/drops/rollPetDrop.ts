@@ -1,4 +1,4 @@
-import { PET_DROPS } from "@/data/characters/petDrops";
+import { PET_DROPS } from "@/data/characters/pets/petDrops";
 import { getEquipmentById } from "@/data/equipment";
 
 export function rollPetDrop(

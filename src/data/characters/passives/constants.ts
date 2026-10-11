@@ -1,5 +1,5 @@
 import type { CHARACTERS } from "@/data/characters/list";
-import { EMANUEL_COMBO_WINDOW_MS } from "@/data/characters/emanuel";
+import { EMANUEL_COMBO_WINDOW_MS } from "@/data/characters/emanuel/emanuel";
 import type { CharacterPassive } from "./types";
 import type { CharacterPassiveKind } from "./types";
 

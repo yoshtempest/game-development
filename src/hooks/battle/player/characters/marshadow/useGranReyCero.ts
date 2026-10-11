@@ -32,7 +32,7 @@ import {
   GRAN_REY_CERO_PUSH_PX,
   GRAN_REY_CERO_TICK_MS,
   GRAN_REY_CERO_TRAVEL_MS,
-} from "@/data/characters/granReyCero";
+} from "@/data/characters/marcelo/granReyCero";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
 import type { VampirismStats } from "@/gameRules/battle/vampirism/applyVampirism";

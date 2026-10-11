@@ -9,7 +9,7 @@ import {
 import { isEquipmentId } from "@/data/equipment";
 import { saveCompressed, loadCompressed } from "@/services/save/storageService";
 import { slotKey } from "@/services/save/slotManager";
-import { PET_CLASS } from "@/data/characters/petProgress";
+import { PET_CLASS } from "@/data/characters/pets/petProgress";
 
 export type CharacterEquipmentData = {
   equipped: EquippedItems;

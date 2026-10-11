@@ -1,4 +1,4 @@
-import { PET_CLASS } from "@/data/characters/petProgress";
+import { PET_CLASS } from "@/data/characters/pets/petProgress";
 
 export const PET_XP_BASE: Record<NPCClass, number> = {
   common: 10,

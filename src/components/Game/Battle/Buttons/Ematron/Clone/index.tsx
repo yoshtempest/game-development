@@ -1,5 +1,5 @@
 import { Ghost } from "lucide-react";
-import { EMANUEL_CLONE_MAX_COST } from "@/data/characters/emanuel";
+import { EMANUEL_CLONE_MAX_COST } from "@/data/characters/emanuel/emanuel";
 import styles from "./styles.module.css";
 
 type Props = {

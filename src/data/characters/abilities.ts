@@ -6,19 +6,19 @@ import {
   EMANUEL_KI_CHARGE_TICK_MS,
   GENKI_DAMA_INITIAL_COST,
   GENKI_DAMA_MAX_DAMAGE_MULTIPLIER,
-} from "@/data/characters/emanuel";
-import { ATOMIC_COOLDOWN_MS } from "@/data/characters/marshadow";
+} from "@/data/characters/emanuel/emanuel";
+import { ATOMIC_COOLDOWN_MS } from "@/data/characters/marcelo/marshadow";
 import {
   GRAN_REY_CERO_AOE_RADIUS,
   GRAN_REY_CERO_COOLDOWN_MS,
-} from "@/data/characters/granReyCero";
+} from "@/data/characters/marcelo/granReyCero";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import {
   KILLER_QUEEN_COOLDOWN_MS,
   TOTAL_FREEZE_MS,
-} from "@/data/characters/srGuaxinim";
-import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa";
-import { LUCAS_WEAPONS } from "@/data/characters/lucasWeapons";
+} from "@/data/characters/artur/srGuaxinim";
+import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa/larissa";
+import { LUCAS_WEAPONS } from "@/data/characters/lucas/lucasWeapons";
 import { LUCAS_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import {
   BLINK_ENERGY_COST,

@@ -3,7 +3,7 @@ import { playerPathMarshadowHabilities } from "@/utils/paths";
 import {
   GRAN_REY_CERO_EFFECT_HEIGHT,
   GRAN_REY_CERO_EFFECT_WIDTH,
-} from "@/data/characters/granReyCero";
+} from "@/data/characters/marcelo/granReyCero";
 import { granReyCeroEffectTop } from "@/gameRules/battle/granReyCero";
 import type { BattleEntityPositioning } from "@/components/Game/Battle/Entities/types";
 

@@ -7,7 +7,7 @@ import {
 import {
   GENKI_DAMA_RISE_MS,
   GENKI_DAMA_RISE_Y,
-} from "@/data/characters/emanuel";
+} from "@/data/characters/emanuel/emanuel";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import type { CollisionParams } from "@/utils/types/battle/collision";
 

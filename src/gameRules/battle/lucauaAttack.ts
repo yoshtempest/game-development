@@ -1,4 +1,4 @@
-import { LucauaEnergyConstants } from "@/data/characters/lucaua";
+import { LucauaEnergyConstants } from "@/data/characters/lucaua/lucaua";
 import type {
   LucauaAttackVariant,
   LucauaTarget,

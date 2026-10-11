@@ -39,7 +39,7 @@ import {
   SPHERE_SPAWN_MS,
   SPHERE_SPAWN_SCALE,
   SPHERE_TICK_MS,
-} from "@/data/characters/riquelme";
+} from "@/data/characters/riquelme/riquelme";
 
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { SoundId } from "@/utils/audio/soundId";

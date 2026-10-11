@@ -1,6 +1,6 @@
 import { Flame } from "lucide-react";
 
-import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa";
+import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa/larissa";
 
 import styles from "./styles.module.css";
 

@@ -1,5 +1,5 @@
 import { playerProjectilePath } from "@/utils/paths";
-import { VASTOLORD_LASER_BEAM_HEIGHT } from "@/data/characters/marshadowLaser";
+import { VASTOLORD_LASER_BEAM_HEIGHT } from "@/data/characters/marcelo/marshadowLaser";
 import {
   vastolordLaserTop,
   type VastolordLaserBeam,

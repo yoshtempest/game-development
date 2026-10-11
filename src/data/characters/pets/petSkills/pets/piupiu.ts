@@ -1,5 +1,5 @@
-import { def } from "@/data/characters/petSkills/helpers";
-import type { PetSkillDefinition } from "@/data/characters/petSkills/types";
+import { def } from "@/data/characters/pets/petSkills/helpers";
+import type { PetSkillDefinition } from "@/data/characters/pets/petSkills/types";
 
 export const pet_piupiu: PetSkillDefinition = def(
   "pet_piupiu",

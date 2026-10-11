@@ -7,7 +7,7 @@
  * conta — `src/components/` não deve importar nada de `src/hooks/`.
  */
 
-import { VASTOLORD_LASER_BEAM_HEIGHT } from "@/data/characters/marshadowLaser";
+import { VASTOLORD_LASER_BEAM_HEIGHT } from "@/data/characters/marcelo/marshadowLaser";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 
 /**

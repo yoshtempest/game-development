@@ -25,7 +25,7 @@ import {
   EMANUEL_CLONE_MOVE_PX,
   EMANUEL_CLONE_MOVE_TICK_MS,
   EMANUEL_CLONE_TIME_SCALE,
-} from "@/data/characters/emanuel";
+} from "@/data/characters/emanuel/emanuel";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
 
 type Props = {

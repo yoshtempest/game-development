@@ -6,7 +6,7 @@ import {
   getSpritePath,
 } from "@/utils/npc/getSpritePath";
 import { ProjectileConstants } from "@/data/projectile";
-import { DOMAIN_EXPANSION_DISINTEGRATION_MS } from "@/data/characters/marshadowDomainExpansion";
+import { DOMAIN_EXPANSION_DISINTEGRATION_MS } from "@/data/characters/marcelo/marshadowDomainExpansion";
 import type {
   MugetsuDisintegrationTarget,
   MugetsuSweep,

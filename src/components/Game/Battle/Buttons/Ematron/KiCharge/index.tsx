@@ -2,7 +2,7 @@ import { Zap } from "lucide-react";
 import {
   EMANUEL_KI_CHARGE_PER_TICK,
   EMANUEL_KI_CHARGE_TICK_MS,
-} from "@/data/characters/emanuel";
+} from "@/data/characters/emanuel/emanuel";
 import styles from "./styles.module.css";
 
 type Props = {

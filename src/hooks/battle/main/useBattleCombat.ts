@@ -78,11 +78,11 @@ import {
   type Enchantment,
 } from "@/data/equipment/enchantments";
 import { CHARGE_ATTACK_MIN_LEVEL } from "@/data/battle/charge";
-import { KILLER_QUEEN_COOLDOWN_MS } from "@/data/characters/srGuaxinim";
-import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa";
+import { KILLER_QUEEN_COOLDOWN_MS } from "@/data/characters/artur/srGuaxinim";
+import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa/larissa";
 import { LUCAS_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import { cursedEnergyFromDamage } from "@/gameRules/battle/cursedEnergy";
-import { PET_ROOT_DURATION_MS } from "@/data/characters/petSkills";
+import { PET_ROOT_DURATION_MS } from "@/data/characters/pets/petSkills";
 import { TWO_HUNDRED_MS } from "@/data/ms";
 import { runPetSkill } from "@/gameRules/battle/petSkill/petSkill";
 import { applyPlayerStatus } from "@/gameRules/battle/status/statusEffects";

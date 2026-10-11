@@ -3,7 +3,7 @@ import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import {
   EMANUEL_KI_CHARGE_EFFECT_ASPECT,
   EMANUEL_KI_CHARGE_EFFECT_SIZE_MULTIPLIER,
-} from "@/data/characters/emanuel";
+} from "@/data/characters/emanuel/emanuel";
 import { getViewportSize } from "@/utils/viewport";
 
 export interface PlayerDimensions {

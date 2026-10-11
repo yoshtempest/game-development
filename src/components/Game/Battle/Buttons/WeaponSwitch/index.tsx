@@ -1,4 +1,4 @@
-import { LUCAS_WEAPON_LABELS } from "@/data/characters/lucasWeapons";
+import { LUCAS_WEAPON_LABELS } from "@/data/characters/lucas/lucasWeapons";
 import { playerPath } from "@/utils/paths";
 import styles from "./styles.module.css";
 

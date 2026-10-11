@@ -1,5 +1,5 @@
 // PlayerState vem do escopo global (src/utils/types/global.d.ts) — fonte única.
-import { EMANUEL_AIR_GRAB_DURATION_MS } from "@/data/characters/emanuel";
+import { EMANUEL_AIR_GRAB_DURATION_MS } from "@/data/characters/emanuel/emanuel";
 import {
   ONE_HUNDRED_MS,
   ONE_HUNDRED_FIFTY_MS,

@@ -1,4 +1,4 @@
-import { LucauaEnergyConstants } from "@/data/characters/lucaua";
+import { LucauaEnergyConstants } from "@/data/characters/lucaua/lucaua";
 import { spriteMap } from "@/data/battle/projectileSprites";
 
 import type { LucauaEnergyProjectile } from "@/utils/types/character/lucaua";

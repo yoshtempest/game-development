@@ -6,7 +6,7 @@ import {
 import { canPlayerHit } from "@/gameRules/battle/combat";
 import { evaluateStatusGuards } from "@/gameRules/battle/status/evaluateStatusGuards";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
-import { LUCAS_WEAPON_RANGES } from "@/data/characters/lucasWeapons";
+import { LUCAS_WEAPON_RANGES } from "@/data/characters/lucas/lucasWeapons";
 import { DIVERGENT_FIST_DELAY_MS } from "@/gameRules/battle/cursedEnergy";
 import {
   applyBasicHit,

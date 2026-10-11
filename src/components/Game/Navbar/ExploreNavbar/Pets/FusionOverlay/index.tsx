@@ -9,7 +9,7 @@ import {
   petStarStyle,
   getPetStarVisual,
 } from "@/utils/character/petVisuals";
-import { PET_STAR_MAX } from "@/data/characters/petProgress";
+import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
 
 const MERGE_MS = 1100;
 const RESULT_MS = 1500;

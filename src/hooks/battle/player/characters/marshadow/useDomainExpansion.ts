@@ -31,7 +31,7 @@ import {
   DOMAIN_EXPANSION_TIME_ID,
   DOMAIN_EXPANSION_TOTAL_MS,
   DOMAIN_EXPANSION_SWEEP_SPEED,
-} from "@/data/characters/marshadowDomainExpansion";
+} from "@/data/characters/marcelo/marshadowDomainExpansion";
 import type {
   MugetsuBlink,
   MugetsuDisintegrationTarget,

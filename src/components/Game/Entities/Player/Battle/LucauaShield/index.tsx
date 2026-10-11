@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { LucauaShieldConstants } from "@/data/characters/lucaua";
+import { LucauaShieldConstants } from "@/data/characters/lucaua/lucaua";
 import { playerPath } from "@/utils/paths";
 
 import styles from "./styles.module.css";

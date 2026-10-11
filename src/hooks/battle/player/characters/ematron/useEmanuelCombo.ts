@@ -4,7 +4,7 @@ import {
   EMANUEL_COMBO_STEPS,
   EMANUEL_COMBO_WINDOW_MS,
   type EmanuelComboStep,
-} from "@/data/characters/emanuel";
+} from "@/data/characters/emanuel/emanuel";
 
 export function useEmanuelCombo() {
   const stepIndexRef = useRef(0);

@@ -3,7 +3,7 @@ import {
   DEFAULT_LUCAS_WEAPON,
   rollNextLucasWeapon,
   type LucasWeapon,
-} from "@/data/characters/lucasWeapons";
+} from "@/data/characters/lucas/lucasWeapons";
 import { applyHitstop, type TimeEffect } from "@/gameRules/battle/time";
 
 export const LUCAS_WEAPON_SWITCH_DURATION_MS = 600;

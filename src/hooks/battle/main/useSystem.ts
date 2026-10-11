@@ -3,7 +3,7 @@ import { battleBehaviors } from "@/gameRules/battle/behaviors/player";
 import {
   getPetSkillDefinition,
   PET_SKILL_COOLDOWN_MS,
-} from "@/data/characters/petSkills";
+} from "@/data/characters/pets/petSkills";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { usePetSkillCooldown } from "@/hooks/battle/player/pets/usePetSkill";
 import { usePetPassive } from "@/hooks/battle/player/pets/usePetPassive";

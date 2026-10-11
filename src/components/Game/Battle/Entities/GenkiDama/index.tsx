@@ -4,7 +4,7 @@ import {
   GENKI_DAMA_CHARGE_EFFECT_ASPECT,
   GENKI_DAMA_CHARGE_EFFECT_SIZE_MULTIPLIER,
   GENKI_DAMA_SPRITE_ASPECT,
-} from "@/data/characters/emanuel";
+} from "@/data/characters/emanuel/emanuel";
 import type { GenkiDamaVisual } from "@/utils/types/character/emanuel";
 import styles from "./styles.module.css";
 

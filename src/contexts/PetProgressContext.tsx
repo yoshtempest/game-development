@@ -7,18 +7,18 @@ import {
 } from "react";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { PET_PROGRESS_KEY } from "@/data/storageKeys";
-import type { PetsProgress } from "@/data/characters/petProgress";
+import type { PetsProgress } from "@/data/characters/pets/petProgress";
 import {
   PET_DEFAULT_PROGRESS,
   normalizePetProgress,
-} from "@/data/characters/petProgress";
+} from "@/data/characters/pets/petProgress";
 import {
   getPetXPToNextLevel,
   getPetClass,
 } from "@/utils/character/petProgress";
 import { useCompressedStorage } from "@/hooks/useCompressedStorage";
 import { useQueuedSounds } from "@/hooks/audio/useQueuedSounds";
-import { PET_MAX_LEVEL } from "@/data/characters/petProgress";
+import { PET_MAX_LEVEL } from "@/data/characters/pets/petProgress";
 
 type ContextType = {
   petProgress: PetsProgress;

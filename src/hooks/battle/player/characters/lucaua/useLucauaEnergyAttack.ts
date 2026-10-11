@@ -8,7 +8,7 @@ import {
 } from "@/gameRules/battle/rangeConfig";
 import { getTime, type TimeEffect } from "@/gameRules/battle/time";
 import { planLucauaAttack } from "@/gameRules/battle/lucauaAttack";
-import { LucauaEnergyConstants } from "@/data/characters/lucaua";
+import { LucauaEnergyConstants } from "@/data/characters/lucaua/lucaua";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { ProjectileConstants } from "@/data/projectile";
 

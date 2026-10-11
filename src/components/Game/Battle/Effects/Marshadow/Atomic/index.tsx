@@ -5,7 +5,7 @@ import {
   getNpcSpriteYOffset,
 } from "@/utils/npc/getSpritePath";
 import { playerPathMarshadowHabilities } from "@/utils/paths";
-import { MARCELO_CUT_IN_ENEMIE_SRC } from "@/data/characters/marshadowCutIn";
+import { MARCELO_CUT_IN_ENEMIE_SRC } from "@/data/characters/marcelo/marshadowCutIn";
 import type { AtomicCut, AtomicExplosion } from "@/utils/types/battle/atomic";
 import styles from "./styles.module.css";
 

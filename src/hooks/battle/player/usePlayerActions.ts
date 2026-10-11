@@ -15,11 +15,11 @@ import type {
   VampirismStats,
 } from "@/gameRules/battle/vampirism/applyVampirism";
 import { BLOCK_ATTACK_PUSH_DISTANCE } from "@/gameRules/movement/constants";
-import { LUCAS_WEAPON_RANGES } from "@/data/characters/lucasWeapons";
+import { LUCAS_WEAPON_RANGES } from "@/data/characters/lucas/lucasWeapons";
 import { PlayerSpecialConstants } from "@/data/projectile";
 import { useBuildTargetList } from "./usePlayerTargeting";
 import { resetCooldownRef } from "@/utils/battle/cooldown";
-import { EMANUEL_COMBO_STEPS } from "@/data/characters/emanuel";
+import { EMANUEL_COMBO_STEPS } from "@/data/characters/emanuel/emanuel";
 
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 import type { SpecialHitOptions } from "@/utils/types/battle/specialHitOptions";

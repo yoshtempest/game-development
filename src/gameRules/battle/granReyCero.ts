@@ -14,7 +14,7 @@ import {
   GRAN_REY_CERO_PLAYER_SPRITE_RATIO,
   GRAN_REY_CERO_TRAVEL_DISTANCE,
   GRAN_REY_CERO_TRAVEL_MS,
-} from "@/data/characters/granReyCero";
+} from "@/data/characters/marcelo/granReyCero";
 
 /** Velocidade da "corrida" (sem alvo), em px por ms. */
 export const GRAN_REY_CERO_TRAVEL_SPEED =

@@ -2,7 +2,7 @@ import { useRef, useCallback, useEffect } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { PLAYER_CHARGE_DASH_COOLDOWN } from "@/data/cooldowns";
 import { isPlayerInRange } from "@/gameRules/battle/range";
-import { LUCAS_WEAPON_RANGES } from "@/data/characters/lucasWeapons";
+import { LUCAS_WEAPON_RANGES } from "@/data/characters/lucas/lucasWeapons";
 import {
   DASH_DURATION,
   DASH_INTERVAL,

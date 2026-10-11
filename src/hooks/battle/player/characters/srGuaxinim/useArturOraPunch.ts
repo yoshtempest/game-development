@@ -10,7 +10,7 @@ import {
   PUNCH_MIN_DISTANCE_MS,
   PUNCH_SPAWN_INTERVAL_MS,
   PUNCH_TARGET_JITTER,
-} from "@/data/characters/srGuaxinim";
+} from "@/data/characters/artur/srGuaxinim";
 import type {
   PunchHitResult,
   OraPunch,

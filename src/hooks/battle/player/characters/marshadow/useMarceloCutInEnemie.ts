@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   MARCELO_BLEED_DURATION_MS,
   MARCELO_CUT_IN_DURATION_MS,
-} from "@/data/characters/marshadowCutIn";
+} from "@/data/characters/marcelo/marshadowCutIn";
 
 export type CutInEnemieOverlay = {
   /** Contador de ativações — vira a chave React para reiniciar o sprite. */

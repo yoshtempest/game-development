@@ -23,7 +23,7 @@ import {
   TOTAL_FREEZE_MS,
   KILLER_QUEEN_TIME_ID,
   KILLER_QUEEN_SPRITE_FILE,
-} from "@/data/characters/srGuaxinim";
+} from "@/data/characters/artur/srGuaxinim";
 
 type Props = {
   player: Player;

@@ -4,7 +4,7 @@ import {
   animationFlow,
   getSpecialFlowOverride,
 } from "@/data/battle/animationFlow";
-import { EMANUEL_AIR_LAUNCH_MS } from "@/data/characters/emanuel";
+import { EMANUEL_AIR_LAUNCH_MS } from "@/data/characters/emanuel/emanuel";
 import { logPlay } from "@/utils/replay/audioEventLog";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { FIVE_HUNDRED_MS } from "@/data/ms";

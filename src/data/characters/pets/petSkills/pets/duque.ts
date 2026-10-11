@@ -1,6 +1,6 @@
-import { PET_SKILL_COOLDOWN_MS } from "@/data/characters/petSkills/constants";
-import { def } from "@/data/characters/petSkills/helpers";
-import type { PetSkillDefinition } from "@/data/characters/petSkills/types";
+import { PET_SKILL_COOLDOWN_MS } from "@/data/characters/pets/petSkills/constants";
+import { def } from "@/data/characters/pets/petSkills/helpers";
+import type { PetSkillDefinition } from "@/data/characters/pets/petSkills/types";
 
 export const pet_duque: PetSkillDefinition = def(
   "pet_duque",

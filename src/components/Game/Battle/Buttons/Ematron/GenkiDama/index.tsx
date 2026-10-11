@@ -2,7 +2,7 @@ import { Orbit } from "lucide-react";
 import {
   GENKI_DAMA_INITIAL_COST,
   GENKI_DAMA_MAX_DAMAGE_MULTIPLIER,
-} from "@/data/characters/emanuel";
+} from "@/data/characters/emanuel/emanuel";
 import styles from "./styles.module.css";
 
 type Props = {

@@ -3,7 +3,7 @@ import { colKey, type CharacterEquipmentData } from "@/data/equipment/storage";
 import {
   PET_STAR_MAX,
   enhanceFromPetStars,
-} from "@/data/characters/petProgress";
+} from "@/data/characters/pets/petProgress";
 import { addToCollection } from "./addToCollection";
 import { getMutableState } from "./getMutableState";
 
