@@ -17,13 +17,14 @@ export function RiquelmeSphere({ sphere, battleScaleX, battleScaleY }: Props) {
       : playerProjectilePath("redSphere.svg");
 
   const blinkOpacity = sphere.blink;
+  const screenMix = blinkOpacity > 0.05;
   return (
     <div
       className={styles.container}
       style={{
         left: `${sphere.x * battleScaleX}px`,
-        bottom: `${sphere.y * battleScaleY}px`,
-        transform: `translateX(-50%) translateY(50%) scale(${sphere.scale})`,
+        top: `${sphere.y * battleScaleY}px`,
+        transform: `translateX(-30%) translateY(-160%) scale(${sphere.scale})`,
         opacity: sphere.opacity,
       }}
     >
@@ -33,14 +34,13 @@ export function RiquelmeSphere({ sphere, battleScaleX, battleScaleY }: Props) {
         alt="Esfera do Riquelme"
         style={{
           opacity: Math.max(0, 1 - blinkOpacity),
-          mixBlendMode: blinkOpacity > 0.05 ? "screen" : "normal",
-          filter:
-            blinkOpacity > 0.05
-              ? "brightness(5) saturate(1.4)"
-              : "drop-shadow(0 4px 12px rgba(0,0,0,0.45))",
+          mixBlendMode: screenMix ? "screen" : "normal",
+          filter: screenMix
+            ? "brightness(6) saturate(1.6)"
+            : "drop-shadow(0 4px 14px rgba(0,0,0,0.5))",
         }}
       />
-      {blinkOpacity > 0.05 && (
+      {screenMix && (
         <img
           className={styles.silhouette}
           src={src}

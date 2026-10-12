@@ -198,18 +198,18 @@ export function useRiquelmeSpheres({
     );
   }, [setPlayerRef]);
 
-  const clearInputs = () => {
+  const clearInputs = useCallback(() => {
     leftRef.current = false;
     rightRef.current = false;
     upRef.current = false;
     downRef.current = false;
-  };
+  }, []);
 
-  const releaseControl = () => {
+  const releaseControl = useCallback(() => {
     layerControlsRef.current?.();
     layerControlsRef.current = null;
     clearInputs();
-  };
+  }, [clearInputs]);
 
   const finish = useCallback(() => {
     activeRef.current = false;

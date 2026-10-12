@@ -1,15 +1,16 @@
 .container {
     position: absolute;
-    transform-origin: center top;
+    transform-origin: center center;
     pointer-events: none;
     will-change: transform, opacity;
-    z-index: 25,
+    z-index: 25;
 }
 
 .silhouette,
 .image {
-    width: var(--size-77);
+    width: var(--fs-32);
     height: auto;
+    display: block;
 }
 
 .silhouette {

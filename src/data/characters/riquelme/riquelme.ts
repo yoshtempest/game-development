@@ -31,7 +31,7 @@ export const SPHERE_TICK_MS = SIXTEEN_MS;
 export const SPHERE_CONTROL_PX = 14;
 
 /** Drain da blue em campo: 1 de energia amaldiçoada a cada 10ms. */
-export const BLUE_SPHERE_DRAIN_INTERVAL_MS = 10;
+export const BLUE_SPHERE_DRAIN_INTERVAL_MS = 50;
 export const BLUE_SPHERE_DRAIN_COST = 1;
 /** Dano gravitacional da blue: a cada 100ms sobre quem estiver no raio. */
 export const BLUE_SPHERE_DAMAGE_INTERVAL_MS = ONE_HUNDRED_MS;
