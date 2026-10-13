@@ -1,5 +1,5 @@
 import { playerSoundPath } from "@/utils/paths/song/playerSoundPath";
 
 export function emanuelSoundPath(path: string) {
-  return playerSoundPath(`emanuel/${path}`);
+  return playerSoundPath(`characters/emanuel/${path}`);
 }
