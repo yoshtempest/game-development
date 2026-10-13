@@ -1,4 +1,6 @@
 import { Flame } from "lucide-react";
+
+import { spriteMap } from "@/data/battle/projectileSprites";
 import styles from "./styles.module.css";
 
 type Props = {
@@ -13,6 +15,11 @@ export function RedSphereButton({ disabled = false, onClick }: Props) {
       className={`abilityButton ${styles.button} ${
         disabled ? "abilityDisabled" : ""
       }`}
+      style={{
+        backgroundImage: `url("${spriteMap.redSphere}")`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
       disabled={disabled}
       onClick={onClick}
       aria-label="Arremessar Esfera Vermelha"

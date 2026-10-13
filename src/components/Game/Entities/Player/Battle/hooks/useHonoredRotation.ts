@@ -17,7 +17,7 @@ export function useHonoredRotation(isMostHonored: boolean) {
     const animate = (now: number) => {
       const progress = Math.min(1, (now - start) / HONORED_ONE_RISE_MS);
 
-      setRotationDeg(-90 * progress);
+      setRotationDeg(-30 * progress);
 
       if (progress < 1) {
         animationFrame = requestAnimationFrame(animate);

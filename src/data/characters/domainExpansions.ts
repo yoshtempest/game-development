@@ -80,7 +80,7 @@ export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
       kind: "burst",
     },
     riquelme: {
-      name: "Domínio Amaldiçoado",
+      name: "Muryōkūsho",
       description:
         "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
       accent: "#3b82f6",

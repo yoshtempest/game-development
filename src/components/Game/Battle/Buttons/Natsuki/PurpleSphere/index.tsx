@@ -1,4 +1,6 @@
 import { Sparkles } from "lucide-react";
+
+import { spriteMap } from "@/data/battle/projectileSprites";
 import styles from "./styles.module.css";
 
 type Props = {
@@ -18,6 +20,11 @@ export function PurpleSphereButton({
       className={`abilityButton ${styles.button} ${
         active ? styles.active : ""
       } ${disabled ? "abilityDisabled" : ""}`}
+      style={{
+        backgroundImage: `url("${spriteMap.purpleSphere}")`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
       disabled={disabled}
       onClick={onClick}
       aria-label="Esfera Roxa (fusão das esferas azul e vermelha)"
