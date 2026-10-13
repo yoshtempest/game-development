@@ -166,6 +166,14 @@
   --ability-natsuki-50: rgba(232, 65, 24, 0.5);
   --ability-natsuki-80: rgba(232, 65, 24, 0.8);
   --ability-natsuki-deep: #e03a1f;
+  /* Esfera roxa (fusão blue+red do riquelme) */
+  --ability-purple: #a855f7;
+  --ability-purple-15: rgba(168, 85, 247, 0.15);
+  --ability-purple-30: rgba(168, 85, 247, 0.3);
+  --ability-purple-35: rgba(168, 85, 247, 0.35);
+  --ability-purple-50: rgba(168, 85, 247, 0.5);
+  --ability-purple-80: rgba(168, 85, 247, 0.8);
+  --ability-purple-pale: #e9d5ff;
   --ability-vastolord: #9b59ff;
   --ability-vastolord-60: rgba(155, 89, 255, 0.6);
   --ability-vastolord-deep: #7c4dff;

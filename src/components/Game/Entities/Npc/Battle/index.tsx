@@ -75,6 +75,11 @@ type Props = {
   cutInEnemie?: CutInEnemieOverlay | null;
   /** NPC em sangramento: mostra o bloodIcon acima da imagem. */
   npcBleeding?: boolean;
+  /**
+   * Furo da esfera purple: se a purple matou o NPC, o sprite perde o lado
+   * central-direito no ponto do impacto (em vez de só sumir no fade).
+   */
+  purpleHole?: boolean;
 };
 
 export function NPCBattle({
@@ -93,6 +98,7 @@ export function NPCBattle({
   isAlfa = false,
   cutInEnemie = null,
   npcBleeding = false,
+  purpleHole = false,
 }: Props) {
   const { playSound } = useSoundEffects();
   const prevIsExplodingRef = useRef(isExploding);
@@ -133,6 +139,15 @@ export function NPCBattle({
       ? npcPath(`/hungryDeath/run${runFrame + 1}.svg`)
       : `${basePath}`;
 
+  // ── Furo da esfera purple ─────────────────────────────────────────────────
+  // Só aparece se a purple matou o NPC: em vez de sumir no fade, o sprite fica
+  // visível e perde um pedaço circular no lado central-direito (o ponto do
+  // impacto). O `%` do furo é no espaço LOCAL da imagem e precisa compensar o
+  // `scaleX(-1)` da direita para o buraco cair sempre no lado direito da TELA.
+  const showPurpleHole = purpleHole && isDying && !isExploding;
+  const holeX = direction === "right" ? 28 : 72;
+  const holeMask = `radial-gradient(circle at ${holeX}% 47%, transparent 0 22%, #000 23%)`;
+
   return (
     <div
       style={{
@@ -154,8 +169,18 @@ export function NPCBattle({
             height: "100%",
             transform: `scaleX(${direction === "right" ? -1 : 1})`,
             position: "absolute",
-            opacity: isDying || isUnderground ? 0 : 1,
+            opacity: showPurpleHole ? 1 : isDying || isUnderground ? 0 : 1,
             filter: isDying ? "grayscale(100%)" : "none",
+            ...(showPurpleHole
+              ? {
+                  maskImage: holeMask,
+                  WebkitMaskImage: holeMask,
+                  maskRepeat: "no-repeat",
+                  WebkitMaskRepeat: "no-repeat",
+                  maskSize: "100% 100%",
+                  WebkitMaskSize: "100% 100%",
+                }
+              : {}),
             transition: isUnderground
               ? "opacity 0.4s linear"
               : "opacity 1s linear, filter 1s linear",

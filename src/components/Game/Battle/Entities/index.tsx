@@ -120,6 +120,8 @@ type Props = {
   lucauaShieldSides?: LucauaShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onLucauaShieldEnd?: (side: LucauaShieldSide, nonce: number) => void;
+  /** Furo no sprite do NPC quando a purple o mata (junto com `isDying`). */
+  purpleHole?: boolean;
 };
 
 export function BattleEntities({
@@ -169,6 +171,7 @@ export function BattleEntities({
   lucauaShieldSides,
   onLucauaShieldEnd,
   sphere = null,
+  purpleHole = false,
 }: Props & {
   sphere?: import("@/utils/types/character/riquelme").RiquelmeSphere | null;
 }) {
@@ -198,6 +201,7 @@ export function BattleEntities({
         isAlfa={isAlfa}
         cutInEnemie={cutInEnemie}
         npcBleeding={npcBleeding}
+        purpleHole={purpleHole}
       />
 
       <NpcProjectile

@@ -23,6 +23,11 @@ import {
   BLUE_SPHERE_DRAIN_INTERVAL_MS,
   BLUE_SPHERE_PULL_PX,
   BLUE_SPHERE_RANGE,
+  PURPLE_FLY_MS,
+  PURPLE_FORM_MS,
+  PURPLE_JUNCTION_MS,
+  PURPLE_SPHERE_MULTIPLIER,
+  PURPLE_SPHERE_RANGE,
   RED_SPHERE_FLY_MS,
   RED_SPHERE_HIT_RANGE,
   RED_SPHERE_MULTIPLIER,
@@ -57,8 +62,14 @@ import type {
 
 /** Id do efeito de time do Setup (congela o mundo enquanto a esfera se forma). */
 const SPHERE_TIME_ID = "riquelme:spheres";
+/** Id estável do projétil da purple (colisão com projéteis inimigos). */
+const PURPLE_PROJECTILE_ID = "riquelme:purpleSphere";
 const BLUE_DAMAGE_KIND = getAbilityDamageType("blueSphere");
 const RED_DAMAGE_KIND = getAbilityDamageType("redSphere");
+const PURPLE_DAMAGE_KIND = getAbilityDamageType("purpleSphere");
+/** Congelamento do mundo durante o Setup da purple (junction + one + two). */
+const PURPLE_CAST_FREEZE_MS =
+  PURPLE_JUNCTION_MS + PURPLE_FORM_MS + SPHERE_MOVE_MS;
 
 type Props = {
   player: Player;
@@ -88,6 +99,12 @@ type Props = {
   battleEndedRef: RefObject<boolean>;
   /** Proporção especial/básico (ver `specialDamageRatio` no useBattleCombat). */
   specialDamageRatio: number;
+  /**
+   * Esfera em voo consumida pelo `useProjectile` (destrói projéteis inimigos).
+   * A purple escreve aqui durante a fase `firing` — é o mesmo contrato do
+   * projétil especial, só que conduzido por este hook.
+   */
+  playerProjectileRef: RefObject<PlayerSpecialProjectile | null>;
 };
 
 /**
@@ -126,16 +143,23 @@ export function useRiquelmeSpheres({
   disabledRef,
   battleEndedRef,
   specialDamageRatio,
+  playerProjectileRef,
 }: Props) {
   const { pushControls } = useGameControls();
 
   const [sphere, setSphere] = useState<RiquelmeSphere | null>(null);
+  /** O furo no sprite só é desenhado se o NPC morrer (ver `isNpcDying` na cena). */
+  const [purpleHole, setPurpleHole] = useState(false);
 
   const activeRef = useRef(false);
   const sphereRef = useRef<RiquelmeSphere | null>(null);
   const phaseStartRef = useRef(0);
   const fromRef = useRef({ x: 0, y: 0 });
   const targetRef = useRef({ x: 0, y: 0 });
+  /** Alvos já atingidos pela purple em voo (não é parada pelo primeiro). */
+  const purpleHitIdsRef = useRef<Set<string>>(new Set());
+  /** x do player no disparo: só quem está à frente entra na linha da purple. */
+  const purpleOriginXRef = useRef(0);
   const layerControlsRef = useRef<(() => void) | null>(null);
   const leftRef = useRef(false);
   const rightRef = useRef(false);
@@ -219,8 +243,16 @@ export function useRiquelmeSpheres({
     resetPlayerIfSphere();
     sphereRef.current = null;
     setSphere(null);
+    playerProjectileRef.current = null;
+    purpleHitIdsRef.current.clear();
     cooldownUntilRef.current = Date.now() + SPHERE_MIN_COOLDOWN_MS;
-  }, [freezeActionsUntilRef, releaseWorldFreeze, resetPlayerIfSphere, releaseControl]);
+  }, [
+    freezeActionsUntilRef,
+    releaseWorldFreeze,
+    resetPlayerIfSphere,
+    releaseControl,
+    playerProjectileRef,
+  ]);
 
   /** Libera o controle/player já no início do fade da dissipação. */
   const startDismiss = useCallback(() => {
@@ -249,11 +281,50 @@ export function useRiquelmeSpheres({
     const now = Date.now();
     const p = playerRef.current;
 
-    if (s.phase === "spawning") {
+    // ── Junção da purple: a blue e a red convergem até a cabeça ─────────────
+    if (s.phase === "junction") {
       const elapsed = now - phaseStartRef.current;
-      const t = Math.min(1, elapsed / SPHERE_SPAWN_MS);
-      const scale = SPHERE_SPAWN_SCALE + (1 - SPHERE_SPAWN_SCALE) * t;
-      const blink = Math.max(0, 1 - elapsed / SPHERE_BLINK_MS);
+      const t = Math.min(1, elapsed / PURPLE_JUNCTION_MS);
+      const ease = t * t * (3 - 2 * t);
+      const blueFromX = s.blueX ?? s.x;
+      const blueFromY = s.blueY ?? s.y;
+      const redFromX = s.redX ?? s.x;
+      const redFromY = s.redY ?? s.y;
+      const next: RiquelmeSphere = {
+        ...s,
+        blueX: blueFromX + (s.x - blueFromX) * ease,
+        blueY: blueFromY + (s.y - blueFromY) * ease,
+        redX: redFromX + (s.x - redFromX) * ease,
+        redY: redFromY + (s.y - redFromY) * ease,
+      };
+      sphereRef.current = next;
+      setSphere(next);
+
+      if (t >= 1) {
+        // Fusão consumada: a esfera purple já está formada na cabeça.
+        const formed: RiquelmeSphere = {
+          ...next,
+          phase: "spawning",
+          scale: 1,
+          blink: 0,
+        };
+        sphereRef.current = formed;
+        setSphere(formed);
+        phaseStartRef.current = now;
+        setPlayerState("sphereCast");
+      }
+      return;
+    }
+
+    if (s.phase === "spawning") {
+      const isPurple = s.variant === "purple";
+      const elapsed = now - phaseStartRef.current;
+      const duration = isPurple ? PURPLE_FORM_MS : SPHERE_SPAWN_MS;
+      const t = Math.min(1, elapsed / duration);
+      const scale = isPurple
+        ? 1
+        : SPHERE_SPAWN_SCALE + (1 - SPHERE_SPAWN_SCALE) * t;
+      const blink = isPurple ? 0 : Math.max(0, 1 - elapsed / SPHERE_BLINK_MS);
       const next: RiquelmeSphere = {
         ...s,
         x: p.x,
@@ -291,6 +362,7 @@ export function useRiquelmeSpheres({
 
       if (t >= 1) {
         if (s.variant === "blue") enterControl();
+        else if (s.variant === "purple") enterPurpleFire();
         else enterFire();
       }
       return;
@@ -303,6 +375,10 @@ export function useRiquelmeSpheres({
     }
 
     if (s.phase === "firing") {
+      if (s.variant === "purple") {
+        tickPurpleFire(s, now);
+        return;
+      }
       const t = Math.min(1, (now - phaseStartRef.current) / RED_SPHERE_FLY_MS);
       const ease = t * t * (3 - 2 * t);
       const x = fromRef.current.x + (targetRef.current.x - fromRef.current.x) * ease;
@@ -395,6 +471,119 @@ export function useRiquelmeSpheres({
     setSphere(next);
     setPlayerState("sphereFire");
     playSoundRef.current("explosion");
+  };
+
+  /** Purple: dispara a esfera fundida atravessando a arena. */
+  const enterPurpleFire = () => {
+    const s = sphereRef.current;
+    if (!s) return;
+    const forward = s.direction === "right" ? 1 : -1;
+    // O voo é em tempo real: solta o congelamento do Setup antes de arremessar.
+    releaseWorldFreeze();
+    purpleHitIdsRef.current.clear();
+    purpleOriginXRef.current = playerRef.current.x;
+    fromRef.current = { x: s.x, y: s.y };
+    targetRef.current = { x: s.x + forward * PURPLE_SPHERE_RANGE, y: s.y };
+    phaseStartRef.current = Date.now();
+    const next: RiquelmeSphere = { ...s, phase: "firing" };
+    sphereRef.current = next;
+    setSphere(next);
+    setPlayerState("sphereFire");
+    playSoundRef.current("explosion");
+  };
+
+  /** Publica a esfera em voo para o `useProjectile` destruir projéteis. */
+  const syncPurpleProjectile = (s: RiquelmeSphere) => {
+    playerProjectileRef.current = {
+      id: PURPLE_PROJECTILE_ID,
+      phase: "fire",
+      x: s.x,
+      y: s.y,
+      startX: fromRef.current.x,
+      startY: fromRef.current.y,
+      targetX: targetRef.current.x,
+      targetY: targetRef.current.y,
+      blueX: s.x,
+      blueY: s.y,
+      redX: s.x,
+      redY: s.y,
+      direction: s.direction,
+      indestructible: true,
+    };
+  };
+
+  /** Tick do voo da purple: move, publica o projétil e resolve o dano. */
+  const tickPurpleFire = (s: RiquelmeSphere, now: number) => {
+    const t = Math.min(1, (now - phaseStartRef.current) / PURPLE_FLY_MS);
+    const ease = t * t * (3 - 2 * t);
+    const x =
+      fromRef.current.x + (targetRef.current.x - fromRef.current.x) * ease;
+    const next: RiquelmeSphere = { ...s, x };
+    sphereRef.current = next;
+    setSphere(next);
+    syncPurpleProjectile(next);
+    applyPurpleLine(next);
+
+    if (t >= 1) {
+      playerProjectileRef.current = null;
+      // Se o NPC sobreviveu à esfera, o furo não deve aparecer numa morte
+      // futura (o furo é exclusivo de morte por purple).
+      if (battleRef.current.npcHP > 0) setPurpleHole(false);
+      finish();
+    }
+  };
+
+  /**
+   * Purple: dano perfurante. Atravessa todos os alvos à frente e acerta cada um
+   * uma única vez (não é parada pelo primeiro). Dano mágico de 2x a redSphere.
+   */
+  const applyPurpleLine = (s: RiquelmeSphere) => {
+    const b = battleRef.current;
+    const ratio = specialRatioRef.current;
+    const damageMult = PURPLE_SPHERE_MULTIPLIER * ratio;
+    const dir = s.direction === "right" ? 1 : -1;
+    const originX = purpleOriginXRef.current;
+
+    const mainNpc = npcRef.current;
+    const mainAhead = dir * (mainNpc.x - originX) >= 0;
+    if (
+      mainAhead &&
+      !purpleHitIdsRef.current.has("main") &&
+      dir * (s.x - mainNpc.x) >= 0
+    ) {
+      purpleHitIdsRef.current.add("main");
+      b.playerHit(damageMult, true, true, PURPLE_DAMAGE_KIND);
+      // O furo no sprite só aparece se o NPC morrer (a cena condiciona a isNpcDying).
+      setPurpleHole(true);
+    }
+
+    const list = summonsRef.current;
+    for (const sum of list) {
+      if (purpleHitIdsRef.current.has(sum.id)) continue;
+      if (dir * (sum.x - originX) < 0) continue;
+      if (dir * (s.x - sum.x) < 0) continue;
+      purpleHitIdsRef.current.add(sum.id);
+      damageSummon({
+        target: { id: sum.id, x: sum.x, y: sum.y },
+        multiplier: damageMult,
+        source: "other",
+        damageKind: PURPLE_DAMAGE_KIND,
+        player: playerRef.current,
+        playerClass: playerClassRef.current,
+        progress: progressRef.current,
+        playerHP: b.playerHP,
+        playerMaxHp: b.playerMaxHp,
+        vampirism: b.vampirism,
+        summons: list,
+        setSummons: setSummonsRef.current,
+        giveSummonRewards: giveSummonRewardsRef.current,
+        spawnDamageRef: refs.spawnDamageRef,
+        registerHitRef: refs.registerHitRef,
+        setPlayerHP: b.setPlayerHP,
+        deliciaSetter: b.setDelicia,
+        hitsToSpecial: b.hitsToSpecial,
+      });
+    }
   };
 
   /** Blue controlada: move pelo joystick (sem gravidade, presa na arena). */
@@ -555,31 +744,45 @@ export function useRiquelmeSpheres({
     onUsedRef.current?.();
     activeRef.current = true;
 
+    const isPurple = variant === "purple";
     const run = () => {
       const p = playerRef.current;
-      applyWorldFreeze(SPHERE_CAST_FREEZE_MS);
+      applyWorldFreeze(
+        isPurple ? PURPLE_CAST_FREEZE_MS : SPHERE_CAST_FREEZE_MS,
+      );
       freezeActionsUntilRef.current = Infinity;
       phaseStartRef.current = Date.now();
       lastDamageRef.current = Date.now();
+      const forward = p.battleDirection === "right" ? 1 : -1;
       const s: RiquelmeSphere = {
         variant,
-        phase: "spawning",
+        // A purple nasce pela FUSÃO (blue + red convergindo); depois entra no
+        // Setup compartilhado (spawning→one/two/three).
+        phase: isPurple ? "junction" : "spawning",
         x: p.x,
         y: p.y - SPHERE_OFFSET_Y,
-        scale: SPHERE_SPAWN_SCALE,
-        blink: 1,
+        scale: isPurple ? 1 : SPHERE_SPAWN_SCALE,
+        blink: isPurple ? 0 : 1,
         opacity: 1,
         direction: p.battleDirection,
+        ...(isPurple
+          ? {
+              blueX: p.x - forward * SPHERE_OFFSET_X,
+              blueY: p.y - SPHERE_OFFSET_Y,
+              redX: p.x + forward * SPHERE_OFFSET_X,
+              redY: p.y - SPHERE_OFFSET_Y,
+            }
+          : {}),
       };
       sphereRef.current = s;
       setSphere(s);
-      setPlayerState("sphereCast");
+      setPlayerState(isPurple ? "purpleJunction" : "sphereCast");
       playSoundRef.current("natsukiSpecial");
     };
 
-    // O intro abre o background (blue|red) em slow-motion e chama `run` ao fim;
-    // se já houver um intro em andamento ele não roda, e o cast precisa sair na
-    // hora para a ativação (e o recurso) não sumirem.
+    // O intro abre o background (blue|red|purple) em slow-motion e chama `run`
+    // ao fim; se já houver um intro em andamento ele não roda, e o cast precisa
+    // sair na hora para a ativação (e o recurso) não sumirem.
     const started = startIntroRef.current("riquelme", run, variant);
     if (!started) run();
   };
@@ -614,6 +817,12 @@ export function useRiquelmeSpheres({
     startCast("red");
   };
 
+  /** Fusão arrastada: blue + red → purple (atravessa tudo, 2x o dano da red). */
+  const purplePress = () => {
+    if (sphereRef.current) return;
+    startCast("purple");
+  };
+
   // ── Efeitos ───────────────────────────────────────────────
   const tickRef = useLatestRef(tick);
   const drainRef = useLatestRef(drain);
@@ -643,20 +852,27 @@ export function useRiquelmeSpheres({
   const sphereFocus: RiquelmeSphereFocus =
     sphere?.phase === "controlled" ? { x: sphere.x, y: sphere.y } : null;
   const castActive =
-    sphere?.phase === "spawning" || sphere?.phase === "moving";
+    sphere?.phase === "junction" ||
+    sphere?.phase === "spawning" ||
+    sphere?.phase === "moving";
 
   const blueInField =
     sphere != null && sphere.variant === "blue" && sphere.phase !== "dismissing";
   const blueUsable = blueInField || (sphere == null && canUseRef.current);
   const redUsable = sphere == null && canUseRef.current;
+  // A fusão só pode começar com as duas esferas disponíveis (nenhuma em campo).
+  const purpleUsable = sphere == null && canUseRef.current;
 
   return {
     sphere,
     sphereFocus,
     castActive,
+    purpleHole,
     bluePress,
     blueUsable,
     redPress,
     redUsable,
+    purplePress,
+    purpleUsable,
   };
 }

@@ -142,6 +142,17 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
         "Invoca e arremessa a esfera vermelha nos inimigos, causando dano mágico e empurrando-os.",
       damageType: "magical",
     },
+    {
+      // Não tem botão próprio: a purple é a fusão das esferas azul/vermelha
+      // (arraste um botão sobre o outro). Existe no registro para o funil de
+      // dano e o damageType ficarem na mesma verdade do menu de Status.
+      kind: "active",
+      id: "purpleSphere",
+      name: "Esfera Roxa",
+      description:
+        "Fusão das esferas azul e vermelha: atravessa todos os inimigos no caminho (2x o dano da esfera vermelha), destrói projéteis e é indestrutível.",
+      damageType: "magical",
+    },
     domainBurstAbility("riquelme"),
   ],
   emanuel: [

@@ -1,0 +1,10 @@
+/* `display: contents` para o wrapper não criar caixa: os botões continuam sendo
+   itens diretos da barra `.abilityButtons` (mesmo layout/gap), mas os eventos de
+   ponteiro sobem pelo wrapper para o gesto de fusão. */
+.wrap {
+  display: contents;
+}
+
+.wrap button {
+  touch-action: none;
+}

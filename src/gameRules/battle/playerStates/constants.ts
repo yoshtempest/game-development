@@ -115,10 +115,12 @@ export const LASER_STATES = stateSet<PlayerLaserState>("laser");
 export const GRAN_REY_CERO_STATES =
   stateSet<PlayerGranReyCeroState>("granReyCero");
 /**
- * Esferas do riquelme (blue/red): a sequência de Setup é conduzida pelo hook
- * `useRiquelmeSpheres`; `blueSphereControl` é o Hold do controle da blue.
+ * Esferas do riquelme (blue/red) e a fusão delas na purple: a sequência é
+ * conduzida pelo hook `useRiquelmeSpheres`; `purpleJunction` é a fusão (blue +
+ * red convergindo) e `blueSphereControl` é o Hold do controle da blue.
  */
 export const SPHERE_STATES = stateSet<PlayerSphereState>(
+  "purpleJunction",
   "sphereCast",
   "sphereMove",
   "sphereFire",

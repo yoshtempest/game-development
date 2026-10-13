@@ -1547,6 +1547,7 @@ export function useBattleCombat({
     disabledRef: cloneDisabledRef,
     battleEndedRef: battle.isEnding,
     specialDamageRatio,
+    playerProjectileRef,
   });
 
   return {

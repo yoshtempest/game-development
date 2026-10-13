@@ -4,6 +4,7 @@ import {
   ONE_HUNDRED_FIFTY_MS,
   FOUR_HUNDRED_MS,
   FIVE_HUNDRED_MS,
+  SIX_HUNDRED_MS,
   ONE_THOUSAND_FIVE_HUNDRED_MS,
 } from "@/data/ms";
 
@@ -52,6 +53,21 @@ export const RED_SPHERE_HIT_RANGE = 140;
 export const RED_SPHERE_PUSH = 60;
 /** Multiplicador de dano da red (1x o dano especial/mágico). */
 export const RED_SPHERE_MULTIPLIER = 1;
+
+// ── Purple (fusão blue + red) ──────────────────────────────
+// A fusão é disparada arrastando um botão de esfera sobre o outro. O Setup é o
+// mesmo (one/two/three), mas o personagem troca de sprite para a pose de fusão
+// (`purple/junction.svg`) antes de conjurar.
+/** Duração do `junction.svg`: a blue e a red convergem e se fundem na cabeça. */
+export const PURPLE_JUNCTION_MS = SIX_HUNDRED_MS;
+/** Duração do `one.svg` da purple: a esfera já formada se apresenta na cabeça. */
+export const PURPLE_FORM_MS = FOUR_HUNDRED_MS;
+/** Duração do voo da purple (atravessa a arena até o limite). */
+export const PURPLE_FLY_MS = FIVE_HUNDRED_MS;
+/** Alcance do arremesso da purple: cobre a largura da arena (MAP_WIDTH=1000). */
+export const PURPLE_SPHERE_RANGE = 1200;
+/** Multiplicador de dano da purple: 2x o dano de uma redSphere. */
+export const PURPLE_SPHERE_MULTIPLIER = 2 * RED_SPHERE_MULTIPLIER;
 
 /** Cooldown mínimo entre esferas (impede spam de casts). */
 export const SPHERE_MIN_COOLDOWN_MS = ONE_HUNDRED_FIFTY_MS;

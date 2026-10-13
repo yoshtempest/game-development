@@ -4,8 +4,7 @@ import { WeaponSwitchButton } from "@/components/Game/Battle/Buttons/WeaponSwitc
 import { CursedEnergyButton } from "@/components/Game/Battle/Buttons/Natsuki/CursedEnergy";
 import { BlinkButton } from "@/components/Game/Battle/Buttons/Natsuki/Blink";
 import { DivergentFistButton } from "@/components/Game/Battle/Buttons/Natsuki/DivergentFist";
-import { BlueSphereButton } from "@/components/Game/Battle/Buttons/Natsuki/BlueSphere";
-import { RedSphereButton } from "@/components/Game/Battle/Buttons/Natsuki/RedSphere";
+import { SphereJunction } from "@/components/Game/Battle/Buttons/Natsuki/SphereJunction";
 import { EmanuelCloneButton } from "@/components/Game/Battle/Buttons/Ematron/Clone";
 import { EmanuelKiChargeButton } from "@/components/Game/Battle/Buttons/Ematron/KiCharge";
 import { EmanuelGenkiDamaButton } from "@/components/Game/Battle/Buttons/Ematron/GenkiDama";
@@ -208,10 +207,13 @@ export function BattleScene(props: Props) {
     sphere,
     sphereFocus,
     castActive,
+    purpleHole,
     bluePress,
     blueUsable,
     redPress,
     redUsable,
+    purplePress,
+    purpleUsable,
   } = useBattleScene({ ...props, isAlfa, PLAYER_SIZE });
 
   // Domínio do personagem atual: nome/cor/efeito saem de DOMAIN_EXPANSIONS e
@@ -590,6 +592,7 @@ export function BattleScene(props: Props) {
             lucauaShieldSides={lucauaShieldSides}
             onLucauaShieldEnd={onLucauaShieldEnd}
             sphere={sphere}
+            purpleHole={purpleHole}
           />
 
           <ChargeParticles
@@ -725,14 +728,17 @@ export function BattleScene(props: Props) {
 
         {player.character === "riquelme" && (
           <>
-            <BlueSphereButton
-              active={sphere?.variant === "blue" && sphere.phase !== "dismissing"}
-              disabled={controlsDisabled || !blueUsable}
-              onClick={bluePress}
-            />
-            <RedSphereButton
-              disabled={controlsDisabled || !redUsable}
-              onClick={redPress}
+            <SphereJunction
+              blueActive={
+                sphere?.variant === "blue" && sphere.phase !== "dismissing"
+              }
+              blueDisabled={controlsDisabled || !blueUsable}
+              redDisabled={controlsDisabled || !redUsable}
+              purpleActive={sphere?.variant === "purple"}
+              purpleDisabled={controlsDisabled || !purpleUsable}
+              onBlue={bluePress}
+              onRed={redPress}
+              onPurple={purplePress}
             />
             <DivergentFistButton
               energy={battleMana?.playerMana ?? 0}

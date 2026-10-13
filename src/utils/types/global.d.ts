@@ -436,11 +436,14 @@ declare global {
   /** "Gran Rey Cero" do marcelo. */
   type PlayerGranReyCeroState = "granReyCero";
   /**
-   * Esferas do riquelme (habilidades "blue"/"red"): a sequência de Setup
-   * (`one.svg` → `two.svg` → `three.svg`) é conduzida pelo hook
-   * `useRiquelmeSpheres`, não pelo `animationFlow`.
+   * Esferas do riquelme (habilidades "blue"/"red") e a fusão delas na purple:
+   * a sequência é conduzida pelo hook `useRiquelmeSpheres`, não pelo
+   * `animationFlow`. `purpleJunction` é o sprite `purple/junction.svg`, o
+   * instante em que a blue e a red se fundem; o Setup (`one.svg` → `two.svg` →
+   * `three.svg`) usa os três estados seguintes.
    */
   type PlayerSphereState =
+    | "purpleJunction"
     | "sphereCast"
     | "sphereMove"
     | "sphereFire"

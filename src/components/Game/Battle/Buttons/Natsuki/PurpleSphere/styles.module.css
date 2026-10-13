@@ -1,0 +1,27 @@
+.button {
+  border: var(--size-2) solid var(--ability-purple-50);
+  background: var;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--ability-purple-35);
+}
+
+.active {
+  animation: purpleGlow 1s ease-in-out infinite;
+}
+
+.label {
+  color: var(--ability-purple-pale);
+}
+
+@keyframes purpleGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 var(--size-4) var(--ability-purple-30);
+  }
+
+  50% {
+    box-shadow: 0 0 var(--size-16) var(--ability-purple-80);
+  }
+}

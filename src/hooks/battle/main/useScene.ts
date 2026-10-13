@@ -501,10 +501,13 @@ export function useBattleScene({
     sphere,
     sphereFocus,
     castActive,
+    purpleHole,
     bluePress,
     blueUsable,
     redPress,
     redUsable,
+    purplePress,
+    purpleUsable,
   } = combat;
 
   vastolordEndingRef.current = battle.isEnding;
@@ -838,9 +841,12 @@ export function useBattleScene({
     sphere,
     sphereFocus,
     castActive,
+    purpleHole,
     bluePress,
     blueUsable,
     redPress,
     redUsable,
+    purplePress,
+    purpleUsable,
   });
 }

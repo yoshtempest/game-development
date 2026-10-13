@@ -15,6 +15,7 @@ type Props = {
   isAlfa: boolean;
   cutInEnemie?: CutInEnemieOverlay | null;
   npcBleeding?: boolean;
+  purpleHole?: boolean;
 };
 
 export function MainNpc({
@@ -30,6 +31,7 @@ export function MainNpc({
   isAlfa,
   cutInEnemie = null,
   npcBleeding = false,
+  purpleHole = false,
 }: Props) {
   return (
     <NPCBattle
@@ -48,6 +50,7 @@ export function MainNpc({
       isAlfa={isAlfa}
       cutInEnemie={cutInEnemie}
       npcBleeding={npcBleeding}
+      purpleHole={purpleHole}
     />
   );
 }

@@ -30,6 +30,11 @@ export function resolveBattleSprite(
   // Esferas do riquelme (blue/red): a sequência de Setup vive em
   // `inFight/habilities/Setup/` (one/two/three), fora do `STATE_FOLDER`.
   if (character === "riquelme") {
+    // A fusão das esferas (purple) tem sprite próprio: `habilities/purple/
+    // junction.svg` — não é um dos frames do Setup (one/two/three).
+    if (state === "purpleJunction") {
+      return playerPathRiquelmeHabilities(`/purple/junction.svg`);
+    }
     const sphereSprite = stateData(RIQUELME_SPHERE_SETUP_SPRITES, state);
     if (sphereSprite) {
       return playerPathRiquelmeHabilities(`/Setup/${sphereSprite}.svg`);

@@ -177,7 +177,7 @@ export type BattleSceneApi = {
   granReyCeroEffect: ReturnType<typeof useGranReyCero>["effect"];
   granReyCeroPress: () => void;
   granReyCeroUsable: boolean;
-  /** Esfera das habilidades do riquelme (blue/red). */
+  /** Esfera das habilidades do riquelme (blue/red/purple). */
   sphere: import("@/utils/types/character/riquelme").RiquelmeSphere | null;
   /** Foco de câmera enquanto a blue é controlada. */
   sphereFocus:
@@ -185,10 +185,15 @@ export type BattleSceneApi = {
     | null;
   /** Ativo durante o Setup (shake de cast). */
   castActive: boolean;
+  /** Furo no sprite do NPC quando a purple o mata (junto com `isNpcDying`). */
+  purpleHole: boolean;
   bluePress: () => void;
   blueUsable: boolean;
   redPress: () => void;
   redUsable: boolean;
+  /** Fusão blue+red → purple (arraste um botão de esfera sobre o outro). */
+  purplePress: () => void;
+  purpleUsable: boolean;
   granReyCeroRemaining: number;
   /** Projéteis de energia do ataque básico do lucaua em voo. */
   lucauaEnergyProjectiles: LucauaEnergyProjectile[];

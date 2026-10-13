@@ -99,8 +99,10 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
   preMugetsu: null,
   mugetsu: null,
 
-  // Esferas do riquelme (blue/red): estados da sequência Setup controlados pelo
-  // hook (useRiquelmeSpheres), que restaura o idle ao fim do cast/arremesso.
+  // Esferas do riquelme (blue/red + a fusão na purple): estados da sequência
+  // Setup controlados pelo hook (useRiquelmeSpheres), que restaura o idle ao
+  // fim do cast/arremesso. `purpleJunction` é o sprite de fusão.
+  purpleJunction: null,
   sphereCast: null,
   sphereMove: null,
   sphereFire: null,
