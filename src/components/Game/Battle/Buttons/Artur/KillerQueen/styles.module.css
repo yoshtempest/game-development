@@ -1,7 +1,6 @@
-/* Habilidade própria do Artur: ocupa o slot que era do botão SPECIAL (só um
-   dos dois personagens tem botão de habilidade ativa por vez). */
+/* Habilidade própria do Artur: só um dos dois personagens (ele e a Larissa)
+   tem botão de habilidade ativa por vez. */
 .button {
-  right: var(--size-300);
   border: var(--size-2) solid rgba(253, 230, 138, 0.55);
   animation: killerQueenGlow 1.5s ease-in-out infinite;
 }

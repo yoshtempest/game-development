@@ -1,5 +1,4 @@
 .button {
-  right: var(--size-230);
   border: var(--size-2) solid var(--ability-natsuki-50);
   background: var(--ability-natsuki-15);
 }

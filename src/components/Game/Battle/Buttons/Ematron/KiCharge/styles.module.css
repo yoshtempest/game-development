@@ -1,5 +1,4 @@
 .button {
-  right: var(--size-128);
   border: var(--size-2) solid var(--ability-ematron-charge-50);
   background: var(--ability-ematron-charge-15);
   animation: glow 1.5s ease-in-out infinite;

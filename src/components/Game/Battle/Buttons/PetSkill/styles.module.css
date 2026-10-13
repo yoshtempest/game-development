@@ -1,5 +1,4 @@
 .button {
-  bottom: var(--vh-10);
   border: var(--size-2) solid var(--white-25);
   background: var(--white-10);
 }

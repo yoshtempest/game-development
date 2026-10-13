@@ -698,159 +698,161 @@ export function BattleScene(props: Props) {
 
       <ComboAction />
 
-      {petSkill && pet && (
-        <PetSkillButton
-          imageUrl={npcPath(`/${petSkill.definition.npcType}/face.svg`)}
-          skillName={petSkill.definition.skill.name}
-          ready={petSkill.ready}
-          remaining={petSkill.remaining}
-          cooldownMs={petSkill.definition.skill.cooldownMs}
-          disabled={controlsDisabled}
-          onClick={petSkill.trigger}
-        />
-      )}
-
-      {player.character === "lucas" && (
-        <WeaponSwitchButton
-          weapon={lucasWeapon}
-          disabled={
-            controlsDisabled ||
-            (battleMana != null &&
-              battleMana.playerMana < LUCAS_WEAPON_SWITCH_MANA_COST)
-          }
-          onClick={switchWeapon}
-        />
-      )}
-
-      {player.character === "riquelme" && (
-        <>
-          <BlueSphereButton
-            active={sphere?.variant === "blue" && sphere.phase !== "dismissing"}
-            disabled={controlsDisabled || !blueUsable}
-            onClick={bluePress}
+      <div className="abilityButtons">
+        {petSkill && pet && (
+          <PetSkillButton
+            imageUrl={npcPath(`/${petSkill.definition.npcType}/face.svg`)}
+            skillName={petSkill.definition.skill.name}
+            ready={petSkill.ready}
+            remaining={petSkill.remaining}
+            cooldownMs={petSkill.definition.skill.cooldownMs}
+            disabled={controlsDisabled}
+            onClick={petSkill.trigger}
           />
-          <RedSphereButton
-            disabled={controlsDisabled || !redUsable}
-            onClick={redPress}
-          />
-          <DivergentFistButton
-            energy={battleMana?.playerMana ?? 0}
-            active={divergentFistActive}
+        )}
+
+        {player.character === "lucas" && (
+          <WeaponSwitchButton
+            weapon={lucasWeapon}
             disabled={
               controlsDisabled ||
-              (battleMana?.playerMana ?? 0) < DIVERGENT_FIST_COST
+              (battleMana != null &&
+                battleMana.playerMana < LUCAS_WEAPON_SWITCH_MANA_COST)
             }
-            onClick={activateDivergentFist}
+            onClick={switchWeapon}
           />
-        </>
-      )}
+        )}
 
-      {player.character === "riquelme" &&
-        (honoredOneActive ? (
-          <BlinkButton
+        {player.character === "riquelme" && (
+          <>
+            <BlueSphereButton
+              active={sphere?.variant === "blue" && sphere.phase !== "dismissing"}
+              disabled={controlsDisabled || !blueUsable}
+              onClick={bluePress}
+            />
+            <RedSphereButton
+              disabled={controlsDisabled || !redUsable}
+              onClick={redPress}
+            />
+            <DivergentFistButton
+              energy={battleMana?.playerMana ?? 0}
+              active={divergentFistActive}
+              disabled={
+                controlsDisabled ||
+                (battleMana?.playerMana ?? 0) < DIVERGENT_FIST_COST
+              }
+              onClick={activateDivergentFist}
+            />
+          </>
+        )}
+
+        {player.character === "riquelme" &&
+          (honoredOneActive ? (
+            <BlinkButton
+              energy={battleMana?.playerMana ?? 0}
+              disabled={
+                controlsDisabled ||
+                (battleMana?.playerMana ?? 0) < BLINK_ENERGY_COST
+              }
+              onClick={blink}
+            />
+          ) : (
+            <CursedEnergyButton
+              energy={battleMana?.playerMana ?? 0}
+              energyMax={battleMana?.playerMaxMana ?? 100}
+              disabled={
+                controlsDisabled ||
+                (battleMana?.playerMana ?? 0) < CURSED_ENERGY_HEAL_RATIO ||
+                battle.playerHP >= battle.playerMaxHp
+              }
+              onClick={convertCursedEnergy}
+            />
+          ))}
+
+        {player.character === "emanuel" && (
+          <EmanuelCloneButton
             energy={battleMana?.playerMana ?? 0}
-            disabled={
-              controlsDisabled ||
-              (battleMana?.playerMana ?? 0) < BLINK_ENERGY_COST
-            }
-            onClick={blink}
+            disabled={controlsDisabled || !cloneUsable}
+            onPress={clonePress}
+            onRelease={cloneRelease}
           />
-        ) : (
-          <CursedEnergyButton
+        )}
+
+        {player.character === "emanuel" && (
+          <EmanuelKiChargeButton
             energy={battleMana?.playerMana ?? 0}
             energyMax={battleMana?.playerMaxMana ?? 100}
-            disabled={
-              controlsDisabled ||
-              (battleMana?.playerMana ?? 0) < CURSED_ENERGY_HEAL_RATIO ||
-              battle.playerHP >= battle.playerMaxHp
-            }
-            onClick={convertCursedEnergy}
+            disabled={controlsDisabled || !kiChargeUsable}
+            onPress={kiChargePress}
+            onRelease={kiChargeRelease}
           />
-        ))}
+        )}
 
-      {player.character === "emanuel" && (
-        <EmanuelCloneButton
-          energy={battleMana?.playerMana ?? 0}
-          disabled={controlsDisabled || !cloneUsable}
-          onPress={clonePress}
-          onRelease={cloneRelease}
-        />
-      )}
+        {player.character === "emanuel" && (
+          <EmanuelGenkiDamaButton
+            energy={battleMana?.playerMana ?? 0}
+            disabled={controlsDisabled || !genkiDamaUsable}
+            onPress={genkiDamaPress}
+            onRelease={genkiDamaRelease}
+          />
+        )}
 
-      {player.character === "emanuel" && (
-        <EmanuelKiChargeButton
-          energy={battleMana?.playerMana ?? 0}
-          energyMax={battleMana?.playerMaxMana ?? 100}
-          disabled={controlsDisabled || !kiChargeUsable}
-          onPress={kiChargePress}
-          onRelease={kiChargeRelease}
-        />
-      )}
+        {player.character === "marcelo" && vastolordActive && (
+          <VastolordLaserButton
+            charges={vastolordLaserStacks}
+            disabled={!vastolordLaserUsable}
+            onClick={vastolordLaserPress}
+          />
+        )}
 
-      {player.character === "emanuel" && (
-        <EmanuelGenkiDamaButton
-          energy={battleMana?.playerMana ?? 0}
-          disabled={controlsDisabled || !genkiDamaUsable}
-          onPress={genkiDamaPress}
-          onRelease={genkiDamaRelease}
-        />
-      )}
+        {!vastolordActive && player.character === "marcelo" && (
+          <AtomicButton
+            ready={atomicUsable}
+            remaining={atomicRemaining}
+            disabled={controlsDisabled}
+            onClick={atomicPress}
+          />
+        )}
 
-      {player.character === "marcelo" && vastolordActive && (
-        <VastolordLaserButton
-          charges={vastolordLaserStacks}
-          disabled={!vastolordLaserUsable}
-          onClick={vastolordLaserPress}
-        />
-      )}
+        {player.character === "artur" && (
+          <KillerQueenButton
+            ready={activeAbilityUsable}
+            remaining={activeAbilityRemaining}
+            disabled={controlsDisabled}
+            onClick={activeAbilityPress}
+          />
+        )}
 
-      {!vastolordActive && player.character === "marcelo" && (
-        <AtomicButton
-          ready={atomicUsable}
-          remaining={atomicRemaining}
-          disabled={controlsDisabled}
-          onClick={atomicPress}
-        />
-      )}
+        {player.character === "larissa" && (
+          <StackExplosionButton
+            ready={activeAbilityUsable}
+            remaining={activeAbilityRemaining}
+            disabled={controlsDisabled}
+            onClick={activeAbilityPress}
+          />
+        )}
 
-      {player.character === "artur" && (
-        <KillerQueenButton
-          ready={activeAbilityUsable}
-          remaining={activeAbilityRemaining}
-          disabled={controlsDisabled}
-          onClick={activeAbilityPress}
-        />
-      )}
+        {!vastolordActive && (
+          <DomainExpansionButton
+            name={domainConfig.name}
+            description={domainConfig.description}
+            accent={domainConfig.accent}
+            background={domainBackground}
+            ready={domainExpansionUsable}
+            disabled={controlsDisabled}
+            onClick={domainExpansionPress}
+          />
+        )}
 
-      {player.character === "larissa" && (
-        <StackExplosionButton
-          ready={activeAbilityUsable}
-          remaining={activeAbilityRemaining}
-          disabled={controlsDisabled}
-          onClick={activeAbilityPress}
-        />
-      )}
-
-      {!vastolordActive && (
-        <DomainExpansionButton
-          name={domainConfig.name}
-          description={domainConfig.description}
-          accent={domainConfig.accent}
-          background={domainBackground}
-          ready={domainExpansionUsable}
-          disabled={controlsDisabled}
-          onClick={domainExpansionPress}
-        />
-      )}
-
-      {!vastolordActive && player.character === "marcelo" && (
-        <GranReyCeroButton
-          ready={granReyCeroUsable}
-          remaining={granReyCeroRemaining}
-          disabled={controlsDisabled}
-          onClick={granReyCeroPress}
-        />
-      )}
+        {!vastolordActive && player.character === "marcelo" && (
+          <GranReyCeroButton
+            ready={granReyCeroUsable}
+            remaining={granReyCeroRemaining}
+            disabled={controlsDisabled}
+            onClick={granReyCeroPress}
+          />
+        )}
+      </div>
 
       {isTraining && <TrainingOverlay onLeave={() => navigate(-1)} />}
 

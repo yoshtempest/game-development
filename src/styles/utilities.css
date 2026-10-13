@@ -171,18 +171,32 @@
   transform: translateY(0) scale(0.97);
 }
 
-.abilityButton {
+/* Barra das habilidades: agrupa todo `.abilityButton` numa linha (flex) no
+   canto inferior direito. Como a posição vem do fluxo do flex, um botão nunca
+   sobrepõe o outro — por isso os botões não declaram mais `right`/`bottom`
+   próprios. */
+.abilityButtons {
   position: absolute;
-  right: 2vw;
-  bottom: 11vh;
-  gap: var(--size-2);
+  right: 0;
+  bottom: 0;
+  z-index: 19;
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: var(--size-16);
+
+  padding: var(--size-16);
+}
+
+.abilityButton {
+  position: relative;
 
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-
-  padding: var(--size-6) var(--size-22);
 
   border-radius: 50%;
 

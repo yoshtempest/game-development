@@ -1,8 +1,4 @@
-/* Slot mais à direita do trio do marcelo: o Laser Vastolord usa a ponta
-   negativa (`right: -0.39vw`), então o Gran Rey Cero fica no vão entre ele e o
-   I Am Atomic (`right: 10vw`), que é o que fica livre na forma normal. */
 .button {
-  right: var(--size-30);
   border: var(--size-2) solid var(--accent-50);
   animation: granReyCeroGlow 1.5s ease-in-out infinite;
 }

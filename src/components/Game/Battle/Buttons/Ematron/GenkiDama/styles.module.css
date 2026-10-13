@@ -1,5 +1,4 @@
 .button {
-  right: var(--size-230);
   border: var(--size-2) solid var(--indigo-soft-50);
   background: var(--indigo-soft-15);
   animation: glow 1.5s ease-in-out infinite;
