@@ -11,6 +11,7 @@ const SFX_VOLUME: Record<string, number> = {
   marshadowSpecial: 0.7,
   mugetsu: 2,
   natsukiSpecial: 1.3,
+  riquelmeDomain: 1.3,
   win: 0.5,
 };
 

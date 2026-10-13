@@ -52,6 +52,7 @@ export function createSounds() {
     blink: sfx("blink.mp3"),
     explosion: sfx("explosion.mp3"),
     natsukiSpecial: riquelmeSoundPath("special.mp3"),
+    riquelmeDomain: riquelmeSoundPath("expansion.mp3"),
     kokusen: riquelmeSoundPath("kokusen.mp3"),
     impact: sfx("impact.mp3"),
     slimitaJump: npcSoundPath("slimita/jump.mp3"),

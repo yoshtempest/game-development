@@ -6,6 +6,7 @@ import {
   FIVE_HUNDRED_MS,
   SIX_HUNDRED_MS,
   ONE_THOUSAND_FIVE_HUNDRED_MS,
+  FIVE_THOUSAND_MS,
 } from "@/data/ms";
 
 // ── Esferas (blue/red) ─────────────────────────────────────
@@ -77,3 +78,17 @@ export const SPHERE_MIN_COOLDOWN_MS = ONE_HUNDRED_FIFTY_MS;
  * algo der errado no meio.
  */
 export const SPHERE_CAST_FREEZE_MS = SPHERE_SPAWN_MS + SPHERE_MOVE_MS + 1000;
+
+// ── Expansão de Domínio (Muryōkūsho) ───────────────────────
+// O domínio congela o mundo (regra de time) e segura o personagem na pose
+// `rioiki.svg` enquanto os inimigos drenam 1% da vida máxima a cada 100ms. Ao
+// fim, se algum inimigo sobreviveu, o `expansion.svg` estilhaça e desce.
+
+/** Id do efeito de time do domínio (congela o mundo pelos 5s). */
+export const RIQUELME_DOMAIN_TIME_ID = "riquelme:domainExpansion";
+/** Duração do domínio: a pose `rioiki.svg` + o dreno contínuo. */
+export const RIQUELME_DOMAIN_MS = FIVE_THOUSAND_MS;
+/** Intervalo entre os ticks de dreno. */
+export const RIQUELME_DOMAIN_DRAIN_INTERVAL_MS = ONE_HUNDRED_MS;
+/** Fração da vida máxima drenada por tick (1%). */
+export const RIQUELME_DOMAIN_DRAIN_RATIO = 0.01;

@@ -25,6 +25,7 @@ export const isDomainExpansion = isOf(ALL_STATES.DOMAIN_EXPANSION_STATES);
 export const isLaser = isOf(ALL_STATES.LASER_STATES);
 export const isGranReyCero = isOf(ALL_STATES.GRAN_REY_CERO_STATES);
 export const isSphere = isOf(ALL_STATES.SPHERE_STATES);
+export const isRiquelmeDomain = isOf(ALL_STATES.RIQUELME_DOMAIN_STATES);
 export const isBlock = isOf(ALL_STATES.BLOCK_STATES);
 export const isHitReaction = isOf(ALL_STATES.HIT_REACTION_STATES);
 export const isActionLocked = isOf(ALL_STATES.ACTION_LOCK_STATES);
@@ -71,6 +72,7 @@ export const ALL_PREDICATES = {
   isLaser,
   isGranReyCero,
   isSphere,
+  isRiquelmeDomain,
 
   // Defesa e reação
   isBlock,

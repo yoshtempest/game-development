@@ -431,6 +431,12 @@ declare global {
   type PlayerAtomicState = "preparingAtomic" | "finalizatingAtomic";
   /** Expansão de Domínio do marcelo. */
   type PlayerDomainExpansionState = "preMugetsu" | "mugetsu";
+  /**
+   * Expansão de Domínio do riquelme (Muryōkūsho): a pose `rioiki.svg` segura o
+   * personagem durante os 5s do domínio, que congela o mundo e drena 1% da
+   * vida máxima dos inimigos a cada 100ms.
+   */
+  type PlayerRiquelmeDomainState = "rioiki";
   /** Laser da Forma Vastolord do marcelo. */
   type PlayerLaserState = "laser";
   /** "Gran Rey Cero" do marcelo. */
@@ -459,9 +465,9 @@ declare global {
 
   /**
    * Estados que seguram o personagem e travam novas ações: qualquer
-   * `PlayerChargeState`, o O Abençoado e as habilidades de cast longas
-   * (Genki Dama, o Laser da Forma Vastolord, o Gran Rey Cero e as esferas do
-   * riquelme).
+   * `PlayerChargeState`, o O Abençoado, as habilidades de cast longas (Genki
+   * Dama, o Laser da Forma Vastolord, o Gran Rey Cero, as esferas do riquelme)
+   * e a Expansão de Domínio do riquelme.
    */
   type PlayerActionLockState =
     | PlayerChargeState
@@ -469,7 +475,8 @@ declare global {
     | PlayerGenkiDamaState
     | PlayerLaserState
     | PlayerGranReyCeroState
-    | PlayerSphereState;
+    | PlayerSphereState
+    | PlayerRiquelmeDomainState;
 
   /** O jogador não age: trava de ação, defesa ou reação a dano. */
   type PlayerCantActState =

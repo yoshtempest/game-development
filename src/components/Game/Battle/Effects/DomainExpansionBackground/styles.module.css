@@ -16,7 +16,7 @@
   background-position: center;
   background-size: cover;
 
-  will-change: clip-path;
+  will-change: clip-path, transform;
 
   animation: renderBottomToTop 1000ms ease-out forwards;
 }
@@ -28,5 +28,49 @@
 
   100% {
     clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Quebra (vitória parcial): troca a animação de entrada pela descida, que só
+   começa depois do estilhaço. As durações casam com DOMAIN_SHATTER_MS (1500ms):
+   600ms de estilhaço + 900ms de descida. A declaração vem DEPOIS do
+   `renderBottomToTop` de propósito — mesma especificidade, então a quebra vence. */
+.shattering {
+  animation: slideDown 900ms 600ms cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+/* Um pedaço do vidro: carrega o expansion.svg inteiro e recorta só a sua fatia
+   (clip-path vem inline). Voam para fora do centro no estilhaço. */
+.shard {
+  position: absolute;
+  inset: 0;
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+
+  will-change: transform;
+
+  animation: shardBreak 600ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+@keyframes shardBreak {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(var(--shard-x), var(--shard-y))
+      rotate(var(--shard-rotate));
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(115%);
   }
 }

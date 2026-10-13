@@ -35,6 +35,11 @@ export function resolveBattleSprite(
     if (state === "purpleJunction") {
       return playerPathRiquelmeHabilities(`/purple/junction.svg`);
     }
+    // Expansão de Domínio (Muryōkūsho): a pose `rioiki.svg` acompanha o domínio
+    // inteiro (5s) e não é um frame do Setup.
+    if (state === "rioiki") {
+      return playerPathRiquelmeHabilities(`/domainExpansion/rioiki.svg`);
+    }
     const sphereSprite = stateData(RIQUELME_SPHERE_SETUP_SPRITES, state);
     if (sphereSprite) {
       return playerPathRiquelmeHabilities(`/Setup/${sphereSprite}.svg`);

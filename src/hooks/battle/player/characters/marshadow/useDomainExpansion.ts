@@ -22,6 +22,7 @@ import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import type { SoundId } from "@/utils/audio/soundId";
 import type { NPCBattleState, SummonedNpc } from "@/utils/types/npc/npc";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
+import { DOMAIN_SHATTER_MS } from "@/data/characters/domainExpansions";
 import {
   DOMAIN_EXPANSION_BLINK_IN_MS,
   DOMAIN_EXPANSION_BLINK_OUT_MS,
@@ -51,6 +52,8 @@ type Props = {
   /** Dados do NPC principal para registrar a desintegração no toque. */
   mainNpcType: string;
   mainNpcPhase: number;
+  /** O NPC principal é boss? (decide se a fase 2 sobrevive e o vidro quebra). */
+  mainNpcIsBoss: boolean;
   isAlfa: boolean;
   /** Summons inimigos — todos os cruzados pela varredura morrem. */
   summons: SummonedNpc[];
@@ -101,6 +104,8 @@ type DomainExpansionApi = {
   mugetsuSweep: MugetsuSweep | null;
   /** True do início da habilidade até o fim da varredura (troca o background). */
   domainExpansionActive: boolean;
+  /** Fase de estilhaço do vidro: um boss de duas fases sobreviveu (fase 2). */
+  shattering: boolean;
   /** Fase do blink do teleporte do jogador. */
   mugetsuBlink: MugetsuBlink;
   /** Alvos (NPC principal + summons) sendo desintegrados em pó. */
@@ -125,6 +130,7 @@ export function useDomainExpansion({
   npc,
   mainNpcType,
   mainNpcPhase,
+  mainNpcIsBoss,
   isAlfa,
   summons,
   setSummons,
@@ -152,6 +158,7 @@ export function useDomainExpansion({
 }: Props): DomainExpansionApi {
   const [mugetsuSweep, setMugetsuSweep] = useState<MugetsuSweep | null>(null);
   const [domainExpansionActive, setDomainExpansionActive] = useState(false);
+  const [shattering, setShattering] = useState(false);
   const [mugetsuBlink, setMugetsuBlink] = useState<MugetsuBlink>(null);
   const [disintegrating, setDisintegrating] = useState<
     MugetsuDisintegrationTarget[]
@@ -167,8 +174,12 @@ export function useDomainExpansion({
   const killedSummonIdsRef = useRef(new Set<string>());
   const disintegratedProjectileIdsRef = useRef(new Set<string>());
   const completeFiredRef = useRef(false);
+  /** True quando o fim da varredura já foi resolvido (dreno/teardown/quebra). */
+  const endFiredRef = useRef(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const tickTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  /** Watchdog de `DOMAIN_EXPANSION_TOTAL_MS` — pode ser adiado pela quebra. */
+  const capTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const playerRef = useLatestRef(player);
   const npcRef = useLatestRef(npc);
@@ -179,6 +190,7 @@ export function useDomainExpansion({
   const onNpcKilledRef = useLatestRef(onNpcKilled);
   const mainNpcTypeRef = useLatestRef(mainNpcType);
   const mainNpcPhaseRef = useLatestRef(mainNpcPhase);
+  const mainNpcIsBossRef = useLatestRef(mainNpcIsBoss);
   const isAlfaRef = useLatestRef(isAlfa);
   const chargesRef = useLatestRef(charges);
   const chargesMaxRef = useLatestRef(chargesMax);
@@ -199,6 +211,10 @@ export function useDomainExpansion({
   const clearTimers = useCallback(() => {
     for (const timer of timersRef.current) clearTimeout(timer);
     timersRef.current = [];
+    if (capTimerRef.current != null) {
+      clearTimeout(capTimerRef.current);
+      capTimerRef.current = null;
+    }
   }, []);
 
   const clearTimer = useCallback(() => {
@@ -241,6 +257,7 @@ export function useDomainExpansion({
     setMugetsuSweep(null);
     setMugetsuBlink(null);
     setDomainExpansionActive(false);
+    setShattering(false);
     setDisintegrating([]);
     setPlayer((p) =>
       p.mode !== "battle" || !ALL_PREDICATES.isDomainExpansion(p.state)
@@ -260,6 +277,55 @@ export function useDomainExpansion({
   }, [finish]);
 
   const cleanupRef = useLatestRef(cleanup);
+
+  /**
+   * Sobrou inimigo depois da varredura? A varredura cobre o mapa inteiro,
+   * então o único sobrevivente possível é a fase 2 de um boss (o mugetsu
+   * "mata" a fase 1 e o lifecycle segue para a fase seguinte).
+   */
+  const hasSurvivor = useCallback(() => {
+    return (
+      npcKilledRef.current &&
+      mainNpcIsBossRef.current &&
+      mainNpcPhaseRef.current === 1
+    );
+  }, [mainNpcIsBossRef, mainNpcPhaseRef]);
+
+  /**
+   * Fim normal da varredura: se sobrou um boss de fase 2, o `expansion.svg`
+   * estilhaça e desce (`DOMAIN_SHATTER_MS`) antes de sair de cena; sem
+   * sobrevivente, encerra direto (a vitória vem pelo `finish`).
+   *
+   * Chamado pelo tick (16ms), que continua rodando até o `finish` — daí o
+   * `endFiredRef` (uma vez só) e o watchdog (`capTimerRef`, que cortaria o
+   * vidro no meio) sair de cena quando a quebra vai acontecer.
+   */
+  const endDomain = useCallback(() => {
+    if (endFiredRef.current) return;
+    endFiredRef.current = true;
+
+    if (!hasSurvivor()) {
+      finishRef.current();
+      return;
+    }
+
+    if (capTimerRef.current != null) {
+      clearTimeout(capTimerRef.current);
+      capTimerRef.current = null;
+    }
+    // O player segue travado enquanto o vidro desce: o lock do press só cobria
+    // a varredura.
+    freezeActionsUntilRef.current = Math.max(
+      freezeActionsUntilRef.current,
+      Date.now() + DOMAIN_SHATTER_MS,
+    );
+    setShattering(true);
+    timersRef.current.push(
+      setTimeout(() => finishRef.current(), DOMAIN_SHATTER_MS),
+    );
+  }, [finishRef, freezeActionsUntilRef, hasSurvivor]);
+
+  const endDomainRef = useLatestRef(endDomain);
 
   /** Cruzou a frente da varredura em `frontX` (mata de 0 em `fromX` até lá). */
   const hasCrossed = useCallback(
@@ -401,7 +467,7 @@ export function useDomainExpansion({
       // Varredura já chegou na outra ponta: falta só o pó dos alvos voar.
       if (sweepEndedRef.current) {
         if (pendingDisintegrationsRef.current === 0) {
-          finishRef.current();
+          endDomainRef.current();
         }
         return;
       }
@@ -431,13 +497,13 @@ export function useDomainExpansion({
         // overlay da expansão até a última desintegração acabar.
         setMugetsuSweep(null);
         if (pendingDisintegrationsRef.current === 0) {
-          finishRef.current();
+          endDomainRef.current();
         }
         return;
       }
 
       setMugetsuSweep((prev) => (prev ? { ...prev, x: frontX } : prev));
-    }, [applyKillAtRef, finishRef, sweepRef]),
+    }, [applyKillAtRef, endDomainRef, sweepRef]),
   );
 
   const press = useCallback(() => {
@@ -461,11 +527,13 @@ export function useDomainExpansion({
     setMugetsuSweep(null);
     setMugetsuBlink(null);
     setDomainExpansionActive(true);
+    setShattering(false);
     setDisintegrating([]);
     npcKilledRef.current = false;
     killedSummonIdsRef.current.clear();
     disintegratedProjectileIdsRef.current.clear();
     completeFiredRef.current = false;
+    endFiredRef.current = false;
     sweepEndedRef.current = false;
     pendingDisintegrationsRef.current = 0;
 
@@ -559,8 +627,15 @@ export function useDomainExpansion({
         tickTimerRef.current = setInterval(tickRef.current, 16);
       }, sweepAt),
 
-      setTimeout(() => cleanupRef.current(), DOMAIN_EXPANSION_TOTAL_MS),
     ];
+
+    // O watchdog também fica com handle próprio: a quebra do vidro precisa
+    // adiá-lo (ele encerraria a habilidade com o vidro ainda em cena).
+    capTimerRef.current = setTimeout(
+      () => cleanupRef.current(),
+      DOMAIN_EXPANSION_TOTAL_MS,
+    );
+    timersRef.current.push(capTimerRef.current);
   }, [
     battleEndedRef,
     clearTimer,
@@ -589,6 +664,7 @@ export function useDomainExpansion({
   return {
     mugetsuSweep,
     domainExpansionActive,
+    shattering,
     mugetsuBlink,
     disintegrating,
     press,

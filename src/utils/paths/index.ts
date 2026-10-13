@@ -30,7 +30,7 @@ export { playerPath } from "./player/playerPath";
 export { playerPathMarshadowHabilities } from "./characters/marcelo/playerPathMarshadowHabilities";
 export { playerPathArturHabilities } from "./characters/artur/playerPathArturHabilities";
 export { playerPathRiquelmeHabilities } from "./characters/riquelme/playerPathRiquelmeHabilities";
-export { playerAbilityBackgroundPath } from "./player/playerAbilityBackgroundPath";
+export { playerAbilityBackgroundPath, playerAbilityPath } from "./player/playerAbilityBackgroundPath";
 export { npcPath } from "./npc/npcPath";
 export { npcPathAlly } from "./npc/npcPathAlly";
 export { npcPathPets } from "./npc/npcPathPets";

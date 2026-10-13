@@ -109,6 +109,9 @@ export const DOMAIN_EXPANSION_STATES = stateSet<PlayerDomainExpansionState>(
   "preMugetsu",
   "mugetsu",
 );
+/** Expansão de Domínio do riquelme (Muryōkūsho) — pose `rioiki.svg` por 5s. */
+export const RIQUELME_DOMAIN_STATES =
+  stateSet<PlayerRiquelmeDomainState>("rioiki");
 /** Laser da Forma Vastolord (marcelo). */
 export const LASER_STATES = stateSet<PlayerLaserState>("laser");
 /** "Gran Rey Cero" (marcelo). */
@@ -153,6 +156,7 @@ export const ACTION_LOCK_STATES = unionOf(
     "granReyCero",
   ),
   SPHERE_STATES,
+  RIQUELME_DOMAIN_STATES,
 );
 /** O jogador não age: trava de ação, defesa ou reação a dano. */
 export const CANNOT_ACT_STATES = unionOf(
@@ -231,6 +235,7 @@ export const ALL_STATES = {
   LASER_STATES,
   GRAN_REY_CERO_STATES,
   SPHERE_STATES,
+  RIQUELME_DOMAIN_STATES,
 
   // Defesa e reação
   BLOCK_STATES,

@@ -62,7 +62,7 @@ import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
-import { npcPath, playerAbilityBackgroundPath } from "@/utils/paths";
+import { npcPath, playerAbilityBackgroundPath, playerAbilityPath } from "@/utils/paths";
 import { GAME_VIEWPORT_WIDTH_RATIO } from "@/data/grid";
 import { getViewportSize } from "@/utils/viewport";
 
@@ -196,6 +196,8 @@ export function BattleScene(props: Props) {
     domainExpansionPress,
     domainExpansionUsable,
     domainBurstActive,
+    domainBackgroundActive,
+    domainShattering,
     granReyCeroEffect,
     granReyCeroPress,
     granReyCeroUsable,
@@ -219,8 +221,13 @@ export function BattleScene(props: Props) {
   // Domínio do personagem atual: nome/cor/efeito saem de DOMAIN_EXPANSIONS e
   // alimentam o botão universal e o overlay do burst.
   const domainConfig = DOMAIN_EXPANSIONS[player.character];
+  // A intro é o `background.svg` (SpecialIntro) e o preenchimento é o
+  // `expansion.svg` (DomainExpansionBackground) — só quem tem `hasBackgroundArt`.
   const domainBackground = domainConfig.hasBackgroundArt
     ? playerAbilityBackgroundPath(player.character, "domainExpansion")
+    : undefined;
+  const domainExpansionArt = domainConfig.hasBackgroundArt
+    ? playerAbilityPath(player.character, "domainExpansion", "expansion.svg")
     : undefined;
 
   // Especial do alfa: enquanto ele usa a habilidade (ex: special dig do
@@ -507,8 +514,13 @@ export function BattleScene(props: Props) {
 
       {/* Preenchimento do domínio: primeiro filho do `.Master` para cobrir só
           o fundo da batalha (pintado de baixo para cima), ficando abaixo do
-          HUD, do SceneMap e das intros por ordem de DOM + z-index 0. */}
-      <DomainExpansionBackground active={domainExpansionActive} />
+          HUD, do SceneMap e das intros por ordem de DOM + z-index 0. A quebra
+          do vidro (quando sobra inimigo) também mora aqui. */}
+      <DomainExpansionBackground
+        active={domainBackgroundActive}
+        src={domainExpansionArt}
+        shattering={domainShattering}
+      />
       <DomainBurstOverlay
         active={domainBurstActive}
         name={domainConfig.name}

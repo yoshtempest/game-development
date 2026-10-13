@@ -99,6 +99,11 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
   preMugetsu: null,
   mugetsu: null,
 
+  // Expansão de Domínio do riquelme (Muryōkūsho): o hook
+  // (useRiquelmeDomainExpansion) segura a pose `rioiki.svg` por 5s e restaura o
+  // idle quando o domínio (e a quebra do vidro) termina.
+  rioiki: null,
+
   // Esferas do riquelme (blue/red + a fusão na purple): estados da sequência
   // Setup controlados pelo hook (useRiquelmeSpheres), que restaura o idle ao
   // fim do cast/arremesso. `purpleJunction` é o sprite de fusão.

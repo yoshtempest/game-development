@@ -174,6 +174,13 @@ export type BattleSceneApi = {
   domainExpansionUsable: boolean;
   /** Overlay ativo do burst da Expansão (marcelo usa `domainExpansionActive`). */
   domainBurstActive: boolean;
+  /**
+   * Preenchimento `expansion.svg` em cena (marcelo na varredura, riquelme nos
+   * 5s da Muryōkūsho).
+   */
+  domainBackgroundActive: boolean;
+  /** Quebra do vidro: algum inimigo sobreviveu e o `expansion.svg` estilhaça. */
+  domainShattering: boolean;
   granReyCeroEffect: ReturnType<typeof useGranReyCero>["effect"];
   granReyCeroPress: () => void;
   granReyCeroUsable: boolean;

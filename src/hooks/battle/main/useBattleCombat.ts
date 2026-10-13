@@ -39,6 +39,7 @@ import { useEmanuelGenkiDama } from "@/hooks/battle/player/characters/ematron/us
 import { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
 import { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
 import { useRiquelmeSpheres } from "@/hooks/battle/player/characters/riquelme/useRiquelmeSpheres";
+import { useRiquelmeDomainExpansion } from "@/hooks/battle/player/characters/riquelme/useRiquelmeDomainExpansion";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import {
   useAtomic,
@@ -1412,6 +1413,7 @@ export function useBattleCombat({
     npc,
     mainNpcType: npcType,
     mainNpcPhase: battle.npcPhase,
+    mainNpcIsBoss: npcData.class === "boss",
     isAlfa,
     summons,
     setSummons,
@@ -1507,6 +1509,44 @@ export function useBattleCombat({
     onBurst: handleDomainBurst,
     playSound,
   });
+
+  // Expansão de Domínio do riquelme (Muryōkūsho) ------------------------------
+  // Domínio próprio: congela o mundo, segura a pose `rioiki.svg` por 5s e
+  // drena 1% da vida MÁXIMA de todos os inimigos a cada 100ms. No fim, se
+  // alguém sobreviveu, o `expansion.svg` estilhaça e desce.
+  const {
+    active: riquelmeDomainActive,
+    shattering: riquelmeDomainShattering,
+    press: riquelmeDomainPress,
+    usable: riquelmeDomainUsable,
+  } = useRiquelmeDomainExpansion({
+    player,
+    setPlayer,
+    npc,
+    npcHP: battle.npcHP,
+    npcMaxHp: battle.npcMaxHp,
+    setNpcHP: battle.setNpcHP,
+    summons,
+    setSummons,
+    spawnDamageNumber: battle.spawnDamageNumber,
+    freezeActionsUntilRef,
+    timeRef: refs.timeRef,
+    isPausedRef,
+    battleEndedRef: battle.isEnding,
+    disabledRef: cloneDisabledRef,
+    startSpecialIntro,
+    playSound,
+    charges: battle.delicia,
+    chargesMax: battle.hitsToSpecial,
+    setDelicia: battle.setDelicia,
+  });
+
+  // Preenchimento (`expansion.svg`) e quebra do vidro são um só para toda
+  // Expansão de Domínio: o marcelo mostra durante a varredura, o riquelme
+  // durante os 5s do dreno.
+  const domainBackgroundActive = domainExpansionActive || riquelmeDomainActive;
+  const domainShattering =
+    domainExpansionShattering || riquelmeDomainShattering;
 
   // "Gran Rey Cero" do marcelo ------------------------------------------------
   // Lâmina de 500px que corre por quadro; disponível na forma normal (os
@@ -1631,15 +1671,24 @@ export function useBattleCombat({
     mugetsuSweep,
     domainExpansionActive,
     mugetsuBlink,
-    // Mesmo par de props para os dois efeitos: o marcelo usa o mugetsu
-    // (cutin + varredura) e os demais o burst (dano em área).
+    // Mesmo par de props para os três efeitos: o marcelo usa o mugetsu
+    // (cutin + varredura), o riquelme a Muryōkūsho (dreno contínuo) e os demais
+    // o burst (dano em área).
     domainExpansionPress:
-      domainConfig.kind === "mugetsu" ? domainExpansionPress : domainBurstPress,
+      domainConfig.kind === "mugetsu"
+        ? domainExpansionPress
+        : domainConfig.kind === "muryokusho"
+          ? riquelmeDomainPress
+          : domainBurstPress,
     domainExpansionUsable:
       domainConfig.kind === "mugetsu"
         ? domainExpansionUsable
-        : domainBurstUsable,
+        : domainConfig.kind === "muryokusho"
+          ? riquelmeDomainUsable
+          : domainBurstUsable,
     domainBurstActive,
+    domainBackgroundActive,
+    domainShattering,
     granReyCeroEffect,
     granReyCeroPress,
     granReyCeroUsable,

@@ -88,6 +88,23 @@ function domainBurstAbility(characterId: CharacterId): ActiveAbility {
   };
 }
 
+/**
+ * Expansão de Domínio do riquelme (`kind: "muryokusho"`): nome/descrição saem
+ * do registro `DOMAIN_EXPANSIONS`. O dreno é 1% da vida MÁXIMA direto no HP, a
+ * cada 100ms — não passa pelo funil de armadura, então `"true"` fixa a
+ * semântica (o mesmo caso do `domainExpansion` do marcelo).
+ */
+function muryokushoAbility(characterId: CharacterId): ActiveAbility {
+  const def = DOMAIN_EXPANSIONS[characterId];
+  return {
+    kind: "active",
+    id: "muryokusho",
+    name: def.name,
+    description: def.description,
+    damageType: "true",
+  };
+}
+
 export const CHARACTER_ACTIVE_ABILITIES: Partial<
   Record<CharacterId, ActiveAbility[]>
 > = {
@@ -153,7 +170,7 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
         "Fusão das esferas azul e vermelha: atravessa todos os inimigos no caminho (2x o dano da esfera vermelha), destrói projéteis e é indestrutível.",
       damageType: "magical",
     },
-    domainBurstAbility("riquelme"),
+    muryokushoAbility("riquelme"),
   ],
   emanuel: [
     {
