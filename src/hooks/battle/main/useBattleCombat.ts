@@ -1365,26 +1365,43 @@ export function useBattleCombat({
   });
 
   // Expansão de Domínio do marcelo -------------------------------------------
-  // Mata TODOS os inimigos instantaneamente (100% da vida máxima) quando o
-  // mugetsuEffect os toca. A victória só é disparada quando a varredura chega
-  // na outra ponta do mapa — por isso onNpcDeath é chamado direto aqui, com o
-  // isEnding já setado pelo hook durante a varredura (bloqueando o lifecycle).
+  // Causa 100% da vida máxima de tudo que o mugetsuEffect toca. A vitória só é
+  // disparada quando a varredura chega na outra ponta do mapa — por isso o
+  // isEnding fica setado pelo hook durante a varredura (bloqueando o lifecycle)
+  // e o desfecho é resolvido aqui no fim. Num boss de duas fases, matar a fase
+  // 1 não encerra a luta: a fase 2 começa e a batalha continua.
   const handleDomainExpansionKill = useCallback(() => {
     if (vastolordActive) {
       extendVastolordRef.current(VASTOLORD_KILL_EXTEND_MS);
       addVastolordLaserChargeRef.current();
     }
+
+    if (npcData.class === "boss" && battle.npcPhase === 1) {
+      // Destrava o lifecycle (o hook setou o isEnding no início da varredura) e
+      // avança para a fase 2, reposicionando os personagens no `usePhaseTransition`.
+      battle.isEnding.current = false;
+      setNpcPhase(2);
+      battle.setNpcHP(battle.npcMaxHp);
+      npc.updateNpc({ hidden: false });
+      return;
+    }
+
     onNpcDeathRef.current();
   }, [
     addVastolordLaserChargeRef,
+    battle,
     extendVastolordRef,
+    npc,
+    npcData.class,
     onNpcDeathRef,
+    setNpcPhase,
     vastolordActive,
   ]);
 
   const {
     mugetsuSweep,
     domainExpansionActive,
+    shattering: domainExpansionShattering,
     mugetsuBlink,
     disintegrating,
     press: domainExpansionPress,
