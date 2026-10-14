@@ -93,3 +93,10 @@ export const RIQUELME_DOMAIN_MS = FIVE_THOUSAND_MS;
 export const RIQUELME_DOMAIN_DRAIN_INTERVAL_MS = FIFTY_MS;
 /** Fração da vida máxima drenada por tick (0.2%). */
 export const RIQUELME_DOMAIN_DRAIN_RATIO = 0.002;
+/**
+ * Fatia da energia amaldiçoada que ele tem NO MOMENTO do uso que o domínio
+ * consome, além das 40 cargas da barra. Sem exigência de mínimo: como é sempre
+ * metade do que existe, `consumeMana` nunca reprova (a energia é refeita
+ * causando dano, então o domínio esvazia o tanque pela metade).
+ */
+export const RIQUELME_DOMAIN_MANA_RATIO = 0.5;

@@ -20,6 +20,7 @@ import {
   isPlayerParalyzed,
 } from "@/gameRules/battle/status/statusEffects";
 import type { BattleBehavior } from "@/utils/types/player/behavior";
+import type { BasicHitOptions } from "@/utils/types/battle/basicHitOptions";
 import type { VampirismStats } from "@/gameRules/battle/vampirism/applyVampirism";
 import type { CharacterProgress } from "@/data/characters/defaultProgress";
 import type { ElementType } from "@/utils/types/battle/element";
@@ -98,6 +99,13 @@ type Props = {
   onHalfHeal?: () => void;
 };
 
+/**
+ * Setter no-op passado ao `behavior` quando o golpe não rende carga da Expansão
+ * (`grantCharge: false`): o comportamento é quem escreve na barra, então negar o
+ * setter é o jeito de o dano contínuo das esferas não encher a barra.
+ */
+const ignoreDelicia = () => {};
+
 export function usePlayerBattle({
   player,
   playerClass,
@@ -157,6 +165,7 @@ export function usePlayerBattle({
       bypassCanPlayerHit = false,
       bypassCooldown = false,
       damageKind: DamageKind = "physical",
+      options?: BasicHitOptions,
     ) => {
       if (isEnding.current) return;
       if (!playerCooldown.current && !bypassCooldown) return;
@@ -241,6 +250,12 @@ export function usePlayerBattle({
       });
       if (outcome.kind !== "proceed") return;
 
+      // Golpe que não rende carga (`grantCharge: false`, o dano contínuo das
+      // esferas do riquelme): o `behavior` é quem escreve na barra da Expansão,
+      // então entregar a ele o setter no-op desliga só essa parte do golpe.
+      const hitSetDelicia =
+        options?.grantCharge === false ? ignoreDelicia : setDelicia;
+
       const runBasicHit = () =>
         applyBasicHit({
           player,
@@ -273,7 +288,7 @@ export function usePlayerBattle({
           npcX,
           npcY,
           spawnPiercing,
-          setDelicia,
+          setDelicia: hitSetDelicia,
           setStacks,
           HITS_TO_SPECIAL,
         });

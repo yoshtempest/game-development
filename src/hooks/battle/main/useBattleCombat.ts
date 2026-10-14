@@ -1530,6 +1530,7 @@ export function useBattleCombat({
     setSummons,
     spawnDamageNumber: battle.spawnDamageNumber,
     freezeActionsUntilRef,
+    battleManaRef,
     timeRef: refs.timeRef,
     isPausedRef,
     battleEndedRef: battle.isEnding,

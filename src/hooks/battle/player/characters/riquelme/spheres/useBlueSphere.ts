@@ -219,8 +219,14 @@ export function useBlueSphere({
 
     const b = battleRef.current;
     const damageMult = ratio * BLUE_SPHERE_DAMAGE_RATIO;
+    // A esfera fere a cada 100ms: o dano contínuo NÃO rende carga da Expansão
+    // (`grantCharge: false` e nenhum `deliciaSetter` abaixo) — os +5 do uso da
+    // habilidade (`onUsed`, no cast) são o pagamento dela. Sem o corte, a esfera
+    // sozinha encheria as 40 cargas da barra.
     if (Math.abs(mainNpc.x - s.x) <= BLUE_SPHERE_RANGE) {
-      b.playerHit(damageMult, true, true, BLUE_DAMAGE_KIND);
+      b.playerHit(damageMult, true, true, BLUE_DAMAGE_KIND, {
+        grantCharge: false,
+      });
     }
     for (const sum of list) {
       if (Math.abs(sum.x - s.x) > BLUE_SPHERE_RANGE) continue;
@@ -241,8 +247,7 @@ export function useBlueSphere({
         spawnDamageRef: battle.refs.spawnDamageRef,
         registerHitRef: battle.refs.registerHitRef,
         setPlayerHP: b.setPlayerHP,
-        deliciaSetter: b.setDelicia,
-        hitsToSpecial: b.hitsToSpecial,
+        // Sem `deliciaSetter`/`hitsToSpecial`: o golpe da esfera não rende carga.
       });
     }
   }

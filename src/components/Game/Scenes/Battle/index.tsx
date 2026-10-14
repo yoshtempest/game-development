@@ -49,6 +49,7 @@ import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { useBattleMana } from "@/contexts/BattleManaContext";
 import { useCameraShake } from "@/hooks/battle/effects/useCameraShake";
 import { LUCAS_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
+import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import {
   CURSED_ENERGY_HEAL_RATIO,
   BLINK_ENERGY_COST,
@@ -771,6 +772,7 @@ export function BattleScene(props: Props) {
               energy={battleMana?.playerMana ?? 0}
               disabled={
                 controlsDisabled ||
+                ALL_PREDICATES.isRiquelmeDomain(player.state) ||
                 (battleMana?.playerMana ?? 0) < BLINK_ENERGY_COST
               }
               onClick={blink}

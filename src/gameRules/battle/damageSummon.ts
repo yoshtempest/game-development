@@ -41,8 +41,14 @@ type Params = {
   >;
   registerHitRef: React.RefObject<(damage: number) => void>;
   setPlayerHP: React.Dispatch<React.SetStateAction<number>>;
-  deliciaSetter: React.Dispatch<React.SetStateAction<number>>;
-  hitsToSpecial: number;
+  /**
+   * Rende +1 de carga da Expansão por golpe. **Ausente = o golpe não rende
+   * carga** — é o caso do dano contínuo da esfera azul do riquelme, que já
+   * pagou os +5 do uso da habilidade e não pode encher a barra tick a tick.
+   */
+  deliciaSetter?: React.Dispatch<React.SetStateAction<number>>;
+  /** Teto da barra; só entra na conta quando o golpe rende carga. */
+  hitsToSpecial?: number;
   pushDir?: number;
 };
 
@@ -101,7 +107,9 @@ export function damageSummon({
     multiplier >= 1.2 ? "special" : "summon",
   );
   registerHitRef.current?.(dmg);
-  deliciaSetter((d) => Math.min(d + 1, hitsToSpecial));
+  if (deliciaSetter && hitsToSpecial != null) {
+    deliciaSetter((d) => Math.min(d + 1, hitsToSpecial));
+  }
   incrementAttacksUsedStats(player.character);
   incrementHitsUsedStats(player.character);
 

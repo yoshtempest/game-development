@@ -7,6 +7,7 @@ import {
 } from "@/gameRules/battle/cursedEnergy";
 
 import { clampX } from "@/gameRules/movement/clampX";
+import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { gainAbilityCharge } from "@/gameRules/battle/special";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { SoundId } from "@/utils/audio/soundId";
@@ -70,7 +71,13 @@ export function useActiveSkills({
     setPlayer,
   ]);
 
+  // A Expansão de Domínio do riquelme (Muryōkūsho) segura o personagem na pose
+  // `rioiki` até o fim do dreno (e da quebra do vidro): blink no meio dela seria
+  // um teleporte para fora do domínio, então a habilidade morre junto.
+  const riquelmeDomainActive = ALL_PREDICATES.isRiquelmeDomain(player.state);
+
   const handleBlink = useCallback(() => {
+    if (riquelmeDomainActive) return;
     if (!honoredOneActiveRef.current) return;
     const mana = battleManaRef.current;
     if (!mana || battle.isEnding.current) return;
@@ -95,6 +102,7 @@ export function useActiveSkills({
     player.x,
     player.y,
     playSound,
+    riquelmeDomainActive,
     setPlayer,
     triggerBlink,
   ]);

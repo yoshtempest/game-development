@@ -17,9 +17,11 @@ import { DOMAIN_SHATTER_MS } from "@/data/characters/domainExpansions";
 import {
   RIQUELME_DOMAIN_DRAIN_INTERVAL_MS,
   RIQUELME_DOMAIN_DRAIN_RATIO,
+  RIQUELME_DOMAIN_MANA_RATIO,
   RIQUELME_DOMAIN_MS,
   RIQUELME_DOMAIN_TIME_ID,
 } from "@/data/characters/riquelme/riquelme";
+import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { SoundId } from "@/utils/audio/soundId";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 
@@ -46,6 +48,11 @@ type Props = {
     type: DamageType,
   ) => void;
   freezeActionsUntilRef: RefObject<number>;
+  /**
+   * Energia amaldiçoada do riquelme: o uso do domínio consome metade do que ele
+   * tem no momento (`RIQUELME_DOMAIN_MANA_RATIO`), além das 40 cargas.
+   */
+  battleManaRef: RefObject<BattleManaApi | null>;
   /** Efeitos de time da batalha (regra `gameRules/battle/time`). */
   timeRef: RefObject<TimeEffect[]>;
   isPausedRef: RefObject<boolean>;
@@ -94,7 +101,10 @@ const DAMAGE_NUMBER_EVERY_TICKS = 5;
  * e desce para fora do campo de visão — a mesma quebra que a Expansão do
  * marcelo usa quando sobra alguém. Se ninguém sobreviveu, a batalha só segue
  * (vitória pelo lifecycle normal: o dreno pode zerar a vida e matar de verdade).
- * Custo: as 40 cargas da barra (sem cooldown próprio).
+ * Custo: as 40 cargas da barra + metade da energia amaldiçoada que ele tem no
+ * momento (`RIQUELME_DOMAIN_MANA_RATIO`), sem cooldown próprio. Durante o
+ * domínio o personagem fica na pose `rioiki`, e é ela que trava o blink
+ * (passiva O Abençoado): teleportar no meio do domínio seria fugir dele.
  */
 export function useRiquelmeDomainExpansion({
   player,
@@ -107,6 +117,7 @@ export function useRiquelmeDomainExpansion({
   setSummons,
   spawnDamageNumber,
   freezeActionsUntilRef,
+  battleManaRef,
   timeRef,
   isPausedRef,
   battleEndedRef,
@@ -331,8 +342,17 @@ export function useRiquelmeDomainExpansion({
     if (activeRef.current) return;
     if (!usableRef.current) return;
 
-    // O custo é a barra inteira: as 40 cargas somem no uso (sem cooldown).
+    // O custo é a barra inteira: as 40 cargas somem no uso (sem cooldown) —
+    // mais `RIQUELME_DOMAIN_MANA_RATIO` da energia amaldiçoada que ele tem no
+    // momento. Como é sempre metade do que existe, não há mínimo exigido: o
+    // domínio sempre paga (e esvazia o tanque pela metade).
     setDeliciaRef.current(0);
+    const mana = battleManaRef.current;
+    if (mana) {
+      mana.consumeMana(
+        Math.floor(mana.playerMana * RIQUELME_DOMAIN_MANA_RATIO),
+      );
+    }
     // Trava já no press: cobre a intro (background.svg) + o dreno. A quebra do
     // vidro, quando acontece, adia o lock no `endDomain` (só aí ele é maior).
     freezeActionsUntilRef.current = Math.max(
@@ -372,6 +392,7 @@ export function useRiquelmeDomainExpansion({
     );
     if (!started) startDomainRef.current();
   }, [
+    battleManaRef,
     clearTimers,
     freezeActionsUntilRef,
     playSoundRef,
