@@ -49,7 +49,7 @@ export const NPC_STATUS_MULTIPLIERS: Partial<
   rice: { damage: 0.7, physicalArmor: 1.5, magicalArmor: 1.2, hp: 1 },
   goat: { damage: 1.1, physicalArmor: 1.3, magicalArmor: 2, hp: 1.2 },
   vandinhaFragment: { damage: 1.3, physicalArmor: 1, magicalArmor: 1, hp: 1.3 },
-  trueVandinha: { damage: 0.1, physicalArmor: 0.1, magicalArmor: 0.1, hp: 0.1 },
+  // trueVandinha: { damage: 0.1, physicalArmor: 0.1, magicalArmor: 0.1, hp: 0.1 },
   deise: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 0.8 },
 };
 
