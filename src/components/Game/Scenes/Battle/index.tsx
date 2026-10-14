@@ -479,6 +479,16 @@ export function BattleScene(props: Props) {
           : undefined
       }
     >
+      {/* Preenchimento do domínio: PRIMEIRO filho do `.Master`, para pintar
+          como o `backgroundImage` da batalha — acima do fundo, abaixo de todo
+          o resto (HUD do jogador e do NPC, ComboDisplay, SceneMap, intros) por
+          ordem de DOM + z-index 0. Posicionado com `inset: 0`. A quebra do
+          vidro (quando sobra inimigo) também mora aqui. */}
+      <DomainExpansionBackground
+        active={domainBackgroundActive}
+        src={domainExpansionArt}
+        shattering={domainShattering}
+      />
       <BattleHUD
         battle={battle}
         npcStats={npcStats}
@@ -512,15 +522,6 @@ export function BattleScene(props: Props) {
         />
       )}
 
-      {/* Preenchimento do domínio: primeiro filho do `.Master` para cobrir só
-          o fundo da batalha (pintado de baixo para cima), ficando abaixo do
-          HUD, do SceneMap e das intros por ordem de DOM + z-index 0. A quebra
-          do vidro (quando sobra inimigo) também mora aqui. */}
-      <DomainExpansionBackground
-        active={domainBackgroundActive}
-        src={domainExpansionArt}
-        shattering={domainShattering}
-      />
       <DomainBurstOverlay
         active={domainBurstActive}
         name={domainConfig.name}

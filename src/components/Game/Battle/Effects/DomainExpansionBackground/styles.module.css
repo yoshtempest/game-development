@@ -2,8 +2,11 @@
    fundo da batalha por cima (sem trocar a imagem de fundo), surgindo sendo
    "renderizado" de baixo para cima — o clip começa 100% do topo (nada visível)
    e o topo encolhe até 0, revelando a imagem do chão para o teto.
-   z-index 0 + primeiro filho do `.Master`: pinta logo acima do fundo, abaixo
-   de todo o resto (HUD, SceneMap, intros) que vem depois na ordem de DOM. */
+   Tem que ser o PRIMEIRO filho do `.Master` (a mesma camada do `backgroundImage`
+   da batalha, logo acima dele): assim pinta abaixo de todo o resto — HUD do
+   jogador e do NPC, ComboDisplay, SceneMap, intros — que é posicionado e vem
+   depois na ordem de DOM. Renderizado depois do HUD, o `z-index: 0` o joga por
+   cima dos painéis (mesmo grupo de pintura, ordem de DOM decide). */
 .overlay {
   position: absolute;
   inset: 0;
