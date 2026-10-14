@@ -28,7 +28,8 @@ import {
  * works offline — a partial-content request against a plain cached response
  * fails, which is why the previous Workbox `CacheFirst` rule broke scrubbing.
  */
-const BASE = "/react-jomasio-adventures/";
+// const BASE = "/react-jomasio-adventures/";
+const BASE = "/jomasio-adventures/";
 
 installPushHandler({
   defaultTitle: "Nova notificação",

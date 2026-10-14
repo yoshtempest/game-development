@@ -20,7 +20,8 @@ import { tempestPwaDevSw, tempestPwaManifest } from "tempest-react-sdk/vite";
  * files Vite emits into the bundle; `appShell` and `additionalUrls` are taken
  * verbatim. Likewise `tempestPwaDevSw` matches `req.url` literally.
  */
-const BASE = "/react-jomasio-adventures/";
+// const BASE = "/react-jomasio-adventures/";
+const BASE = "/jomasio-adventures/";
 
 export default defineConfig({
   base: BASE,
