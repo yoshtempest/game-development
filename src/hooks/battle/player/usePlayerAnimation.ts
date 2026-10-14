@@ -21,6 +21,7 @@ export function usePlayerAnimation(
   canRun?: boolean,
   timeScaleRef?: React.RefObject<number>,
   emanuelCombo?: EmanuelComboApi,
+  riquelmePunchRef?: React.RefObject<boolean>,
 ) {
   const tenacityRef = useLatestRef(battleTenacityRef);
   const canRunRef = useLatestRef(canRun);
@@ -77,6 +78,17 @@ export function usePlayerAnimation(
       step = { ...defaultStep, next: comboStep.state };
     }
 
+    // Riquelme: o básico intercala kick/attack/punch sob o mesmo windup
+    // `preAttack` (mesmo mecanismo do combo do emanuel) — o press marca em
+    // `riquelmePunchRef` quando este windup termina em `punch`.
+    const isRiquelmePunch =
+      player.character === "riquelme" &&
+      player.state === "preAttack" &&
+      riquelmePunchRef?.current === true;
+    if (isRiquelmePunch) {
+      step = { ...defaultStep, next: "punch" };
+    }
+
     if (override) {
       if (player.state === "preSpecial") {
         if (player.character === "marcelo") {
@@ -119,6 +131,11 @@ export function usePlayerAnimation(
       const wantsToRun = ALL_PREDICATES.isRunState(step.next);
       if (wantsToRun && canRunRef != null && !canRunRef.current) return;
 
+      // Consome a marca do punch do riquelme no fim do windup `preAttack`; um
+      // windup interrompido (sem timeout) deixa o flag para o próximo press,
+      // que sempre resorteia.
+      if (isRiquelmePunch && riquelmePunchRef) riquelmePunchRef.current = false;
+
       setPlayer((p) => {
         // Fim de um golpe do combo do emanuel (punch/hook/lowKick): se houve
         // press durante o golpe (buffer), encadeia o próximo step em vez de
@@ -158,5 +175,6 @@ export function usePlayerAnimation(
     canRunRef,
     timeScaleInternalRef,
     emanuelComboRef,
+    riquelmePunchRef,
   ]);
 }

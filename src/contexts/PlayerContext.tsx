@@ -156,6 +156,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const { progress } = useCharacterProgress();
   const { timeScaleRef, setTimeScale, resetTimeScale } = useTimeScale();
   const emanuelCombo = useEmanuelCombo();
+  // Riquelme: o básico intercala kick/attack/punch e o punch deriva do windup
+  // `preAttack` (mesmo mecanismo do combo do emanuel). O press marca aqui qual
+  // desfecho este windup apresenta; o `usePlayerAnimation` lê e limpa.
+  const riquelmePunchRef = useRef(false);
   const playerRef = useLatestRef(player);
   const emanuelComboMultiplierRef = emanuelCombo.multiplierRef;
   const emanuelComboActiveRef = emanuelCombo.activeRef;
@@ -174,6 +178,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     (progress[player.character]?.sleep ?? 0) > 0,
     timeScaleRef,
     emanuelCombo,
+    riquelmePunchRef,
   );
 
   const movingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -252,6 +257,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     playerRef,
     genkiDamaRiseStartRef,
     genkiDamaRiseStartYRef,
+    riquelmePunchRef,
   );
   const battleRef = useRef(battle);
   battleRef.current = battle;

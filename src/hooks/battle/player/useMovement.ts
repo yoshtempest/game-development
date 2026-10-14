@@ -64,6 +64,7 @@ export function useBattleMovement(
   playerRef?: RefObject<Player>,
   genkiDamaRiseStartRef?: RefObject<number>,
   genkiDamaRiseStartYRef?: RefObject<number>,
+  riquelmePunchRef?: RefObject<boolean>,
 ) {
   const leftIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const rightIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -297,6 +298,19 @@ export function useBattleMovement(
       }
     }
 
+    // Riquelme: o básico intercala kick/attack/punch. O sorteio fica fora do
+    // updater de estado (nenhum side effect ali) e o `punch` deriva do windup
+    // `preAttack` — o `usePlayerAnimation` resolve o `next` para `punch`
+    // quando `riquelmePunchRef` está marcado. O Punho Divergente
+    // (`forcePunchRef`) continua forçando o soco (`preAttack` → attack).
+    const isRiquelmeAttack = current?.character === "riquelme";
+    const riquelmeRolls = isRiquelmeAttack && !forcePunchRef?.current;
+    const riquelmeRoll = riquelmeRolls ? Math.random() : 1;
+    const riquelmeKick = riquelmeRolls && riquelmeRoll < 1 / 3;
+    const riquelmePunch =
+      riquelmeRolls && !riquelmeKick && riquelmeRoll < 2 / 3;
+    if (riquelmePunchRef) riquelmePunchRef.current = riquelmePunch;
+
     setPlayer((p) => {
       if (isPlayerFrozen(p) || isPlayerParalyzed(p)) return p;
       if (ALL_PREDICATES.isInvulnerable(p.state)) return p;
@@ -351,10 +365,9 @@ export function useBattleMovement(
         return { ...p, state: "attack" };
       }
       if (p.character === "riquelme") {
-        const isKick = !forcePunchRef?.current && Math.random() > 0.5;
         return {
           ...p,
-          state: isKick ? "preKick" : "preAttack",
+          state: riquelmeKick ? "preKick" : "preAttack",
         };
       }
       return { ...p, state: "preAttack" };
