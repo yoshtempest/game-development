@@ -111,7 +111,7 @@ export function useDomainExpansionBurst({
       Date.now() + DOMAIN_BURST_LOCK_MS,
     );
     setActive(true);
-    playSound("explosion");
+    // playSound("explosion");
     onBurstRef.current();
 
     timersRef.current = [

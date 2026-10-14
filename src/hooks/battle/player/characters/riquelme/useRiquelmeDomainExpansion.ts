@@ -275,7 +275,7 @@ export function useRiquelmeDomainExpansion({
       Date.now() + DOMAIN_SHATTER_MS,
     );
     setShattering(true);
-    playSoundRef.current("explosion");
+    playSoundRef.current("domainBreak");
     timersRef.current.push(
       setTimeout(() => finishRef.current(), DOMAIN_SHATTER_MS),
     );
@@ -304,7 +304,7 @@ export function useRiquelmeDomainExpansion({
       freezeActionsUntilRef.current,
       Date.now() + RIQUELME_DOMAIN_MS,
     );
-    playSoundRef.current("riquelmeDomain");
+    playSoundRef.current("riquelmeOpenedDomain");
 
     clearDrain();
     drainTickRef.current();

@@ -17,6 +17,7 @@ export function createSounds() {
   return {
     win: battleDefault("win.mp3"),
     defeat: battleDefault("defeat.mp3"),
+    domainBreak: battleDefault("domainBreak.mp3"),
     run: battleDefault("run.mp3"),
     cantMove: playerSoundPath("/cantMove.mp3"),
     tryAgain: battleDefault("tryAgain.mp3"),
@@ -52,7 +53,7 @@ export function createSounds() {
     blink: sfx("blink.mp3"),
     explosion: sfx("explosion.mp3"),
     natsukiSpecial: riquelmeSoundPath("special.mp3"),
-    riquelmeDomain: riquelmeSoundPath("expansion.mp3"),
+    riquelmeOpenedDomain: riquelmeSoundPath("openedDomain.mp3"),
     kokusen: riquelmeSoundPath("kokusen.mp3"),
     impact: sfx("impact.mp3"),
     slimitaJump: npcSoundPath("slimita/jump.mp3"),

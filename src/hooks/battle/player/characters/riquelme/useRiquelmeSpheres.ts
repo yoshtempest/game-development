@@ -470,7 +470,7 @@ export function useRiquelmeSpheres({
     sphereRef.current = next;
     setSphere(next);
     setPlayerState("sphereFire");
-    playSoundRef.current("explosion");
+    // playSoundRef.current("explosion");
   };
 
   /** Purple: dispara a esfera fundida atravessando a arena. */
@@ -489,7 +489,7 @@ export function useRiquelmeSpheres({
     sphereRef.current = next;
     setSphere(next);
     setPlayerState("sphereFire");
-    playSoundRef.current("explosion");
+    // playSoundRef.current("explosion");
   };
 
   /** Publica a esfera em voo para o `useProjectile` destruir projéteis. */
