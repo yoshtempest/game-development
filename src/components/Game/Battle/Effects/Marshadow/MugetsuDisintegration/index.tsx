@@ -12,8 +12,8 @@ type Props = {
 };
 
 /**
- * Camada visual da desintegração da Expansão de Domínio: todos os alvos
- * tocados (NPC principal + summons) viram pixels pretos → pó assoprado.
+ * Camada visual da desintegração da Expansão de Domínio: todo alvo tocado
+ * (NPC principal + summons) é cortado em duas metades e desvanece.
  */
 export function MugetsuDisintegration({ targets, sweep, TILE_SIZE }: Props) {
   if (targets.length === 0) return null;

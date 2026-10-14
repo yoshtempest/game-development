@@ -22,7 +22,7 @@ export type MugetsuSweep = {
 /** Fase do blink visual do teleporte: "out" (some) → "in" (vem). */
 export type MugetsuBlink = "out" | "in" | null;
 
-/** Alvo sendo desintegrado pela varredura (sprite vira pixels pretos e pó). */
+/** Alvo cortado pela varredura (o sprite é partido em duas metades). */
 export type MugetsuDisintegrationTarget = {
   /** "main" para o NPC principal; summonId para os summons. */
   id: string;
@@ -35,7 +35,7 @@ export type MugetsuDisintegrationTarget = {
   x: number;
   /** Pés do alvo (px lógicos). */
   y: number;
-  /** Direção da varredura no toque (define o vento do pó). */
+  /** Direção da varredura no toque (define o lado do corte). */
   direction: "left" | "right";
   startedAt: number;
 };

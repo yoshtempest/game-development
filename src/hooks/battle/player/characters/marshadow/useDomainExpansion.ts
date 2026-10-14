@@ -108,7 +108,7 @@ type DomainExpansionApi = {
   shattering: boolean;
   /** Fase do blink do teleporte do jogador. */
   mugetsuBlink: MugetsuBlink;
-  /** Alvos (NPC principal + summons) sendo desintegrados em pó. */
+  /** Alvos (NPC principal + summons) sendo desintegrados pela varredura. */
   disintegrating: MugetsuDisintegrationTarget[];
   press: () => void;
   usable: boolean;
@@ -166,7 +166,7 @@ export function useDomainExpansion({
 
   const activeRef = useRef(false);
   const sweepStartRef = useRef(0);
-  /** True quando a varredura chegou na outra ponta (resta só o pó voar). */
+  /** True quando a varredura chegou na outra ponta (resta o corte terminar). */
   const sweepEndedRef = useRef(false);
   /** Conta síncrona de alvos ainda desintegrando (independe do state commit). */
   const pendingDisintegrationsRef = useRef(0);
@@ -225,7 +225,7 @@ export function useDomainExpansion({
   }, []);
 
   /**
-   * Registra um alvo sendo desintegrado pela varredura. O recorde (e o pó)
+   * Registra um alvo sendo desintegrado pela varredura. O corte na cena
    * persiste por `DOMAIN_EXPANSION_DISINTEGRATION_MS`; ao remover o último
    * alvo, o tick encerra a habilidade (só aí a vitória é disparada).
    */
@@ -245,7 +245,7 @@ export function useDomainExpansion({
     [],
   );
 
-  /** Encerra a habilidade (fim da varredura + pó ou cancelamento) e restaura o idle. */
+  /** Encerra a habilidade (fim da varredura + corte ou cancelamento) e restaura o idle. */
   const finish = useCallback(() => {
     activeRef.current = false;
     clearTimers();
@@ -345,8 +345,8 @@ export function useDomainExpansion({
       if (!sweep) return;
 
       // NPC principal: HP → 0 no toque, mas a vitória só vem no fim da
-      // varredura + desintegração. O sprite-base some (hidden) e o canvas de
-      // desintegração assume o visual a partir de agora.
+      // varredura + desintegração. O sprite-base some (hidden) e o corte na
+      // cena assume o visual a partir de agora.
       const main = npcRef.current;
       if (!npcKilledRef.current && hasCrossed(main.x, sweep, frontX)) {
         npcKilledRef.current = true;
@@ -380,7 +380,7 @@ export function useDomainExpansion({
       }
 
       // Summons inimigos: removidos (com recompensa rare) no toque — o visual
-      // da morte passa a ser a desintegração (recorde no momento do corte).
+      // da morte passa a ser o corte em duas metades.
       const killedIds = killedSummonIdsRef.current;
       let changed = false;
       let killed = false;
@@ -464,7 +464,7 @@ export function useDomainExpansion({
 
   const tickRef = useLatestRef(
     useCallback(() => {
-      // Varredura já chegou na outra ponta: falta só o pó dos alvos voar.
+      // varredura já chegou na outra ponta: falta só o corte dos alvos terminar.
       if (sweepEndedRef.current) {
         if (pendingDisintegrationsRef.current === 0) {
           endDomainRef.current();
