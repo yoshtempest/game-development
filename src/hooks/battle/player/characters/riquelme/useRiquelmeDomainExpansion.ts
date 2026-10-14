@@ -304,6 +304,7 @@ export function useRiquelmeDomainExpansion({
       freezeActionsUntilRef.current,
       Date.now() + RIQUELME_DOMAIN_MS,
     );
+    playSoundRef.current("domainInitiate");
     playSoundRef.current("riquelmeOpenedDomain");
 
     clearDrain();
@@ -356,6 +357,11 @@ export function useRiquelmeDomainExpansion({
       }, 0),
     );
 
+    // SFX da abertura: sai junto com a intro `background.svg` entrando na
+    // tela (é o grito/pose do `rioiki.svg`). O som do domínio em si —
+    // `riquelmeOpenedDomain` — é o `startDomain`, que roda só no fim da intro.
+    playSoundRef.current("riquelmeRioiki");
+
     // A intro `background.svg` abre o domínio; sem o intro (Config), o
     // `startDomain` roda na hora. Se já havia um intro em curso (o hook
     // devolve false sem chamar o callback), não deixa o domínio pendurado.
@@ -368,6 +374,7 @@ export function useRiquelmeDomainExpansion({
   }, [
     clearTimers,
     freezeActionsUntilRef,
+    playSoundRef,
     setDeliciaRef,
     setPlayer,
     shouldCancelRef,

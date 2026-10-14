@@ -40,6 +40,8 @@ export type SoundId =
   | "shieldStack"
   | "ORA"
   | "natsukiSpecial"
+  | "riquelmeRioiki"
+  | "domainInitiate"
   | "riquelmeOpenedDomain"
   | "domainBreak"
   | "blink"

@@ -63,7 +63,7 @@ export function useDomainExpansionBurst({
   battleEndedRef,
   disabledRef,
   onBurst,
-  playSound,
+  // playSound,
 }: Props): DomainBurstApi {
   const [active, setActive] = useState(false);
 
@@ -121,7 +121,7 @@ export function useDomainExpansionBurst({
     cleanupRef,
     freezeActionsUntilRef,
     onBurstRef,
-    playSound,
+    // playSound,
     setDeliciaRef,
     usableRef,
   ]);
