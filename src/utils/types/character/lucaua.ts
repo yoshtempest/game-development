@@ -49,6 +49,18 @@ export type LucauaPortalKind = "ground" | "default" | "air";
 export type LucauaPortalPhase = "flying" | "placed";
 
 /**
+ * Warp de projétil entre os portais. Recebe a posição do projétil e devolve o
+ * destino (o portal par) quando ele cruza a zona de travessia — ou `null`
+ * quando não há travessia (menos de dois portais, já desarmado, fora da zona).
+ * Injetado nos loops de projétil (NPC e energia do lucaua) pelo hook de portais.
+ */
+export type LucauaPortalWarpFn = (
+  id: string,
+  x: number,
+  y: number,
+) => { x: number; y: number } | null;
+
+/**
  * Portal posicionado (ou em voo). O `y` é a **âncora** (o chão em que a
  * entidade entra), não o centro da arte: o render sobe o sprite a partir dele,
  * e o teleporte/hitbox usam a mesma coordenada.

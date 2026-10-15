@@ -23,6 +23,7 @@ import type {
 import { getTime, type TimeEffect } from "@/gameRules/battle/time";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
+import type { LucauaPortalWarpFn } from "@/utils/types/character/lucaua";
 
 export function useProjectile(
   projectiles: Projectile[],
@@ -46,6 +47,7 @@ export function useProjectile(
   spawnDamageRef?: React.RefObject<SpawnDamageFn>,
   playerCooldownRef?: React.RefObject<boolean>,
   playerHitDamageRef?: React.RefObject<ProjectileHitDamageFn>,
+  portalWarpRef?: React.RefObject<LucauaPortalWarpFn | null>,
 ) {
   const onHitRef = useLatestRef(onHit);
   const onPullPlayerRef = useLatestRef(onPullPlayer);
@@ -247,7 +249,25 @@ export function useProjectile(
 
       if (stick) onStickRef.current?.();
       for (const x of misses) onMissRef.current?.(x);
-      setProjectiles(next);
+
+      // Portais do lucaua: o projétil que cruza a zona reaparece no outro
+      // portal, mantendo a direção (o deslocamento leva o **centro** ao destino).
+      const warp = portalWarpRef?.current;
+      const moved =
+        warp == null
+          ? next
+          : next.map((p) => {
+              const center = getProjectileCenter(p);
+              const dest = warp(p.id, center.x, center.y);
+              if (!dest) return p;
+              return {
+                ...p,
+                x: p.x + (dest.x - center.x),
+                y: p.y + (dest.y - center.y),
+              };
+            });
+
+      setProjectiles(moved);
     }, 20);
 
     return () => clearInterval(interval);
@@ -269,6 +289,7 @@ export function useProjectile(
     npcXRef,
     npcYRef,
     playerProjectileRef,
+    portalWarpRef,
     strike,
     destroy,
   ]);

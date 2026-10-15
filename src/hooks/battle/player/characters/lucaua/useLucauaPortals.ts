@@ -30,6 +30,7 @@ import type {
   LucauaPortalFocus,
   LucauaPortalGhost,
   LucauaPortalKind,
+  LucauaPortalWarpFn,
 } from "@/utils/types/character/lucaua";
 
 /** Direção que o joystick pode empurrar o fantasma/seletor. */
@@ -37,6 +38,34 @@ type PortalDirection = "up" | "down" | "left" | "right";
 
 /** Par de portais que uma travessia conecta (origem → destino). */
 type PortalWarp = { dest: LucauaPortal; source: LucauaPortal };
+
+/** Grupo de entidade que atravessa (define qual setter escreve a posição). */
+type PortalTravelGroup = "npc" | "summon" | "ally" | "pet";
+
+/**
+ * Queda em curso de uma entidade não-player. A posição é dirigida aqui (não
+ * pelo AI, que fica congelado pelo efeito de time): `descend` afunda do portal
+ * terrestre até `targetY`; `land` cai do destino suspenso até o chão.
+ */
+type EntityTravel = {
+  /** Id de travessia (mesma chave do `disarmedRef`, ex.: `summon:<id>`). */
+  key: string;
+  group: PortalTravelGroup;
+  id: string;
+  dest: LucauaPortal;
+  phase: "descend" | "land";
+  x: number;
+  y: number;
+  vy: number;
+  targetY: number;
+};
+
+/** Queda em curso do player ao entrar num portal terrestre. */
+type PlayerTravel = {
+  dest: LucauaPortal;
+  targetY: number;
+  startTime: number;
+};
 
 /** Lista de obstáculos vazia estável (evita recriar array a cada render). */
 const NO_OBSTACLES: BattleObstacle[] = [];
@@ -67,6 +96,11 @@ type Props = {
   disabledRef: RefObject<boolean>;
   battleEndedRef: RefObject<boolean>;
   playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
+  /**
+   * Saída do warp de projéteis: o hook publica aqui a função que os loops de
+   * projétil (NPC e energia do lucaua) chamam para atravessar os portais.
+   */
+  portalWarpRef: RefObject<LucauaPortalWarpFn | null>;
 };
 
 /**
@@ -86,6 +120,12 @@ type Props = {
  * Teleporte: cada entidade tem um "armado/desarmado" próprio — depois de
  * atravessar, ela fica desarmada até sair de todos os raios, o que impediria o
  * ping-pong infinito entre dois portais que se sobrepõem.
+ *
+ * Travessia com queda: entrar num portal **terrestre** afunda a entidade
+ * (`GROUND_FALL_DEPTH`) antes de cruzar — o player pela gravidade, os demais por
+ * queda simulada; e um portal de saída suspenso (frontal/aéreo) derruba a
+ * entidade até o chão, nunca a deixa parada na linha do portal. Projéteis
+ * também cruzam (o warp é publicado em `portalWarpRef`).
  */
 export function useLucauaPortals({
   player,
@@ -106,6 +146,7 @@ export function useLucauaPortals({
   disabledRef,
   battleEndedRef,
   playSound,
+  portalWarpRef,
 }: Props) {
   const { pushControls } = useGameControls();
 
@@ -139,6 +180,10 @@ export function useLucauaPortals({
 
   // Travessia: ids desarmados até saírem de todos os portais.
   const disarmedRef = useRef<Set<string>>(new Set());
+
+  // Quedas em curso (afundar no portal terrestre + aterrissar no chão).
+  const playerTravelRef = useRef<PlayerTravel | null>(null);
+  const travelRef = useRef<EntityTravel[]>([]);
 
   // Travas (time + ações do player) e o valor salvo para restaurar depois.
   const locksEngagedRef = useRef(false);
@@ -239,12 +284,13 @@ export function useLucauaPortals({
   }
 
   /**
-   * Chão sob um portal aéreo. O destino fica `AIR_HEIGHT` acima da superfície
-   * em que o portal foi fincado, então sondar a partir do próprio destino não
-   * acharia o piso (o `feetY` ficaria no ar); a partir de `dest.y + AIR_HEIGHT`
-   * o `getGroundAtX` reconhece a plataforma que contém os pés.
+   * Chão sob a âncora de um portal. O portal terrestre fica **no** chão (a
+   * própria âncora); os flutuantes (frontal/aéreo) ficam acima dele, então a
+   * sonda desce `AIR_HEIGHT` para o `getGroundAtX` reconhecer a plataforma que
+   * contém os pés — sondar a partir do próprio destino cairia no ar.
    */
-  function groundUnderAir(dest: LucauaPortal): number {
+  function groundUnder(dest: LucauaPortal): number {
+    if (dest.kind === "ground") return dest.y;
     return getGroundAtX(
       dest.y + LucauaPortalConstants.AIR_HEIGHT + 2,
       dest.x,
@@ -252,13 +298,29 @@ export function useLucauaPortals({
     );
   }
 
-  /** Posição final de uma entidade depois de atravessar (nunca no céu). */
-  function warpPosition(warp: PortalWarp): { x: number; y: number } {
-    const dest = warp.dest;
-    if (dest.kind === "air") {
-      return { x: dest.x, y: groundUnderAir(dest) };
+  /** Escreve a posição de uma entidade não-player, pelo grupo a que pertence. */
+  function writeEntity(
+    group: PortalTravelGroup,
+    id: string,
+    x: number,
+    y: number,
+  ) {
+    if (group === "npc") {
+      npc.updateNpc({ x, y });
+    } else if (group === "summon") {
+      setSummons((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, x, y } : s)),
+      );
+    } else if (group === "ally") {
+      setAllies((prev) => prev.map((s) => (s.id === id ? { ...s, x, y } : s)));
+    } else {
+      setPet((prev) => (prev ? { ...prev, x, y } : prev));
     }
-    return { x: dest.x, y: dest.y };
+  }
+
+  /** Há uma queda em curso para essa chave de travessia? */
+  function isTraveling(key: string): boolean {
+    return travelRef.current.some((t) => t.key === key);
   }
 
   // ── Travas ─────────────────────────────────────────────────────────────────
@@ -504,73 +566,218 @@ export function useLucauaPortals({
 
   // ── Teleporte ──────────────────────────────────────────────────────────────
 
-  function runTeleports(now: number) {
-    const playerWarp = pickWarp("player", player.x, player.y);
-    if (playerWarp) {
-      const inSky = playerWarp.dest.kind === "air";
-      const ground = inSky
-        ? groundUnderAir(playerWarp.dest)
-        : playerWarp.dest.y;
+  /**
+   * Teleporta o player para o destino. O `groundY` vira o chão sob o destino:
+   * se o portal estiver suspenso, o player sai em queda (`falling`) e a própria
+   * gravidade o leva ao chão — era o bug de ficar preso na linha do portal.
+   */
+  function teleportPlayer(dest: LucauaPortal, now: number) {
+    const ground = groundUnder(dest);
+    const aboveGround = dest.y < ground - 1;
+    setPlayer((prev) => ({
+      ...prev,
+      x: dest.x,
+      y: dest.y,
+      groundY: ground,
+      velY: 0,
+      state: aboveGround ? "falling" : prev.state,
+    }));
+    if (aboveGround) {
+      landingEngagedRef.current = true;
+      landingUntilRef.current = now + LucauaPortalConstants.LANDING_MS;
+    }
+    playSoundRef.current("emanuelTeleport");
+  }
+
+  /**
+   * Inicia a travessia do player. Portal terrestre na origem = afundar
+   * `GROUND_FALL_DEPTH` (gravidade) antes de cruzar; os demais cruzam na hora.
+   */
+  function startPlayerWarp(warp: PortalWarp, now: number) {
+    if (warp.source.kind === "ground") {
+      const targetY = warp.source.y + LucauaPortalConstants.GROUND_FALL_DEPTH;
+      playerTravelRef.current = { dest: warp.dest, targetY, startTime: now };
+      // `groundY` no fundo do buraco: a gravidade desce até lá e "aterra".
       setPlayer((prev) => ({
         ...prev,
-        x: playerWarp.dest.x,
-        y: playerWarp.dest.y,
-        groundY: inSky ? ground : playerWarp.dest.y,
+        groundY: targetY,
         velY: 0,
-        state: inSky ? "falling" : prev.state,
+        state: "falling",
       }));
-      if (playerWarp.source.kind === "air" || playerWarp.dest.kind === "air") {
-        landingEngagedRef.current = true;
-        landingUntilRef.current = now + LucauaPortalConstants.LANDING_MS;
+      return;
+    }
+    teleportPlayer(warp.dest, now);
+  }
+
+  /** Conclui a travessia do player quando o corpo chega ao fundo do buraco. */
+  function updatePlayerTravel(now: number) {
+    const travel = playerTravelRef.current;
+    if (!travel) return;
+    const reached = player.y >= travel.targetY - 1;
+    const timedOut =
+      now - travel.startTime >= LucauaPortalConstants.FALL_MAX_MS;
+    if (!reached && !timedOut) return;
+    playerTravelRef.current = null;
+    teleportPlayer(travel.dest, now);
+  }
+
+  /**
+   * Inicia a travessia de uma entidade não-player. Portal terrestre na origem =
+   * queda simulada (o AI fica congelado e esta queda escreve x/y); os demais
+   * cruzam na hora e, se o destino estiver suspenso, caem até o chão.
+   */
+  function startEntityWarp(
+    group: PortalTravelGroup,
+    id: string,
+    key: string,
+    fromX: number,
+    fromY: number,
+    warp: PortalWarp,
+  ) {
+    if (warp.source.kind === "ground") {
+      travelRef.current.push({
+        key,
+        group,
+        id,
+        dest: warp.dest,
+        phase: "descend",
+        x: fromX,
+        y: fromY,
+        vy: 0,
+        targetY: warp.source.y + LucauaPortalConstants.GROUND_FALL_DEPTH,
+      });
+      return;
+    }
+    writeEntity(group, id, warp.dest.x, warp.dest.y);
+    playSoundRef.current("emanuelTeleport");
+    const ground = groundUnder(warp.dest);
+    if (warp.dest.y < ground - 1) {
+      travelRef.current.push({
+        key,
+        group,
+        id,
+        dest: warp.dest,
+        phase: "land",
+        x: warp.dest.x,
+        y: warp.dest.y,
+        vy: 0,
+        targetY: ground,
+      });
+    }
+  }
+
+  /** Avança as quedas em curso; a travessia cruza ao fim do afundamento. */
+  function updateTravel() {
+    const list = travelRef.current;
+    if (list.length === 0) return;
+    const remaining: EntityTravel[] = [];
+    for (const travel of list) {
+      travel.vy += LucauaPortalConstants.FALL_GRAVITY;
+      travel.y = Math.min(travel.y + travel.vy, travel.targetY);
+      if (travel.y < travel.targetY) {
+        writeEntity(travel.group, travel.id, travel.x, travel.y);
+        remaining.push(travel);
+        continue;
       }
-      playSoundRef.current("emanuelTeleport");
+      if (travel.phase === "descend") {
+        writeEntity(travel.group, travel.id, travel.dest.x, travel.dest.y);
+        playSoundRef.current("emanuelTeleport");
+        const ground = groundUnder(travel.dest);
+        if (travel.dest.y < ground - 1) {
+          travel.phase = "land";
+          travel.x = travel.dest.x;
+          travel.y = travel.dest.y;
+          travel.vy = 0;
+          travel.targetY = ground;
+          remaining.push(travel);
+        }
+        continue;
+      }
+      // `land`: já pousou no chão do destino.
+      writeEntity(travel.group, travel.id, travel.x, travel.targetY);
+    }
+    travelRef.current = remaining;
+  }
+
+  function runTeleports(now: number) {
+    if (!playerTravelRef.current) {
+      const playerWarp = pickWarp("player", player.x, player.y);
+      if (playerWarp) startPlayerWarp(playerWarp, now);
     }
 
-    const npcWarp = pickWarp("npc", npc.x, npc.y);
-    if (npcWarp) {
-      const position = warpPosition(npcWarp);
-      npc.updateNpc(position);
-      playSoundRef.current("emanuelTeleport");
+    if (!isTraveling("npc")) {
+      const npcWarp = pickWarp("npc", npc.x, npc.y);
+      if (npcWarp) startEntityWarp("npc", "npc", "npc", npc.x, npc.y, npcWarp);
     }
 
-    const summonWarps = new Map<string, PortalWarp>();
     for (const summon of summonsRef.current) {
-      const warp = pickWarp(`summon:${summon.id}`, summon.x, summon.y);
-      if (warp) summonWarps.set(summon.id, warp);
-    }
-    if (summonWarps.size > 0) {
-      setSummons((prev) =>
-        prev.map((summon) => {
-          const warp = summonWarps.get(summon.id);
-          if (!warp) return summon;
-          return { ...summon, ...warpPosition(warp) };
-        }),
-      );
+      const key = `summon:${summon.id}`;
+      if (isTraveling(key)) continue;
+      const warp = pickWarp(key, summon.x, summon.y);
+      if (warp) {
+        startEntityWarp(
+          "summon",
+          summon.id,
+          key,
+          summon.x,
+          summon.y,
+          warp,
+        );
+      }
     }
 
-    const allyWarps = new Map<string, PortalWarp>();
     for (const ally of alliesRef.current) {
-      const warp = pickWarp(`ally:${ally.id}`, ally.x, ally.y);
-      if (warp) allyWarps.set(ally.id, warp);
-    }
-    if (allyWarps.size > 0) {
-      setAllies((prev) =>
-        prev.map((ally) => {
-          const warp = allyWarps.get(ally.id);
-          if (!warp) return ally;
-          return { ...ally, ...warpPosition(warp) };
-        }),
-      );
+      const key = `ally:${ally.id}`;
+      if (isTraveling(key)) continue;
+      const warp = pickWarp(key, ally.x, ally.y);
+      if (warp) {
+        startEntityWarp("ally", ally.id, key, ally.x, ally.y, warp);
+      }
     }
 
+    // Pet: o tick dele é o único que **não** consulta a regra de time (só
+    // `isPaused`), então uma queda simulada brigaria com o próprio "seguir o
+    // player". Ele atravessa na hora e já sai no chão do destino — nunca preso
+    // na linha de um portal suspenso.
     const currentPet = petRef.current;
     if (currentPet) {
       const petWarp = pickWarp("pet", currentPet.x, currentPet.y);
       if (petWarp) {
-        const position = warpPosition(petWarp);
-        setPet((prev) => (prev ? { ...prev, ...position } : prev));
+        const petY = Math.max(petWarp.dest.y, groundUnder(petWarp.dest));
+        writeEntity("pet", "pet", petWarp.dest.x, petY);
+        playSoundRef.current("emanuelTeleport");
       }
     }
+  }
+
+  /**
+   * Warp de projétil: os loops de projétil (NPC e energia do lucaua) chamam a
+   * cada tick com o centro do projétil. Ele mantém a direção e reaparece no
+   * outro portal; fica desarmado até sair das duas zonas (evita ping-pong).
+   */
+  function warpProjectile(
+    id: string,
+    x: number,
+    y: number,
+  ): { x: number; y: number } | null {
+    const list = portalsRef.current;
+    if (list.length < LucauaPortalConstants.MAX_PORTALS) return null;
+    const a = list[0];
+    const b = list[1];
+    if (!a || !b || a.phase !== "placed" || b.phase !== "placed") return null;
+
+    const key = `projectile:${id}`;
+    const inA = overlapsPortal(x, y, a);
+    const inB = overlapsPortal(x, y, b);
+    if (!inA && !inB) {
+      disarmedRef.current.delete(key);
+      return null;
+    }
+    if (disarmedRef.current.has(key)) return null;
+
+    disarmedRef.current.add(key);
+    const dest = inA ? b : a;
+    return { x: dest.x, y: dest.y };
   }
 
   function updateLanding(now: number) {
@@ -638,13 +845,17 @@ export function useLucauaPortals({
 
     if (flowRef.current === "positioning") moveGhost();
 
-    if (flowRef.current !== "idle" || flying) {
+    if (flowRef.current === "idle" && !flying) runTeleports(now);
+    updatePlayerTravel(now);
+    updateTravel();
+
+    const traveling =
+      playerTravelRef.current !== null || travelRef.current.length > 0;
+    if (flowRef.current !== "idle" || flying || traveling) {
       engageLocks(now);
     } else if (locksEngagedRef.current) {
       releaseLocks();
     }
-
-    if (flowRef.current === "idle" && !flying) runTeleports(now);
 
     updateLanding(now);
   }
@@ -673,6 +884,17 @@ export function useLucauaPortals({
       }
     };
   }, [freezeActionsUntilRef, timeRef]);
+
+  // Publica o warp de projéteis para os loops de projétil (NPC e energia). O
+  // wrapper estável lê o `warpProjectile` atual a cada chamada, que por sua vez
+  // consulta `portalsRef`/`disarmedRef` na hora — nada de closure velho.
+  const warpProjectileRef = useLatestRef(warpProjectile);
+  useEffect(() => {
+    portalWarpRef.current = (id, x, y) => warpProjectileRef.current(id, x, y);
+    return () => {
+      portalWarpRef.current = null;
+    };
+  }, [portalWarpRef, warpProjectileRef]);
 
   // ── API ────────────────────────────────────────────────────────────────────
 

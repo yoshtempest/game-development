@@ -99,7 +99,10 @@ import { clampX } from "@/gameRules/movement/clampX";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { useBlinkAnimation } from "@/hooks/battle/player/characters/natsuki/useBlinkAnimation";
-import type { LucauaTarget } from "@/utils/types/character/lucaua";
+import type {
+  LucauaPortalWarpFn,
+  LucauaTarget,
+} from "@/utils/types/character/lucaua";
 
 type Props = {
   setup: ReturnType<typeof useBattleStageSetup>;
@@ -296,6 +299,10 @@ export function useBattleCombat({
   // Esfera do Riquelme em voo — consumida pelo useProjectile para colisões.
   const playerProjectileRef = useRef<PlayerSpecialProjectile | null>(null);
 
+  // Portais do lucaua: o hook de portais publica o warp de projéteis aqui e os
+  // loops de projétil (NPC e energia) o consultam a cada tick.
+  const portalWarpRef = useRef<LucauaPortalWarpFn | null>(null);
+
   // Vida de projéteis NPC destrutíveis (1/3 do dano que causariam), uma por
   // natureza de dano — usa ref porque o battle (fonte de totalArmor) só existe
   // depois do useNpcAI.
@@ -327,6 +334,7 @@ export function useBattleCombat({
     spawnDamageRef: refs.spawnDamageRef,
     playerCooldownRef: refs.playerCooldown,
     playerHitDamageRef: refs.playerHitDamageRef,
+    portalWarpRef,
     isAlfa,
     onSummonFromRight: (summonType: string) =>
       summonNpcRef.current(summonType, BATTLE_LIMITS.maxX + 600),
@@ -768,6 +776,7 @@ export function useBattleCombat({
     npcClass: npcData.class,
     summons,
     onProjectileHit: (target) => lucauaOnHitRef.current?.(target),
+    portalWarpRef,
   });
   lucauaFireRef.current = lucauaEnergy.fire;
 
@@ -1629,6 +1638,7 @@ export function useBattleCombat({
     disabledRef: cloneDisabledRef,
     battleEndedRef: battle.isEnding,
     playSound,
+    portalWarpRef,
   });
 
   return {

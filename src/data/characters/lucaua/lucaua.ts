@@ -1,4 +1,5 @@
 import {
+  EIGHT_HUNDRED_MS,
   FIVE_HUNDRED_MS,
   FOUR_HUNDRED_MS,
   ONE_HUNDRED_TWENTY_MS,
@@ -80,6 +81,20 @@ export const LucauaPortalConstants = {
   TRIGGER_HALF_Y: 160,
   /** Beat mínimo do sprite de queda depois de atravessar um portal aéreo. */
   LANDING_MS: FOUR_HUNDRED_MS,
+  /**
+   * Quanto abaixo do portal terrestre a entidade afunda antes de atravessar
+   * (px lógicos). O portal deitado "abre um buraco": primeiro a entidade cai
+   * esses 200px, só então sai no outro portal.
+   */
+  GROUND_FALL_DEPTH: 200,
+  /** Aceleração da queda simulada (px/tick²), igual à gravidade do player. */
+  FALL_GRAVITY: 1,
+  /**
+   * Teto de tempo da queda: se a física não chegar ao alvo (ex.: o chão
+   * intercepta o trajeto), a travessia dispara sozinha para não prender a
+   * entidade na zona do portal.
+   */
+  FALL_MAX_MS: EIGHT_HUNDRED_MS,
 } as const;
 
 /** Ordem dos tipos no seletor de portal (o índice inicial é o `default`). */

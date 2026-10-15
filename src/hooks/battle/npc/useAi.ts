@@ -27,6 +27,7 @@ import { getTime, NPC_TIME_ID, type TimeEffect } from "@/gameRules/battle/time";
 
 import { clampX } from "@/gameRules/movement/clampX";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
+import type { LucauaPortalWarpFn } from "@/utils/types/character/lucaua";
 type Props = {
   playerX: number;
   playerY: number;
@@ -80,6 +81,8 @@ type Props = {
   playerCooldownRef?: React.RefObject<boolean>;
   /** Dano real do golpe ativo (básico ou special) aplicado nos projéteis. */
   playerHitDamageRef?: React.RefObject<ProjectileHitDamageFn>;
+  /** Portais do lucaua: faz o projétil do NPC atravessar de um portal ao outro. */
+  portalWarpRef?: React.RefObject<LucauaPortalWarpFn | null>;
   /** Timestamp até onde os projéteis ficam congelados (Killer Queen). */
 };
 
@@ -128,6 +131,7 @@ export function useNpcAI({
   spawnDamageRef,
   playerCooldownRef,
   playerHitDamageRef,
+  portalWarpRef,
 }: Props) {
   const [npc, setNpc] = useState<NPCBattleState>({
     x: BATTLE_SPAWN.npc.x,
@@ -265,6 +269,7 @@ export function useNpcAI({
     spawnDamageRef,
     playerCooldownRef,
     playerHitDamageRef,
+    portalWarpRef,
   );
 
   const resetNpc = (stateOverride?: NPCBattleState["state"]) => {

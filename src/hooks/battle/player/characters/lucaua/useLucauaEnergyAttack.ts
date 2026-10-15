@@ -15,6 +15,7 @@ import { ProjectileConstants } from "@/data/projectile";
 import type {
   LucauaAttackVariant,
   LucauaEnergyProjectile,
+  LucauaPortalWarpFn,
   LucauaTarget,
 } from "@/utils/types/character/lucaua";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
@@ -27,6 +28,8 @@ type Props = {
   summons: SummonedNpc[];
   /** Colisão do projétil com um alvo: resolve o dano básico (main ou summon). */
   onProjectileHit: (target: LucauaTarget) => void;
+  /** Portais do lucaua: faz o projétil de energia atravessar de um ao outro. */
+  portalWarpRef?: React.RefObject<LucauaPortalWarpFn | null>;
 };
 
 /**
@@ -44,6 +47,7 @@ export function useLucauaEnergyAttack({
   npcClass,
   summons,
   onProjectileHit,
+  portalWarpRef,
 }: Props) {
   const [projectiles, setProjectiles] = useState<LucauaEnergyProjectile[]>([]);
   const [attackVariant, setAttackVariant] = useState<LucauaAttackVariant>(
@@ -137,8 +141,20 @@ export function useLucauaEnergyAttack({
           const time = getTime(timeRef.current, "projectile", p.id);
           if (time.speed === 0) return p;
 
-          const x =
+          let x =
             p.x + p.dirX * LucauaEnergyConstants.SPEED_PER_TICK * time.speed;
+          let y = p.y;
+
+          // Portais do lucaua: cruza a zona e reaparece no outro portal,
+          // mantendo a direção; a colisão passa a valer já na saída.
+          const warp = portalWarpRef?.current;
+          if (warp) {
+            const dest = warp(p.id, x, y);
+            if (dest) {
+              x = dest.x;
+              y = dest.y;
+            }
+          }
 
           if (
             x < -LucauaEnergyConstants.OFFSCREEN_MARGIN ||
@@ -152,14 +168,14 @@ export function useLucauaEnergyAttack({
           for (const target of collisionTargets) {
             if (
               Math.abs(x - target.x) <= target.radiusX &&
-              Math.abs(p.y - target.y) <= target.radiusY
+              Math.abs(y - target.y) <= target.radiusY
             ) {
               hits.push({ id: target.id, x: target.x, y: target.y });
               return null; // o projétil some no primeiro alvo atingido
             }
           }
 
-          return { ...p, x };
+          return { ...p, x, y };
         })
         .filter((p): p is LucauaEnergyProjectile => p !== null);
 
@@ -179,6 +195,7 @@ export function useLucauaEnergyAttack({
     summonsRef,
     timeRef,
     onProjectileHitRef,
+    portalWarpRef,
   ]);
 
   return { projectiles, attackVariant, fire };
