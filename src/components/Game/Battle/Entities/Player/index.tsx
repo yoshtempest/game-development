@@ -33,6 +33,8 @@ type Props = {
   lucauaShieldSides?: LucauaShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onLucauaShieldEnd?: (side: LucauaShieldSide, nonce: number) => void;
+  /** Player saindo de um portal do lucaua (voo/decolagem). */
+  lucauaPortalLanding?: boolean;
 };
 
 export function Player({
@@ -52,6 +54,7 @@ export function Player({
   lucauaAttackVariant,
   lucauaShieldSides,
   onLucauaShieldEnd,
+  lucauaPortalLanding = false,
 }: Props) {
   const blinkSilhouette =
     player.character === "riquelme" && blinkVisual
@@ -83,6 +86,7 @@ export function Player({
       lucauaAttackVariant={lucauaAttackVariant}
       lucauaShieldSides={lucauaShieldSides}
       onLucauaShieldEnd={onLucauaShieldEnd}
+      lucauaPortalLanding={lucauaPortalLanding}
       levelUpParticles
     />
   );

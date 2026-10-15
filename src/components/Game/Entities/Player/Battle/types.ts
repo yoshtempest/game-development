@@ -31,4 +31,6 @@ export interface PlayerBattleProps {
   lucauaShieldSides?: LucauaShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onLucauaShieldEnd?: (side: LucauaShieldSide, nonce: number) => void;
+  /** Player saindo de um portal do lucaua (voo/decolagem). */
+  lucauaPortalLanding?: boolean;
 }

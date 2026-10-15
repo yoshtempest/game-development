@@ -1,8 +1,11 @@
 import {
   FIVE_HUNDRED_MS,
+  FOUR_HUNDRED_MS,
   ONE_HUNDRED_TWENTY_MS,
+  SIXTEEN_MS,
   TWO_HUNDRED_TWENTY_MS,
 } from "@/data/ms";
+import type { LucauaPortalKind } from "@/utils/types/character/lucaua";
 
 /**
  * Constantes do ataque básico do lucaua: projétil de energia (`energyAttack.svg`)
@@ -39,3 +42,49 @@ export const LucauaShieldConstants = {
   /** Duração do "blink" de surgimento (silhueta branca → imagem normal), em ms. */
   BLINK_MS: ONE_HUNDRED_TWENTY_MS,
 } as const;
+
+/**
+ * Habilidade "Energia Dimensional" (portais do lucaua).
+ *
+ * O custo é uma fração da energia MÁXIMA (não do valor atual), então o teto de
+ * portais é o que limita o uso — e o toque no botão com o par completo vira o
+ * undo do último (devolvendo exatamente o que foi pago).
+ */
+export const LucauaPortalConstants = {
+  /** Fração da energia máxima consumida por portal (25%). */
+  COST_RATIO: 0.25,
+  /** Máximo de portais no mapa; acima disso o toque desfaz o último. */
+  MAX_PORTALS: 2,
+  /** Altura do portal aéreo acima do chão (o player precisa pular para entrar). */
+  AIR_HEIGHT: 400,
+  /**
+   * Passo do fantasma por tick do joystick (px lógicos). O tick é de 16ms, então
+   * 5px ≈ 312px/s — o mesmo ritmo do passo de caminhada do player
+   * (`BATTLE_STEP` 10px a cada 30ms), o que dá precisão para mirar o portal.
+   */
+  MOVE_PX: 5,
+  /** Intervalo do tick de posicionamento/voo/teleporte. */
+  TICK_MS: SIXTEEN_MS,
+  /** Duração do voo da mão até o destino (com a câmera seguindo o portal). */
+  FLIGHT_MS: FOUR_HUNDRED_MS,
+  /** Largura renderizada do portal (a altura segue o aspect da arte). */
+  SPRITE_WIDTH: 130,
+  /** Meia-largura da zona de travessia. */
+  TRIGGER_HALF_X: 55,
+  /**
+   * Meia-altura da zona de travessia, medida a partir dos **pés** da entidade.
+   * Alto o bastante para o ápice do pulo duplo (~256px) alcançar o portal
+   * aéreo (400px acima do chão) e baixo o suficiente para o pulo simples
+   * (~136px) não alcançar.
+   */
+  TRIGGER_HALF_Y: 160,
+  /** Beat mínimo do sprite de queda depois de atravessar um portal aéreo. */
+  LANDING_MS: FOUR_HUNDRED_MS,
+} as const;
+
+/** Ordem dos tipos no seletor de portal (o índice inicial é o `default`). */
+export const LUCAUA_PORTAL_KINDS: readonly LucauaPortalKind[] = [
+  "ground",
+  "default",
+  "air",
+];

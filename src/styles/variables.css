@@ -149,6 +149,13 @@
   --ability-ematron-pale: #cffafe;
   --ability-freeze: #7dd3fc;
   --ability-freeze-80: rgba(125, 211, 252, 0.8);
+  --ability-lucaua: #34d399;
+  --ability-lucaua-15: rgba(52, 211, 153, 0.15);
+  --ability-lucaua-25: rgba(52, 211, 153, 0.25);
+  --ability-lucaua-35: rgba(52, 211, 153, 0.35);
+  --ability-lucaua-50: rgba(52, 211, 153, 0.5);
+  --ability-lucaua-80: rgba(52, 211, 153, 0.8);
+  --ability-lucaua-pale: #d1fae5;
   --ability-marshadow: #8b7cf6;
   --ability-marshadow-50: rgba(139, 124, 246, 0.5);
   --ability-marshadow-deep: #6d5bd0;

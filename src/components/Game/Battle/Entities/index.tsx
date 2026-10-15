@@ -27,6 +27,7 @@ import { AtomicEffects } from "@/components/Game/Battle/Effects/Marshadow/Atomic
 import { DomainExpansionEffects } from "@/components/Game/Battle/Effects/DomainExpansion";
 import { MugetsuDisintegration } from "@/components/Game/Battle/Effects/Marshadow/MugetsuDisintegration";
 import { RiquelmeSphere } from "@/components/Game/Battle/Entities/RiquelmeSphere";
+import { LucauaPortals } from "@/components/Game/Battle/Entities/LucauaPortals";
 import type { BattleEntitiesBattle, MainNpcState } from "./types";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 import type { PetState } from "@/hooks/battle/player/pets/usePet";
@@ -49,6 +50,8 @@ import type {
 import type {
   LucauaAttackVariant,
   LucauaEnergyProjectile,
+  LucauaPortal,
+  LucauaPortalGhost,
   LucauaShieldSide,
   LucauaShieldSides,
 } from "@/utils/types/character/lucaua";
@@ -120,6 +123,12 @@ type Props = {
   lucauaShieldSides?: LucauaShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onLucauaShieldEnd?: (side: LucauaShieldSide, nonce: number) => void;
+  /** Portais fincados no mapa (Energia Dimensional do lucaua). */
+  lucauaPortals?: LucauaPortal[];
+  /** Fantasma do posicionamento do portal (antes de soltar o botão). */
+  lucauaPortalGhost?: LucauaPortalGhost | null;
+  /** Player no "voo do portal" (override de sprite pós-teletransporte). */
+  lucauaPortalLanding?: boolean;
   /** Furo no sprite do NPC quando a purple o mata (junto com `isDying`). */
   purpleHole?: boolean;
 };
@@ -170,6 +179,9 @@ export function BattleEntities({
   lucauaAttackVariant,
   lucauaShieldSides,
   onLucauaShieldEnd,
+  lucauaPortals = [],
+  lucauaPortalGhost = null,
+  lucauaPortalLanding = false,
   sphere = null,
   purpleHole = false,
 }: Props & {
@@ -259,6 +271,13 @@ export function BattleEntities({
 
       <Pet pet={pet} TILE_SIZE={TILE_SIZE} />
 
+      <LucauaPortals
+        portals={lucauaPortals}
+        ghost={lucauaPortalGhost}
+        battleScaleX={battleScaleX}
+        battleScaleY={battleScaleY}
+      />
+
       <Player
         player={player}
         PLAYER_SIZE={PLAYER_SIZE}
@@ -276,6 +295,7 @@ export function BattleEntities({
         lucauaAttackVariant={lucauaAttackVariant}
         lucauaShieldSides={lucauaShieldSides}
         onLucauaShieldEnd={onLucauaShieldEnd}
+        lucauaPortalLanding={lucauaPortalLanding}
       />
 
       <EnergyProjectile

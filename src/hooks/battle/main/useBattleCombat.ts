@@ -40,6 +40,7 @@ import { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/us
 import { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
 import { useRiquelmeSpheres } from "@/hooks/battle/player/characters/riquelme/useRiquelmeSpheres";
 import { useRiquelmeDomainExpansion } from "@/hooks/battle/player/characters/riquelme/useRiquelmeDomainExpansion";
+import { useLucauaPortals } from "@/hooks/battle/player/characters/lucaua/useLucauaPortals";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import {
   useAtomic,
@@ -1608,8 +1609,31 @@ export function useBattleCombat({
     playerProjectileRef,
   });
 
+  // Portais do lucaua (Energia Dimensional) --------------------------------
+  const lucauaPortals = useLucauaPortals({
+    player,
+    setPlayer,
+    npc,
+    summons,
+    setSummons,
+    allies,
+    setAllies,
+    pet: battle.pet,
+    setPet: battle.setPet,
+    obstacles,
+    PLAYER_SIZE,
+    battleManaRef,
+    timeRef: refs.timeRef,
+    freezeActionsUntilRef,
+    isPausedRef,
+    disabledRef: cloneDisabledRef,
+    battleEndedRef: battle.isEnding,
+    playSound,
+  });
+
   return {
     ...riquelmeSpheres,
+    ...lucauaPortals,
     battle,
     npc,
     charge,

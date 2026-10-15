@@ -72,5 +72,6 @@ export function hasManaBar(character: CharacterId): boolean {
 export function getEnergyName(character: CharacterId): string {
   if (character === "riquelme") return "Energia Amaldiçoada";
   if (character === "emanuel") return "Ki";
+  if (character === "lucaua") return "Energia Dimensional";
   return "Mana";
 }

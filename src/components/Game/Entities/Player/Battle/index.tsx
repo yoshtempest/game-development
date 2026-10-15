@@ -42,6 +42,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     lucauaAttackVariant,
     lucauaShieldSides = NO_LUCAUA_SHIELD,
     onLucauaShieldEnd,
+    lucauaPortalLanding = false,
   } = props;
 
   const isChargingKi = character === "emanuel" && state === "chargingKi";
@@ -64,6 +65,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     preAtomic,
     outroExpression,
     lucauaAttackVariant,
+    lucauaPortalLanding,
   });
 
   const isMostHonored = state === "mostHonored";

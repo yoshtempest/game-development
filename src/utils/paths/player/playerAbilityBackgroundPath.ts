@@ -3,12 +3,13 @@ import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
 
 /**
  * Personagens cujas habilidades vivem **direto** em `inFight/habilities/`
- * (sem a pasta de forma): o artur (Killer Queen em `habilities/bitesTheDust/`)
- * e o riquelme (esferas em `habilities/blue|red/` e a sequência em
- * `habilities/Setup/`). O marcelo, por outro lado, aninha tudo sob a forma
- * (`inFight/default/habilities/` e `inFight/vastolordForm/habilities/`).
+ * (sem a pasta de forma): o artur (Killer Queen em `habilities/bitesTheDust/`),
+ * o riquelme (esferas em `habilities/blue|red/` e a sequência em
+ * `habilities/Setup/`) e o lucaua (portais em `habilities/portals/`). O marcelo,
+ * por outro lado, aninha tudo sob a forma (`inFight/default/habilities/` e
+ * `inFight/vastolordForm/habilities/`).
  */
-const FLAT_ABILITY_FOLDER = new Set(["artur", "riquelme"]);
+const FLAT_ABILITY_FOLDER = new Set(["artur", "riquelme", "lucaua"]);
 
 /**
  * Arte (`file`) de uma habilidade de personagem:

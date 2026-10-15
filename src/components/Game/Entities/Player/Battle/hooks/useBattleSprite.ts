@@ -17,6 +17,8 @@ interface UseBattleSpriteParams {
   preAtomic: boolean;
   outroExpression?: "victory" | "defeat" | null;
   lucauaAttackVariant?: LucauaAttackVariant;
+  /** Player saindo de um portal do lucaua (voo/decolagem). */
+  lucauaPortalLanding?: boolean;
 }
 
 export function useBattleSprite({
@@ -29,6 +31,7 @@ export function useBattleSprite({
   preAtomic,
   outroExpression = null,
   lucauaAttackVariant,
+  lucauaPortalLanding = false,
 }: UseBattleSpriteParams) {
   const resolvedState = resolveSpriteState(state);
 
@@ -42,6 +45,7 @@ export function useBattleSprite({
     preAtomic,
     outroExpression,
     lucauaAttackVariant,
+    lucauaPortalLanding,
   });
 
   // Sequência idle do personagem (e forma):1 frame = parado, >1 = animado.

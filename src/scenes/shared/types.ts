@@ -35,6 +35,9 @@ import type { NavigateFunction } from "react-router";
 import type {
   LucauaAttackVariant,
   LucauaEnergyProjectile,
+  LucauaPortal,
+  LucauaPortalFocus,
+  LucauaPortalGhost,
   LucauaShieldSide,
   LucauaShieldSides,
 } from "@/utils/types/character/lucaua";
@@ -210,4 +213,26 @@ export type BattleSceneApi = {
   lucauaShieldSides: LucauaShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onLucauaShieldEnd: (side: LucauaShieldSide, nonce: number) => void;
+  /** Portais fincados no mapa (Energia Dimensional do lucaua). */
+  lucauaPortals: LucauaPortal[];
+  /** Fantasma do posicionamento (antes de soltar o botão) ou `null`. */
+  lucauaPortalGhost: LucauaPortalGhost | null;
+  /** Índice do tipo destacado no seletor, ou `null` se o seletor está fechado. */
+  lucauaPortalSelection: number | null;
+  /** Player no "voo do portal" (override de sprite pós-teletransporte). */
+  lucauaPortalLanding: boolean;
+  /** Foco de câmera durante o voo do portal. */
+  lucauaPortalFocus: LucauaPortalFocus;
+  /** Segurar o botão: abre o seletor (ou desfaz o último portal se cheio). */
+  lucauaPortalPress: () => void;
+  /** Soltar o botão: finca o portal posicionado. */
+  lucauaPortalRelease: () => void;
+  /** Se a habilidade pode ser usada agora (portais cheios ou guard + energia). */
+  lucauaPortalUsable: boolean;
+  /** Quantidade de portais fincados. */
+  lucauaPortalCount: number;
+  /** Custo em energia de cada portal (25% da energia máxima). */
+  lucauaPortalCost: number;
+  /** Teto de portais simultâneos. */
+  lucauaPortalMaxPortals: number;
 };

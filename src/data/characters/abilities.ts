@@ -19,6 +19,7 @@ import {
 } from "@/data/characters/artur/srGuaxinim";
 import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa/larissa";
 import { LUCAS_WEAPONS } from "@/data/characters/lucas/lucasWeapons";
+import { LucauaPortalConstants } from "@/data/characters/lucaua/lucaua";
 import { LUCAS_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import {
   BLINK_ENERGY_COST,
@@ -239,7 +240,15 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
   samuel: [domainBurstAbility("samuel")],
   artur: [killerQueenAbility(), domainBurstAbility("artur")],
   mayra: [domainBurstAbility("mayra")],
-  lucaua: [domainBurstAbility("lucaua")],
+  lucaua: [
+    {
+      kind: "active",
+      id: "dimensionalPortal",
+      name: "Energia Dimensional",
+      description: `Segure para escolher o tipo (chão/frontal/aéreo) e posicione o portal com o joystick; soltar finca. Cada portal custa ${LucauaPortalConstants.COST_RATIO * 100}% da energia máxima e até ${LucauaPortalConstants.MAX_PORTALS} ficam no mapa — quem entra num sai no outro. Com os dois em campo, tocar o botão desfaz o último e devolve a energia.`,
+    },
+    domainBurstAbility("lucaua"),
+  ],
   larissa: [stackExplosionAbility(), domainBurstAbility("larissa")],
   camilly: [domainBurstAbility("camilly")],
   levi: [domainBurstAbility("levi")],

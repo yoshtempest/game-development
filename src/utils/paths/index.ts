@@ -31,6 +31,7 @@ export { playerPathMarshadowHabilities } from "./characters/marcelo/playerPathMa
 export { playerPathArturHabilities } from "./characters/artur/playerPathArturHabilities";
 export { playerPathRiquelmeHabilities } from "./characters/riquelme/playerPathRiquelmeHabilities";
 export { playerAbilityBackgroundPath, playerAbilityPath } from "./player/playerAbilityBackgroundPath";
+export { lucauaPortalPath } from "./player/lucauaPortalPath";
 export { npcPath } from "./npc/npcPath";
 export { npcPathAlly } from "./npc/npcPathAlly";
 export { npcPathPets } from "./npc/npcPathPets";

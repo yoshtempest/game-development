@@ -12,6 +12,8 @@ import { VastolordLaserButton } from "@/components/Game/Battle/Buttons/Marshadow
 import { AtomicButton } from "@/components/Game/Battle/Buttons/Marshadow/Atomic";
 import { KillerQueenButton } from "@/components/Game/Battle/Buttons/Artur/KillerQueen";
 import { StackExplosionButton } from "@/components/Game/Battle/Buttons/Larissa/StackExplosion";
+import { LucauaPortalsButton } from "@/components/Game/Battle/Buttons/Lucaua/Portals";
+import { PortalSelect } from "@/components/Game/Battle/Modal/PortalSelect";
 import { DomainExpansionButton } from "@/components/Game/Battle/Buttons/DomainExpansion";
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
 import { GameMap } from "@/components/Game/Map/Game";
@@ -207,6 +209,17 @@ export function BattleScene(props: Props) {
     lucauaAttackVariant,
     lucauaShieldSides,
     onLucauaShieldEnd,
+    lucauaPortals,
+    lucauaPortalGhost,
+    lucauaPortalSelection,
+    lucauaPortalLanding,
+    lucauaPortalFocus,
+    lucauaPortalPress,
+    lucauaPortalRelease,
+    lucauaPortalUsable,
+    lucauaPortalCount,
+    lucauaPortalCost,
+    lucauaPortalMaxPortals,
     sphere,
     sphereFocus,
     castActive,
@@ -272,9 +285,11 @@ export function BattleScene(props: Props) {
   // câmera de mais e esconderia o jogador, que está em BATTLE_SPAWN.player.y.
   const focus = mugetsuSweep
     ? { x: mugetsuSweep.x, y: player.y }
-    : sphereFocus
-      ? { x: sphereFocus.x, y: sphereFocus.y }
-      : { x: focusEntity.x, y: focusEntity.y };
+    : lucauaPortalFocus
+      ? { x: lucauaPortalFocus.x, y: lucauaPortalFocus.y }
+      : sphereFocus
+        ? { x: sphereFocus.x, y: sphereFocus.y }
+        : { x: focusEntity.x, y: focusEntity.y };
 
   const targetBgX = Math.max(
     bgXMin,
@@ -297,7 +312,8 @@ export function BattleScene(props: Props) {
   const worldOffsetY =
     (containerHeight * 0.5 * (bgPosY - initialBgPosRef.current.y)) / 100;
 
-  const baseZoom = sphereFocus ? 1 : (cameraFocus?.zoom ?? 1);
+  const baseZoom =
+    lucauaPortalFocus || sphereFocus ? 1 : (cameraFocus?.zoom ?? 1);
   // Expansão de Domínio: leve zoomOut de 1.4x enquanto a habilidade está ativa
   // — o mugetsuEffect é gigante em altura e o zoom revela mais do mapa.
   const domainZoom = domainExpansionActive ? 1 / 1.4 : 1;
@@ -605,6 +621,9 @@ export function BattleScene(props: Props) {
             lucauaAttackVariant={lucauaAttackVariant}
             lucauaShieldSides={lucauaShieldSides}
             onLucauaShieldEnd={onLucauaShieldEnd}
+            lucauaPortals={lucauaPortals}
+            lucauaPortalGhost={lucauaPortalGhost}
+            lucauaPortalLanding={lucauaPortalLanding}
             sphere={sphere}
             purpleHole={purpleHole}
           />
@@ -711,6 +730,10 @@ export function BattleScene(props: Props) {
           bestTime={bestTime}
           showRetry={showRetry}
         />
+      )}
+
+      {lucauaPortalSelection !== null && (
+        <PortalSelect index={lucauaPortalSelection} />
       )}
 
       <ComboAction />
@@ -850,6 +873,17 @@ export function BattleScene(props: Props) {
             remaining={activeAbilityRemaining}
             disabled={controlsDisabled}
             onClick={activeAbilityPress}
+          />
+        )}
+
+        {player.character === "lucaua" && (
+          <LucauaPortalsButton
+            count={lucauaPortalCount}
+            maxPortals={lucauaPortalMaxPortals}
+            cost={lucauaPortalCost}
+            disabled={controlsDisabled || !lucauaPortalUsable}
+            onPress={lucauaPortalPress}
+            onRelease={lucauaPortalRelease}
           />
         )}
 

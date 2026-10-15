@@ -18,6 +18,8 @@ interface ResolvePlayerSpriteParams {
   preAtomic: boolean;
   outroExpression?: "victory" | "defeat" | null;
   lucauaAttackVariant?: LucauaAttackVariant;
+  /** Player saindo de um portal do lucaua (voo/decolagem). */
+  lucauaPortalLanding?: boolean;
 }
 
 export function resolvePlayerSprite({
@@ -30,6 +32,7 @@ export function resolvePlayerSprite({
   preAtomic,
   outroExpression = null,
   lucauaAttackVariant,
+  lucauaPortalLanding = false,
 }: ResolvePlayerSpriteParams): string {
   const resolvedState = resolveSpriteState(state);
 
@@ -38,6 +41,12 @@ export function resolvePlayerSprite({
   // porque, com o resultado definido, nada mais está em andamento.
   if (outroExpression) {
     return playerPath(`/${character}/expressions/${outroExpression}.svg`);
+  }
+
+  // Voo do portal do lucaua: sprite de decolagem enquanto o player atravessa
+  // (ou cai de) um portal aéreo.
+  if (lucauaPortalLanding && character === "lucaua") {
+    return playerPath("/lucaua/inFight/landing.svg");
   }
 
   if (preAtomic && character === "marcelo" && state === "idle") {
