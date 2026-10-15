@@ -7,6 +7,8 @@ import type { LucauaPortalKind } from "@/utils/types/character/lucaua";
 type Props = {
   /** Índice do tipo destacado em `LUCAUA_PORTAL_KINDS`. */
   index: number;
+  /** Escolhe um tipo pelo card (atalho do ←/→ + confirmar). */
+  onPick: (index: number) => void;
 };
 
 const PORTAL_LABEL: Record<LucauaPortalKind, string> = {
@@ -16,11 +18,12 @@ const PORTAL_LABEL: Record<LucauaPortalKind, string> = {
 };
 
 /**
- * Seletor do tipo de portal do lucaua, aberto enquanto o botão está segurado
- * (o mundo fica congelado). Esquerda/direita destaca um tipo e o input de
- * ataque confirma, indo para o posicionamento com o joystick.
+ * Seletor do tipo de portal do lucaua (o mundo fica congelado enquanto aberto).
+ * Um clique no card escolhe o tipo, ou o jogador navega com esquerda/direita e
+ * confirma com o ataque; nos dois casos vai para o posicionamento com o
+ * joystick.
  */
-export function PortalSelect({ index }: Props) {
+export function PortalSelect({ index, onPick }: Props) {
   return (
     <div className="overlay">
       <div className={`modal ${styles.modal}`}>
@@ -33,16 +36,18 @@ export function PortalSelect({ index }: Props) {
         <div className={styles.content}>
           <h2 className={styles.title}>Energia Dimensional</h2>
           <p className={styles.hint}>
-            Escolha o portal e confirme para posicioná-lo
+            Escolha o portal, posicione com o joystick e confirme para fincar
           </p>
 
           <div className={styles.options}>
             {LUCAUA_PORTAL_KINDS.map((kind, i) => (
-              <div
+              <button
                 key={kind}
+                type="button"
                 className={`${styles.option} ${
                   i === index ? styles.selected : ""
                 }`}
+                onClick={() => onPick(i)}
               >
                 <img
                   className={styles.sprite}
@@ -50,7 +55,7 @@ export function PortalSelect({ index }: Props) {
                   alt=""
                 />
                 <span className={styles.label}>{PORTAL_LABEL[kind]}</span>
-              </div>
+              </button>
             ))}
           </div>
         </div>

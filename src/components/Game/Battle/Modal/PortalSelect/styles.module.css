@@ -52,7 +52,9 @@
   gap: var(--size-24);
 }
 
-.option {
+/* Os cards são `<button>` e o global `.modal button` (0,1,1) venceria as
+   classes soltas (0,1,0); aninhar em `.options` sobe a especificidade. */
+.options .option {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -60,12 +62,20 @@
   padding: var(--size-16);
   border: var(--size-2) solid transparent;
   border-radius: var(--size-12);
+  background: none;
+  color: var(--ability-lucaua-pale);
+  font: inherit;
+  cursor: pointer;
   transition:
     border-color 0.15s ease,
     transform 0.15s ease;
 }
 
-.selected {
+.options .option:hover {
+  border-color: var(--ability-lucaua-50);
+}
+
+.options .selected {
   border-color: var(--ability-lucaua);
   background: var(--ability-lucaua-15);
   transform: translateY(calc(var(--size-4) * -1));

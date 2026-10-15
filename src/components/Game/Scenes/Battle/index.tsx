@@ -214,8 +214,8 @@ export function BattleScene(props: Props) {
     lucauaPortalSelection,
     lucauaPortalLanding,
     lucauaPortalFocus,
-    lucauaPortalPress,
-    lucauaPortalRelease,
+    lucauaPortalClick,
+    lucauaPortalPick,
     lucauaPortalUsable,
     lucauaPortalCount,
     lucauaPortalCost,
@@ -733,7 +733,7 @@ export function BattleScene(props: Props) {
       )}
 
       {lucauaPortalSelection !== null && (
-        <PortalSelect index={lucauaPortalSelection} />
+        <PortalSelect index={lucauaPortalSelection} onPick={lucauaPortalPick} />
       )}
 
       <ComboAction />
@@ -882,8 +882,7 @@ export function BattleScene(props: Props) {
             maxPortals={lucauaPortalMaxPortals}
             cost={lucauaPortalCost}
             disabled={controlsDisabled || !lucauaPortalUsable}
-            onPress={lucauaPortalPress}
-            onRelease={lucauaPortalRelease}
+            onClick={lucauaPortalClick}
           />
         )}
 

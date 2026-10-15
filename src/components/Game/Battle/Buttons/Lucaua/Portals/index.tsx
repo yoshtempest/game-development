@@ -9,52 +9,37 @@ type Props = {
   /** Energia consumida por portal (25% da máxima). */
   cost: number;
   disabled?: boolean;
-  onPress: () => void;
-  onRelease: () => void;
+  onClick: () => void;
 };
 
 /**
- * Botão de hold dos portais do lucaua ("Energia Dimensional"): segurar abre o
- * seletor de tipo, o joystick posiciona o fantasma e soltar finca o portal.
- * Com o par completo o toque vira o undo do último (devolve a energia) — por
- * isso o rótulo troca. Usa pointer capture para garantir o release mesmo
- * soltando fora do botão.
+ * Botão dos portais do lucaua ("Energia Dimensional"): um clique abre o seletor
+ * de tipo; depois o jogador escolhe no modal, posiciona o fantasma com o
+ * joystick e confirma com o ataque. Com o par completo o clique vira o undo do
+ * último (devolve a energia) — por isso o rótulo troca.
  */
 export function LucauaPortalsButton({
   count,
   maxPortals,
   cost,
   disabled = false,
-  onPress,
-  onRelease,
+  onClick,
 }: Props) {
   const full = count >= maxPortals;
 
   return (
     <button
+      type="button"
       className={`abilityButton ${styles.button} ${full ? styles.full : ""} ${
         disabled ? "abilityDisabled" : ""
       }`}
       disabled={disabled}
       title={
         full
-          ? "Portais: toque para desfazer o último e recuperar a energia"
-          : `Portais: segure para escolher o tipo e posicione com o joystick; solte para fincar (custa ${cost} de energia)`
+          ? "Portais: clique para desfazer o último e recuperar a energia"
+          : `Portais: clique para escolher o tipo, posicione com o joystick e confirme para fincar (custa ${cost} de energia)`
       }
-      style={{ touchAction: "none" }}
-      onPointerDown={(e) => {
-        if (disabled) return;
-        e.preventDefault();
-        e.currentTarget.setPointerCapture(e.pointerId);
-        onPress();
-      }}
-      onPointerUp={(e) => {
-        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-          e.currentTarget.releasePointerCapture(e.pointerId);
-        }
-        onRelease();
-      }}
-      onPointerCancel={() => onRelease()}
+      onClick={onClick}
     >
       <span className={styles.count}>
         {count}/{maxPortals}

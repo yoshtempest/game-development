@@ -72,11 +72,12 @@ type Props = {
 /**
  * "Energia Dimensional" — portais do lucaua.
  *
- * Fluxo do botão (hold): segurar abre o seletor de tipo (mundo congelado);
- * esquerda/direita destaca um tipo e o input de ataque confirma; o fantasma é
- * então posicionado pelo joystick (ainda congelado) e soltar o botão finca o
- * portal. Com dois portais no mapa, o toque no botão desfaz o último e devolve
- * a energia paga.
+ * Fluxo do botão (clique): um toque abre o seletor de tipo (mundo congelado);
+ * esquerda/direita (ou o próprio cartão do modal) destaca um tipo e o input de
+ * ataque confirma; o fantasma é então posicionado pelo joystick (ainda
+ * congelado) e o ataque de novo finca o portal. Com dois portais no mapa, o
+ * toque no botão desfaz o último e devolve a energia paga. O cancelar encerra
+ * o fluxo sem gastar energia.
  *
  * Congelamento em duas frentes: o mundo para pelo efeito de time (`freeze`),
  * renovado a cada tick; o player é travado pelo `freezeActionsUntilRef`, porque
@@ -431,7 +432,7 @@ export function useLucauaPortals({
     dirRef.current[direction] = pressed;
   }
 
-  function startFlowPress() {
+  function clickPortal() {
     if (flowRef.current !== "idle") return;
     const list = portalsRef.current;
     if (list.length >= LucauaPortalConstants.MAX_PORTALS) {
@@ -491,14 +492,14 @@ export function useLucauaPortals({
     layerRemoveRef.current = pushControlsRef.current(layer);
   }
 
-  function releasePress() {
-    if (flowRef.current === "positioning") {
-      placePortal();
-      return;
-    }
-    if (flowRef.current === "selecting") {
-      endFlow();
-    }
+  /**
+   * Escolha pelo card do modal: fixa o tipo e já entra no posicionamento. O
+   * jogador segue com o joystick e confirma com o ataque.
+   */
+  function pickPortal(index: number) {
+    if (flowRef.current !== "selecting") return;
+    selectRef.current = index;
+    confirmSelection();
   }
 
   // ── Teleporte ──────────────────────────────────────────────────────────────
@@ -681,12 +682,15 @@ export function useLucauaPortals({
   const full = portals.length >= LucauaPortalConstants.MAX_PORTALS;
   const usable = full || (guardUsable && hasEnergy);
 
-  const pressRef = useLatestRef(startFlowPress);
-  const releaseRef = useLatestRef(releasePress);
+  const clickRef = useLatestRef(clickPortal);
+  const pickRef = useLatestRef(pickPortal);
   const usableRef = useLatestRef(usable);
 
-  const press = useCallback(() => pressRef.current(), [pressRef]);
-  const release = useCallback(() => releaseRef.current(), [releaseRef]);
+  const click = useCallback(() => clickRef.current(), [clickRef]);
+  const pick = useCallback(
+    (index: number) => pickRef.current(index),
+    [pickRef],
+  );
 
   const confirmInputRef = useLatestRef(confirmInput);
   const cancelInputRef = useLatestRef(cancelInput);
@@ -698,8 +702,8 @@ export function useLucauaPortals({
     lucauaPortalSelection: selection,
     lucauaPortalLanding: landing,
     lucauaPortalFocus: focus,
-    lucauaPortalPress: press,
-    lucauaPortalRelease: release,
+    lucauaPortalClick: click,
+    lucauaPortalPick: pick,
     lucauaPortalUsable: usable,
     lucauaPortalCount: portals.length,
     lucauaPortalCost: portalCost,

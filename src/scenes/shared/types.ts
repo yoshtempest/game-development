@@ -223,10 +223,10 @@ export type BattleSceneApi = {
   lucauaPortalLanding: boolean;
   /** Foco de câmera durante o voo do portal. */
   lucauaPortalFocus: LucauaPortalFocus;
-  /** Segurar o botão: abre o seletor (ou desfaz o último portal se cheio). */
-  lucauaPortalPress: () => void;
-  /** Soltar o botão: finca o portal posicionado. */
-  lucauaPortalRelease: () => void;
+  /** Clique no botão: abre o seletor (ou desfaz o último portal se cheio). */
+  lucauaPortalClick: () => void;
+  /** Escolha do tipo pelo card do modal (entra no posicionamento). */
+  lucauaPortalPick: (index: number) => void;
   /** Se a habilidade pode ser usada agora (portais cheios ou guard + energia). */
   lucauaPortalUsable: boolean;
   /** Quantidade de portais fincados. */

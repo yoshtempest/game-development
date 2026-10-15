@@ -245,7 +245,7 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
       kind: "active",
       id: "dimensionalPortal",
       name: "Energia Dimensional",
-      description: `Segure para escolher o tipo (chão/frontal/aéreo) e posicione o portal com o joystick; soltar finca. Cada portal custa ${LucauaPortalConstants.COST_RATIO * 100}% da energia máxima e até ${LucauaPortalConstants.MAX_PORTALS} ficam no mapa — quem entra num sai no outro. Com os dois em campo, tocar o botão desfaz o último e devolve a energia.`,
+      description: `Clique para escolher o tipo (chão/frontal/aéreo), posicione com o joystick e confirme para fincar. Cada portal custa ${LucauaPortalConstants.COST_RATIO * 100}% da energia máxima e até ${LucauaPortalConstants.MAX_PORTALS} ficam no mapa — quem entra num sai no outro. Com os dois em campo, clicar o botão desfaz o último e devolve a energia.`,
     },
     domainBurstAbility("lucaua"),
   ],
