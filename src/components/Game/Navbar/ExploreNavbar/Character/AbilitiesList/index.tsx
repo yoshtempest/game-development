@@ -149,10 +149,10 @@ export function AbilitiesList({
           );
         })}
         <PassiveSkills characterId={player.character} startIndex={0} />
-        <div className={styles.title}>
+        {/* <div className={styles.title}>
           <span className={styles.titleMain}>Gran Rey</span>
           <span className={styles.titleSub}>Cero</span>
-        </div>
+        </div> */}
       </div>
     </div>
   );
