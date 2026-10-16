@@ -3,7 +3,7 @@ import { VASTOLORD_LASER_BEAM_HEIGHT } from "@/data/characters/marcelo/marshadow
 import {
   vastolordLaserTop,
   type VastolordLaserBeam,
-} from "@/gameRules/battle/vastolordLaser";
+} from "@/gameRules/battle/characters/marcelo/vastolordLaser";
 import type { BattleEntityPositioning } from "@/components/Game/Battle/Entities/types";
 
 type Props = BattleEntityPositioning & {

@@ -10,7 +10,7 @@ import { logPlay } from "@/utils/replay/audioEventLog";
 import { getNpcVsPlayerMultiplier } from "@/gameRules/battle/npcVsPlayerDamage";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { combatService } from "@/services/combat";
-import { getBabidiBlockReflect } from "@/gameRules/battle/babidiBlock";
+import { getBabidiBlockReflect } from "@/gameRules/battle/characters/lucaua/babidiBlock";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
 import type { VampirismStats } from "@/gameRules/battle/vampirism/applyVampirism";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";

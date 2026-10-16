@@ -13,7 +13,7 @@ import { timeSinceParryInput } from "./timeSinceParryInput";
 import { applyGuardBreak } from "./apply/applyGuardBreak";
 import { applyDesperateBlock } from "./apply/applyDesperateBlock";
 import { applyHitstop, type TimeEffect } from "@/gameRules/battle/time";
-import { getShieldSide } from "@/gameRules/battle/lucauaShield";
+import { getShieldSide } from "@/gameRules/battle/characters/lucaua/lucauaShield";
 
 import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
 

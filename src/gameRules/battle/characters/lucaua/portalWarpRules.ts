@@ -2,6 +2,9 @@ import type { TimeKind } from "@/gameRules/battle/time";
 import type {
   EntityTravel,
   PortalWarp,
+  PickWarpResult,
+  PickProjectileResult,
+  TravelLockSpec,
 } from "@/utils/types/character/lucaua/portals";
 import type { LucauaPortal } from "@/utils/types/character/lucaua";
 import { LucauaPortalConstants } from "@/data/characters/lucaua";
@@ -23,11 +26,6 @@ export function getPlacedPortalPair(
   if (a.phase !== "placed" || b.phase !== "placed") return null;
   return [a, b];
 }
-
-export type PickWarpResult =
-  | { kind: "none" }
-  | { kind: "disarm" }
-  | { kind: "arm"; warp: PortalWarp };
 
 /**
  * Decide a travessia de uma entidade.
@@ -66,11 +64,6 @@ export function projectileWarpKey(id: string): string {
   return `projectile:${id}`;
 }
 
-export type PickProjectileResult =
-  | { kind: "none" }
-  | { kind: "disarm" }
-  | { kind: "warp"; dest: LucauaPortal };
-
 /**
  * Decide a travessia de um projétil entre os dois portais.
  *
@@ -105,21 +98,6 @@ export function pickProjectileWarp(
 }
 
 // ── Congelamento seletivo da travessia ──────────────────────────────────────
-
-/**
- * Especificação do efeito de time aplicado enquanto alguém atravessa um
- * portal: congela **só** as classes que têm alguém em travessia, isenta quem
- * da mesma classe ficou para trás e decide se o player (que não é
- * `TimeKind`) tem as ações travadas.
- */
-export type TravelLockSpec = {
-  /** Classes de entidade com alguém em travessia (as que congelam). */
-  kinds: TimeKind[];
-  /** Ids de entidades dessas classes que NÃO viajam — continuam vivas. */
-  exempt: string[];
-  /** O player é quem está caindo: trava só as ações dele, não o mundo. */
-  lockPlayer: boolean;
-};
 
 /**
  * Constrói o congelamento seletivo de uma travessia.

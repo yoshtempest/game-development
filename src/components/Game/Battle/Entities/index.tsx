@@ -1,7 +1,7 @@
 import { ProjectileConstants } from "@/data/projectile";
 import { getViewportSize } from "@/utils/viewport";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
-import { getPortalCross } from "@/gameRules/battle/lucauaPortal";
+import { getPortalCross } from "@/gameRules/battle/characters/lucaua/lucauaPortal";
 import { MainNpc } from "./MainNpc";
 import { NpcProjectile } from "./NpcProjectile";
 import { GroundPaper } from "./GroundPaper";
@@ -39,8 +39,8 @@ import type { BattleLootBag } from "@/utils/types/battle/loot";
 import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/useBlinkAnimation";
 import type { EmanuelCloneVisual } from "@/utils/types/character/emanuel";
 import type { GenkiDamaVisual } from "@/utils/types/character/emanuel";
-import type { VastolordLaserBeam } from "@/gameRules/battle/vastolordLaser";
-import type { GranReyCeroEffect } from "@/gameRules/battle/granReyCero";
+import type { VastolordLaserBeam } from "@/gameRules/battle/characters/marcelo/vastolordLaser";
+import type { GranReyCeroEffect } from "@/gameRules/battle/characters/marcelo/granReyCero";
 import type { CutInEnemieOverlay } from "@/utils/types/battle/cutInEnemie";
 import type { AtomicExplosion, AtomicCut } from "@/utils/types/battle/atomic";
 import type {
@@ -49,13 +49,13 @@ import type {
   MugetsuDisintegrationTarget,
 } from "@/utils/types/battle/mugetsu";
 import type {
-  LucauaAttackVariant,
   LucauaEnergyProjectile,
   LucauaPortal,
   LucauaPortalGhost,
   LucauaShieldSide,
   LucauaShieldSides,
 } from "@/utils/types/character/lucaua";
+import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
 
 type Props = {
   npc: MainNpcState;

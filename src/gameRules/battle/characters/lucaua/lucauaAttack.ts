@@ -1,21 +1,10 @@
 import { LucauaEnergyConstants } from "@/data/characters/lucaua";
 import type {
-  LucauaAttackVariant,
   LucauaTarget,
 } from "@/utils/types/character/lucaua";
-
-/** Um disparo do plano: direção e posição de spawn no mapa da batalha. */
-export type LucauaAttackShot = {
-  dirX: 1 | -1;
-  spawnX: number;
-  spawnY: number;
-};
-
-/** Plano do básico do lucaua: sprite de ataque + os projéteis a gerar. */
-export type LucauaAttackPlan = {
-  variant: LucauaAttackVariant;
-  shots: LucauaAttackShot[];
-};
+import type {
+  LucauaAttackPlan,
+} from "@/utils/types/character/lucaua/attack";
 
 /**
  * Há inimigos vivos em cada lado do player (dentro da tolerância vertical)?

@@ -6,7 +6,7 @@ import {
     applyTime,
     clearTime
 } from "@/gameRules/battle/time";
-import type { TravelLockSpec } from "@/gameRules/battle/characters/lucaua/portalWarpRules";
+import type { TravelLockSpec } from "@/utils/types/character/lucaua/portals";
 import { LucauaPortalConstants } from "@/data/characters/lucaua";
 import { useStableCallback } from "@/hooks/useStableCallback";
 

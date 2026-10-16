@@ -40,7 +40,7 @@ import {
   granReyCeroDistance,
   granReyCeroHits,
   type GranReyCeroEffect,
-} from "@/gameRules/battle/granReyCero";
+} from "@/gameRules/battle/characters/marcelo/granReyCero";
 
 /** Natureza do corte pelo registro de habilidades (o GameData e o hook concordam). */
 const GRAN_REY_CERO_DAMAGE_KIND = getAbilityDamageType("granReyCero");

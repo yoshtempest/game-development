@@ -1,13 +1,3 @@
-/**
- * Tipos do ataque básico do lucaua: o golpe é um projétil de energia
- * (`energyAttack.svg`) disparado da mão — uma mão por vez (alternando entre
- * `leftHandAttack`/`rightHandAttack`) ou as duas (`bothSidesAttack`) quando há
- * inimigos dos dois lados do player.
- */
-
-/** Variante do básico do lucaua: pose da mão do sprite de ataque. */
-export type LucauaAttackVariant = "left" | "right" | "both";
-
 /** Lado do shield de bloqueio do lucaua: espelha o lado de quem ataca. */
 export type LucauaShieldSide = "left" | "right";
 

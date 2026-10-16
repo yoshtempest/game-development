@@ -38,8 +38,8 @@ import { useEmanuelKiCharge } from "@/hooks/battle/player/characters/ematron/use
 import { useEmanuelGenkiDama } from "@/hooks/battle/player/characters/ematron/useEmanuelGenkiDama";
 import { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
 import { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
-import { useRiquelmeSpheres } from "@/hooks/battle/player/characters/riquelme/useRiquelmeSpheres";
-import { useRiquelmeDomainExpansion } from "@/hooks/battle/player/characters/riquelme/useRiquelmeDomainExpansion";
+import { useRiquelmeSpheres } from "@/hooks/battle/player/characters/natsuki/spheres/useRiquelmeSpheres";
+import { useRiquelmeDomainExpansion } from "@/hooks/battle/player/characters/natsuki/useRiquelmeDomainExpansion";
 import { useLucauaPortals } from "@/hooks/battle/player/characters/lucaua/useLucauaPortals";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import {

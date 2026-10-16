@@ -4,7 +4,7 @@ import {
   GRAN_REY_CERO_EFFECT_HEIGHT,
   GRAN_REY_CERO_EFFECT_WIDTH,
 } from "@/data/characters/marcelo/granReyCero";
-import { granReyCeroEffectTop } from "@/gameRules/battle/granReyCero";
+import { granReyCeroEffectTop } from "@/gameRules/battle/characters/marcelo/granReyCero";
 import type { BattleEntityPositioning } from "@/components/Game/Battle/Entities/types";
 
 import styles from "./styles.module.css";

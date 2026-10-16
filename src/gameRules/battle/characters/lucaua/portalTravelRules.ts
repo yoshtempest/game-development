@@ -4,6 +4,7 @@ import type { LucauaPortal } from "@/utils/types/character/lucaua";
 import type {
   EntityTravel,
   PlayerTravel,
+  TravelAdvance,
 } from "@/utils/types/character/lucaua/portals";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
 
@@ -30,17 +31,6 @@ export function landingGround(
   const ground = groundUnder(dest, obstacles);
   return dest.y < ground - 1 ? ground : null;
 }
-
-/** Resultado de um passo de queda: onde escrever e se a queda terminou. */
-export type TravelAdvance = {
-  /** Queda que continua no próximo tick, ou `null` se terminou neste. */
-  next: EntityTravel | null;
-  /** Posição a escrever neste tick. */
-  x: number;
-  y: number;
-  /** A travessia cruzou agora — quem chama toca o som de teleporte. */
-  crossed: boolean;
-};
 
 /**
  * Avança a queda simulada de uma entidade não-player por um tick.

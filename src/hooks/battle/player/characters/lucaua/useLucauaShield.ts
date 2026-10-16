@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-import { BABIDI_CHARACTER } from "@/gameRules/battle/babidiBlock";
+import { BABIDI_CHARACTER } from "@/gameRules/battle/characters/lucaua/babidiBlock";
 
 import type {
   LucauaShieldSide,

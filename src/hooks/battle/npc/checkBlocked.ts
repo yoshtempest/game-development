@@ -1,5 +1,5 @@
 import { isFacingTarget } from "@/gameRules/battle/direction";
-import { blocksOmnidirectionally } from "@/gameRules/battle/lucauaShield";
+import { blocksOmnidirectionally } from "@/gameRules/battle/characters/lucaua/lucauaShield";
 import { handleNpcBlocking } from "./useBlocking";
 import { type TimeEffect } from "@/gameRules/battle/time";
 

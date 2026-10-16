@@ -1,5 +1,5 @@
 import { NPCBattle } from "@/components/Game/Entities/Npc/Battle";
-import { getPortalCross } from "@/gameRules/battle/lucauaPortal";
+import { getPortalCross } from "@/gameRules/battle/characters/lucaua/lucauaPortal";
 import type { PetState } from "@/hooks/battle/player/pets/usePet";
 import type { LucauaPortal } from "@/utils/types/character/lucaua";
 

@@ -5,20 +5,20 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import {
   NPC_CLASS_HITBOX_BONUS,
   NPC_CLASS_VERTICAL_BONUS,
-} from "@/gameRules/battle/rangeConfig";
+} from "@/gameRules/battle/range/config";
 import { getTime, type TimeEffect } from "@/gameRules/battle/time";
-import { planLucauaAttack } from "@/gameRules/battle/lucauaAttack";
-import { getPortalExitDirection } from "@/gameRules/battle/lucauaPortal";
+import { planLucauaAttack } from "@/gameRules/battle/characters/lucaua/lucauaAttack";
+import { getPortalExitDirection } from "@/gameRules/battle/characters/lucaua/lucauaPortal";
 import { LucauaEnergyConstants } from "@/data/characters/lucaua";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { ProjectileConstants } from "@/data/projectile";
 
 import type {
-  LucauaAttackVariant,
   LucauaEnergyProjectile,
   LucauaPortalWarpFn,
   LucauaTarget,
 } from "@/utils/types/character/lucaua";
+import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 
 type Props = {

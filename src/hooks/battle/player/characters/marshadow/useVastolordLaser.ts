@@ -36,7 +36,7 @@ import {
 import {
   vastolordLaserTop,
   type VastolordLaserBeam,
-} from "@/gameRules/battle/vastolordLaser";
+} from "@/gameRules/battle/characters/marcelo/vastolordLaser";
 
 type Props = {
   player: Player;

@@ -2,7 +2,7 @@ import {
   CHARACTER_RANGE_X,
   NPC_CLASS_HITBOX_BONUS,
   NPC_CLASS_VERTICAL_BONUS,
-} from "./rangeConfig";
+} from "./config";
 
 export function isPlayerInRange(
   playerX: number,

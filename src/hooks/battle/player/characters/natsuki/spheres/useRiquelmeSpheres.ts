@@ -21,11 +21,11 @@ import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 import type { RiquelmeSphereFocus } from "@/utils/types/character/riquelme";
 
-import { useBlueSphere } from "./spheres/useBlueSphere";
-import { usePurpleSphere } from "./spheres/usePurpleSphere";
-import { useRedSphere } from "./spheres/useRedSphere";
-import { useSphereCore } from "./spheres/useSphereCore";
-import type { SphereBattle, SphereNpc } from "./spheres/types";
+import { useBlueSphere } from "./useBlueSphere";
+import { usePurpleSphere } from "./usePurpleSphere";
+import { useRedSphere } from "./useRedSphere";
+import { useSphereCore } from "./useSphereCore";
+import type { SphereBattle, SphereNpc } from "./types";
 
 type Props = {
   player: Player;
