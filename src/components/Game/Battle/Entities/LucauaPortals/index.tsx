@@ -27,13 +27,18 @@ type Props = {
 const ANCHOR_TRANSFORM: Record<LucauaPortalKind, string> = {
   ground: "translate(-50%, -62%)",
   default: "translate(-50%, -100%)",
-  air: "translate(-50%, -50%)",
+  air: "translate(-50%, -200%)",
 };
 
 /**
  * Portais do lucaua no mapa (fixos e o fantasma do posicionamento). A âncora
  * `x/y` é o ponto em que a entidade atravessa — o mesmo referencial que a zona
  * de travessia do hook usa.
+ *
+ * O `transform` de âncora fica no **invólucro** e o giro (`scaleY`) no sprite
+ * interno: se fossem o mesmo elemento, o `scaleY(-1)` também espelharia o
+ * deslocamento do `translate` e o portal "andaria" a cada flip. Separados, o
+ * giro espelha só o conteúdo, dentro da mesma caixa.
  */
 export function LucauaPortals({
   portals,
@@ -44,11 +49,9 @@ export function LucauaPortals({
   return (
     <>
       {portals.map((portal) => (
-        <img
+        <span
           key={portal.id}
           className={styles.portal}
-          src={lucauaPortalPath(portal.kind)}
-          alt="Portal do lucaua"
           style={{
             left: portal.x * battleScaleX,
             top: portal.y * battleScaleY,
@@ -56,21 +59,31 @@ export function LucauaPortals({
             transform: ANCHOR_TRANSFORM[portal.kind],
             opacity: portal.phase === "flying" ? 0.85 : 1,
           }}
-        />
+        >
+          <img
+            className={styles.sprite}
+            src={lucauaPortalPath(portal.kind)}
+            alt="Portal do lucaua"
+          />
+        </span>
       ))}
 
       {ghost && (
-        <img
+        <span
           className={`${styles.portal} ${styles.ghost}`}
-          src={lucauaPortalPath(ghost.kind)}
-          alt="Portal do lucaua (posicionando)"
           style={{
             left: ghost.x * battleScaleX,
             top: ghost.y * battleScaleY,
             width: LucauaPortalConstants.SPRITE_WIDTH,
             transform: ANCHOR_TRANSFORM[ghost.kind],
           }}
-        />
+        >
+          <img
+            className={styles.sprite}
+            src={lucauaPortalPath(ghost.kind)}
+            alt="Portal do lucaua (posicionando)"
+          />
+        </span>
       )}
     </>
   );

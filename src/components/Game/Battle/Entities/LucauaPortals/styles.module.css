@@ -1,10 +1,32 @@
 .portal {
   position: absolute;
+  display: block;
   transform-origin: center;
   z-index: 7;
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 0 var(--size-12) var(--ability-lucaua-50));
+}
+
+/*
+ * Giro do portal: espelha na vertical a cada 500ms — o "girar" barato de sprite
+ * do jogo. Fica no sprite (filho), não no `.portal`: aí o `scaleY(-1)` não mexe
+ * no `translate` de âncora do invólucro.
+ */
+.sprite {
+  display: block;
+  width: 100%;
+  transform-origin: center;
+  animation: portalFlip 2s steps(1, end) infinite;
+}
+
+@keyframes portalFlip {
+  0% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(-1);
+  }
 }
 
 .ghost {

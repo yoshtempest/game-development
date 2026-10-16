@@ -57,7 +57,7 @@ export const LucauaPortalConstants = {
   /** Máximo de portais no mapa; acima disso o toque desfaz o último. */
   MAX_PORTALS: 2,
   /** Altura do portal aéreo acima do chão (o player precisa pular para entrar). */
-  AIR_HEIGHT: 450,
+  AIR_HEIGHT: 400,
   /**
    * Passo do fantasma por tick do joystick (px lógicos). O tick é de 16ms, então
    * 5px ≈ 312px/s — o mesmo ritmo do passo de caminhada do player

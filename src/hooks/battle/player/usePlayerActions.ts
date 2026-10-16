@@ -6,7 +6,7 @@ import {
 } from "@/data/cooldowns";
 import { playAttackSound } from "@/utils/audio/playAttackSound";
 import { isPlayerInRange } from "@/gameRules/battle/range";
-import { NPC_CLASS_HITBOX_BONUS } from "@/gameRules/battle/rangeConfig";
+import { NPC_CLASS_HITBOX_BONUS } from "@/gameRules/battle/range/config";
 import { isFacingTarget } from "@/gameRules/battle/direction";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { damageSummon } from "@/gameRules/battle/damageSummon";

@@ -1,4 +1,4 @@
-import { NPC_CLASS_VERTICAL_BONUS } from "@/gameRules/battle/rangeConfig";
+import { NPC_CLASS_VERTICAL_BONUS } from "@/gameRules/battle/range/config";
 
 export function isFacingTarget(
   playerX: number,

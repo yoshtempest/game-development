@@ -1,6 +1,6 @@
 import { isPlayerInRange } from "@/gameRules/battle/range";
 import { isFacingTarget } from "@/gameRules/battle/direction";
-import { NPC_CLASS_VERTICAL_BONUS } from "@/gameRules/battle/rangeConfig";
+import { NPC_CLASS_VERTICAL_BONUS } from "@/gameRules/battle/range/config";
 import { MARSHADOW_CHARACTER_ID } from "./constants";
 
 type CutParams = {
