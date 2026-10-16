@@ -112,7 +112,15 @@ export function useBattleSprite({
       return;
     }
 
-    setErrorSrc(resolveBattleSprite(character, fallbackState, weapon, form, lucauaAttackVariant));
+    setErrorSrc(
+      resolveBattleSprite(
+        character,
+        fallbackState,
+        weapon,
+        form,
+        lucauaAttackVariant,
+      ),
+    );
   };
 
   return {

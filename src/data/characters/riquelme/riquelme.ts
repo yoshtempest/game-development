@@ -7,7 +7,7 @@ import {
   SIX_HUNDRED_MS,
   ONE_THOUSAND_FIVE_HUNDRED_MS,
   FIVE_THOUSAND_MS,
-  FIFTY_MS
+  FIFTY_MS,
 } from "@/data/ms";
 
 // ── Esferas (blue/red) ─────────────────────────────────────

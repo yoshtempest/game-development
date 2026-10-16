@@ -191,8 +191,7 @@ export type BattleSceneApi = {
   sphere: import("@/utils/types/character/riquelme").RiquelmeSphere | null;
   /** Foco de câmera enquanto a blue é controlada. */
   sphereFocus:
-    | import("@/utils/types/character/riquelme").RiquelmeSphereFocus
-    | null;
+    import("@/utils/types/character/riquelme").RiquelmeSphereFocus | null;
   /** Ativo durante o Setup (shake de cast). */
   castActive: boolean;
   /** Furo no sprite do NPC quando a purple o mata (junto com `isNpcDying`). */

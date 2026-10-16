@@ -1,6 +1,9 @@
 import { Bomb } from "lucide-react";
 
-import { KILLER_QUEEN_COOLDOWN_MS, TOTAL_FREEZE_MS } from "@/data/characters/artur/srGuaxinim";
+import {
+  KILLER_QUEEN_COOLDOWN_MS,
+  TOTAL_FREEZE_MS,
+} from "@/data/characters/artur/srGuaxinim";
 
 import styles from "./styles.module.css";
 

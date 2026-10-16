@@ -1,21 +1,21 @@
 .container {
-    position: absolute;
-    transform-origin: center center;
-    pointer-events: none;
-    will-change: transform, opacity;
-    z-index: 25;
+  position: absolute;
+  transform-origin: center center;
+  pointer-events: none;
+  will-change: transform, opacity;
+  z-index: 25;
 }
 
 .silhouette,
 .image {
-    width: var(--fs-32);
-    height: auto;
-    display: block;
+  width: var(--fs-32);
+  height: auto;
+  display: block;
 }
 
 .silhouette {
-    position: absolute;
-    filter: brightness(10);
-    inset: 0;
-    mix-blend-mode: screen;
+  position: absolute;
+  filter: brightness(10);
+  inset: 0;
+  mix-blend-mode: screen;
 }

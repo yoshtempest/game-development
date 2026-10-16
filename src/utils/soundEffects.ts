@@ -10,7 +10,7 @@ import {
   playerSoundPath,
   xpLevelPath,
   usedItemPath,
-  npcSoundPath
+  npcSoundPath,
 } from "@/utils/paths";
 
 export function createSounds() {

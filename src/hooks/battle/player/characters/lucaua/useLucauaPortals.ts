@@ -236,11 +236,7 @@ export function useLucauaPortals({
     x: number,
     freeY: number,
   ): number {
-    const ground = getGroundAtX(
-      player.groundY,
-      x,
-      obstaclesRef.current,
-    );
+    const ground = getGroundAtX(player.groundY, x, obstaclesRef.current);
     if (kind === "air") {
       return Math.max(0, ground - LucauaPortalConstants.AIR_HEIGHT);
     }
@@ -322,9 +318,7 @@ export function useLucauaPortals({
     if (group === "npc") {
       npc.updateNpc({ x, y });
     } else if (group === "summon") {
-      setSummons((prev) =>
-        prev.map((s) => (s.id === id ? { ...s, x, y } : s)),
-      );
+      setSummons((prev) => prev.map((s) => (s.id === id ? { ...s, x, y } : s)));
     } else if (group === "ally") {
       setAllies((prev) => prev.map((s) => (s.id === id ? { ...s, x, y } : s)));
     } else {
@@ -751,14 +745,7 @@ export function useLucauaPortals({
       if (isTraveling(key)) continue;
       const warp = pickWarp(key, summon.x, summon.y);
       if (warp) {
-        startEntityWarp(
-          "summon",
-          summon.id,
-          key,
-          summon.x,
-          summon.y,
-          warp,
-        );
+        startEntityWarp("summon", summon.id, key, summon.x, summon.y, warp);
       }
     }
 
@@ -871,8 +858,7 @@ export function useLucauaPortals({
       commitPortals(next);
     }
 
-    const flying =
-      portalsRef.current.find((p) => p.phase === "flying") ?? null;
+    const flying = portalsRef.current.find((p) => p.phase === "flying") ?? null;
 
     if (flying) {
       setFocus({ x: flying.x, y: flying.y });

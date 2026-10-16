@@ -100,7 +100,11 @@ export function useExternalDamage({
    * do NPC usa, que era a diferença entre os dois caminhos.
    */
   const damagePlayer = useCallback(
-    (damage: number, damageKind: DamageKind = "physical", attackerX?: number) => {
+    (
+      damage: number,
+      damageKind: DamageKind = "physical",
+      attackerX?: number,
+    ) => {
       const shieldSide =
         attackerX === undefined ? undefined : getShieldSide(attackerX, playerX);
 

@@ -626,7 +626,6 @@ export function useDomainExpansion({
         clearTimer();
         tickTimerRef.current = setInterval(tickRef.current, 16);
       }, sweepAt),
-
     ];
 
     // O watchdog também fica com handle próprio: a quebra do vidro precisa

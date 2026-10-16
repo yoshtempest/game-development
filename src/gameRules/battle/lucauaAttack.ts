@@ -31,7 +31,9 @@ export function hasLucauaEnemiesOnBothSides(
   let hasRight = false;
 
   for (const target of targets) {
-    if (Math.abs(target.y - playerY) > LucauaEnergyConstants.VERTICAL_TOLERANCE) {
+    if (
+      Math.abs(target.y - playerY) > LucauaEnergyConstants.VERTICAL_TOLERANCE
+    ) {
       continue;
     }
     if (target.x < playerX) {

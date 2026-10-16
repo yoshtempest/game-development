@@ -65,7 +65,11 @@ import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
-import { npcPath, playerAbilityBackgroundPath, playerAbilityPath } from "@/utils/paths";
+import {
+  npcPath,
+  playerAbilityBackgroundPath,
+  playerAbilityPath,
+} from "@/utils/paths";
 import { GAME_VIEWPORT_WIDTH_RATIO } from "@/data/grid";
 import { getViewportSize } from "@/utils/viewport";
 
@@ -356,7 +360,11 @@ export function BattleScene(props: Props) {
       (p.dirX > 0 ? p.x < player.x : p.x > player.x),
   );
 
-  const shake = useCameraShake(battle.damageNumbers, groundShakeActive, castActive);
+  const shake = useCameraShake(
+    battle.damageNumbers,
+    groundShakeActive,
+    castActive,
+  );
 
   const bgBaseW = containerWidth * 1.5;
   const bgBaseH = containerHeight * 1.5;

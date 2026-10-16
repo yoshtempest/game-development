@@ -1,4 +1,8 @@
-import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { BlueSphereButton } from "@/components/Game/Battle/Buttons/Natsuki/BlueSphere";

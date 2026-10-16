@@ -90,11 +90,7 @@ type Props = {
  * inimigo sobrevive, a imagem estilhaça em pedaços de vidro e o conjunto desce
  * e sai de cena, devolvendo o background normal da batalha.
  */
-export function DomainExpansionBackground({
-  active,
-  src,
-  shattering,
-}: Props) {
+export function DomainExpansionBackground({ active, src, shattering }: Props) {
   if (!active || !src) return null;
 
   return (

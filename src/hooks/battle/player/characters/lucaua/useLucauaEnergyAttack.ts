@@ -51,9 +51,8 @@ export function useLucauaEnergyAttack({
   portalWarpRef,
 }: Props) {
   const [projectiles, setProjectiles] = useState<LucauaEnergyProjectile[]>([]);
-  const [attackVariant, setAttackVariant] = useState<LucauaAttackVariant>(
-    "right",
-  );
+  const [attackVariant, setAttackVariant] =
+    useState<LucauaAttackVariant>("right");
 
   const onProjectileHitRef = useLatestRef(onProjectileHit);
   const npcRef = useLatestRef(npc);

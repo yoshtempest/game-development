@@ -371,9 +371,7 @@ export function useRiquelmeDomainExpansion({
     timersRef.current.push(
       setTimeout(() => {
         if (shouldCancelRef.current()) return;
-        setPlayer((p) =>
-          p.mode !== "battle" ? p : { ...p, state: "rioiki" },
-        );
+        setPlayer((p) => (p.mode !== "battle" ? p : { ...p, state: "rioiki" }));
       }, 0),
     );
 
