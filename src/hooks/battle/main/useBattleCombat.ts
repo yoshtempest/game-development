@@ -102,7 +102,7 @@ import type { useBlinkAnimation } from "@/hooks/battle/player/characters/natsuki
 import type {
   LucauaPortalWarpFn,
   LucauaTarget,
-} from "@/utils/types/character/lucaua";
+} from "@/utils/types/character/lucaua/lucaua";
 
 type Props = {
   setup: ReturnType<typeof useBattleStageSetup>;

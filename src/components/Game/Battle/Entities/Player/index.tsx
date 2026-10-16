@@ -5,7 +5,7 @@ import type {
   LucauaPortalCross,
   LucauaShieldSide,
   LucauaShieldSides,
-} from "@/utils/types/character/lucaua";
+} from "@/utils/types/character/lucaua/lucaua";
 
 type Props = {
   player: Player;

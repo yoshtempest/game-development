@@ -19,7 +19,7 @@ import {
 } from "@/data/characters/artur/srGuaxinim";
 import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa/larissa";
 import { LUCAS_WEAPONS } from "@/data/characters/lucas/lucasWeapons";
-import { LucauaPortalConstants } from "@/data/characters/lucaua/lucaua";
+import { LucauaPortalConstants } from "@/data/characters/lucaua";
 import { LUCAS_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import {
   BLINK_ENERGY_COST,

@@ -27,7 +27,7 @@ import { getTime, NPC_TIME_ID, type TimeEffect } from "@/gameRules/battle/time";
 
 import { clampX } from "@/gameRules/movement/clampX";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
-import type { LucauaPortalWarpFn } from "@/utils/types/character/lucaua";
+import type { LucauaPortalWarpFn } from "@/utils/types/character/lucaua/lucaua";
 type Props = {
   playerX: number;
   playerY: number;

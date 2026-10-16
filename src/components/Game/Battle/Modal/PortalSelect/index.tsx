@@ -1,8 +1,8 @@
 import { playerAbilityBackgroundPath, lucauaPortalPath } from "@/utils/paths";
-import { LUCAUA_PORTAL_KINDS } from "@/data/characters/lucaua/lucaua";
+import { LUCAUA_PORTAL_KINDS } from "@/data/characters/lucaua";
 import styles from "./styles.module.css";
 
-import type { LucauaPortalKind } from "@/utils/types/character/lucaua";
+import type { LucauaPortalKind } from "@/utils/types/character/lucaua/lucaua";
 
 type Props = {
   /** Índice do tipo destacado em `LUCAUA_PORTAL_KINDS`. */

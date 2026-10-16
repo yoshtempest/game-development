@@ -5,24 +5,28 @@ import { useGameControls } from "@/contexts/GameControlsContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
 
-import { getGroundAtX } from "@/gameRules/battle/obstacles";
 import { BATTLE_LIMITS } from "@/gameRules/movement/constants";
+import {
+  bodyHeight,
+  resolvePortalY,
+  overlapsPortal,
+  groundUnder,
+  NO_OBSTACLES,
+} from "@/gameRules/battle/characters/lucaua/portalGeometry";
 import {
   ALL_TIME_KINDS,
   applyTime,
   clearTime,
   type TimeEffect,
 } from "@/gameRules/battle/time";
-import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import {
   LUCAUA_PORTAL_KINDS,
   LucauaPortalConstants,
-} from "@/data/characters/lucaua/lucaua";
+} from "@/data/characters/lucaua";
 
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { SoundId } from "@/utils/audio/soundId";
 import type { GameControlLayer } from "@/utils/types/player/controls";
-import type { BattleObstacle } from "@/utils/types/maps/battle";
 import type { NPCBattleState, SummonedNpc } from "@/utils/types/npc/npc";
 import type { PetState } from "@/hooks/battle/player/pets/usePet";
 import type {
@@ -31,44 +35,15 @@ import type {
   LucauaPortalGhost,
   LucauaPortalKind,
   LucauaPortalWarpFn,
-} from "@/utils/types/character/lucaua";
-
-/** Direção que o joystick pode empurrar o fantasma/seletor. */
-type PortalDirection = "up" | "down" | "left" | "right";
-
-/** Par de portais que uma travessia conecta (origem → destino). */
-type PortalWarp = { dest: LucauaPortal; source: LucauaPortal };
-
-/** Grupo de entidade que atravessa (define qual setter escreve a posição). */
-type PortalTravelGroup = "npc" | "summon" | "ally" | "pet";
-
-/**
- * Queda em curso de uma entidade não-player. A posição é dirigida aqui (não
- * pelo AI, que fica congelado pelo efeito de time): `descend` afunda do portal
- * terrestre até `targetY`; `land` cai do destino suspenso até o chão.
- */
-type EntityTravel = {
-  /** Id de travessia (mesma chave do `disarmedRef`, ex.: `summon:<id>`). */
-  key: string;
-  group: PortalTravelGroup;
-  id: string;
-  dest: LucauaPortal;
-  phase: "descend" | "land";
-  x: number;
-  y: number;
-  vy: number;
-  targetY: number;
-};
-
-/** Queda em curso do player ao entrar num portal terrestre. */
-type PlayerTravel = {
-  dest: LucauaPortal;
-  targetY: number;
-  startTime: number;
-};
-
-/** Lista de obstáculos vazia estável (evita recriar array a cada render). */
-const NO_OBSTACLES: BattleObstacle[] = [];
+} from "@/utils/types/character/lucaua/lucaua";
+import type {
+  PortalDirection,
+  PortalTravelGroup,
+  PortalWarp,
+  EntityTravel,
+  PlayerTravel
+} from "@/utils/types/character/lucaua/portals";
+import { type BattleObstacle } from "@/utils/types/maps/battle";
 
 /** Id do efeito de time do congelamento — único por habilidade. */
 const PORTAL_TIME_ID = "lucaua-portals";
@@ -167,7 +142,6 @@ export function useLucauaPortals({
   const summonsRef = useLatestRef(summons);
   const alliesRef = useLatestRef(allies);
   const petRef = useLatestRef(pet);
-  const obstaclesRef = useLatestRef(obstacles ?? NO_OBSTACLES);
   const playSoundRef = useLatestRef(playSound);
   const pushControlsRef = useLatestRef(pushControls);
 
@@ -201,6 +175,7 @@ export function useLucauaPortals({
   const landingEngagedRef = useRef(false);
   const landingUntilRef = useRef(0);
   const landingShownRef = useRef(false);
+  const obstaclesRef = useLatestRef(obstacles ?? NO_OBSTACLES);
 
   const counterRef = useRef(0);
 
@@ -219,53 +194,6 @@ export function useLucauaPortals({
     portalsRef.current = next;
     setPortals(next);
   }, []);
-
-  function bodyHeight(): number {
-    return PLAYER_SIZE / PLAYER_SPRITE_DIVISOR;
-  }
-
-  /**
-   * `y` da âncora do portal no ponto `x`.
-   *
-   * O chão é sondado pela posição do player (é quem lança e está de pé): o
-   * `getGroundAtX` procura a superfície que contém os pés, então usar um `y`
-   * arbitrário devolveria o piso padrão em vez da plataforma certa.
-   */
-  function resolvePortalY(
-    kind: LucauaPortalKind,
-    x: number,
-    freeY: number,
-  ): number {
-    const ground = getGroundAtX(player.groundY, x, obstaclesRef.current);
-    if (kind === "air") {
-      return Math.max(0, ground - LucauaPortalConstants.AIR_HEIGHT);
-    }
-    if (kind === "ground") return ground;
-    // Frontal: flutua livre, mas nunca abaixo do chão ou acima do topo.
-    return Math.max(0, Math.min(ground, freeY));
-  }
-
-  function overlapsPortal(
-    x: number,
-    feetY: number,
-    portal: LucauaPortal,
-  ): boolean {
-    if (Math.abs(x - portal.x) > LucauaPortalConstants.TRIGGER_HALF_X) {
-      return false;
-    }
-    if (portal.kind === "ground") {
-      // O portal deitado é um buraco no chão: só captura quem está com os pés
-      // na linha (andando) ou abaixo dela (caindo). A margem pequena acima dá
-      // a saída do pulo — o ápice do pulo simples passa de 128px, muito além
-      // dela, então dá para pular por cima sem cair dentro.
-      const above = portal.y - LucauaPortalConstants.GROUND_ENTER_MARGIN;
-      return (
-        feetY >= above &&
-        feetY <= portal.y + LucauaPortalConstants.TRIGGER_HALF_Y
-      );
-    }
-    return Math.abs(feetY - portal.y) <= LucauaPortalConstants.TRIGGER_HALF_Y;
-  }
 
   /**
    * Decide a travessia de uma entidade, cuidando do "armado/desarmado".
@@ -291,21 +219,6 @@ export function useLucauaPortals({
 
     disarmedRef.current.add(id);
     return inA ? { dest: b, source: a } : { dest: a, source: b };
-  }
-
-  /**
-   * Chão sob a âncora de um portal. O portal terrestre fica **no** chão (a
-   * própria âncora); os flutuantes (frontal/aéreo) ficam acima dele, então a
-   * sonda desce `AIR_HEIGHT` para o `getGroundAtX` reconhecer a plataforma que
-   * contém os pés — sondar a partir do próprio destino cairia no ar.
-   */
-  function groundUnder(dest: LucauaPortal): number {
-    if (dest.kind === "ground") return dest.y;
-    return getGroundAtX(
-      dest.y + LucauaPortalConstants.AIR_HEIGHT + 2,
-      dest.x,
-      obstaclesRef.current,
-    );
   }
 
   /** Escreve a posição de uma entidade não-player, pelo grupo a que pertence. */
@@ -427,7 +340,7 @@ export function useLucauaPortals({
       BATTLE_LIMITS.minX,
       Math.min(player.x, BATTLE_LIMITS.maxX),
     );
-    const y = resolvePortalY(kind, x, player.y);
+    const y = resolvePortalY(kind, x, player.y, player.groundY);
     flowRef.current = "positioning";
     ghostRef.current = { kind, x, y };
     setGhost({ kind, x, y });
@@ -454,7 +367,7 @@ export function useLucauaPortals({
       current.kind === "default"
         ? current.y + dy * LucauaPortalConstants.MOVE_PX
         : current.y;
-    const y = resolvePortalY(current.kind, x, freeY);
+    const y = resolvePortalY(current.kind, x, freeY, player.groundY);
     ghostRef.current = { kind: current.kind, x, y };
     setGhost({ kind: current.kind, x, y });
   }
@@ -474,7 +387,7 @@ export function useLucauaPortals({
       return;
     }
 
-    const handY = player.y - bodyHeight() * 0.55;
+    const handY = player.y - bodyHeight(PLAYER_SIZE) * 0.55;
     const portal: LucauaPortal = {
       id: `${PORTAL_TIME_ID}-${counterRef.current++}`,
       kind: target.kind,
@@ -602,7 +515,10 @@ export function useLucauaPortals({
    * gravidade o leva ao chão — era o bug de ficar preso na linha do portal.
    */
   function teleportPlayer(dest: LucauaPortal, now: number) {
-    const ground = groundUnder(dest);
+    const ground = groundUnder(
+      dest,
+      obstaclesRef.current
+    );
     const aboveGround = dest.y < ground - 1;
     setPlayer((prev) => ({
       ...prev,
@@ -680,7 +596,7 @@ export function useLucauaPortals({
     }
     writeEntity(group, id, warp.dest.x, warp.dest.y);
     playSoundRef.current("emanuelTeleport");
-    const ground = groundUnder(warp.dest);
+    const ground = groundUnder(warp.dest, obstaclesRef.current);
     if (warp.dest.y < ground - 1) {
       travelRef.current.push({
         key,
@@ -712,7 +628,7 @@ export function useLucauaPortals({
       if (travel.phase === "descend") {
         writeEntity(travel.group, travel.id, travel.dest.x, travel.dest.y);
         playSoundRef.current("emanuelTeleport");
-        const ground = groundUnder(travel.dest);
+        const ground = groundUnder(travel.dest, obstaclesRef.current);
         if (travel.dest.y < ground - 1) {
           travel.phase = "land";
           travel.x = travel.dest.x;
@@ -766,7 +682,10 @@ export function useLucauaPortals({
     if (currentPet) {
       const petWarp = pickWarp("pet", currentPet.x, currentPet.y);
       if (petWarp) {
-        const petY = Math.max(petWarp.dest.y, groundUnder(petWarp.dest));
+        const petY = Math.max(
+          petWarp.dest.y,
+          groundUnder(petWarp.dest, obstaclesRef.current)
+        );
         writeEntity("pet", "pet", petWarp.dest.x, petY);
         playSoundRef.current("emanuelTeleport");
       }

@@ -5,7 +5,7 @@ import { combatService } from "@/services/combat";
 import { getShieldSide } from "@/gameRules/battle/lucauaShield";
 import type { DamageArmor, DamageKind } from "@/utils/types/battle/damageKind";
 import type { SpawnDamageFn } from "@/utils/types/battle/spawnDamageFn";
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
+import type { LucauaShieldSide } from "@/utils/types/character/lucaua/lucaua";
 
 type Props = {
   playerX: number;

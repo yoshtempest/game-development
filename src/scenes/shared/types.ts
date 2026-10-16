@@ -40,7 +40,7 @@ import type {
   LucauaPortalGhost,
   LucauaShieldSide,
   LucauaShieldSides,
-} from "@/utils/types/character/lucaua";
+} from "@/utils/types/character/lucaua/lucaua";
 
 type Battle = ReturnType<typeof useBattleSystem>;
 type Npc = ReturnType<typeof useNpcAI>;

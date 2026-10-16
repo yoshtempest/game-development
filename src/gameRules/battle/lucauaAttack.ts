@@ -1,8 +1,8 @@
-import { LucauaEnergyConstants } from "@/data/characters/lucaua/lucaua";
+import { LucauaEnergyConstants } from "@/data/characters/lucaua";
 import type {
   LucauaAttackVariant,
   LucauaTarget,
-} from "@/utils/types/character/lucaua";
+} from "@/utils/types/character/lucaua/lucaua";
 
 /** Um disparo do plano: direção e posição de spawn no mapa da batalha. */
 export type LucauaAttackShot = {

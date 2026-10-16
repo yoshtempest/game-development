@@ -1,12 +1,12 @@
 import { lucauaPortalPath } from "@/utils/paths";
-import { LucauaPortalConstants } from "@/data/characters/lucaua/lucaua";
+import { LucauaPortalConstants } from "@/data/characters/lucaua";
 import styles from "./styles.module.css";
 
 import type {
   LucauaPortal,
   LucauaPortalGhost,
   LucauaPortalKind,
-} from "@/utils/types/character/lucaua";
+} from "@/utils/types/character/lucaua/lucaua";
 
 type Props = {
   portals: LucauaPortal[];

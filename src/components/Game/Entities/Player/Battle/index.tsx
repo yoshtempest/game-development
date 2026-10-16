@@ -13,7 +13,7 @@ import { LucauaShield } from "./LucauaShield";
 import { LevelUpParticles } from "@/components/Game/LevelUpParticles";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 
-import type { LucauaShieldSides } from "@/utils/types/character/lucaua";
+import type { LucauaShieldSides } from "@/utils/types/character/lucaua/lucaua";
 
 /** Nenhum shield do lucaua ativo, usado quando a prop não vem. */
 const NO_LUCAUA_SHIELD: LucauaShieldSides = { left: 0, right: 0 };

@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 
-import { LucauaShieldConstants } from "@/data/characters/lucaua/lucaua";
+import { LucauaShieldConstants } from "@/data/characters/lucaua";
 import { playerPath } from "@/utils/paths";
 
 import styles from "./styles.module.css";
 
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
+import type { LucauaShieldSide } from "@/utils/types/character/lucaua/lucaua";
 
 type Props = {
   /** Lado do corpo coberto pelo shield (o lado de quem ataca). */

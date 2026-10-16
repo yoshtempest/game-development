@@ -1,7 +1,7 @@
 import { NPCBattle } from "@/components/Game/Entities/Npc/Battle";
 import { getPortalCross } from "@/gameRules/battle/lucauaPortal";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
-import type { LucauaPortal } from "@/utils/types/character/lucaua";
+import type { LucauaPortal } from "@/utils/types/character/lucaua/lucaua";
 
 type Props = {
   allies: SummonedNpc[];

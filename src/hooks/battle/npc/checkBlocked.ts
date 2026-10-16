@@ -3,7 +3,7 @@ import { blocksOmnidirectionally } from "@/gameRules/battle/lucauaShield";
 import { handleNpcBlocking } from "./useBlocking";
 import { type TimeEffect } from "@/gameRules/battle/time";
 
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
+import type { LucauaShieldSide } from "@/utils/types/character/lucaua/lucaua";
 
 export function checkBlocked(params: {
   dmg: number;

@@ -24,7 +24,7 @@ import { EMANUEL_COMBO_STEPS } from "@/data/characters/emanuel/emanuel";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 import type { SpecialHitOptions } from "@/utils/types/battle/specialHitOptions";
 import type { CharactersProgress } from "@/data/characters/defaultProgress";
-import type { LucauaTarget } from "@/utils/types/character/lucaua";
+import type { LucauaTarget } from "@/utils/types/character/lucaua/lucaua";
 
 type Props = {
   player: Player;

@@ -6,7 +6,7 @@ import {
   SIXTEEN_MS,
   TWO_HUNDRED_TWENTY_MS,
 } from "@/data/ms";
-import type { LucauaPortalKind } from "@/utils/types/character/lucaua";
+import type { LucauaPortalKind } from "@/utils/types/character/lucaua/lucaua";
 
 /**
  * Constantes do ataque básico do lucaua: projétil de energia (`energyAttack.svg`)

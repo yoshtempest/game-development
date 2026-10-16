@@ -1,6 +1,6 @@
 import { playerAbilityPath } from "./playerAbilityBackgroundPath";
 
-import type { LucauaPortalKind } from "@/utils/types/character/lucaua";
+import type { LucauaPortalKind } from "@/utils/types/character/lucaua/lucaua";
 
 const PORTAL_FILE: Record<LucauaPortalKind, string> = {
   ground: "groundPortal.svg",

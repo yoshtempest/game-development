@@ -5,7 +5,7 @@ import { BABIDI_CHARACTER } from "@/gameRules/battle/babidiBlock";
 import type {
   LucauaShieldSide,
   LucauaShieldSides,
-} from "@/utils/types/character/lucaua";
+} from "@/utils/types/character/lucaua/lucaua";
 
 /** Nenhum shield ativo: os dois nonces em zero. */
 const NO_SHIELD: LucauaShieldSides = { left: 0, right: 0 };

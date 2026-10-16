@@ -1,6 +1,6 @@
 import { BABIDI_CHARACTER } from "@/gameRules/battle/babidiBlock";
 
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
+import type { LucauaShieldSide } from "@/utils/types/character/lucaua/lucaua";
 
 /**
  * O block do lucaua (Babidi Block) cobre os dois lados: segurando o bloqueio,

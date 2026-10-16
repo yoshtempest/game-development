@@ -9,7 +9,7 @@ import {
 import { getTime, type TimeEffect } from "@/gameRules/battle/time";
 import { planLucauaAttack } from "@/gameRules/battle/lucauaAttack";
 import { getPortalExitDirection } from "@/gameRules/battle/lucauaPortal";
-import { LucauaEnergyConstants } from "@/data/characters/lucaua/lucaua";
+import { LucauaEnergyConstants } from "@/data/characters/lucaua";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { ProjectileConstants } from "@/data/projectile";
 
@@ -18,7 +18,7 @@ import type {
   LucauaEnergyProjectile,
   LucauaPortalWarpFn,
   LucauaTarget,
-} from "@/utils/types/character/lucaua";
+} from "@/utils/types/character/lucaua/lucaua";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 
 type Props = {
