@@ -83,6 +83,23 @@ export type LucauaPortal = {
   cost: number;
 };
 
+/**
+ * Travessia visual de uma entidade por um portal terrestre.
+ *
+ * Enquanto a entidade afunda (os pés passam abaixo da linha do portal), a parte
+ * que já passou some do lado de origem e reaparece saindo do portal par — assim
+ * ela "entra" num portal e "sai" no outro em vez de simplesmente sumir. Tudo é
+ * derivado da própria posição (o hook já a atualiza durante a queda), então o
+ * render reconstrói o efeito sem estado extra.
+ */
+export type LucauaPortalCross = {
+  /** Quanto os pés já afundaram abaixo da linha do portal, em unidades de arena. */
+  depth: number;
+  /** Portal par: onde a parte "de dentro" reaparece. */
+  destX: number;
+  destY: number;
+};
+
 /** Fantasma do portal durante o posicionamento pelo joystick. */
 export type LucauaPortalGhost = {
   kind: LucauaPortalKind;

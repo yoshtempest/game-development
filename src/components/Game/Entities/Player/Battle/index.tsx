@@ -43,6 +43,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     lucauaShieldSides = NO_LUCAUA_SHIELD,
     onLucauaShieldEnd,
     lucauaPortalLanding = false,
+    lucauaPortalCross = null,
   } = props;
 
   const isChargingKi = character === "emanuel" && state === "chargingKi";
@@ -98,64 +99,113 @@ export function PlayerBattle(props: PlayerBattleProps) {
     .filter(Boolean)
     .join(" ");
 
+  const sprite = (
+    <BattleSprite
+      src={src}
+      className={spriteClassName}
+      blinkDuration={blink.duration}
+      transform={transform}
+      transformOrigin={transformOrigin}
+      onError={handleSpriteError}
+    />
+  );
+
+  // ── Portal terrestre: sprite dividido entre os dois portais ───────────────
+  // Enquanto o corpo afunda na linha do portal de origem, a parte que já passou
+  // some daqui e reaparece saindo do portal par. O corte é medido na mesma
+  // escala do render (`scaleY`), então o pedaço "de dentro" casa com a arte.
+  const inside = lucauaPortalCross
+    ? Math.min(
+        Math.max(lucauaPortalCross.depth * dimensions.scaleY, 0),
+        dimensions.height,
+      )
+    : 0;
+  const sourceMask = lucauaPortalCross
+    ? `linear-gradient(to top, transparent 0 ${inside}px, #000 ${inside}px)`
+    : undefined;
+  const destMask = lucauaPortalCross
+    ? `linear-gradient(to bottom, transparent 0 ${dimensions.height - inside}px, #000 ${dimensions.height - inside}px)`
+    : undefined;
+
   return (
-    <div
-      style={{
-        position: "absolute",
-        width: dimensions.width,
-        height: dimensions.height,
-        left: x * dimensions.scaleX,
-        top: y * dimensions.scaleY,
-        transform: "translate(-50%, -100%)",
-        zIndex: 10,
-        overflow: "visible",
-      }}
-    >
-      {isChargingKi && (
-        <ChargingKiEffect
-          width={dimensions.chargingEffectWidth}
-          height={dimensions.chargingEffectHeight}
-        />
+    <>
+      <div
+        style={{
+          position: "absolute",
+          width: dimensions.width,
+          height: dimensions.height,
+          left: x * dimensions.scaleX,
+          top: y * dimensions.scaleY,
+          transform: "translate(-50%, -100%)",
+          zIndex: 10,
+          overflow: "visible",
+          maskImage: sourceMask,
+          WebkitMaskImage: sourceMask,
+          maskRepeat: "no-repeat",
+        }}
+      >
+        {isChargingKi && (
+          <ChargingKiEffect
+            width={dimensions.chargingEffectWidth}
+            height={dimensions.chargingEffectHeight}
+          />
+        )}
+
+        {sprite}
+
+        {/* Bloqueio do lucaua: um shield por lado atacado, remontado a cada golpe
+            (nonce) para repetir o blink. O `key` por lado+nonce é o que garante
+            que dois lados coexistam sem que um roube a animação do outro. */}
+        {onLucauaShieldEnd && lucauaShieldSides.left > 0 && (
+          <LucauaShield
+            key={`lucaua-shield-left-${lucauaShieldSides.left}`}
+            side="left"
+            nonce={lucauaShieldSides.left}
+            onEnd={onLucauaShieldEnd}
+          />
+        )}
+
+        {onLucauaShieldEnd && lucauaShieldSides.right > 0 && (
+          <LucauaShield
+            key={`lucaua-shield-right-${lucauaShieldSides.right}`}
+            side="right"
+            nonce={lucauaShieldSides.right}
+            onEnd={onLucauaShieldEnd}
+          />
+        )}
+
+        {atomicHalo && character === "marcelo" && <AtomicHalo />}
+
+        {levelUpParticles && (
+          <LevelUpParticles
+            character={character}
+            size={Math.round(dimensions.height)}
+          />
+        )}
+      </div>
+
+      {/* Portal par: só o pedaço que está "dentro" da origem, saindo do destino.
+          Fora do container mascarado para o corte da origem não vazá-lo também. */}
+      {lucauaPortalCross && inside > 0 && (
+        <div
+          style={{
+            position: "absolute",
+            width: dimensions.width,
+            height: dimensions.height,
+            left: lucauaPortalCross.destX * dimensions.scaleX,
+            top: lucauaPortalCross.destY * dimensions.scaleY,
+            transform: "translate(-50%, -100%)",
+            zIndex: 10,
+            overflow: "visible",
+            maskImage: destMask,
+            WebkitMaskImage: destMask,
+            maskRepeat: "no-repeat",
+            pointerEvents: "none",
+          }}
+        >
+          {sprite}
+        </div>
       )}
-
-      <BattleSprite
-        src={src}
-        className={spriteClassName}
-        blinkDuration={blink.duration}
-        transform={transform}
-        transformOrigin={transformOrigin}
-        onError={handleSpriteError}
-      />
-
-      {/* Bloqueio do lucaua: um shield por lado atacado, remontado a cada golpe
-          (nonce) para repetir o blink. O `key` por lado+nonce é o que garante
-          que dois lados coexistam sem que um roube a animação do outro. */}
-      {onLucauaShieldEnd && lucauaShieldSides.left > 0 && (
-        <LucauaShield
-          key={`lucaua-shield-left-${lucauaShieldSides.left}`}
-          side="left"
-          nonce={lucauaShieldSides.left}
-          onEnd={onLucauaShieldEnd}
-        />
-      )}
-
-      {onLucauaShieldEnd && lucauaShieldSides.right > 0 && (
-        <LucauaShield
-          key={`lucaua-shield-right-${lucauaShieldSides.right}`}
-          side="right"
-          nonce={lucauaShieldSides.right}
-          onEnd={onLucauaShieldEnd}
-        />
-      )}
-
-      {atomicHalo && character === "marcelo" && <AtomicHalo />}
-
-      {levelUpParticles && (
-        <LevelUpParticles
-          character={character}
-          size={Math.round(dimensions.height)}
-        />
-      )}
-    </div>
+    </>
   );
 }

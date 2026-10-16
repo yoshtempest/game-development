@@ -13,6 +13,7 @@ import {
   BLOOD_ICON_SRC,
 } from "@/data/characters/marcelo/marshadowCutIn";
 import type { CutInEnemieOverlay } from "@/utils/types/battle/cutInEnemie";
+import type { LucauaPortalCross } from "@/utils/types/character/lucaua";
 
 type Props = {
   x: number;
@@ -80,6 +81,8 @@ type Props = {
    * central-direito no ponto do impacto (em vez de só sumir no fade).
    */
   purpleHole?: boolean;
+  /** Travessia em andamento por um portal terrestre (sprite dividido). */
+  lucauaPortalCross?: LucauaPortalCross | null;
 };
 
 export function NPCBattle({
@@ -99,6 +102,7 @@ export function NPCBattle({
   cutInEnemie = null,
   npcBleeding = false,
   purpleHole = false,
+  lucauaPortalCross = null,
 }: Props) {
   const { playSound } = useSoundEffects();
   const prevIsExplodingRef = useRef(isExploding);
@@ -148,96 +152,152 @@ export function NPCBattle({
   const holeX = direction === "right" ? 28 : 72;
   const holeMask = `radial-gradient(circle at ${holeX}% 47%, transparent 0 22%, #000 23%)`;
 
+  // ── Portal terrestre: sprite dividido entre os dois portais ───────────────
+  // O NPC que entrou no buraco some da parte de baixo aqui e reaparece saindo do
+  // portal par. O corte respeita o `yOffset` (a fração do container que fica
+  // abaixo dos pés) para a linha cair nos pés, não na borda da caixa.
+  const tilePx = TILE_SIZE * sizeMultiplier;
+  const crossInside = lucauaPortalCross
+    ? Math.min(Math.max(lucauaPortalCross.depth * scaleY, 0), tilePx)
+    : 0;
+  const crossBottom = crossInside + yOffset * tilePx;
+  const sourceMask = lucauaPortalCross
+    ? `linear-gradient(to top, transparent 0 ${crossBottom}px, #000 ${crossBottom}px)`
+    : undefined;
+  const crossTop = Math.max(0, tilePx - yOffset * tilePx - crossInside);
+  const destMask = lucauaPortalCross
+    ? `linear-gradient(to bottom, transparent 0 ${crossTop}px, #000 ${crossTop}px)`
+    : undefined;
+
   return (
-    <div
-      style={{
-        position: "absolute",
-        width: TILE_SIZE * sizeMultiplier,
-        height: TILE_SIZE * sizeMultiplier,
-        left: x * scaleX,
-        top: y * scaleY,
-        transform: `translate(-50%, calc(-100% + ${yOffset * 100}%))`,
-        zIndex: 9,
-      }}
-    >
-      {/* 🧍 NPC (oculto quando vira alvo de bomba da killerQueen) */}
-      {!isHidden && (
-        <img
-          src={src}
-          style={{
-            width: "100%",
-            height: "100%",
-            transform: `scaleX(${direction === "right" ? -1 : 1})`,
-            position: "absolute",
-            opacity: showPurpleHole ? 1 : isDying || isUnderground ? 0 : 1,
-            filter: isDying ? "grayscale(100%)" : "none",
-            ...(showPurpleHole
-              ? {
-                  maskImage: holeMask,
-                  WebkitMaskImage: holeMask,
-                  maskRepeat: "no-repeat",
-                  WebkitMaskRepeat: "no-repeat",
-                  maskSize: "100% 100%",
-                  WebkitMaskSize: "100% 100%",
-                }
-              : {}),
-            transition: isUnderground
-              ? "opacity 0.4s linear"
-              : "opacity 1s linear, filter 1s linear",
-          }}
-        />
-      )}
+    <>
+      <div
+        style={{
+          position: "absolute",
+          width: TILE_SIZE * sizeMultiplier,
+          height: TILE_SIZE * sizeMultiplier,
+          left: x * scaleX,
+          top: y * scaleY,
+          transform: `translate(-50%, calc(-100% + ${yOffset * 100}%))`,
+          zIndex: 9,
+        }}
+      >
+        {/* 🧍 NPC (oculto quando vira alvo de bomba da killerQueen) */}
+        {!isHidden && (
+          <img
+            src={src}
+            style={{
+              width: "100%",
+              height: "100%",
+              transform: `scaleX(${direction === "right" ? -1 : 1})`,
+              position: "absolute",
+              opacity: showPurpleHole ? 1 : isDying || isUnderground ? 0 : 1,
+              filter: isDying ? "grayscale(100%)" : "none",
+              ...(showPurpleHole
+                ? {
+                    maskImage: holeMask,
+                    WebkitMaskImage: holeMask,
+                    maskRepeat: "no-repeat",
+                    WebkitMaskRepeat: "no-repeat",
+                    maskSize: "100% 100%",
+                    WebkitMaskSize: "100% 100%",
+                  }
+                : sourceMask
+                  ? {
+                      maskImage: sourceMask,
+                      WebkitMaskImage: sourceMask,
+                      maskRepeat: "no-repeat",
+                    }
+                  : {}),
+              transition: isUnderground
+                ? "opacity 0.4s linear"
+                : "opacity 1s linear, filter 1s linear",
+            }}
+          />
+        )}
 
-      {/* 🗡️ PIERCINGS */}
-      {piercings.map((p) => (
-        <img
-          key={p.id}
-          src={npcPathProjectile("/piercing.svg")}
+        {/* 🗡️ PIERCINGS */}
+        {piercings.map((p) => (
+          <img
+            key={p.id}
+            src={npcPathProjectile("/piercing.svg")}
+            style={{
+              position: "absolute",
+              width: TILE_SIZE * 0.4,
+              height: TILE_SIZE * 0.4,
+              left: "50%",
+              top: "50%",
+              transform: `translate(${p.x}px, ${p.y}px)`,
+              pointerEvents: "none",
+            }}
+          />
+        ))}
+
+        {/* ✂️ CUT-IN ENEMIE do marcelo: strike sobre o NPC (1s, ângulo aleatório) */}
+        {cutInEnemie && (
+          <img
+            key={cutInEnemie.key}
+            src={MARCELO_CUT_IN_ENEMIE_SRC}
+            style={{
+              position: "absolute",
+              width: TILE_SIZE * sizeMultiplier * 0.5,
+              left: "50%",
+              top: TILE_SIZE * 0.35,
+              transform: `translate(-50%, -50%) rotate(${cutInEnemie.rotation}deg)`,
+              pointerEvents: "none",
+              zIndex: 3,
+            }}
+          />
+        )}
+
+        {/* 🩸 BLOOD ICON: NPC em sangramento mostra o ícone acima da imagem */}
+        {npcBleeding && (
+          <img
+            src={BLOOD_ICON_SRC}
+            style={{
+              position: "absolute",
+              width: TILE_SIZE * 0.1,
+              height: TILE_SIZE * 0.1,
+              left: "50%",
+              top: -TILE_SIZE * 0.45,
+              transform: "translateX(-50%)",
+              pointerEvents: "none",
+              zIndex: 3,
+            }}
+          />
+        )}
+      </div>
+
+      {/* Portal par: só o pedaço que está "dentro" da origem, saindo do
+          destino. Irmão do sprite de origem (mask própria) para o corte de um
+          não vazar no outro. */}
+      {lucauaPortalCross && crossInside > 0 && !isHidden && (
+        <div
           style={{
             position: "absolute",
-            width: TILE_SIZE * 0.4,
-            height: TILE_SIZE * 0.4,
-            left: "50%",
-            top: "50%",
-            transform: `translate(${p.x}px, ${p.y}px)`,
+            width: tilePx,
+            height: tilePx,
+            left: lucauaPortalCross.destX * scaleX,
+            top: lucauaPortalCross.destY * scaleY,
+            transform: `translate(-50%, calc(-100% + ${yOffset * 100}%))`,
+            zIndex: 9,
+            maskImage: destMask,
+            WebkitMaskImage: destMask,
+            maskRepeat: "no-repeat",
             pointerEvents: "none",
           }}
-        />
-      ))}
-
-      {/* ✂️ CUT-IN ENEMIE do marcelo: strike sobre o NPC (1s, ângulo aleatório) */}
-      {cutInEnemie && (
-        <img
-          key={cutInEnemie.key}
-          src={MARCELO_CUT_IN_ENEMIE_SRC}
-          style={{
-            position: "absolute",
-            width: TILE_SIZE * sizeMultiplier * 0.5,
-            left: "50%",
-            top: TILE_SIZE * 0.35,
-            transform: `translate(-50%, -50%) rotate(${cutInEnemie.rotation}deg)`,
-            pointerEvents: "none",
-            zIndex: 3,
-          }}
-        />
+        >
+          <img
+            src={src}
+            style={{
+              width: "100%",
+              height: "100%",
+              transform: `scaleX(${direction === "right" ? -1 : 1})`,
+              position: "absolute",
+            }}
+          />
+        </div>
       )}
-
-      {/* 🩸 BLOOD ICON: NPC em sangramento mostra o ícone acima da imagem */}
-      {npcBleeding && (
-        <img
-          src={BLOOD_ICON_SRC}
-          style={{
-            position: "absolute",
-            width: TILE_SIZE * 0.1,
-            height: TILE_SIZE * 0.1,
-            left: "50%",
-            top: -TILE_SIZE * 0.45,
-            transform: "translateX(-50%)",
-            pointerEvents: "none",
-            zIndex: 3,
-          }}
-        />
-      )}
-    </div>
+    </>
   );
 }

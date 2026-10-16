@@ -57,7 +57,7 @@ export const LucauaPortalConstants = {
   /** Máximo de portais no mapa; acima disso o toque desfaz o último. */
   MAX_PORTALS: 2,
   /** Altura do portal aéreo acima do chão (o player precisa pular para entrar). */
-  AIR_HEIGHT: 400,
+  AIR_HEIGHT: 450,
   /**
    * Passo do fantasma por tick do joystick (px lógicos). O tick é de 16ms, então
    * 5px ≈ 312px/s — o mesmo ritmo do passo de caminhada do player
@@ -79,6 +79,13 @@ export const LucauaPortalConstants = {
    * (~136px) não alcançar.
    */
   TRIGGER_HALF_Y: 160,
+  /**
+   * Margem **acima** da linha do portal terrestre em que os pés ainda contam
+   * como "dentro". O portal deitado abre um buraco no chão: quem anda (pés na
+   * linha) ou cai entra, mas pular por cima escapa — o ápice do pulo simples
+   * passa de 128px, então uma margem pequena basta para dar essa saída.
+   */
+  GROUND_ENTER_MARGIN: 24,
   /** Beat mínimo do sprite de queda depois de atravessar um portal aéreo. */
   LANDING_MS: FOUR_HUNDRED_MS,
   /**

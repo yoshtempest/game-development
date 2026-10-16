@@ -126,6 +126,11 @@ type Props = {
  * queda simulada; e um portal de saída suspenso (frontal/aéreo) derruba a
  * entidade até o chão, nunca a deixa parada na linha do portal. Projéteis
  * também cruzam (o warp é publicado em `portalWarpRef`).
+ *
+ * O portal terrestre é um buraco: quem anda com os pés na linha (ou cai) entra,
+ * mas pular por cima escapa — por isso a zona de entrada dele só abre uma
+ * margem curta acima da linha (`GROUND_ENTER_MARGIN`), ao contrário dos
+ * suspensos, que capturam numa faixa simétrica.
  */
 export function useLucauaPortals({
   player,
@@ -252,9 +257,18 @@ export function useLucauaPortals({
     if (Math.abs(x - portal.x) > LucauaPortalConstants.TRIGGER_HALF_X) {
       return false;
     }
-    return (
-      Math.abs(feetY - portal.y) <= LucauaPortalConstants.TRIGGER_HALF_Y
-    );
+    if (portal.kind === "ground") {
+      // O portal deitado é um buraco no chão: só captura quem está com os pés
+      // na linha (andando) ou abaixo dela (caindo). A margem pequena acima dá
+      // a saída do pulo — o ápice do pulo simples passa de 128px, muito além
+      // dela, então dá para pular por cima sem cair dentro.
+      const above = portal.y - LucauaPortalConstants.GROUND_ENTER_MARGIN;
+      return (
+        feetY >= above &&
+        feetY <= portal.y + LucauaPortalConstants.TRIGGER_HALF_Y
+      );
+    }
+    return Math.abs(feetY - portal.y) <= LucauaPortalConstants.TRIGGER_HALF_Y;
   }
 
   /**

@@ -2,6 +2,7 @@ import { PlayerBattle } from "@/components/Game/Entities/Player/Battle";
 import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/useBlinkAnimation";
 import type {
   LucauaAttackVariant,
+  LucauaPortalCross,
   LucauaShieldSide,
   LucauaShieldSides,
 } from "@/utils/types/character/lucaua";
@@ -35,6 +36,8 @@ type Props = {
   onLucauaShieldEnd?: (side: LucauaShieldSide, nonce: number) => void;
   /** Player saindo de um portal do lucaua (voo/decolagem). */
   lucauaPortalLanding?: boolean;
+  /** Travessia em andamento por um portal terrestre (sprite dividido). */
+  lucauaPortalCross?: LucauaPortalCross | null;
 };
 
 export function Player({
@@ -55,6 +58,7 @@ export function Player({
   lucauaShieldSides,
   onLucauaShieldEnd,
   lucauaPortalLanding = false,
+  lucauaPortalCross = null,
 }: Props) {
   const blinkSilhouette =
     player.character === "riquelme" && blinkVisual
@@ -87,6 +91,7 @@ export function Player({
       lucauaShieldSides={lucauaShieldSides}
       onLucauaShieldEnd={onLucauaShieldEnd}
       lucauaPortalLanding={lucauaPortalLanding}
+      lucauaPortalCross={lucauaPortalCross}
       levelUpParticles
     />
   );

@@ -1,5 +1,6 @@
 import type {
   LucauaAttackVariant,
+  LucauaPortalCross,
   LucauaShieldSide,
   LucauaShieldSides,
 } from "@/utils/types/character/lucaua";
@@ -33,4 +34,9 @@ export interface PlayerBattleProps {
   onLucauaShieldEnd?: (side: LucauaShieldSide, nonce: number) => void;
   /** Player saindo de um portal do lucaua (voo/decolagem). */
   lucauaPortalLanding?: boolean;
+  /**
+   * Travessia em andamento por um portal terrestre: a parte do sprite abaixo da
+   * linha do portal some de um lado e reaparece saindo do outro.
+   */
+  lucauaPortalCross?: LucauaPortalCross | null;
 }

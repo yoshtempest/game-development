@@ -1,6 +1,7 @@
 import { ProjectileConstants } from "@/data/projectile";
 import { getViewportSize } from "@/utils/viewport";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
+import { getPortalCross } from "@/gameRules/battle/lucauaPortal";
 import { MainNpc } from "./MainNpc";
 import { NpcProjectile } from "./NpcProjectile";
 import { GroundPaper } from "./GroundPaper";
@@ -198,6 +199,12 @@ export function BattleEntities({
     isAlfa,
   );
 
+  // Travessia em andamento pelos portais terrestres: a parte do sprite que já
+  // passou da linha de um portal tem de reaparecer saindo do par (o hook só
+  // mexe na posição — o recorte é reconstruído aqui a partir dela).
+  const playerPortalCross = getPortalCross(lucauaPortals, player.x, player.y);
+  const npcPortalCross = getPortalCross(lucauaPortals, npc.x, npc.y);
+
   return (
     <>
       <MainNpc
@@ -214,6 +221,7 @@ export function BattleEntities({
         cutInEnemie={cutInEnemie}
         npcBleeding={npcBleeding}
         purpleHole={purpleHole}
+        lucauaPortalCross={npcPortalCross}
       />
 
       <NpcProjectile
@@ -265,11 +273,16 @@ export function BattleEntities({
         summons={summons}
         hiddenIds={activeBombIds}
         TILE_SIZE={TILE_SIZE}
+        lucauaPortals={lucauaPortals}
       />
 
-      <Ally allies={allies} TILE_SIZE={TILE_SIZE} />
+      <Ally
+        allies={allies}
+        TILE_SIZE={TILE_SIZE}
+        lucauaPortals={lucauaPortals}
+      />
 
-      <Pet pet={pet} TILE_SIZE={TILE_SIZE} />
+      <Pet pet={pet} TILE_SIZE={TILE_SIZE} lucauaPortals={lucauaPortals} />
 
       <LucauaPortals
         portals={lucauaPortals}
@@ -296,6 +309,7 @@ export function BattleEntities({
         lucauaShieldSides={lucauaShieldSides}
         onLucauaShieldEnd={onLucauaShieldEnd}
         lucauaPortalLanding={lucauaPortalLanding}
+        lucauaPortalCross={playerPortalCross}
       />
 
       <EnergyProjectile
