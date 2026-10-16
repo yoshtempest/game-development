@@ -1,11 +1,11 @@
 import { PlayerBattle } from "@/components/Game/Entities/Player/Battle";
 import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/useBlinkAnimation";
 import type {
-  LucauaAttackVariant,
   LucauaPortalCross,
   LucauaShieldSide,
   LucauaShieldSides,
 } from "@/utils/types/character/lucaua";
+import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
 
 type Props = {
   player: Player;

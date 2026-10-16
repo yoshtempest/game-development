@@ -1,9 +1,9 @@
 import type {
-  LucauaAttackVariant,
   LucauaPortalCross,
   LucauaShieldSide,
   LucauaShieldSides,
 } from "@/utils/types/character/lucaua";
+import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
 
 export interface PlayerBattleProps {
   x: number;

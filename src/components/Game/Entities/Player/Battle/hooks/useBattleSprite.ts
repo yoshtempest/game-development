@@ -5,7 +5,7 @@ import { resolveSpriteState } from "@/gameRules/battle/playerStates";
 import { getIdleFrames, IDLE_FRAME_MS } from "@/data/sprites/idleFrames";
 
 import { resolvePlayerSprite } from "@/components/Game/Entities/Player/Battle/utils/resolvePlayerSprite";
-import type { LucauaAttackVariant } from "@/utils/types/character/lucaua";
+import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
 
 interface UseBattleSpriteParams {
   character: CharacterId;

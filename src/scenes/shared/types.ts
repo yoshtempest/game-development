@@ -33,7 +33,6 @@ import type { CharactersProgress } from "@/data/characters/defaultProgress";
 import type { ReplayData } from "@/utils/types/replay";
 import type { NavigateFunction } from "react-router";
 import type {
-  LucauaAttackVariant,
   LucauaEnergyProjectile,
   LucauaPortal,
   LucauaPortalFocus,
@@ -41,6 +40,8 @@ import type {
   LucauaShieldSide,
   LucauaShieldSides,
 } from "@/utils/types/character/lucaua";
+import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
+
 
 type Battle = ReturnType<typeof useBattleSystem>;
 type Npc = ReturnType<typeof useNpcAI>;
