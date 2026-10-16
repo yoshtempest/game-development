@@ -521,6 +521,7 @@ export function useBattleScene({
     redUsable,
     purplePress,
     purpleUsable,
+    lucauaResetPortals,
   } = combat;
 
   vastolordEndingRef.current = battle.isEnding;
@@ -725,6 +726,7 @@ export function useBattleScene({
     resetCombo,
     grabbedTimerRef,
     setIsGrabbed,
+    resetPortals: lucauaResetPortals,
   });
 
   // Intro do alfa hungryDog: câmera foca no alfa enquanto ele invoca (2s),

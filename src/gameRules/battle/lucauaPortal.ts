@@ -3,7 +3,26 @@ import { LucauaPortalConstants } from "@/data/characters/lucaua/lucaua";
 import type {
   LucauaPortal,
   LucauaPortalCross,
+  LucauaPortalKind,
 } from "@/utils/types/character/lucaua";
+
+/**
+ * Direção que um projétil adota ao **sair** de um portal. A boca do portal
+ * apoia uma direção: o frontal (`default`) é uma passagem horizontal — quem sai
+ * segue em frente, mantendo a direção de entrada; o terrestre abre para cima e
+ * o aéreo para baixo, então quem sai deles vira vertical (90°/-90°).
+ *
+ * Tudo em unidades de arena, onde `y` cresce para baixo — subir é `dirY: -1`.
+ */
+export function getPortalExitDirection(
+  kind: LucauaPortalKind,
+  dirX: number,
+  dirY: number,
+): { dirX: number; dirY: number } {
+  if (kind === "ground") return { dirX: 0, dirY: -1 };
+  if (kind === "air") return { dirX: 0, dirY: 1 };
+  return { dirX, dirY };
+}
 
 /**
  * Travessia visual em andamento (a entidade está afundando num portal

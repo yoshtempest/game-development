@@ -367,6 +367,28 @@ export function useLucauaPortals({
     timeRef.current = clearTime(timeRef.current, PORTAL_TIME_ID);
   }
 
+  /**
+   * Zera a habilidade para uma nova tentativa: portais, quedas em curso, foco
+   * de câmera e travas. O estado do hook **sobrevive** ao retry da batalha (só
+   * player/NPC são remontados), então sem isso a nova tentativa recomeçaria com
+   * os portais já fincados no mapa.
+   */
+  function resetPortals() {
+    commitPortals([]);
+    disarmedRef.current.clear();
+    playerTravelRef.current = null;
+    travelRef.current = [];
+    landingEngagedRef.current = false;
+    landingShownRef.current = false;
+    setLanding(false);
+    endFlow();
+    if (focusingRef.current) {
+      focusingRef.current = false;
+      setFocus(null);
+    }
+    releaseLocks();
+  }
+
   // ── Fluxo ──────────────────────────────────────────────────────────────────
 
   function endFlow() {
@@ -766,14 +788,16 @@ export function useLucauaPortals({
 
   /**
    * Warp de projétil: os loops de projétil (NPC e energia do lucaua) chamam a
-   * cada tick com o centro do projétil. Ele mantém a direção e reaparece no
-   * outro portal; fica desarmado até sair das duas zonas (evita ping-pong).
+   * cada tick com o centro do projétil. Ele reaparece no outro portal e devolve
+   * o `kind` de saída — quem decide a nova direção é o chamador
+   * (`getPortalExitDirection`); fica desarmado até sair das duas zonas (evita
+   * ping-pong).
    */
   function warpProjectile(
     id: string,
     x: number,
     y: number,
-  ): { x: number; y: number } | null {
+  ): { x: number; y: number; kind: LucauaPortalKind } | null {
     const list = portalsRef.current;
     if (list.length < LucauaPortalConstants.MAX_PORTALS) return null;
     const a = list[0];
@@ -791,7 +815,7 @@ export function useLucauaPortals({
 
     disarmedRef.current.add(key);
     const dest = inA ? b : a;
-    return { x: dest.x, y: dest.y };
+    return { x: dest.x, y: dest.y, kind: dest.kind };
   }
 
   function updateLanding(now: number) {
@@ -932,6 +956,14 @@ export function useLucauaPortals({
   const cancelInputRef = useLatestRef(cancelInput);
   const handleDirRef = useLatestRef(handleDir);
 
+  // Estável para o retry da batalha: o `handleRetry` do fluxo de derrota entra
+  // na lista de deps dele, então uma função nova a cada render o recriaria.
+  const resetPortalsRef = useLatestRef(resetPortals);
+  const resetPortalsStable = useCallback(
+    () => resetPortalsRef.current(),
+    [resetPortalsRef],
+  );
+
   return {
     lucauaPortals: portals,
     lucauaPortalGhost: ghost,
@@ -944,5 +976,6 @@ export function useLucauaPortals({
     lucauaPortalCount: portals.length,
     lucauaPortalCost: portalCost,
     lucauaPortalMaxPortals: LucauaPortalConstants.MAX_PORTALS,
+    lucauaResetPortals: resetPortalsStable,
   };
 }

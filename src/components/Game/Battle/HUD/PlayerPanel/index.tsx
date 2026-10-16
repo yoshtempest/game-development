@@ -6,7 +6,7 @@ import { ElementBadges } from "@/components/Game/Battle/HUD/ElementBadges";
 import { playerPath } from "@/utils/paths";
 import type { ElementType } from "@/utils/types/battle/element";
 import styles from "@/components/Game/Battle/HUD/styles.module.css";
-import { hasManaBar } from "@/gameRules/battle/mana";
+import { getEnergyName, hasManaBar } from "@/gameRules/battle/mana";
 // import { characterFaceStyle } from "@/utils/character/elementFace";
 // import type { CharacterOption } from "@/utils/types/player/character";
 
@@ -89,15 +89,9 @@ export function PlayerHUDPanel({
             {energy != null && <EnergyBar label="REIRYOKU" value={energy} />}
             {hasManaBar(character) && mana != null && maxMana != null && (
               <EnergyBar
-                label={
-                  character === "riquelme"
-                    ? "ENERGIA AMALDIÇOADA"
-                    : character === "emanuel"
-                      ? "KI"
-                      : character === "marcelo"
-                        ? "REIRYOKU"
-                        : "MANA"
-                }
+                // O rótulo sai da mesma fonte que o menu de Status
+                // (`getEnergyName`): nada de tabela paralela aqui.
+                label={getEnergyName(character).toUpperCase()}
                 value={mana}
                 max={maxMana}
                 tone={character === "riquelme" ? "cursed" : "mana"}

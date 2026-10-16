@@ -30,8 +30,16 @@ export type LucauaEnergyProjectile = {
   id: string;
   x: number;
   y: number;
-  /** Direção do voo: 1 = direita, -1 = esquerda (o sprite espelha nesse caso). */
-  dirX: 1 | -1;
+  /**
+   * Componente horizontal do voo: nasce `±1` (tiro reto) e vira `0` quando o
+   * projétil sai de um portal vertical. O sprite espelha quando é negativo.
+   */
+  dirX: number;
+  /**
+   * Componente vertical: `0` no disparo normal e `±1` depois de atravessar um
+   * portal — o terrestre cospe para cima (`-1`), o aéreo para baixo (`1`).
+   */
+  dirY: number;
 };
 
 /**
@@ -52,13 +60,15 @@ export type LucauaPortalPhase = "flying" | "placed";
  * Warp de projétil entre os portais. Recebe a posição do projétil e devolve o
  * destino (o portal par) quando ele cruza a zona de travessia — ou `null`
  * quando não há travessia (menos de dois portais, já desarmado, fora da zona).
- * Injetado nos loops de projétil (NPC e energia do lucaua) pelo hook de portais.
+ * O `kind` do destino é o que decide a direção de saída (ver
+ * `getPortalExitDirection`); o chamador aplica ao próprio movimento. Injetado
+ * nos loops de projétil (NPC e energia do lucaua) pelo hook de portais.
  */
 export type LucauaPortalWarpFn = (
   id: string,
   x: number,
   y: number,
-) => { x: number; y: number } | null;
+) => { x: number; y: number; kind: LucauaPortalKind } | null;
 
 /**
  * Portal posicionado (ou em voo). O `y` é a **âncora** (o chão em que a

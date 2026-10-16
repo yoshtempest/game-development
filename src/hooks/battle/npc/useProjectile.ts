@@ -9,6 +9,7 @@ import {
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { resetCooldownRef } from "@/utils/battle/cooldown";
 import { getProjectileCenter } from "@/gameRules/npc/projectile/projectileDamage";
+import { getPortalExitDirection } from "@/gameRules/battle/lucauaPortal";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { applyPlayerStrike } from "./apply/applyPlayerStrike";
 import { handleGroundProjectile } from "./handle/handleGroundProjectile";
@@ -250,8 +251,10 @@ export function useProjectile(
       if (stick) onStickRef.current?.();
       for (const x of misses) onMissRef.current?.(x);
 
-      // Portais do lucaua: o projétil que cruza a zona reaparece no outro
-      // portal, mantendo a direção (o deslocamento leva o **centro** ao destino).
+      // Portais do lucaua: o projétil que cruza a zona reaparece no outro portal
+      // (o deslocamento leva o **centro** ao destino) e o portal de saída decide
+      // a nova direção. Só `common`/`pull` têm rumo próprio para obedecer —
+      // `ground`, `rain` e `cut` seguem o movimento deles e só mudam de posição.
       const warp = portalWarpRef?.current;
       const moved =
         warp == null
@@ -260,10 +263,15 @@ export function useProjectile(
               const center = getProjectileCenter(p);
               const dest = warp(p.id, center.x, center.y);
               if (!dest) return p;
+              const exit =
+                p.variant === "common" || p.variant === "pull"
+                  ? getPortalExitDirection(dest.kind, p.dirX, p.dirY)
+                  : null;
               return {
                 ...p,
                 x: p.x + (dest.x - center.x),
                 y: p.y + (dest.y - center.y),
+                ...(exit ? { dirX: exit.dirX, dirY: exit.dirY } : {}),
               };
             });
 

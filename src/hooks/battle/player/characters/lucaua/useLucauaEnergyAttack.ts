@@ -8,6 +8,7 @@ import {
 } from "@/gameRules/battle/rangeConfig";
 import { getTime, type TimeEffect } from "@/gameRules/battle/time";
 import { planLucauaAttack } from "@/gameRules/battle/lucauaAttack";
+import { getPortalExitDirection } from "@/gameRules/battle/lucauaPortal";
 import { LucauaEnergyConstants } from "@/data/characters/lucaua/lucaua";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { ProjectileConstants } from "@/data/projectile";
@@ -91,6 +92,7 @@ export function useLucauaEnergyAttack({
           x: shot.spawnX,
           y: shot.spawnY,
           dirX: shot.dirX,
+          dirY: 0,
         })),
       ]);
 
@@ -143,16 +145,24 @@ export function useLucauaEnergyAttack({
 
           let x =
             p.x + p.dirX * LucauaEnergyConstants.SPEED_PER_TICK * time.speed;
-          let y = p.y;
+          let y =
+            p.y + p.dirY * LucauaEnergyConstants.SPEED_PER_TICK * time.speed;
+          let dirX = p.dirX;
+          let dirY = p.dirY;
 
-          // Portais do lucaua: cruza a zona e reaparece no outro portal,
-          // mantendo a direção; a colisão passa a valer já na saída.
+          // Portais do lucaua: cruza a zona e reaparece no par. Quem sai decide
+          // a nova direção — frontal mantém o rumo, terrestre cospe para cima e
+          // aéreo para baixo (`getPortalExitDirection`); a colisão passa a valer
+          // já na saída.
           const warp = portalWarpRef?.current;
           if (warp) {
             const dest = warp(p.id, x, y);
             if (dest) {
               x = dest.x;
               y = dest.y;
+              const exit = getPortalExitDirection(dest.kind, p.dirX, p.dirY);
+              dirX = exit.dirX;
+              dirY = exit.dirY;
             }
           }
 
@@ -160,6 +170,10 @@ export function useLucauaEnergyAttack({
             x < -LucauaEnergyConstants.OFFSCREEN_MARGIN ||
             x >
               ProjectileConstants.MAP_WIDTH +
+                LucauaEnergyConstants.OFFSCREEN_MARGIN ||
+            y < -LucauaEnergyConstants.OFFSCREEN_MARGIN ||
+            y >
+              ProjectileConstants.MAP_HEIGHT +
                 LucauaEnergyConstants.OFFSCREEN_MARGIN
           ) {
             return null;
@@ -175,7 +189,7 @@ export function useLucauaEnergyAttack({
             }
           }
 
-          return { ...p, x, y };
+          return { ...p, x, y, dirX, dirY };
         })
         .filter((p): p is LucauaEnergyProjectile => p !== null);
 

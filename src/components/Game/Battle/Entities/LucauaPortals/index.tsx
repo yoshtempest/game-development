@@ -19,11 +19,14 @@ type Props = {
 /**
  * Ajuste do sprite em relação à âncora (o ponto `x/y` em que a entidade
  * atravessa). O portal deitado sobe um pouco mais para não "afundar" na linha
- * do chão; os flutuantes ficam centrados na âncora, igual à zona de travessia.
+ * do chão; o frontal é um batente de pé — a **base** da arte fica na âncora,
+ * a mesma linha dos pés do player (o portal não pode sair centralizado no
+ * chão, senão a entidade emerge na metade da imagem); o aéreo fica centrado,
+ * igual à zona de travessia.
  */
 const ANCHOR_TRANSFORM: Record<LucauaPortalKind, string> = {
   ground: "translate(-50%, -62%)",
-  default: "translate(-50%, -50%)",
+  default: "translate(-50%, -100%)",
   air: "translate(-50%, -50%)",
 };
 
