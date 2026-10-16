@@ -12,13 +12,11 @@ import {
   overlapsPortal,
   resolvePortalY,
 } from "@/gameRules/battle/characters/lucaua/portalGeometry";
-import { pickWarpDecision } from "@/gameRules/battle/characters/lucaua/portalWarpRules";
 import {
-  ALL_TIME_KINDS,
-  applyTime,
-  clearTime,
-  type TimeEffect,
-} from "@/gameRules/battle/time";
+  buildTravelLockSpec,
+  pickWarpDecision,
+} from "@/gameRules/battle/characters/lucaua/portalWarpRules";
+import { type TimeEffect } from "@/gameRules/battle/time";
 import {
   LUCAUA_PORTAL_KINDS,
   LucauaPortalConstants,
@@ -44,9 +42,7 @@ import type {
   PlayerTravel
 } from "@/utils/types/character/lucaua/portals";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
-
-/** Id do efeito de time do congelamento — único por habilidade. */
-const PORTAL_TIME_ID = "lucaua-portals";
+import { usePortalLocks, PORTAL_TIME_ID } from "./usePortalLocks";
 
 type Props = {
   player: Player;
@@ -88,9 +84,13 @@ type Props = {
  * toque no botão desfaz o último e devolve a energia paga. O cancelar encerra
  * o fluxo sem gastar energia.
  *
- * Congelamento em duas frentes: o mundo para pelo efeito de time (`freeze`),
- * renovado a cada tick; o player é travado pelo `freezeActionsUntilRef`, porque
- * ele não faz parte dos `TimeKind`.
+ * Congelamento em duas frentes: o fluxo de colocação (e o voo do portal)
+ * congela o mundo inteiro pelo efeito de time (`freeze`), renovado a cada tick,
+ * travando também as ações do player pelo `freezeActionsUntilRef` (ele não faz
+ * parte dos `TimeKind`); a travessia, por sua vez, congela **só** quem está
+ * atravessando — as outras entidades seguem vivas enquanto a que cai é
+ * renderizada no outro portal, e o player só tem as ações travadas se for ele
+ * quem cai.
  *
  * Teleporte: cada entidade tem um "armado/desarmado" próprio — depois de
  * atravessar, ela fica desarmada até sair de todos os raios, o que impediria o
@@ -165,10 +165,6 @@ export function useLucauaPortals({
   const playerTravelRef = useRef<PlayerTravel | null>(null);
   const travelRef = useRef<EntityTravel[]>([]);
 
-  // Travas (time + ações do player) e o valor salvo para restaurar depois.
-  const locksEngagedRef = useRef(false);
-  const savedFreezeRef = useRef(0);
-
   // Câmera: só atualiza o estado quando muda (evita setState no tick parado).
   const focusingRef = useRef(false);
 
@@ -186,6 +182,11 @@ export function useLucauaPortals({
     disabledRef,
     isPausedRef,
     battleEndedRef,
+  });
+
+  const { releaseLocks, engageLocks, engageTravelLocks } = usePortalLocks({
+    timeRef,
+    freezeActionsUntilRef,
   });
 
   // ── Helpers ────────────────────────────────────────────────────────────────
@@ -241,36 +242,6 @@ export function useLucauaPortals({
   /** Há uma queda em curso para essa chave de travessia? */
   function isTraveling(key: string): boolean {
     return travelRef.current.some((t) => t.key === key);
-  }
-
-  // ── Travas ─────────────────────────────────────────────────────────────────
-
-  function engageLocks(now: number) {
-    if (!locksEngagedRef.current) {
-      savedFreezeRef.current = freezeActionsUntilRef.current;
-      locksEngagedRef.current = true;
-    }
-    freezeActionsUntilRef.current = Number.POSITIVE_INFINITY;
-    timeRef.current = applyTime(
-      timeRef.current,
-      {
-        id: PORTAL_TIME_ID,
-        kinds: ALL_TIME_KINDS,
-        exempt: [],
-        speed: 0,
-        cooldown: 1,
-        // Renovado a cada tick; se o tick parar, o congelamento expira sozinho.
-        durationMs: LucauaPortalConstants.TICK_MS * 20,
-      },
-      now,
-    );
-  }
-
-  function releaseLocks() {
-    if (!locksEngagedRef.current) return;
-    locksEngagedRef.current = false;
-    freezeActionsUntilRef.current = savedFreezeRef.current;
-    timeRef.current = clearTime(timeRef.current, PORTAL_TIME_ID);
   }
 
   /**
@@ -339,7 +310,13 @@ export function useLucauaPortals({
       BATTLE_LIMITS.minX,
       Math.min(player.x, BATTLE_LIMITS.maxX),
     );
-    const y = resolvePortalY(kind, x, player.y, player.groundY);
+    const y = resolvePortalY(
+      kind,
+      x,
+      player.y,
+      player.groundY,
+      obstaclesRef.current,
+    );
     flowRef.current = "positioning";
     ghostRef.current = { kind, x, y };
     setGhost({ kind, x, y });
@@ -574,8 +551,9 @@ export function useLucauaPortals({
 
   /**
    * Inicia a travessia de uma entidade não-player. Portal terrestre na origem =
-   * queda simulada (o AI fica congelado e esta queda escreve x/y); os demais
-   * cruzam na hora e, se o destino estiver suspenso, caem até o chão.
+   * queda simulada (o AI **dessa entidade** fica congelado pelo efeito de
+   * travessia e esta queda escreve x/y); os demais cruzam na hora e, se o
+   * destino estiver suspenso, caem até o chão.
    */
   function startEntityWarp(
     group: PortalTravelGroup,
@@ -797,11 +775,23 @@ export function useLucauaPortals({
     updatePlayerTravel(now);
     updateTravel();
 
-    const traveling =
-      playerTravelRef.current !== null || travelRef.current.length > 0;
-    if (flowRef.current !== "idle" || flying || traveling) {
+    // Fluxo/voo: o mundo para inteiro (o player está montando o par).
+    // Travessia: só quem está caindo congela — o resto do mundo segue.
+    const playerTraveling = playerTravelRef.current !== null;
+    const traveling = playerTraveling || travelRef.current.length > 0;
+    if (flowRef.current !== "idle" || flying) {
       engageLocks(now);
-    } else if (locksEngagedRef.current) {
+    } else if (traveling) {
+      engageTravelLocks(
+        now,
+        buildTravelLockSpec(
+          travelRef.current,
+          playerTraveling,
+          summonsRef.current,
+          alliesRef.current,
+        ),
+      );
+    } else {
       releaseLocks();
     }
 
@@ -825,13 +815,8 @@ export function useLucauaPortals({
         layerRemoveRef.current();
         layerRemoveRef.current = null;
       }
-      if (locksEngagedRef.current) {
-        locksEngagedRef.current = false;
-        freezeActionsUntilRef.current = savedFreezeRef.current;
-        timeRef.current = clearTime(timeRef.current, PORTAL_TIME_ID);
-      }
     };
-  }, [freezeActionsUntilRef, timeRef]);
+  }, []);
 
   // Publica o warp de projéteis para os loops de projétil (NPC e energia). O
   // wrapper estável lê o `warpProjectile` atual a cada chamada, que por sua vez

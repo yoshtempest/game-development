@@ -10,9 +10,11 @@ export type PortalWarp = { dest: LucauaPortal; source: LucauaPortal };
 export type PortalTravelGroup = "npc" | "summon" | "ally" | "pet";
 
 /**
- * Queda em curso de uma entidade não-player. A posição é dirigida aqui (não
- * pelo AI, que fica congelado pelo efeito de time): `descend` afunda do portal
- * terrestre até `targetY`; `land` cai do destino suspenso até o chão.
+ * Queda em curso de uma entidade não-player. A posição é dirigida aqui, não
+ * pelo AI: enquanto a entidade atravessa, um efeito de time dirigido à classe
+ * dela (`engageTravelLocks` + `TravelLockSpec`) a mantém congelada — só ela, o
+ * resto do mundo segue vivo; `descend` afunda do portal terrestre até
+ * `targetY`; `land` cai do destino suspenso até o chão.
  */
 export type EntityTravel = {
   /** Id de travessia (mesma chave do `disarmedRef`, ex.: `summon:<id>`). */
