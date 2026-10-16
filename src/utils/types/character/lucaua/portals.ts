@@ -3,6 +3,13 @@ import type { LucauaPortal } from ".";
 /** Direção que o joystick pode empurrar o fantasma/seletor. */
 export type PortalDirection = "up" | "down" | "left" | "right";
 
+/**
+ * Fase do fluxo de colocação do portal: `selecting` (escolhendo o tipo),
+ * `positioning` (mexendo o fantasma) ou `idle` (fora do fluxo). O fluxo é o que
+ * trava o mundo durante a montagem do par.
+ */
+export type PortalFlowPhase = "idle" | "selecting" | "positioning";
+
 /** Par de portais que uma travessia conecta (origem → destino). */
 export type PortalWarp = { dest: LucauaPortal; source: LucauaPortal };
 

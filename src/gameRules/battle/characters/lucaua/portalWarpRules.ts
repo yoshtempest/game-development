@@ -7,6 +7,23 @@ import type { LucauaPortal } from "@/utils/types/character/lucaua";
 import { LucauaPortalConstants } from "@/data/characters/lucaua";
 import { overlapsPortal } from "./portalGeometry";
 
+/**
+ * O par de portais prontos para atravessar, ou `null` enquanto não houver dois
+ * fincados. É o pré-requisito comum de toda travessia (entidade e projétil
+ * concordam que só existe portal utilizável quando o par está completo e
+ * parado).
+ */
+export function getPlacedPortalPair(
+  portals: readonly LucauaPortal[],
+): [LucauaPortal, LucauaPortal] | null {
+  if (portals.length < LucauaPortalConstants.MAX_PORTALS) return null;
+  const a = portals[0];
+  const b = portals[1];
+  if (!a || !b) return null;
+  if (a.phase !== "placed" || b.phase !== "placed") return null;
+  return [a, b];
+}
+
 export type PickWarpResult =
   | { kind: "none" }
   | { kind: "disarm" }
@@ -22,18 +39,13 @@ export function pickWarpDecision(
   id: string,
   x: number,
   feetY: number,
-  portals: LucauaPortal[],
-  disarmed: Set<string>,
+  portals: readonly LucauaPortal[],
+  disarmed: ReadonlySet<string>,
 ): PickWarpResult {
-  if (portals.length < LucauaPortalConstants.MAX_PORTALS) {
-    return { kind: "none" };
-  }
+  const pair = getPlacedPortalPair(portals);
+  if (!pair) return { kind: "none" };
 
-  const a = portals[0];
-  const b = portals[1];
-  if (!a || !b) return { kind: "none" };
-  if (a.phase !== "placed" || b.phase !== "placed") return { kind: "none" };
-
+  const [a, b] = pair;
   const inA = overlapsPortal(x, feetY, a);
   const inB = overlapsPortal(x, feetY, b);
 
@@ -47,6 +59,49 @@ export function pickWarpDecision(
 
   const warp: PortalWarp = inA ? { dest: b, source: a } : { dest: a, source: b };
   return { kind: "arm", warp };
+}
+
+/** Chave do "armado/desarmado" de um projétil (prefixo evita colisão com entidades). */
+export function projectileWarpKey(id: string): string {
+  return `projectile:${id}`;
+}
+
+export type PickProjectileResult =
+  | { kind: "none" }
+  | { kind: "disarm" }
+  | { kind: "warp"; dest: LucauaPortal };
+
+/**
+ * Decide a travessia de um projétil entre os dois portais.
+ *
+ * Igual à das entidades, mas usa o **centro** do projétil (não os pés) e devolve
+ * só o destino — a direção de saída quem decide é o chamador
+ * (`getPortalExitDirection`). Função pura: o "armado/desarmado" é aplicado pelo
+ * chamador.
+ */
+export function pickProjectileWarp(
+  id: string,
+  x: number,
+  y: number,
+  portals: readonly LucauaPortal[],
+  disarmed: ReadonlySet<string>,
+): PickProjectileResult {
+  const pair = getPlacedPortalPair(portals);
+  if (!pair) return { kind: "none" };
+
+  const [a, b] = pair;
+  const inA = overlapsPortal(x, y, a);
+  const inB = overlapsPortal(x, y, b);
+
+  if (!inA && !inB) {
+    return { kind: "disarm" };
+  }
+
+  if (disarmed.has(projectileWarpKey(id))) {
+    return { kind: "none" };
+  }
+
+  return { kind: "warp", dest: inA ? b : a };
 }
 
 // ── Congelamento seletivo da travessia ──────────────────────────────────────

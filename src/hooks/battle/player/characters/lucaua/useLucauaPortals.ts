@@ -1,48 +1,30 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Dispatch, RefObject, SetStateAction } from "react";
 
-import { useGameControls } from "@/contexts/GameControlsContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
 
-import { BATTLE_LIMITS } from "@/gameRules/movement/constants";
 import {
-  bodyHeight,
-  groundUnder,
-  overlapsPortal,
-  resolvePortalY,
-} from "@/gameRules/battle/characters/lucaua/portalGeometry";
-import {
-  buildTravelLockSpec,
-  pickWarpDecision,
-} from "@/gameRules/battle/characters/lucaua/portalWarpRules";
+  advancePortalFlight,
+  findFlyingPortal,
+} from "@/gameRules/battle/characters/lucaua/portalFlight";
+import { buildTravelLockSpec } from "@/gameRules/battle/characters/lucaua/portalWarpRules";
 import { type TimeEffect } from "@/gameRules/battle/time";
-import {
-  LUCAUA_PORTAL_KINDS,
-  LucauaPortalConstants,
-} from "@/data/characters/lucaua";
+import { LucauaPortalConstants } from "@/data/characters/lucaua";
+import { usePortalFlow } from "./usePortalFlow";
+import { usePortalLocks } from "./usePortalLocks";
+import { usePortalTravel } from "./usePortalTravel";
 
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
-import type { SoundId } from "@/utils/audio/soundId";
-import type { GameControlLayer } from "@/utils/types/player/controls";
+import type { PlaySound } from "@/utils/types/audio";
 import type { NPCBattleState, SummonedNpc } from "@/utils/types/npc/npc";
 import type { PetState } from "@/hooks/battle/player/pets/usePet";
 import type {
   LucauaPortal,
   LucauaPortalFocus,
-  LucauaPortalGhost,
-  LucauaPortalKind,
   LucauaPortalWarpFn,
 } from "@/utils/types/character/lucaua";
-import type {
-  PortalDirection,
-  PortalTravelGroup,
-  PortalWarp,
-  EntityTravel,
-  PlayerTravel
-} from "@/utils/types/character/lucaua/portals";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
-import { usePortalLocks, PORTAL_TIME_ID } from "./usePortalLocks";
 
 type Props = {
   player: Player;
@@ -66,7 +48,7 @@ type Props = {
   isPausedRef: RefObject<boolean>;
   disabledRef: RefObject<boolean>;
   battleEndedRef: RefObject<boolean>;
-  playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
+  playSound: PlaySound;
   /**
    * Saída do warp de projéteis: o hook publica aqui a função que os loops de
    * projétil (NPC e energia do lucaua) chamam para atravessar os portais.
@@ -106,6 +88,10 @@ type Props = {
  * mas pular por cima escapa — por isso a zona de entrada dele só abre uma
  * margem curta acima da linha (`GROUND_ENTER_MARGIN`), ao contrário dos
  * suspensos, que capturam numa faixa simétrica.
+ *
+ * A lógica vive em sub-hooks coesos: `usePortalFlow` (seleção/posicionamento),
+ * `usePortalTravel` (teleporte/quedas) e `usePortalLocks` (as travas de tempo e
+ * de ações). Aqui só ficam o estado dos portais, o tick e a API.
  */
 export function useLucauaPortals({
   player,
@@ -128,13 +114,8 @@ export function useLucauaPortals({
   playSound,
   portalWarpRef,
 }: Props) {
-  const { pushControls } = useGameControls();
-
   // ── Estado de render ───────────────────────────────────────────────────────
   const [portals, setPortals] = useState<LucauaPortal[]>([]);
-  const [ghost, setGhost] = useState<LucauaPortalGhost | null>(null);
-  const [selection, setSelection] = useState<number | null>(null);
-  const [landing, setLanding] = useState(false);
   const [focus, setFocus] = useState<LucauaPortalFocus>(null);
 
   // Fonte de verdade mutável do tick (o state é só espelho para o render).
@@ -144,36 +125,12 @@ export function useLucauaPortals({
   const petRef = useLatestRef(pet);
   const obstaclesRef = useLatestRef(obstacles ?? []);
   const playSoundRef = useLatestRef(playSound);
-  const pushControlsRef = useLatestRef(pushControls);
-
-  // Fluxo (selecting → positioning) e seus dados mutáveis.
-  const flowRef = useRef<"idle" | "selecting" | "positioning">("idle");
-  const selectRef = useRef(1);
-  const ghostRef = useRef<LucauaPortalGhost | null>(null);
-  const dirRef = useRef<Record<PortalDirection, boolean>>({
-    up: false,
-    down: false,
-    left: false,
-    right: false,
-  });
-  const layerRemoveRef = useRef<(() => void) | null>(null);
 
   // Travessia: ids desarmados até saírem de todos os portais.
   const disarmedRef = useRef<Set<string>>(new Set());
 
-  // Quedas em curso (afundar no portal terrestre + aterrissar no chão).
-  const playerTravelRef = useRef<PlayerTravel | null>(null);
-  const travelRef = useRef<EntityTravel[]>([]);
-
   // Câmera: só atualiza o estado quando muda (evita setState no tick parado).
   const focusingRef = useRef(false);
-
-  // Visual de queda por atravessar um portal aéreo.
-  const landingEngagedRef = useRef(false);
-  const landingUntilRef = useRef(0);
-  const landingShownRef = useRef(false);
-
-  const counterRef = useRef(0);
 
   const { usable: guardUsable } = useSkillGuard({
     player,
@@ -189,99 +146,12 @@ export function useLucauaPortals({
     freezeActionsUntilRef,
   });
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
+  // ── Portais ────────────────────────────────────────────────────────────────
 
   const commitPortals = useCallback((next: LucauaPortal[]) => {
     portalsRef.current = next;
     setPortals(next);
   }, []);
-
-  /**
-   * Decide a travessia de uma entidade, cuidando do "armado/desarmado".
-   */
-  function pickWarp(id: string, x: number, feetY: number): PortalWarp | null {
-    const result = pickWarpDecision(
-      id,
-      x,
-      feetY,
-      portalsRef.current,
-      disarmedRef.current,
-    );
-
-    if (result.kind === "disarm") {
-      disarmedRef.current.delete(id);
-      return null;
-    }
-
-    if (result.kind === "arm") {
-      disarmedRef.current.add(id);
-      return result.warp;
-    }
-
-    return null;
-  }
-
-  /** Escreve a posição de uma entidade não-player, pelo grupo a que pertence. */
-  function writeEntity(
-    group: PortalTravelGroup,
-    id: string,
-    x: number,
-    y: number,
-  ) {
-    if (group === "npc") {
-      npc.updateNpc({ x, y });
-    } else if (group === "summon") {
-      setSummons((prev) => prev.map((s) => (s.id === id ? { ...s, x, y } : s)));
-    } else if (group === "ally") {
-      setAllies((prev) => prev.map((s) => (s.id === id ? { ...s, x, y } : s)));
-    } else {
-      setPet((prev) => (prev ? { ...prev, x, y } : prev));
-    }
-  }
-
-  /** Há uma queda em curso para essa chave de travessia? */
-  function isTraveling(key: string): boolean {
-    return travelRef.current.some((t) => t.key === key);
-  }
-
-  /**
-   * Zera a habilidade para uma nova tentativa: portais, quedas em curso, foco
-   * de câmera e travas. O estado do hook **sobrevive** ao retry da batalha (só
-   * player/NPC são remontados), então sem isso a nova tentativa recomeçaria com
-   * os portais já fincados no mapa.
-   */
-  function resetPortals() {
-    commitPortals([]);
-    disarmedRef.current.clear();
-    playerTravelRef.current = null;
-    travelRef.current = [];
-    landingEngagedRef.current = false;
-    landingShownRef.current = false;
-    setLanding(false);
-    endFlow();
-    if (focusingRef.current) {
-      focusingRef.current = false;
-      setFocus(null);
-    }
-    releaseLocks();
-  }
-
-  // ── Fluxo ──────────────────────────────────────────────────────────────────
-
-  function endFlow() {
-    if (flowRef.current === "idle") return;
-    flowRef.current = "idle";
-    ghostRef.current = null;
-    setGhost(null);
-    setSelection(null);
-    dirRef.current = { up: false, down: false, left: false, right: false };
-    if (layerRemoveRef.current) {
-      layerRemoveRef.current();
-      layerRemoveRef.current = null;
-    }
-    const flying = portalsRef.current.some((p) => p.phase === "flying");
-    if (!flying) releaseLocks();
-  }
 
   function undoLast() {
     const list = portalsRef.current;
@@ -304,418 +174,72 @@ export function useLucauaPortals({
     playSoundRef.current("closeMenu");
   }
 
-  function confirmSelection() {
-    const kind = LUCAUA_PORTAL_KINDS[selectRef.current] ?? "default";
-    const x = Math.max(
-      BATTLE_LIMITS.minX,
-      Math.min(player.x, BATTLE_LIMITS.maxX),
-    );
-    const y = resolvePortalY(
-      kind,
-      x,
-      player.y,
-      player.groundY,
-      obstaclesRef.current,
-    );
-    flowRef.current = "positioning";
-    ghostRef.current = { kind, x, y };
-    setGhost({ kind, x, y });
-    setSelection(null);
-    playSoundRef.current("selectMenu");
-  }
+  const {
+    travelRef,
+    playerTravelRef,
+    landing,
+    resetTravel,
+    runTeleports,
+    updateTravel,
+    updatePlayerTravel,
+    updateLanding,
+    warpProjectile,
+  } = usePortalTravel({
+    player,
+    setPlayer,
+    npc,
+    summonsRef,
+    alliesRef,
+    petRef,
+    setSummons,
+    setAllies,
+    setPet,
+    portalsRef,
+    disarmedRef,
+    obstaclesRef,
+    playSoundRef,
+  });
 
-  function moveGhost() {
-    const current = ghostRef.current;
-    if (!current) return;
-    const dir = dirRef.current;
-    const dx = (dir.right ? 1 : 0) - (dir.left ? 1 : 0);
-    const dy = (dir.down ? 1 : 0) - (dir.up ? 1 : 0);
-    if (dx === 0 && dy === 0) return;
+  // ── API (antes do fluxo: o clique lê `usableRef`) ──────────────────────────
 
-    const x = Math.max(
-      BATTLE_LIMITS.minX,
-      Math.min(
-        current.x + dx * LucauaPortalConstants.MOVE_PX,
-        BATTLE_LIMITS.maxX,
-      ),
-    );
-    const freeY =
-      current.kind === "default"
-        ? current.y + dy * LucauaPortalConstants.MOVE_PX
-        : current.y;
-    const y = resolvePortalY(
-      current.kind,
-      x,
-      freeY,
-      player.groundY,
-      obstaclesRef.current,
-    );
-    ghostRef.current = { kind: current.kind, x, y };
-    setGhost({ kind: current.kind, x, y });
-  }
+  const maxMana = battleManaRef.current?.playerMaxMana ?? 0;
+  const portalCost = Math.ceil(maxMana * LucauaPortalConstants.COST_RATIO);
+  const hasEnergy = (battleManaRef.current?.playerMana ?? 0) >= portalCost;
+  const full = portals.length >= LucauaPortalConstants.MAX_PORTALS;
+  const usable = full || (guardUsable && hasEnergy);
+  const usableRef = useLatestRef(usable);
 
-  function placePortal() {
-    const target = ghostRef.current;
-    if (!target) {
-      endFlow();
-      return;
-    }
+  const { ghost, selection, flowRef, endFlow, moveGhost, click, pick } =
+    usePortalFlow({
+      player,
+      portalsRef,
+      obstaclesRef,
+      playSoundRef,
+      battleManaRef,
+      usableRef,
+      commitPortals,
+      engageLocks,
+      releaseLocks,
+      onUndoLast: undoLast,
+      PLAYER_SIZE,
+    });
 
-    const mana = battleManaRef.current;
-    const max = mana?.playerMaxMana ?? 0;
-    const cost = Math.ceil(max * LucauaPortalConstants.COST_RATIO);
-    if (cost > 0 && mana && !mana.consumeMana(cost)) {
-      endFlow();
-      return;
-    }
-
-    const handY = player.y - bodyHeight(PLAYER_SIZE) * 0.55;
-    const portal: LucauaPortal = {
-      id: `${PORTAL_TIME_ID}-${counterRef.current++}`,
-      kind: target.kind,
-      phase: "flying",
-      x: player.x,
-      y: handY,
-      startX: player.x,
-      startY: handY,
-      targetX: target.x,
-      targetY: target.y,
-      startTime: Date.now(),
-      cost,
-    };
-
-    commitPortals([...portalsRef.current, portal]);
-    playSoundRef.current("blink");
+  /**
+   * Zera a habilidade para uma nova tentativa: portais, quedas em curso, foco
+   * de câmera e travas. O estado do hook **sobrevive** ao retry da batalha (só
+   * player/NPC são remontados), então sem isso a nova tentativa recomeçaria com
+   * os portais já fincados no mapa.
+   */
+  function resetPortals() {
+    commitPortals([]);
+    disarmedRef.current.clear();
+    resetTravel();
     endFlow();
-  }
-
-  function confirmInput() {
-    if (flowRef.current === "selecting") {
-      confirmSelection();
-    } else if (flowRef.current === "positioning") {
-      placePortal();
+    if (focusingRef.current) {
+      focusingRef.current = false;
+      setFocus(null);
     }
-  }
-
-  function cancelInput() {
-    endFlow();
-  }
-
-  function handleDir(direction: PortalDirection, pressed: boolean) {
-    if (flowRef.current === "selecting") {
-      // Guarda a direção mesmo durante a seleção: o jogador costuma manter o
-      // direcional pressionado ao confirmar, e sem isso o fantasma só andaria
-      // depois de soltar e apertar de novo (o joystick é edge-based).
-      dirRef.current[direction] = pressed;
-      if (pressed && (direction === "left" || direction === "right")) {
-        const total = LUCAUA_PORTAL_KINDS.length;
-        const delta = direction === "left" ? -1 : 1;
-        selectRef.current = (selectRef.current + delta + total) % total;
-        setSelection(selectRef.current);
-      }
-      return;
-    }
-    if (flowRef.current !== "positioning") return;
-    dirRef.current[direction] = pressed;
-  }
-
-  function clickPortal() {
-    if (flowRef.current !== "idle") return;
-    const list = portalsRef.current;
-    if (list.length >= LucauaPortalConstants.MAX_PORTALS) {
-      undoLast();
-      return;
-    }
-    if (!usableRef.current) return;
-    const now = Date.now();
-    flowRef.current = "selecting";
-    selectRef.current = 1;
-    setSelection(1);
-    engageLocks(now);
-    playSoundRef.current("blink");
-
-    const layer: GameControlLayer = {
-      onConfirm: () => {
-        confirmInputRef.current();
-        return true;
-      },
-      onConfirmRelease: () => {},
-      onCancel: () => {
-        cancelInputRef.current();
-        return true;
-      },
-      onCancelRelease: () => {},
-      onLeft: () => {
-        handleDirRef.current("left", true);
-        return true;
-      },
-      onRight: () => {
-        handleDirRef.current("right", true);
-        return true;
-      },
-      onUp: () => {
-        handleDirRef.current("up", true);
-        return true;
-      },
-      onDown: () => {
-        handleDirRef.current("down", true);
-        return true;
-      },
-      onLeftRelease: () => {
-        handleDirRef.current("left", false);
-      },
-      onRightRelease: () => {
-        handleDirRef.current("right", false);
-      },
-      onUpRelease: () => {
-        handleDirRef.current("up", false);
-      },
-      onDownRelease: () => {
-        handleDirRef.current("down", false);
-      },
-      blockGlobalOpen: true,
-    };
-
-    layerRemoveRef.current = pushControlsRef.current(layer);
-  }
-
-  /**
-   * Escolha pelo card do modal: fixa o tipo e já entra no posicionamento. O
-   * jogador segue com o joystick e confirma com o ataque.
-   */
-  function pickPortal(index: number) {
-    if (flowRef.current !== "selecting") return;
-    selectRef.current = index;
-    confirmSelection();
-  }
-
-  // ── Teleporte ──────────────────────────────────────────────────────────────
-
-  /**
-   * Teleporta o player para o destino. O `groundY` vira o chão sob o destino:
-   * se o portal estiver suspenso, o player sai em queda (`falling`) e a própria
-   * gravidade o leva ao chão — era o bug de ficar preso na linha do portal.
-   */
-  function teleportPlayer(dest: LucauaPortal, now: number) {
-    const ground = groundUnder(
-      dest,
-      obstaclesRef.current
-    );
-    const aboveGround = dest.y < ground - 1;
-    setPlayer((prev) => ({
-      ...prev,
-      x: dest.x,
-      y: dest.y,
-      groundY: ground,
-      velY: 0,
-      state: aboveGround ? "falling" : prev.state,
-    }));
-    if (aboveGround) {
-      landingEngagedRef.current = true;
-      landingUntilRef.current = now + LucauaPortalConstants.LANDING_MS;
-    }
-    playSoundRef.current("emanuelTeleport");
-  }
-
-  /**
-   * Inicia a travessia do player. Portal terrestre na origem = afundar
-   * `GROUND_FALL_DEPTH` (gravidade) antes de cruzar; os demais cruzam na hora.
-   */
-  function startPlayerWarp(warp: PortalWarp, now: number) {
-    if (warp.source.kind === "ground") {
-      const targetY = warp.source.y + LucauaPortalConstants.GROUND_FALL_DEPTH;
-      playerTravelRef.current = { dest: warp.dest, targetY, startTime: now };
-      // `groundY` no fundo do buraco: a gravidade desce até lá e "aterra".
-      setPlayer((prev) => ({
-        ...prev,
-        groundY: targetY,
-        velY: 0,
-        state: "falling",
-      }));
-      return;
-    }
-    teleportPlayer(warp.dest, now);
-  }
-
-  /** Conclui a travessia do player quando o corpo chega ao fundo do buraco. */
-  function updatePlayerTravel(now: number) {
-    const travel = playerTravelRef.current;
-    if (!travel) return;
-    const reached = player.y >= travel.targetY - 1;
-    const timedOut =
-      now - travel.startTime >= LucauaPortalConstants.FALL_MAX_MS;
-    if (!reached && !timedOut) return;
-    playerTravelRef.current = null;
-    teleportPlayer(travel.dest, now);
-  }
-
-  /**
-   * Inicia a travessia de uma entidade não-player. Portal terrestre na origem =
-   * queda simulada (o AI **dessa entidade** fica congelado pelo efeito de
-   * travessia e esta queda escreve x/y); os demais cruzam na hora e, se o
-   * destino estiver suspenso, caem até o chão.
-   */
-  function startEntityWarp(
-    group: PortalTravelGroup,
-    id: string,
-    key: string,
-    fromX: number,
-    fromY: number,
-    warp: PortalWarp,
-  ) {
-    if (warp.source.kind === "ground") {
-      travelRef.current.push({
-        key,
-        group,
-        id,
-        dest: warp.dest,
-        phase: "descend",
-        x: fromX,
-        y: fromY,
-        vy: 0,
-        targetY: warp.source.y + LucauaPortalConstants.GROUND_FALL_DEPTH,
-      });
-      return;
-    }
-    writeEntity(group, id, warp.dest.x, warp.dest.y);
-    playSoundRef.current("emanuelTeleport");
-    const ground = groundUnder(warp.dest, obstaclesRef.current);
-    if (warp.dest.y < ground - 1) {
-      travelRef.current.push({
-        key,
-        group,
-        id,
-        dest: warp.dest,
-        phase: "land",
-        x: warp.dest.x,
-        y: warp.dest.y,
-        vy: 0,
-        targetY: ground,
-      });
-    }
-  }
-
-  /** Avança as quedas em curso; a travessia cruza ao fim do afundamento. */
-  function updateTravel() {
-    const list = travelRef.current;
-    if (list.length === 0) return;
-    const remaining: EntityTravel[] = [];
-    for (const travel of list) {
-      travel.vy += LucauaPortalConstants.FALL_GRAVITY;
-      travel.y = Math.min(travel.y + travel.vy, travel.targetY);
-      if (travel.y < travel.targetY) {
-        writeEntity(travel.group, travel.id, travel.x, travel.y);
-        remaining.push(travel);
-        continue;
-      }
-      if (travel.phase === "descend") {
-        writeEntity(travel.group, travel.id, travel.dest.x, travel.dest.y);
-        playSoundRef.current("emanuelTeleport");
-        const ground = groundUnder(travel.dest, obstaclesRef.current);
-        if (travel.dest.y < ground - 1) {
-          travel.phase = "land";
-          travel.x = travel.dest.x;
-          travel.y = travel.dest.y;
-          travel.vy = 0;
-          travel.targetY = ground;
-          remaining.push(travel);
-        }
-        continue;
-      }
-      // `land`: já pousou no chão do destino.
-      writeEntity(travel.group, travel.id, travel.x, travel.targetY);
-    }
-    travelRef.current = remaining;
-  }
-
-  function runTeleports(now: number) {
-    if (!playerTravelRef.current) {
-      const playerWarp = pickWarp("player", player.x, player.y);
-      if (playerWarp) startPlayerWarp(playerWarp, now);
-    }
-
-    if (!isTraveling("npc")) {
-      const npcWarp = pickWarp("npc", npc.x, npc.y);
-      if (npcWarp) startEntityWarp("npc", "npc", "npc", npc.x, npc.y, npcWarp);
-    }
-
-    for (const summon of summonsRef.current) {
-      const key = `summon:${summon.id}`;
-      if (isTraveling(key)) continue;
-      const warp = pickWarp(key, summon.x, summon.y);
-      if (warp) {
-        startEntityWarp("summon", summon.id, key, summon.x, summon.y, warp);
-      }
-    }
-
-    for (const ally of alliesRef.current) {
-      const key = `ally:${ally.id}`;
-      if (isTraveling(key)) continue;
-      const warp = pickWarp(key, ally.x, ally.y);
-      if (warp) {
-        startEntityWarp("ally", ally.id, key, ally.x, ally.y, warp);
-      }
-    }
-
-    // Pet: o tick dele é o único que **não** consulta a regra de time (só
-    // `isPaused`), então uma queda simulada brigaria com o próprio "seguir o
-    // player". Ele atravessa na hora e já sai no chão do destino — nunca preso
-    // na linha de um portal suspenso.
-    const currentPet = petRef.current;
-    if (currentPet) {
-      const petWarp = pickWarp("pet", currentPet.x, currentPet.y);
-      if (petWarp) {
-        const petY = Math.max(
-          petWarp.dest.y,
-          groundUnder(petWarp.dest, obstaclesRef.current)
-        );
-        writeEntity("pet", "pet", petWarp.dest.x, petY);
-        playSoundRef.current("emanuelTeleport");
-      }
-    }
-  }
-
-  /**
-   * Warp de projétil: os loops de projétil (NPC e energia do lucaua) chamam a
-   * cada tick com o centro do projétil. Ele reaparece no outro portal e devolve
-   * o `kind` de saída — quem decide a nova direção é o chamador
-   * (`getPortalExitDirection`); fica desarmado até sair das duas zonas (evita
-   * ping-pong).
-   */
-  function warpProjectile(
-    id: string,
-    x: number,
-    y: number,
-  ): { x: number; y: number; kind: LucauaPortalKind } | null {
-    const list = portalsRef.current;
-    if (list.length < LucauaPortalConstants.MAX_PORTALS) return null;
-    const a = list[0];
-    const b = list[1];
-    if (!a || !b || a.phase !== "placed" || b.phase !== "placed") return null;
-
-    const key = `projectile:${id}`;
-    const inA = overlapsPortal(x, y, a);
-    const inB = overlapsPortal(x, y, b);
-    if (!inA && !inB) {
-      disarmedRef.current.delete(key);
-      return null;
-    }
-    if (disarmedRef.current.has(key)) return null;
-
-    disarmedRef.current.add(key);
-    const dest = inA ? b : a;
-    return { x: dest.x, y: dest.y, kind: dest.kind };
-  }
-
-  function updateLanding(now: number) {
-    if (!landingEngagedRef.current) return;
-    const airborne = player.y < player.groundY - 1;
-    const show = airborne || now < landingUntilRef.current;
-    if (show !== landingShownRef.current) {
-      landingShownRef.current = show;
-      setLanding(show);
-    }
-    if (!show) landingEngagedRef.current = false;
+    releaseLocks();
   }
 
   // ── Tick ───────────────────────────────────────────────────────────────────
@@ -734,33 +258,15 @@ export function useLucauaPortals({
       return;
     }
 
-    const flyingBefore = portalsRef.current.some((p) => p.phase === "flying");
+    const flyingBefore = findFlyingPortal(portalsRef.current) !== null;
     if (flyingBefore) {
-      const next = portalsRef.current.map((portal) => {
-        if (portal.phase !== "flying") return portal;
-        const t = Math.min(
-          (now - portal.startTime) / LucauaPortalConstants.FLIGHT_MS,
-          1,
-        );
-        if (t >= 1) {
-          return {
-            ...portal,
-            x: portal.targetX,
-            y: portal.targetY,
-            phase: "placed" as const,
-          };
-        }
-        const eased = 1 - Math.pow(1 - t, 3);
-        return {
-          ...portal,
-          x: portal.startX + (portal.targetX - portal.startX) * eased,
-          y: portal.startY + (portal.targetY - portal.startY) * eased,
-        };
-      });
+      const next = portalsRef.current.map((portal) =>
+        advancePortalFlight(portal, now),
+      );
       commitPortals(next);
     }
 
-    const flying = portalsRef.current.find((p) => p.phase === "flying") ?? null;
+    const flying = findFlyingPortal(portalsRef.current);
 
     if (flying) {
       setFocus({ x: flying.x, y: flying.y });
@@ -808,16 +314,6 @@ export function useLucauaPortals({
     return () => clearInterval(id);
   }, [tickRef]);
 
-  // Cleanup: solta a layer e as travas se a batalha desmontar no meio.
-  useEffect(() => {
-    return () => {
-      if (layerRemoveRef.current) {
-        layerRemoveRef.current();
-        layerRemoveRef.current = null;
-      }
-    };
-  }, []);
-
   // Publica o warp de projéteis para os loops de projétil (NPC e energia). O
   // wrapper estável lê o `warpProjectile` atual a cada chamada, que por sua vez
   // consulta `portalsRef`/`disarmedRef` na hora — nada de closure velho.
@@ -828,28 +324,6 @@ export function useLucauaPortals({
       portalWarpRef.current = null;
     };
   }, [portalWarpRef, warpProjectileRef]);
-
-  // ── API ────────────────────────────────────────────────────────────────────
-
-  const maxMana = battleManaRef.current?.playerMaxMana ?? 0;
-  const portalCost = Math.ceil(maxMana * LucauaPortalConstants.COST_RATIO);
-  const hasEnergy = (battleManaRef.current?.playerMana ?? 0) >= portalCost;
-  const full = portals.length >= LucauaPortalConstants.MAX_PORTALS;
-  const usable = full || (guardUsable && hasEnergy);
-
-  const clickRef = useLatestRef(clickPortal);
-  const pickRef = useLatestRef(pickPortal);
-  const usableRef = useLatestRef(usable);
-
-  const click = useCallback(() => clickRef.current(), [clickRef]);
-  const pick = useCallback(
-    (index: number) => pickRef.current(index),
-    [pickRef],
-  );
-
-  const confirmInputRef = useLatestRef(confirmInput);
-  const cancelInputRef = useLatestRef(cancelInput);
-  const handleDirRef = useLatestRef(handleDir);
 
   // Estável para o retry da batalha: o `handleRetry` do fluxo de derrota entra
   // na lista de deps dele, então uma função nova a cada render o recriaria.
