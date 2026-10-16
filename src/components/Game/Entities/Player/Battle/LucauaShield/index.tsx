@@ -5,7 +5,7 @@ import { playerPath } from "@/utils/paths";
 
 import styles from "./styles.module.css";
 
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua/lucaua";
+import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
 
 type Props = {
   /** Lado do corpo coberto pelo shield (o lado de quem ataca). */

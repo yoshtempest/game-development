@@ -3,7 +3,7 @@ import type {
   LucauaPortalCross,
   LucauaShieldSide,
   LucauaShieldSides,
-} from "@/utils/types/character/lucaua/lucaua";
+} from "@/utils/types/character/lucaua";
 
 export interface PlayerBattleProps {
   x: number;

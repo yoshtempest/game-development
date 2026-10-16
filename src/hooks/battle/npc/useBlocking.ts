@@ -15,7 +15,7 @@ import { applyDesperateBlock } from "./apply/applyDesperateBlock";
 import { applyHitstop, type TimeEffect } from "@/gameRules/battle/time";
 import { getShieldSide } from "@/gameRules/battle/lucauaShield";
 
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua/lucaua";
+import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
 
 /**
  * Janela de time (ms) entre a entrada do jogador e sofrer o dano para o

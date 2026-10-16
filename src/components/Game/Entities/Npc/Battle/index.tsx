@@ -13,7 +13,7 @@ import {
   BLOOD_ICON_SRC,
 } from "@/data/characters/marcelo/marshadowCutIn";
 import type { CutInEnemieOverlay } from "@/utils/types/battle/cutInEnemie";
-import type { LucauaPortalCross } from "@/utils/types/character/lucaua/lucaua";
+import type { LucauaPortalCross } from "@/utils/types/character/lucaua";
 
 type Props = {
   x: number;

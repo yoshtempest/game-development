@@ -8,11 +8,11 @@ import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
 import { BATTLE_LIMITS } from "@/gameRules/movement/constants";
 import {
   bodyHeight,
-  resolvePortalY,
-  overlapsPortal,
   groundUnder,
-  NO_OBSTACLES,
+  overlapsPortal,
+  resolvePortalY,
 } from "@/gameRules/battle/characters/lucaua/portalGeometry";
+import { pickWarpDecision } from "@/gameRules/battle/characters/lucaua/portalWarpRules";
 import {
   ALL_TIME_KINDS,
   applyTime,
@@ -35,7 +35,7 @@ import type {
   LucauaPortalGhost,
   LucauaPortalKind,
   LucauaPortalWarpFn,
-} from "@/utils/types/character/lucaua/lucaua";
+} from "@/utils/types/character/lucaua";
 import type {
   PortalDirection,
   PortalTravelGroup,
@@ -43,7 +43,7 @@ import type {
   EntityTravel,
   PlayerTravel
 } from "@/utils/types/character/lucaua/portals";
-import { type BattleObstacle } from "@/utils/types/maps/battle";
+import type { BattleObstacle } from "@/utils/types/maps/battle";
 
 /** Id do efeito de time do congelamento — único por habilidade. */
 const PORTAL_TIME_ID = "lucaua-portals";
@@ -142,6 +142,7 @@ export function useLucauaPortals({
   const summonsRef = useLatestRef(summons);
   const alliesRef = useLatestRef(allies);
   const petRef = useLatestRef(pet);
+  const obstaclesRef = useLatestRef(obstacles ?? []);
   const playSoundRef = useLatestRef(playSound);
   const pushControlsRef = useLatestRef(pushControls);
 
@@ -175,7 +176,6 @@ export function useLucauaPortals({
   const landingEngagedRef = useRef(false);
   const landingUntilRef = useRef(0);
   const landingShownRef = useRef(false);
-  const obstaclesRef = useLatestRef(obstacles ?? NO_OBSTACLES);
 
   const counterRef = useRef(0);
 
@@ -197,28 +197,27 @@ export function useLucauaPortals({
 
   /**
    * Decide a travessia de uma entidade, cuidando do "armado/desarmado".
-   * Pura em relação ao React: só mexe no `disarmedRef` (não é state updater).
    */
   function pickWarp(id: string, x: number, feetY: number): PortalWarp | null {
-    const list = portalsRef.current;
-    if (list.length < LucauaPortalConstants.MAX_PORTALS) return null;
+    const result = pickWarpDecision(
+      id,
+      x,
+      feetY,
+      portalsRef.current,
+      disarmedRef.current,
+    );
 
-    const a = list[0];
-    const b = list[1];
-    if (!a || !b) return null;
-    if (a.phase !== "placed" || b.phase !== "placed") return null;
-
-    const inA = overlapsPortal(x, feetY, a);
-    const inB = overlapsPortal(x, feetY, b);
-
-    if (!inA && !inB) {
+    if (result.kind === "disarm") {
       disarmedRef.current.delete(id);
       return null;
     }
-    if (disarmedRef.current.has(id)) return null;
 
-    disarmedRef.current.add(id);
-    return inA ? { dest: b, source: a } : { dest: a, source: b };
+    if (result.kind === "arm") {
+      disarmedRef.current.add(id);
+      return result.warp;
+    }
+
+    return null;
   }
 
   /** Escreve a posição de uma entidade não-player, pelo grupo a que pertence. */
@@ -367,7 +366,13 @@ export function useLucauaPortals({
       current.kind === "default"
         ? current.y + dy * LucauaPortalConstants.MOVE_PX
         : current.y;
-    const y = resolvePortalY(current.kind, x, freeY, player.groundY);
+    const y = resolvePortalY(
+      current.kind,
+      x,
+      freeY,
+      player.groundY,
+      obstaclesRef.current,
+    );
     ghostRef.current = { kind: current.kind, x, y };
     setGhost({ kind: current.kind, x, y });
   }

@@ -6,7 +6,7 @@ import type {
   LucauaPortal,
   LucauaPortalGhost,
   LucauaPortalKind,
-} from "@/utils/types/character/lucaua/lucaua";
+} from "@/utils/types/character/lucaua";
 
 type Props = {
   portals: LucauaPortal[];

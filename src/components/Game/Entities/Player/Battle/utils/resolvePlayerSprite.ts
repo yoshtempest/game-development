@@ -6,7 +6,7 @@ import {
 import { resolveSpriteState } from "@/gameRules/battle/playerStates";
 
 import { TRANSFORMATION_FRAMES } from "@/components/Game/Entities/Player/Battle/constants";
-import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/lucaua";
+import type { LucauaAttackVariant } from "@/utils/types/character/lucaua";
 
 interface ResolvePlayerSpriteParams {
   character: CharacterId;

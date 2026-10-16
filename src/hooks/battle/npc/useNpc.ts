@@ -27,7 +27,7 @@ import {
 
 import { clampX } from "@/gameRules/movement/clampX";
 import type { DamageArmor, DamageKind } from "@/utils/types/battle/damageKind";
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua/lucaua";
+import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
 
 type Props = {
   npcLevel: number;

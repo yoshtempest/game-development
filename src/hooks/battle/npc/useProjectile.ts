@@ -24,7 +24,7 @@ import type {
 import { getTime, type TimeEffect } from "@/gameRules/battle/time";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
-import type { LucauaPortalWarpFn } from "@/utils/types/character/lucaua/lucaua";
+import type { LucauaPortalWarpFn } from "@/utils/types/character/lucaua";
 
 export function useProjectile(
   projectiles: Projectile[],

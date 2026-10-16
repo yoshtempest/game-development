@@ -3,7 +3,7 @@ import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import type {
     LucauaPortal,
     LucauaPortalKind
-} from "@/utils/types/character/lucaua/lucaua";
+} from "@/utils/types/character/lucaua";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
 import { LucauaPortalConstants } from "@/data/characters/lucaua";
 import { getGroundAtX } from "@/gameRules/battle/obstacles";

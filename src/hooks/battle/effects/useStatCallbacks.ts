@@ -8,7 +8,7 @@ import {
   incrementMissesStats,
 } from "@/utils/rewards";
 
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua/lucaua";
+import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
 
 type Props = {
   playerCharacter: CharacterId;

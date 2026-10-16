@@ -4,7 +4,7 @@ import type {
   LucauaPortal,
   LucauaPortalCross,
   LucauaPortalKind,
-} from "@/utils/types/character/lucaua/lucaua";
+} from "@/utils/types/character/lucaua";
 
 /**
  * Direção que um projétil adota ao **sair** de um portal. A boca do portal

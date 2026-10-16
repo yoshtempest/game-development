@@ -35,7 +35,7 @@ import { useEnergy } from "@/hooks/battle/effects/useEnergy";
 import { useBattleMana } from "@/contexts/BattleManaContext";
 import { gainSpecial } from "@/gameRules/battle/special";
 import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua/lucaua";
+import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
 import {
   applyPlayerStatus,
   clearPlayerStatuses,

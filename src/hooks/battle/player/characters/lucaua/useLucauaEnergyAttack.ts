@@ -18,7 +18,7 @@ import type {
   LucauaEnergyProjectile,
   LucauaPortalWarpFn,
   LucauaTarget,
-} from "@/utils/types/character/lucaua/lucaua";
+} from "@/utils/types/character/lucaua";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 
 type Props = {

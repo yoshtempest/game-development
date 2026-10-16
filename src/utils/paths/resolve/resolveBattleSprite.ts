@@ -12,7 +12,7 @@ import { playerPathMarshadowHabilities } from "@/utils/paths/characters/marcelo/
 import { playerPathArturHabilities } from "@/utils/paths/characters/artur/playerPathArturHabilities";
 import { playerPathRiquelmeHabilities } from "@/utils/paths/characters/riquelme/playerPathRiquelmeHabilities";
 import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
-import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/lucaua";
+import type { LucauaAttackVariant } from "@/utils/types/character/lucaua";
 
 export function resolveBattleSprite(
   character: string,

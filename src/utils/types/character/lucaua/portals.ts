@@ -1,4 +1,4 @@
-import type { LucauaPortal } from "./lucaua";
+import type { LucauaPortal } from ".";
 
 /** Direção que o joystick pode empurrar o fantasma/seletor. */
 export type PortalDirection = "up" | "down" | "left" | "right";
