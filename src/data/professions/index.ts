@@ -4,7 +4,7 @@ export const PROFESSIONS: ProfessionInfo[] = [
   {
     id: "alchemist",
     name: "Alquimista",
-    npcName: "Val Janica",
+    npcName: "Janica",
     toolId: "weapon_cauldron",
     toolName: "Caldeirão",
     recipe: { hungry_essence: 3, rare_scale: 2 },
