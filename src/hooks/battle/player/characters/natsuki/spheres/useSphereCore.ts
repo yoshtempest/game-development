@@ -257,7 +257,7 @@ export function useSphereCore({
         phaseStartRef.current = Date.now();
         publish(createSphereFrame(variant, p));
         setPlayerState(variant === "purple" ? "purpleJunction" : "sphereCast");
-        playSoundRef.current("natsukiSpecial");
+        playSoundRef.current("hollowPurple");
       };
 
       // O intro abre o background (blue|red|purple) em slow-motion e chama

@@ -24,10 +24,10 @@ const SOUND_VOLUMES: Partial<Record<SoundId, number>> = {
   boom: 1.3,
   slimitaJump: 0.3,
   impact: 0.5,
-  natsukiSpecial: 1.3,
+  hollowPurple: 1.3,
   domainInitiate: 1.7,
   riquelmeOpenedDomain: 1.3,
-  marshadowSpecial: 0.7,
+  atomic: 0.7,
   mugetsu: 2,
   win: 0.5,
 };

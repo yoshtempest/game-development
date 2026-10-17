@@ -8,9 +8,9 @@ import type { ReplayData } from "@/utils/types/replay";
 const SFX_VOLUME: Record<string, number> = {
   boom: 1.3,
   slimitaJump: 0.3,
-  marshadowSpecial: 0.7,
+  atomic: 0.7,
   mugetsu: 2,
-  natsukiSpecial: 1.3,
+  hollowPurple: 1.3,
   riquelmeOpenedDomain: 1.3,
   win: 0.5,
 };

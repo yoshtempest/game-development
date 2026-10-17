@@ -562,7 +562,7 @@ export function useDomainExpansion({
           pp.mode !== "battle" ? pp : { ...pp, state: "preMugetsu" },
         );
         setMugetsuBlink("out");
-        playSound("preMarshadowSpecial");
+        playSound("preAtomic");
       }, 0),
 
       // Teleporte para a ponta mais próxima no meio do blink + blink de chegada.

@@ -262,7 +262,7 @@ export function useAtomic({
           pp.mode !== "battle" ? pp : { ...pp, state: "preparingAtomic" },
         );
         setHalo(true);
-        playSound("preMarshadowSpecial");
+        playSound("preAtomic");
       }, prepareAt),
 
       setTimeout(() => {
@@ -292,7 +292,7 @@ export function useAtomic({
 
         setExplosion((prev) => (prev ? { ...prev, phase: "explosion" } : prev));
         setFlash(true);
-        playSound("marshadowSpecial");
+        playSound("atomic");
 
         // Inimigos atingidos: todos em um raio de 300px (eixos x/y) do alvo.
         const hitSummonIds: string[] = [];

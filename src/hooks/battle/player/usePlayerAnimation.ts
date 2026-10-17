@@ -92,13 +92,13 @@ export function usePlayerAnimation(
     if (override) {
       if (player.state === "preSpecial") {
         if (player.character === "marcelo") {
-          playSound("marshadowSpecial");
-          logPlay("marshadowSpecial");
+          playSound("atomic");
+          logPlay("atomic");
         }
 
         if (player.character === "riquelme") {
-          playSound("natsukiSpecial");
-          logPlay("natsukiSpecial");
+          playSound("hollowPurple");
+          logPlay("hollowPurple");
         }
         step = { ...defaultStep, ...override.preSpecial };
       } else if (player.state === "preSpecial2") {
