@@ -25,6 +25,6 @@ export function gainSpecial(current: number, max: number) {
 }
 
 /** +5 de carga — uso de uma habilidade ativa (botão na tela). */
-export function gainAbilityCharge(current: number, max: number) {
-  return Math.min(current + ABILITY_CHARGE_GAIN, max);
+export function gainAbilityCharge(current: number, max: number, times = 1) {
+  return Math.min(current + ABILITY_CHARGE_GAIN * times, max);
 }

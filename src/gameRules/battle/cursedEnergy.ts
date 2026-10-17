@@ -80,3 +80,33 @@ export function cursedEnergyFromDamage(damage: number): number {
 export function cursedEnergyHealAmount(energy: number): number {
   return Math.floor(energy / CURSED_ENERGY_HEAL_RATIO);
 }
+
+/**
+ * Custo de arremessar a redSphere, em % da energia amaldiçoada MÁXIMA. O custo
+ * é por uso (no cast), separado do dreno contínuo da blueSphere.
+ */
+export const RED_SPHERE_ENERGY_PERCENT = 10;
+
+/**
+ * Custo de arremessar a purpleSphere, em % da energia MÁXIMA. A purple é a
+ * fusão da blue com a red, então carrega os dois custos por uso num só.
+ */
+export const PURPLE_SPHERE_ENERGY_PERCENT = 25;
+
+/**
+ * Custo em energia amaldiçoada de arremessar uma esfera, como % da energia
+ * MÁXIMA do personagem. Percentual inteiro (10/25) em vez de fração para não
+ * sofrer com o erro de ponto flutuante de `0.1 * 100` na UI. A blue não entra:
+ * o custo dela é o dreno contínuo enquanto a esfera está em campo
+ * (`BLUE_SPHERE_DRAIN_COST`, em `data/characters/riquelme/riquelme`).
+ */
+export function sphereEnergyCost(
+  variant: "red" | "purple",
+  maxEnergy: number,
+): number {
+  const percent =
+    variant === "purple"
+      ? PURPLE_SPHERE_ENERGY_PERCENT
+      : RED_SPHERE_ENERGY_PERCENT;
+  return Math.floor((maxEnergy * percent) / 100);
+}

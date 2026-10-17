@@ -25,6 +25,8 @@ import {
   BLINK_ENERGY_COST,
   CURSED_ENERGY_HEAL_RATIO,
   DIVERGENT_FIST_COST,
+  PURPLE_SPHERE_ENERGY_PERCENT,
+  RED_SPHERE_ENERGY_PERCENT,
 } from "@/gameRules/battle/cursedEnergy";
 import type {
   ActiveAbility,
@@ -91,8 +93,8 @@ function domainBurstAbility(characterId: CharacterId): ActiveAbility {
 
 /**
  * Expansão de Domínio do riquelme (`kind: "muryokusho"`): nome/descrição saem
- * do registro `DOMAIN_EXPANSIONS`. O dreno é 1% da vida MÁXIMA direto no HP, a
- * cada 100ms — não passa pelo funil de armadura, então `"true"` fixa a
+ * do registro `DOMAIN_EXPANSIONS`. O dreno é 0,2% da vida MÁXIMA direto no HP,
+ * a cada 50ms — não passa pelo funil de armadura, então `"true"` fixa a
  * semântica (o mesmo caso do `domainExpansion` do marcelo).
  */
 function muryokushoAbility(characterId: CharacterId): ActiveAbility {
@@ -156,8 +158,7 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
       kind: "active",
       id: "redSphere",
       name: "Esfera Vermelha",
-      description:
-        "Invoca e arremessa a esfera vermelha nos inimigos, causando dano mágico e empurrando-os.",
+      description: `Invoca e arremessa a esfera vermelha nos inimigos, causando dano mágico e empurrando-os. Custa ${RED_SPHERE_ENERGY_PERCENT}% da energia amaldiçoada máxima.`,
       damageType: "magical",
     },
     {
@@ -167,8 +168,7 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
       kind: "active",
       id: "purpleSphere",
       name: "Esfera Roxa",
-      description:
-        "Fusão das esferas azul e vermelha: atravessa todos os inimigos no caminho (2x o dano da esfera vermelha), destrói projéteis e é indestrutível.",
+      description: `Fusão das esferas azul e vermelha: atravessa todos os inimigos no caminho (2x o dano da esfera vermelha), destrói projéteis e é indestrutível. Custa ${PURPLE_SPHERE_ENERGY_PERCENT}% da energia amaldiçoada máxima.`,
       damageType: "magical",
     },
     muryokushoAbility("riquelme"),

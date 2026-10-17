@@ -11,6 +11,7 @@ import {
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
+import { sphereEnergyCost } from "@/gameRules/battle/cursedEnergy";
 import { applyTime, clearTime, freezeWorldSpec } from "@/gameRules/battle/time";
 import {
   PURPLE_FORM_MS,
@@ -27,6 +28,7 @@ import {
 } from "@/data/characters/riquelme/riquelme";
 
 import type { TimeEffect } from "@/gameRules/battle/time";
+import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { SoundId } from "@/utils/audio/soundId";
 import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
 import type {
@@ -54,8 +56,14 @@ type Props = {
     ability?: string,
     form?: MarceloBattleForm,
   ) => boolean;
-  /** +5 cargas da Expansão ao usar uma habilidade ativa. */
-  onUsed?: () => void;
+  /** +5 cargas da Expansão por uso (a purple conta como dois: 2×). */
+  onUsed?: (times?: number) => void;
+  /**
+   * Energia amaldiçoada: red e purple cobram uma fração da MÁXIMA no cast
+   * (`sphereEnergyCost`). A blue não passa por aqui — o custo dela é o dreno
+   * contínuo em campo.
+   */
+  battleManaRef: RefObject<BattleManaApi | null>;
   isPausedRef: RefObject<boolean>;
   disabledRef: RefObject<boolean>;
   battleEndedRef: RefObject<boolean>;
@@ -78,6 +86,7 @@ export function useSphereCore({
   playSound,
   startSpecialIntro,
   onUsed,
+  battleManaRef,
   isPausedRef,
   disabledRef,
   battleEndedRef,
@@ -245,7 +254,17 @@ export function useSphereCore({
       if (Date.now() < cooldownUntilRef.current) return;
       if (!canUseRef.current) return;
 
-      onUsedRef.current?.();
+      // Custo por uso: a red cobra 10% e a purple 25% da energia MÁXIMA (a blue
+      // não passa por aqui). Consome ANTES de armar o cast; sem saldo, o
+      // aperto morre sem gastar carga nem abrir a intro.
+      const mana = battleManaRef.current;
+      if (variant !== "blue") {
+        const cost = sphereEnergyCost(variant, mana?.playerMaxMana ?? 0);
+        if (cost > 0 && (!mana || !mana.consumeMana(cost))) return;
+      }
+
+      // A purple é a fusão das duas esferas: vale como dois usos (+10 cargas).
+      onUsedRef.current?.(variant === "purple" ? 2 : 1);
       activeRef.current = true;
 
       const run = () => {
@@ -267,6 +286,7 @@ export function useSphereCore({
       if (!started) run();
     },
     [
+      battleManaRef,
       canUseRef,
       freezeActionsUntilRef,
       freezeWorld,

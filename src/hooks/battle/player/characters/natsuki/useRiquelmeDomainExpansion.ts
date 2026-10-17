@@ -82,20 +82,19 @@ type RiquelmeDomainApi = {
 };
 
 /**
- * O dreno cai a cada 100ms, mas o NÚMERO de dano sai a cada 5 pulsos (500ms)
- * com o total acumulado — 50 números sobrepostos no mesmo pixel por inimigo
- * seriam ilegíveis. A vida continua caindo a cada pulso.
- */
-const DAMAGE_NUMBER_EVERY_TICKS = 5;
-
-/**
  * Expansão de Domínio do riquelme (Muryōkūsho): o personagem trava na pose
  * `rioiki.svg`, o mundo inteiro congela (o player fica de fora do `TimeKind`;
  * o lock dele é o `freezeActionsUntilRef`) e TODOS os inimigos — o NPC
- * principal e os summons — drenam `RIQUELME_DOMAIN_DRAIN_RATIO` (1%) da própria
- * vida MÁXIMA a cada 100ms, por 5s. O dreno é direto no HP (não passa pelo
- * funil de armadura), então um boss que se regenera continua perdendo vida até
- * o domínio acabar (a regeneração dele entra no meio).
+ * principal e os summons — drenam `RIQUELME_DOMAIN_DRAIN_RATIO` (0,2%) da
+ * própria vida MÁXIMA a cada `RIQUELME_DOMAIN_DRAIN_INTERVAL_MS` (50ms), por
+ * 5s. O dreno é direto no HP (não passa pelo funil de armadura), então um boss
+ * que se regenera continua perdendo vida até o domínio acabar (a regeneração
+ * dele entra no meio).
+ *
+ * Cada pulso emite o próprio número de dano — o valor REAL do pulso, não um
+ * total acumulado. O `floatUp` do DamageNumbers desencontra os números no
+ * tempo (cada instância sobe a partir da própria origem), então o fluxo lê
+ * como uma chuva de golpes em vez de um "5" fixo que não corresponde ao dano.
  *
  * No fim, se algum inimigo sobreviveu, o `expansion.svg` estilhaça como vidro
  * e desce para fora do campo de visão — a mesma quebra que a Expansão do
@@ -134,7 +133,6 @@ export function useRiquelmeDomainExpansion({
   const activeRef = useRef(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const drainTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const tickCountRef = useRef(0);
 
   const npcRef = useLatestRef(npc);
   const npcHPRef = useLatestRef(npcHP);
@@ -173,36 +171,31 @@ export function useRiquelmeDomainExpansion({
     }
   }, []);
 
-  /** Vida máxima → 1 tick de dreno (1% dela, no mínimo 1 de dano). */
+  /** Vida máxima → 1 tick de dreno (`RIQUELME_DOMAIN_DRAIN_RATIO`, no mínimo 1). */
   const tickDamage = useCallback((maxHp: number) => {
     return Math.max(1, Math.floor(maxHp * RIQUELME_DOMAIN_DRAIN_RATIO));
   }, []);
 
   /**
    * Um pulso do dreno: NPC principal + summons inimigos. Roda em intervalo
-   * próprio (100ms) e não mexe no `isEnding` — é o lifecycle normal que trata
+   * próprio (50ms) e não mexe no `isEnding` — é o lifecycle normal que trata
    * a morte (o boss de duas fases segue para a fase seguinte e continua
    * drenando até o fim dos 5s).
+   *
+   * Cada inimigo emite o próprio número com o dano REAL do pulso: o valor é
+   * `tickDamage` (mínimo 1), não um acumulado. Números de pulsos diferentes
+   * convivem na tela — o `floatUp` os separa verticalmente ao longo do 1s de
+   * vida, então vários "1" sobem juntos sem virar um "5" enganoso.
    */
   const drainTick = useCallback(() => {
     // Pausa (menu aberto) não drena: o intervalo é em tempo real.
     if (isPausedRef.current) return;
 
-    tickCountRef.current += 1;
-    const flush = tickCountRef.current % DAMAGE_NUMBER_EVERY_TICKS === 0;
-
     const main = npcRef.current;
     if (npcHPRef.current > 0) {
       const damage = tickDamage(npcMaxHpRef.current);
       setNpcHPRef.current((hp) => Math.max(0, hp - damage));
-      if (flush) {
-        spawnDamageRef.current(
-          damage * DAMAGE_NUMBER_EVERY_TICKS,
-          main.x,
-          main.y,
-          "special",
-        );
-      }
+      spawnDamageRef.current(damage, main.x, main.y, "special");
     }
 
     const alive = summonsRef.current.filter((s) => !s.isDying && s.hp > 0);
@@ -211,15 +204,13 @@ export function useRiquelmeDomainExpansion({
     const damageById = new Map(
       alive.map((s) => [s.id, tickDamage(s.maxHp)] as const),
     );
-    if (flush) {
-      for (const s of alive) {
-        spawnDamageRef.current(
-          (damageById.get(s.id) ?? 1) * DAMAGE_NUMBER_EVERY_TICKS,
-          s.x,
-          s.y,
-          "summon",
-        );
-      }
+    for (const s of alive) {
+      spawnDamageRef.current(
+        damageById.get(s.id) ?? 1,
+        s.x,
+        s.y,
+        "summon",
+      );
     }
     setSummonsRef.current((prev) =>
       prev.map((s) => {
@@ -363,7 +354,6 @@ export function useRiquelmeDomainExpansion({
     // antes de chamar o callback, e é ele que fecha o botão (`extraCanUse`) e
     // desarma o `shouldCancel` (`extraCancel: () => !activeRef.current`).
     activeRef.current = true;
-    tickCountRef.current = 0;
     clearTimers();
     setShattering(false);
 

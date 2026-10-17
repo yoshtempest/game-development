@@ -588,10 +588,16 @@ export function useBattleCombat({
 
   // Usar habilidade ativa rende +5 cargas da Expansão de Domínio. Os hooks
   // chamam de dentro do press (depois dos guards), para não farmar carga
-  // apertando botão em estado inválido.
-  const onAbilityUsed = useCallback(() => {
-    battle.setDelicia((d) => gainAbilityCharge(d, battle.hitsToSpecial));
-  }, [battle]);
+  // apertando botão em estado inválido. `times` cobre habilidades que contam
+  // como mais de um uso — a esfera roxa é a fusão de duas (2× = +10).
+  const onAbilityUsed = useCallback(
+    (times: number = 1) => {
+      battle.setDelicia((d) =>
+        gainAbilityCharge(d, battle.hitsToSpecial, times),
+      );
+    },
+    [battle],
+  );
 
   const handleWeaponSwitch = useCallback(() => {
     const mana = battleManaRef.current;
@@ -1534,7 +1540,7 @@ export function useBattleCombat({
 
   // Expansão de Domínio do riquelme (Muryōkūsho) ------------------------------
   // Domínio próprio: congela o mundo, segura a pose `rioiki.svg` por 5s e
-  // drena 1% da vida MÁXIMA de todos os inimigos a cada 100ms. No fim, se
+  // drena 0,2% da vida MÁXIMA de todos os inimigos a cada 50ms. No fim, se
   // alguém sobreviveu, o `expansion.svg` estilhaça e desce.
   const {
     active: riquelmeDomainActive,

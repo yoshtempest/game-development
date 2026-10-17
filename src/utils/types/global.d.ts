@@ -433,8 +433,8 @@ declare global {
   type PlayerDomainExpansionState = "preMugetsu" | "mugetsu";
   /**
    * Expansão de Domínio do riquelme (Muryōkūsho): a pose `rioiki.svg` segura o
-   * personagem durante os 5s do domínio, que congela o mundo e drena 1% da
-   * vida máxima dos inimigos a cada 100ms.
+   * personagem durante os 5s do domínio, que congela o mundo e drena 0,2% da
+   * vida máxima dos inimigos a cada 50ms.
    */
   type PlayerRiquelmeDomainState = "rioiki";
   /** Laser da Forma Vastolord do marcelo. */

@@ -6,6 +6,7 @@ import {
 } from "react";
 
 import { useLatestRef } from "@/hooks/useLatestRef";
+import { sphereEnergyCost } from "@/gameRules/battle/cursedEnergy";
 import {
   BLUE_SPHERE_DRAIN_INTERVAL_MS,
   SPHERE_TICK_MS,
@@ -48,8 +49,8 @@ type Props = {
     ability?: string,
     form?: MarceloBattleForm,
   ) => boolean;
-  /** +5 cargas da Expansão ao usar uma habilidade ativa. */
-  onUsed?: () => void;
+  /** +5 cargas da Expansão pelo uso (a purple conta como dois: 2×). */
+  onUsed?: (times?: number) => void;
   isPausedRef: RefObject<boolean>;
   disabledRef: RefObject<boolean>;
   battleEndedRef: RefObject<boolean>;
@@ -109,6 +110,7 @@ export function useRiquelmeSpheres({
     playSound,
     startSpecialIntro,
     onUsed,
+    battleManaRef,
     isPausedRef,
     disabledRef,
     battleEndedRef,
@@ -214,6 +216,17 @@ export function useRiquelmeSpheres({
     sphere?.phase === "spawning" ||
     sphere?.phase === "moving";
 
+  /**
+   * O saldo cobre o custo de arremesso da esfera (red 10% / purple 25% da
+   * energia MÁXIMA)? É o que desabilita o botão antes do clique; o `startCast`
+   * reconfere e gasta de verdade. A blue não entra: o custo dela é o dreno.
+   */
+  function canAfford(variant: "red" | "purple") {
+    const mana = battleManaRef.current;
+    if (!mana) return false;
+    return mana.playerMana >= sphereEnergyCost(variant, mana.playerMaxMana);
+  }
+
   return {
     sphere,
     sphereFocus,
@@ -222,8 +235,8 @@ export function useRiquelmeSpheres({
     bluePress: blue.press,
     blueUsable: blue.usable,
     redPress: red.press,
-    redUsable: red.usable,
+    redUsable: red.usable && canAfford("red"),
     purplePress: purple.press,
-    purpleUsable: purple.usable,
+    purpleUsable: purple.usable && canAfford("purple"),
   };
 }

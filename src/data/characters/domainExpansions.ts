@@ -11,8 +11,8 @@ import { ONE_THOUSAND_FIVE_HUNDRED_MS } from "@/data/ms";
  * - `mugetsu`: o execute bespoke do marcelo (varre o mapa, 100% da vida
  *   máxima) — ver `useDomainExpansion`.
  * - `muryokusho`: o domínio bespoke do riquelme — congela o mundo, segura a
- *   pose `rioiki.svg` por 5s e drena 1% da vida MÁXIMA dos inimigos a cada
- *   100ms — ver `useRiquelmeDomainExpansion`.
+ *   pose `rioiki.svg` por 5s e drena 0,2% da vida MÁXIMA dos inimigos a cada
+ *   50ms — ver `useRiquelmeDomainExpansion`.
  * - `burst`: o efeito base universal — explosão de dano especial em todos os
  *   inimigos da arena, mesmo multiplicador para todos — ver
  *   `useDomainExpansionBurst`.
@@ -95,7 +95,7 @@ export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
     riquelme: {
       name: "Muryōkūsho",
       description:
-        "Expande um domínio que congela o mundo e drena 1% da vida máxima de todos os inimigos a cada 100ms, por 5s. Consome as 40 cargas da barra.",
+        "Expande um domínio que congela o mundo e drena 0,2% da vida máxima de todos os inimigos a cada 50ms, por 5s. Consome as 40 cargas da barra.",
       accent: "#3b82f6",
       kind: "muryokusho",
       hasBackgroundArt: true,
