@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import { battleBehaviors } from "@/gameRules/battle/behaviors/player";
 import {
   getPetSkillDefinition,
@@ -11,6 +11,7 @@ import type { OnBeforeNpcHit } from "@/hooks/battle/npc/useBlocking";
 
 import { useBattleStats } from "@/hooks/battle/useStats";
 import { VASTOLORD_MULTIPLIER } from "@/hooks/battle/player/characters/marshadow/useVastolordForm";
+import { VASTOLORD_UNIVERSAL_VAMPIRISM } from "@/data/characters/marcelo/vastolordForm";
 import { useBattleHP } from "@/hooks/battle/death/useHP";
 import { useBattleCooldowns } from "@/hooks/battle/utilities/useCooldowns";
 import { useBattleEffects } from "@/hooks/battle/effects/useEffects";
@@ -170,7 +171,7 @@ export function useBattleSystem(props: Props) {
     char,
     totalArmor,
     totalShield,
-    vampirism,
+    vampirism: baseVampirism,
     totalReflect,
     totalMaxHpDamage,
     totalTrueDamage,
@@ -184,6 +185,26 @@ export function useBattleSystem(props: Props) {
     hasPet,
     equippedWeaponId,
   } = stats;
+
+  /**
+   * Vampirismo efetivo da batalha = equipamento + o universal da Forma
+   * Vastolord (10%) enquanto ela está ativa. A injeção fica aqui, num único
+   * ponto, porque TODO caminho de dano do jogador (básico/special via
+   * `usePlayerBattle`, habilidades via `battle.vampirism` no `useBattleCombat`,
+   * dreno do Domínio, summons) lê este mesmo objeto — não há um segundo funil
+   * de cura para manter em sincronia.
+   */
+  const vampirism = useMemo(
+    () =>
+      vastolordActive
+        ? {
+            ...baseVampirism,
+            universalVampirism:
+              baseVampirism.universalVampirism + VASTOLORD_UNIVERSAL_VAMPIRISM,
+          }
+        : baseVampirism,
+    [baseVampirism, vastolordActive],
+  );
 
   const { blockGauge, setBlockGauge, blockLimit, resetBlockGauge } =
     useBlockGauge(char.level, getBlockArmor(totalArmor));

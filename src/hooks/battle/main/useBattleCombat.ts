@@ -37,6 +37,7 @@ import { useEmanuelClone } from "@/hooks/battle/player/characters/ematron/useEma
 import { useEmanuelKiCharge } from "@/hooks/battle/player/characters/ematron/useEmanuelKiCharge";
 import { useEmanuelGenkiDama } from "@/hooks/battle/player/characters/ematron/useEmanuelGenkiDama";
 import { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
+import { useVastolordRoar } from "@/hooks/battle/player/characters/marshadow/useVastolordRoar";
 import { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
 import { useRiquelmeSpheres } from "@/hooks/battle/player/characters/natsuki/spheres/useRiquelmeSpheres";
 import { useRiquelmeDomainExpansion } from "@/hooks/battle/player/characters/natsuki/useRiquelmeDomainExpansion";
@@ -124,6 +125,8 @@ type Props = {
   honoredRegenActive: boolean;
   vastolordMultiplierRef: RefObject<() => number>;
   vastolordActive: boolean;
+  /** Quadro da transformação do marcelo (0=screamOne … 3=transformated) ou null. */
+  transformationFrame: number | null;
   /** Aumenta a duração restante da Forma Vastolord (passiva do marcelo). */
   extendVastolordRef: RefObject<(ms: number) => void>;
   cursedEnergyEnabled: boolean;
@@ -156,6 +159,7 @@ export function useBattleCombat({
   honoredRegenActive,
   vastolordMultiplierRef,
   vastolordActive,
+  transformationFrame,
   extendVastolordRef,
   cursedEnergyEnabled,
   onKokusenRef,
@@ -1263,6 +1267,15 @@ export function useBattleCombat({
   });
 
   addVastolordLaserChargeRef.current = addVastolordLaserCharge;
+
+  // Grito da transformação: empurra os inimigos próximos para longe enquanto o
+  // Vastolord está nos quadros de grito (screamOne/Two/Three).
+  useVastolordRoar({
+    transformationFrame,
+    playerX: player.x,
+    npc,
+    setSummons,
+  });
 
   // "I Am Atomic" do marcelo -------------------------------------------------
   // Proporção especial/básico: a explosão deve causar "2x o dano de especial".

@@ -15,7 +15,7 @@ export const CHARACTER_PASSIVES: Record<
       id: "vastolordForm",
       name: "Forma Vastolord",
       description:
-        "Ao morrer, desperta a Forma Vastolord por 10s, recuperando 100% do HP e multiplicando dano e armadura por 4. Se o inimigo não for derrotado a tempo, perde a batalha.",
+        "Ao morrer, desperta a Forma Vastolord por 10s, recuperando 100% do HP e multiplicando dano e armadura por 4. O grito da transformação empurra os inimigos próximos (até 200px, quanto mais perto mais longe) e, enquanto a forma dura, 10% de todo o dano causado vira cura. Se o inimigo não for derrotado a tempo, perde a batalha.",
       unlockedAtLevel: 1,
       oncePerBattle: true,
       effect: { kind: "vastolordForm", durationMs: 10_000 },

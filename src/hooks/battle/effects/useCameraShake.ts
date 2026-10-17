@@ -8,11 +8,14 @@ const SHAKE_DECAY = 0.88;
 const MIN_INTENSITY = 0.1;
 /** Intensidade do tremor enquanto um projétil terrestre detona atravessa a arena. */
 const EXTERNAL_SHAKE_INTENSITY = 1;
+/** Tremor leve e contínuo enquanto o Vastolord grita na transformação. */
+const SCREAM_SHAKE_INTENSITY = 4;
 
 export function useCameraShake(
   damageNumbers: DamageNumber[],
   externalShake = false,
   burstActive = false,
+  screamShake = false,
 ) {
   const intensityRef = useRef(0);
   const runningRef = useRef(false);
@@ -21,16 +24,24 @@ export function useCameraShake(
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const externalShakeRef = useRef(externalShake);
   externalShakeRef.current = externalShake;
+  const screamShakeRef = useRef(screamShake);
+  screamShakeRef.current = screamShake;
 
   const startLoop = useCallback(() => {
     if (runningRef.current) return;
     runningRef.current = true;
 
     const step = () => {
-      const live = externalShakeRef.current;
-      // Enquanto o projétil terrestre está ativo não acumula: fixa a
-      // intensidade base.
-      const intensity = live ? EXTERNAL_SHAKE_INTENSITY : intensityRef.current;
+      // Fontes "vivas": seguram a intensidade fixa enquanto estão ativas. O
+      // grito do Vastolord entra na mesma mecânica, com intensidade menor.
+      const liveExternal = externalShakeRef.current;
+      const liveScream = screamShakeRef.current;
+      const live = liveExternal || liveScream;
+      const intensity = liveExternal
+        ? EXTERNAL_SHAKE_INTENSITY
+        : liveScream
+          ? SCREAM_SHAKE_INTENSITY
+          : intensityRef.current;
       if (intensity <= MIN_INTENSITY && !live) {
         intensityRef.current = 0;
         runningRef.current = false;
@@ -61,6 +72,13 @@ export function useCameraShake(
       startLoop();
     }
   }, [burstActive, startLoop]);
+
+  useEffect(() => {
+    if (screamShake && !runningRef.current) {
+      intensityRef.current = SCREAM_SHAKE_INTENSITY;
+      startLoop();
+    }
+  }, [screamShake, startLoop]);
 
   useEffect(() => {
     const seen = seenIdsRef.current;

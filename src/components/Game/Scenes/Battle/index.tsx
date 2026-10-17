@@ -50,6 +50,7 @@ import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { useBattleMana } from "@/contexts/BattleManaContext";
 import { useCameraShake } from "@/hooks/battle/effects/useCameraShake";
+import { VASTOLORD_ROAR_SCREAM_FRAMES } from "@/data/characters/marcelo/vastolordForm";
 import { LUCAS_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import {
@@ -360,10 +361,17 @@ export function BattleScene(props: Props) {
       (p.dirX > 0 ? p.x < player.x : p.x > player.x),
   );
 
+  // Tremor leve enquanto o Vastolord está num quadro de grito da transformação
+  // (screamOne/Two/Three) — acompanha o empurrão contínuo dos inimigos.
+  const screamShakeActive =
+    vastolordTransformationFrame != null &&
+    vastolordTransformationFrame < VASTOLORD_ROAR_SCREAM_FRAMES;
+
   const shake = useCameraShake(
     battle.damageNumbers,
     groundShakeActive,
     castActive,
+    screamShakeActive,
   );
 
   const bgBaseW = containerWidth * 1.5;

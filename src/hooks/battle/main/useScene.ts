@@ -412,6 +412,7 @@ export function useBattleScene({
     honoredRegenActive,
     vastolordMultiplierRef,
     vastolordActive,
+    transformationFrame,
     extendVastolordRef,
     cursedEnergyEnabled: cursedEnergyParams,
     onKokusenRef,
