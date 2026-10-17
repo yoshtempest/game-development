@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getSpecialFlowOverride } from "@/data/battle/animationFlow";
+import { getAbilityFlowOverride } from "@/data/battle/animationFlow";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { PlayerSpecialConstants, ProjectileConstants } from "@/data/projectile";
 import { PLAYER_SPHERE_TIME_ID } from "@/gameRules/battle/time";
@@ -39,9 +39,9 @@ export function usePlayerSpecialProjectile({
   const setTimeScaleRef = useRef(setTimeScale);
   setTimeScaleRef.current = setTimeScale;
 
-  const isSpecialAnimating = ALL_PREDICATES.isSpecialTrigger(player.state);
+  const isAbilityAnimating = ALL_PREDICATES.isAbilityTrigger(player.state);
 
-  const hasCustomFlow = getSpecialFlowOverride(player.character) !== null;
+  const hasCustomFlow = getAbilityFlowOverride(player.character) !== null;
 
   const SCALE = PLAYER_SIZE / ProjectileConstants.MAP_HEIGHT;
   const HEIGHT =
@@ -52,10 +52,10 @@ export function usePlayerSpecialProjectile({
   useEffect(() => {
     const { state, x, battleDirection } = player;
 
-    if (state === "preSpecial" && player.character === "riquelme") {
+    if (state === "preAbility" && player.character === "riquelme") {
       firedRef.current = false;
-      const override = getSpecialFlowOverride(player.character);
-      mergeDurationRef.current = override?.preSpecial.duration ?? 200;
+      const override = getAbilityFlowOverride(player.character);
+      mergeDurationRef.current = override?.preAbility.duration ?? 200;
 
       if (hasCustomFlow) {
         setTimeScaleRef.current(MERGE_TIME_SCALE);
@@ -88,7 +88,7 @@ export function usePlayerSpecialProjectile({
       return;
     }
 
-    if (state === "preSpecial2" && hasCustomFlow && projectileRef.current) {
+    if (state === "preAbility2" && hasCustomFlow && projectileRef.current) {
       setTimeScaleRef.current(MOVE_TIME_SCALE);
 
       const prev = projectileRef.current;
@@ -96,8 +96,8 @@ export function usePlayerSpecialProjectile({
       const targetX = prev.x + dir * (SPHERE_OFFSET_X + 20);
       const targetY = centerY;
 
-      const override = getSpecialFlowOverride(player.character);
-      moveDurationRef.current = override?.preSpecial2.duration ?? 500;
+      const override = getAbilityFlowOverride(player.character);
+      moveDurationRef.current = override?.preAbility2.duration ?? 500;
 
       projectileRef.current = {
         ...prev,
@@ -116,7 +116,7 @@ export function usePlayerSpecialProjectile({
       return;
     }
 
-    if (state === "special" && hasCustomFlow && projectileRef.current) {
+    if (state === "ability" && hasCustomFlow && projectileRef.current) {
       setTimeScaleRef.current(1);
 
       const prev = projectileRef.current;
@@ -133,7 +133,7 @@ export function usePlayerSpecialProjectile({
       return;
     }
 
-    if (!isSpecialAnimating && projectileRef.current) {
+    if (!isAbilityAnimating && projectileRef.current) {
       setTimeScaleRef.current(1);
       projectileRef.current = null;
       setRenderTick((t) => t + 1);
@@ -149,11 +149,11 @@ export function usePlayerSpecialProjectile({
     headY,
     centerY,
     hasCustomFlow,
-    isSpecialAnimating,
+    isAbilityAnimating,
   ]);
 
   useEffect(() => {
-    if (!isSpecialAnimating) {
+    if (!isAbilityAnimating) {
       animatingRef.current = false;
       return;
     }
@@ -221,7 +221,7 @@ export function usePlayerSpecialProjectile({
       cancelAnimationFrame(rafRef.current);
       animatingRef.current = false;
     };
-  }, [isSpecialAnimating, timeScaleRef]);
+  }, [isAbilityAnimating, timeScaleRef]);
 
   return { playerProjectile: projectileRef.current };
 }

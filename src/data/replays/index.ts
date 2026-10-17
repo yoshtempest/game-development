@@ -1,4 +1,5 @@
 import type { ReplayData } from "@/utils/types/replay";
+import { migratePlayerState } from "@/data/battle/animationFlow";
 import { saveCompressed, loadCompressed } from "@/services/save/storageService";
 import { slotKey } from "@/services/save/slotManager";
 
@@ -9,8 +10,26 @@ function getReplaysKey(): string {
   return slotKey(REPLAYS_KEY);
 }
 
+/**
+ * Replays gravados antes do rename dos estados `special` → `ability` guardam o
+ * nome antigo dentro dos frames; traduz na leitura para continuarem tocando.
+ */
+function migrateReplay(replay: ReplayData): ReplayData {
+  return {
+    ...replay,
+    frames: replay.frames.map((frame) => ({
+      ...frame,
+      ps: migratePlayerState(frame.ps),
+      comboAction: frame.comboAction
+        ? migratePlayerState(frame.comboAction)
+        : frame.comboAction,
+    })),
+  };
+}
+
 export function loadReplays(): ReplayData[] {
-  return loadCompressed<ReplayData[]>(getReplaysKey()) ?? [];
+  const replays = loadCompressed<ReplayData[]>(getReplaysKey()) ?? [];
+  return replays.map(migrateReplay);
 }
 
 export function saveReplay(replay: ReplayData): boolean {

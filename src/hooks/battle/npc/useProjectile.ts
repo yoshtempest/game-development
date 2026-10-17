@@ -78,7 +78,7 @@ export function useProjectile(
       if (playerCooldownRef?.current === false) return false;
       if (playerCooldownRef) {
         resetCooldownRef(
-          ALL_PREDICATES.isSpecialStrike(state)
+          ALL_PREDICATES.isAbilityStrike(state)
             ? PLAYER_SPECIAL_COOLDOWN
             : PLAYER_BASIC_COOLDOWN,
           playerCooldownRef,

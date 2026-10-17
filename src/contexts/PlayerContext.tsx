@@ -80,7 +80,7 @@ type PlayerActionsContextType = {
   blockEnd: () => void;
   toggleCrouch: () => void;
   attack: () => void;
-  special: () => void;
+  startAbility: () => void;
   dash: (direction: "left" | "right") => void;
   setPlayerState: (state: PlayerState) => void;
 
@@ -323,7 +323,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const blockEnd = useCallback(() => battleRef.current.blockEnd(), []);
   const toggleCrouch = useCallback(() => battleRef.current.toggleCrouch(), []);
   const attack = useCallback(() => battleRef.current.attack(), []);
-  const special = useCallback(() => battleRef.current.special(), []);
+  const startAbility = useCallback(
+    () => battleRef.current.startAbility(),
+    [],
+  );
   const dash = useCallback(
     (direction: "left" | "right") => battleRef.current.dash(direction),
     [],
@@ -478,7 +481,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       blockEnd,
       toggleCrouch,
       attack,
-      special,
+      startAbility,
       dash,
       setPlayerState,
 
@@ -541,7 +544,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       blockEnd,
       toggleCrouch,
       attack,
-      special,
+      startAbility,
       dash,
       setPlayerState,
       setMap,

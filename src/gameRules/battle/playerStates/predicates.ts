@@ -9,15 +9,15 @@ export const isDashing = isOf(ALL_STATES.DASH_STATES);
 export const isAirborne = isOf(ALL_STATES.AIRBORNE_STATES);
 export const isAirFalling = isOf(ALL_STATES.AIR_FALL_STATES);
 export const isLanding = isOf(ALL_STATES.LANDING_STATES);
-export const isAirSpecial = isOf(ALL_STATES.AIR_SPECIAL_STATES);
+export const isAirAbility = isOf(ALL_STATES.AIR_ABILITY_STATES);
 export const isAirMelee = isOf(ALL_STATES.AIR_MELEE_STATES);
 export const isAirFrozen = isOf(ALL_STATES.AIR_FROZEN_STATES);
 export const isBasicStrike = isOf(ALL_STATES.BASIC_STRIKE_STATES);
-export const isSpecialStrike = isOf(ALL_STATES.SPECIAL_STRIKE_STATES);
+export const isAbilityStrike = isOf(ALL_STATES.ABILITY_STRIKE_STATES);
 export const isStrike = isOf(ALL_STATES.STRIKE_STATES);
 export const isAttackWindup = isOf(ALL_STATES.ATTACK_WINDUP_STATES);
 export const isAttackPose = isOf(ALL_STATES.ATTACK_POSE_STATES);
-export const isSpecialTrigger = isOf(ALL_STATES.SPECIAL_TRIGGER_STATES);
+export const isAbilityTrigger = isOf(ALL_STATES.ABILITY_TRIGGER_STATES);
 export const isGenkiDama = isOf(ALL_STATES.GENKI_DAMA_STATES);
 export const isGenkiDamaHold = isOf(ALL_STATES.GENKI_DAMA_HOLD_STATES);
 export const isAtomic = isOf(ALL_STATES.ATOMIC_STATES);
@@ -36,8 +36,8 @@ export const isInvulnerable = isOf(ALL_STATES.INVULNERABLE_STATES);
 export const isNpcUnhittable = isOf(ALL_STATES.NPC_UNHITTABLE_STATES);
 export const hasHorizontalControl = (state: PlayerState) =>
   !ALL_STATES.HORIZONTAL_CONTROL_LOCKED_STATES.has(state);
-export const canStartSpecialFrom = (state: PlayerState) =>
-  !ALL_STATES.SPECIAL_LOCKED_STATES.has(state);
+export const canStartAbilityFrom = (state: PlayerState) =>
+  !ALL_STATES.ABILITY_LOCKED_STATES.has(state);
 export const isGroundCombo = isOf(ALL_STATES.GROUND_COMBO_STATES);
 export const isCombo = isOf(ALL_STATES.COMBO_STATES);
 
@@ -52,17 +52,17 @@ export const ALL_PREDICATES = {
   isAirborne,
   isAirFalling,
   isLanding,
-  isAirSpecial,
+  isAirAbility,
   isAirMelee,
   isAirFrozen,
 
   // Golpes
   isBasicStrike,
-  isSpecialStrike,
+  isAbilityStrike,
   isStrike,
   isAttackWindup,
   isAttackPose,
-  isSpecialTrigger,
+  isAbilityTrigger,
 
   // Habilidades
   isGenkiDama,
@@ -86,7 +86,7 @@ export const ALL_PREDICATES = {
   isIdlePreserved,
   isIdleBlocked,
   hasHorizontalControl,
-  canStartSpecialFrom,
+  canStartAbilityFrom,
 
   // Combo
   isGroundCombo,

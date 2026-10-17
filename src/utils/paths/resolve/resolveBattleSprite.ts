@@ -21,7 +21,7 @@ export function resolveBattleSprite(
   form?: MarceloBattleForm,
   lucauaAttackVariant?: LucauaAttackVariant,
 ): string {
-  if (character === "artur" && ALL_PREDICATES.isSpecialTrigger(state)) {
+  if (character === "artur" && ALL_PREDICATES.isAbilityTrigger(state)) {
     return playerPathArturHabilities(`/bitesTheDust/arturSeeing.svg`);
   }
   if (state === "mostHonored" && character === "riquelme") {
@@ -83,6 +83,18 @@ export function resolveBattleSprite(
   if (character === "marcelo" && form === "vastolordForm") {
     const sprite = stateData(MARCELO_VASTOLORD_SPRITES, state) ?? "idle/idle";
     return playerPath(`/marcelo/inFight/vastolordForm/${sprite}.svg`);
+  }
+  // Habilidade ativa (Killer Queen/Explosão de Stacks): não há pasta `special`
+  // para nenhum personagem. O artur já saiu acima com a pose do Bites the Dust;
+  // quem não tiver sprite dedicado de habilidade cai no golpe básico.
+  if (ALL_PREDICATES.isAbilityTrigger(state)) {
+    return resolveBattleSprite(
+      character,
+      "attack",
+      weapon,
+      form,
+      lucauaAttackVariant,
+    );
   }
   const folder = stateData(STATE_FOLDER, state);
   if (folder === null) {

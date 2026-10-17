@@ -74,7 +74,7 @@ export function handleGroundProjectile(
       next.y,
       opts.playerState,
       opts.playerCharacter ?? "",
-      ALL_PREDICATES.isSpecialStrike(opts.playerState),
+      ALL_PREDICATES.isAbilityStrike(opts.playerState),
       false,
       opts.npcClass,
     );

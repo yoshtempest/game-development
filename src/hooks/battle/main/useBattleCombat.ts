@@ -175,7 +175,7 @@ export function useBattleCombat({
     setPlayer,
     setMode,
     attack,
-    special,
+    startAbility,
     difficulty,
     playerClass,
     setPlayerState,
@@ -988,25 +988,24 @@ export function useBattleCombat({
     isDragging;
 
   // ── Habilidades ativas do Artur e da Larissa ──────────────────────────
-  // O "special" universal saiu do jogo: só Artur (Killer Queen) e Larissa
-  // (Explosão de Stacks) têm habilidade própria, cada uma com o seu botão e
-  // cooldown. Por baixo elas reaproveitam o pipeline do golpe especial (os
-  // estados `preSpecial`/`special` e o `handleSpecialHit`), que continua
-  // existindo para a mecânica das esferas do Riquelme — mas nenhum personagem
-  // ganha mais um "special" genérico.
+  // Cada uma tem o próprio botão e cooldown e reaproveita o pipeline genérico
+  // da habilidade ativa (os estados `preAbility`/`ability` e o
+  // `handleSpecialHit`). O dano especial também é usado pelas esferas do
+  // Riquelme, mas aquelas têm estados próprios (`sphereCast`…) — nenhum
+  // personagem ganha mais uma habilidade "special" genérica.
 
   const activateArturKillerQueen = useCallback(() => {
     // O Artur não dá o golpe no press: `useArturKillerQueen` dispara quando o
-    // estado entra em `preSpecial`.
-    special();
-  }, [special]);
+    // estado entra em `preAbility`.
+    startAbility();
+  }, [startAbility]);
 
   const activateLarissaExplosion = useCallback(() => {
     // A Larissa dá o golpe na hora (dano `stacks * 5` + explosão), como fazia
-    // o special antigo quando não havia override de fluxo.
-    special();
+    // a habilidade antiga quando não havia override de fluxo.
+    startAbility();
     handleSpecialHit();
-  }, [special, handleSpecialHit]);
+  }, [startAbility, handleSpecialHit]);
 
   const [activeAbilityRemaining, setActiveAbilityRemaining] = useState(0);
   const activeAbilityReadyAtRef = useRef(0);

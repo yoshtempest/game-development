@@ -555,7 +555,7 @@ export function usePlayerBattle({
         return null;
       }
 
-      if (ALL_PREDICATES.isSpecialStrike(strikeState)) {
+      if (ALL_PREDICATES.isAbilityStrike(strikeState)) {
         const { damage } = calculateSpecialHitDamage({
           player,
           playerClass,

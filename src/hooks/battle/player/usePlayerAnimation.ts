@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import {
   animationFlow,
-  getSpecialFlowOverride,
+  getAbilityFlowOverride,
 } from "@/data/battle/animationFlow";
 import { EMANUEL_AIR_LAUNCH_MS } from "@/data/characters/emanuel/emanuel";
 import { logPlay } from "@/utils/replay/audioEventLog";
@@ -59,7 +59,7 @@ export function usePlayerAnimation(
     const defaultStep = animationFlow[player.state];
     if (!defaultStep) return;
 
-    const override = getSpecialFlowOverride(player.character);
+    const override = getAbilityFlowOverride(player.character);
     let step = defaultStep;
 
     // Combo do emanuel: o windup `preAttack` resolve para o golpe atual do
@@ -90,7 +90,7 @@ export function usePlayerAnimation(
     }
 
     if (override) {
-      if (player.state === "preSpecial") {
+      if (player.state === "preAbility") {
         if (player.character === "marcelo") {
           playSound("atomic");
           logPlay("atomic");
@@ -100,11 +100,11 @@ export function usePlayerAnimation(
           playSound("hollowPurple");
           logPlay("hollowPurple");
         }
-        step = { ...defaultStep, ...override.preSpecial };
-      } else if (player.state === "preSpecial2") {
-        step = { ...defaultStep, ...override.preSpecial2 };
-      } else if (player.state === "special" && override.special) {
-        step = { ...defaultStep, ...override.special };
+        step = { ...defaultStep, ...override.preAbility };
+      } else if (player.state === "preAbility2") {
+        step = { ...defaultStep, ...override.preAbility2 };
+      } else if (player.state === "ability" && override.ability) {
+        step = { ...defaultStep, ...override.ability };
       }
     }
 

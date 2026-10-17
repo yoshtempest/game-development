@@ -73,7 +73,7 @@ export function useArturKillerQueen({
 
   useEffect(() => {
     const isArtur = player.character === "artur";
-    const isActive = ALL_PREDICATES.isSpecialTrigger(player.state);
+    const isActive = ALL_PREDICATES.isAbilityTrigger(player.state);
 
     if (!isArtur || !isActive || runningRef.current) return;
 
@@ -103,7 +103,7 @@ export function useArturKillerQueen({
     );
     freezePlayerUntilRefRef.current.current = done;
 
-    // Snapshot dos alvos no instante em que o special começa: inimigos +
+    // Snapshot dos alvos no instante em que a habilidade começa: inimigos +
     // projéteis destrutíveis. A partir daqui os projéteis ficam congelados, então
     // as posições não mudam mais durante a sequência.
     const targets: EnemyTarget[] = [

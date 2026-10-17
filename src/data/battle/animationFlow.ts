@@ -40,13 +40,13 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
   jump: null,
   falling: null, // controlado pela gravidade
   fallingAttack: { next: "falling", duration: TWO_HUNDRED_MS },
-  preSpecialInAir: { next: "specialInAir", duration: ONE_HUNDRED_MS },
-  specialInAir: { next: "specialInAirFinish", duration: TWO_HUNDRED_MS },
-  specialInAirFinish: { next: "idle", duration: ONE_HUNDRED_FIFTY_MS },
+  preAbilityInAir: { next: "abilityInAir", duration: ONE_HUNDRED_MS },
+  abilityInAir: { next: "abilityInAirFinish", duration: TWO_HUNDRED_MS },
+  abilityInAirFinish: { next: "idle", duration: ONE_HUNDRED_FIFTY_MS },
 
-  preSpecial: { next: "special", duration: TWO_HUNDRED_MS },
-  preSpecial2: { next: "idle", duration: 0 },
-  special: { next: "idle", duration: FIVE_HUNDRED_MS },
+  preAbility: { next: "ability", duration: TWO_HUNDRED_MS },
+  preAbility2: { next: "idle", duration: 0 },
+  ability: { next: "idle", duration: FIVE_HUNDRED_MS },
 
   dash: { next: "idle", duration: THREE_HUNDRED_MS },
 
@@ -114,31 +114,50 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
   blueSphereControl: null,
 };
 
-type SpecialFlowOverride = {
-  preSpecial: { next: PlayerState; duration: number };
-  preSpecial2: { next: PlayerState; duration: number };
-  // Opcional: como `special` normalmente avança sozinho para `idle`, o artur
+type AbilityFlowOverride = {
+  preAbility: { next: PlayerState; duration: number };
+  preAbility2: { next: PlayerState; duration: number };
+  // Opcional: como `ability` normalmente avança sozinho para `idle`, o artur
   // o segura (duração gigante) durante toda a coreografia da Killer Queen.
   // O hook `useArturKillerQueen` força `idle` quando a sequência termina.
-  special?: { next: PlayerState; duration: number };
+  ability?: { next: PlayerState; duration: number };
 };
 
-export const CHARACTER_SPECIAL_FLOWS: Partial<
-  Record<CharacterId, SpecialFlowOverride>
+export const CHARACTER_ABILITY_FLOWS: Partial<
+  Record<CharacterId, AbilityFlowOverride>
 > = {
   riquelme: {
-    preSpecial: { next: "preSpecial2", duration: FOUR_HUNDRED_MS },
-    preSpecial2: { next: "special", duration: EIGHT_HUNDRED_MS },
+    preAbility: { next: "preAbility2", duration: FOUR_HUNDRED_MS },
+    preAbility2: { next: "ability", duration: EIGHT_HUNDRED_MS },
   },
   artur: {
-    preSpecial: { next: "preSpecial2", duration: FOUR_HUNDRED_MS },
-    preSpecial2: { next: "special", duration: FIVE_HUNDRED_MS },
-    special: { next: "idle", duration: 999_999_999 },
+    preAbility: { next: "preAbility2", duration: FOUR_HUNDRED_MS },
+    preAbility2: { next: "ability", duration: FIVE_HUNDRED_MS },
+    ability: { next: "idle", duration: 999_999_999 },
   },
 };
 
-export function getSpecialFlowOverride(
+export function getAbilityFlowOverride(
   characterId: CharacterId,
-): SpecialFlowOverride | null {
-  return CHARACTER_SPECIAL_FLOWS[characterId] ?? null;
+): AbilityFlowOverride | null {
+  return CHARACTER_ABILITY_FLOWS[characterId] ?? null;
+}
+
+/**
+ * Nomes antigos dos estados de habilidade, de quando a família ainda se chamava
+ * "special". Existe só para a leitura de dados persistidos (frames de replay
+ * gravados antes do rename) — o código novo nunca usa estes literais.
+ */
+export const LEGACY_PLAYER_STATE_ALIASES: Record<string, PlayerState> = {
+  preSpecial: "preAbility",
+  preSpecial2: "preAbility2",
+  special: "ability",
+  preSpecialInAir: "preAbilityInAir",
+  specialInAir: "abilityInAir",
+  specialInAirFinish: "abilityInAirFinish",
+};
+
+/** Resolve um estado vindo de dado antigo (replay) para o nome atual. */
+export function migratePlayerState(state: PlayerState): PlayerState {
+  return LEGACY_PLAYER_STATE_ALIASES[state] ?? state;
 }

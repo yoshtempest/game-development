@@ -28,7 +28,7 @@ export function tryMeleeIntercept(
   if (p.indestructible) return undefined;
   if (!ALL_PREDICATES.isStrike(opts.playerState)) return undefined;
 
-  const isSpecial = ALL_PREDICATES.isSpecialStrike(opts.playerState);
+  const isSpecial = ALL_PREDICATES.isAbilityStrike(opts.playerState);
   const inRange = isPlayerInRange(
     opts.playerX,
     opts.playerY,

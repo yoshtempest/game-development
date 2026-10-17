@@ -29,11 +29,11 @@ export const LANDING_STATES = unionOf(
   AIR_FALL_STATES,
   stateSet<PlayerAirState>("preJump"),
 );
-/** Special aéreo. */
-export const AIR_SPECIAL_STATES = stateSet<PlayerAirSpecialState>(
-  "preSpecialInAir",
-  "specialInAir",
-  "specialInAirFinish",
+/** Habilidade ativa no ar (windup → execução → recuperação). */
+export const AIR_ABILITY_STATES = stateSet<PlayerAirAbilityState>(
+  "preAbilityInAir",
+  "abilityInAir",
+  "abilityInAirFinish",
 );
 /** Golpe aéreo do combo. */
 export const AIR_MELEE_STATES = stateSet<PlayerAirMeleeState>(
@@ -41,10 +41,10 @@ export const AIR_MELEE_STATES = stateSet<PlayerAirMeleeState>(
   "airKick",
 );
 /**
- * Golpes que seguram o personagem no ar (o eixo Y fica congelado): special
- * aéreo e golpes aéreos do combo.
+ * Golpes que seguram o personagem no ar (o eixo Y fica congelado): habilidade
+ * aérea e golpes aéreos do combo.
  */
-export const AIR_FROZEN_STATES = unionOf(AIR_SPECIAL_STATES, AIR_MELEE_STATES);
+export const AIR_FROZEN_STATES = unionOf(AIR_ABILITY_STATES, AIR_MELEE_STATES);
 
 // ── Golpes ────────────────────────────────────────────────
 /** Ataque básico já ativo (causa dano). */
@@ -53,19 +53,19 @@ export const BASIC_STRIKE_STATES = stateSet<PlayerBasicAttackState>(
   "crit",
 );
 /**
- * Special já ativo (causa dano). Precisa ser listado: os projéteis do NPC são
- * interceptados no alcance do golpe, e antes só `attack` era aceito — nenhum
- * special alcançava um projétil.
+ * Habilidade ativa já em execução (causa dano). Precisa ser listado: os
+ * projéteis do NPC são interceptados no alcance do golpe, e antes só `attack`
+ * era aceito — nenhuma habilidade alcançava um projétil.
  */
-export const SPECIAL_STRIKE_STATES = stateSet<PlayerState>(
-  "special",
-  "specialInAir",
-  "specialInAirFinish",
+export const ABILITY_STRIKE_STATES = stateSet<PlayerState>(
+  "ability",
+  "abilityInAir",
+  "abilityInAirFinish",
 );
-/** Qualquer golpe ativo (básico ou special). */
+/** Qualquer golpe ativo (básico ou habilidade). */
 export const STRIKE_STATES = unionOf(
   BASIC_STRIKE_STATES,
-  SPECIAL_STRIKE_STATES,
+  ABILITY_STRIKE_STATES,
 );
 /** Windup do ataque básico. */
 export const ATTACK_WINDUP_STATES = stateSet<PlayerBasicAttackState>(
@@ -80,11 +80,11 @@ export const ATTACK_POSE_STATES = stateSet<PlayerBasicAttackState>(
   "preAttack",
   "attack",
 );
-/** Sequência do special de solo, do windup ao golpe. */
-export const SPECIAL_TRIGGER_STATES = stateSet<PlayerSpecialState>(
-  "preSpecial",
-  "preSpecial2",
-  "special",
+/** Sequência da habilidade ativa de solo, do windup à execução. */
+export const ABILITY_TRIGGER_STATES = stateSet<PlayerAbilityState>(
+  "preAbility",
+  "preAbility2",
+  "ability",
 );
 
 // ── Habilidades ───────────────────────────────────────────
@@ -188,8 +188,8 @@ export const HORIZONTAL_CONTROL_LOCKED_STATES = unionOf(
   stateSet<PlayerAirState>("jump"),
   INVULNERABLE_STATES,
 );
-/** Trava a entrada no special (defesa, atordoamento e O Abençoado). */
-export const SPECIAL_LOCKED_STATES = unionOf(
+/** Trava a entrada da habilidade ativa (defesa, atordoamento e O Abençoado). */
+export const ABILITY_LOCKED_STATES = unionOf(
   BLOCK_OR_STUN_STATES,
   INVULNERABLE_STATES,
 );
@@ -215,17 +215,17 @@ export const ALL_STATES = {
   AIRBORNE_STATES,
   AIR_FALL_STATES,
   LANDING_STATES,
-  AIR_SPECIAL_STATES,
+  AIR_ABILITY_STATES,
   AIR_MELEE_STATES,
   AIR_FROZEN_STATES,
 
   // Golpes
   BASIC_STRIKE_STATES,
-  SPECIAL_STRIKE_STATES,
+  ABILITY_STRIKE_STATES,
   STRIKE_STATES,
   ATTACK_WINDUP_STATES,
   ATTACK_POSE_STATES,
-  SPECIAL_TRIGGER_STATES,
+  ABILITY_TRIGGER_STATES,
 
   // Habilidades
   GENKI_DAMA_STATES,
@@ -250,7 +250,7 @@ export const ALL_STATES = {
   INVULNERABLE_STATES,
   NPC_UNHITTABLE_STATES,
   HORIZONTAL_CONTROL_LOCKED_STATES,
-  SPECIAL_LOCKED_STATES,
+  ABILITY_LOCKED_STATES,
 
   // Combo
   GROUND_COMBO_STATES,

@@ -412,9 +412,9 @@ declare global {
   type PlayerIdleState = "idle" | "heal";
   /** No ar — a gravidade está no comando. */
   type PlayerAirState = "preJump" | "jump" | "falling" | "fallingAttack";
-  /** Special aéreo. */
-  type PlayerAirSpecialState =
-    "preSpecialInAir" | "specialInAir" | "specialInAirFinish";
+  /** Habilidade ativa usada no ar (o windup `preAbility*` desce/segura no ar). */
+  type PlayerAirAbilityState =
+    "preAbilityInAir" | "abilityInAir" | "abilityInAirFinish";
   /** Golpe aéreo do combo (`airGrab` é a exibição do windup em `jump`). */
   type PlayerAirMeleeState = "airGrab" | "airKick";
   /** Ataque básico: windup → golpe. */
@@ -422,8 +422,8 @@ declare global {
     "preAttack" | "attack" | "crit" | "preKick" | "kick";
   /** Golpes de solo do combo do emanuel. */
   type PlayerComboState = "punch" | "hook" | "lowKick";
-  /** Special de solo, do windup (`preSpecial*`) ao golpe (`special`). */
-  type PlayerSpecialState = "preSpecial" | "preSpecial2" | "special";
+  /** Habilidade ativa de solo: windup (`preAbility*`) → execução (`ability`). */
+  type PlayerAbilityState = "preAbility" | "preAbility2" | "ability";
   /** Genki Dama do emanuel — o personagem sobe e fica flutuando. */
   type PlayerGenkiDamaState =
     "genkiDamaRising" | "preparingGenkiDama" | "throwGenkiDama";
@@ -491,11 +491,11 @@ declare global {
     | PlayerMoveState
     | PlayerCrouchState
     | PlayerAirState
-    | PlayerAirSpecialState
+    | PlayerAirAbilityState
     | PlayerAirMeleeState
     | PlayerBasicAttackState
     | PlayerComboState
-    | PlayerSpecialState;
+    | PlayerAbilityState;
 
   type PlayerState = PlayerCanActState | PlayerCantActState;
 

@@ -76,7 +76,8 @@ export function useBattleMovement(
   const hasDoubleJumped = useRef(false);
   const hasUsedFallingAttack = useRef(false);
 
-  const isFrozenBySpecial = () =>
+  /** Trava de ação compartilhada (habilidade/explosão em andamento). */
+  const isActionFrozen = () =>
     !!freezeActionsUntilRef?.current &&
     freezeActionsUntilRef.current > Date.now();
 
@@ -139,7 +140,7 @@ export function useBattleMovement(
     if (intervalRef.current) return;
 
     intervalRef.current = setInterval(() => {
-      if (isFrozenBySpecial()) return;
+      if (isActionFrozen()) return;
       setPlayer((p) => {
         if (isPlayerAttackHolding(p)) return p;
         const moved = stepFn(p);
@@ -160,7 +161,7 @@ export function useBattleMovement(
   }
 
   function startMoveLeft() {
-    if (isFrozenBySpecial()) return;
+    if (isActionFrozen()) return;
     startMoveInterval(leftIntervalRef, (p) =>
       moveLeftBattle(p, (progressRef.current[p.character]?.sleep ?? 0) > 0),
     );
@@ -171,7 +172,7 @@ export function useBattleMovement(
   }
 
   function startMoveRight() {
-    if (isFrozenBySpecial()) return;
+    if (isActionFrozen()) return;
     startMoveInterval(rightIntervalRef, (p) =>
       moveRightBattle(p, (progressRef.current[p.character]?.sleep ?? 0) > 0),
     );
@@ -182,14 +183,14 @@ export function useBattleMovement(
   }
 
   function setIdleIfNotMoving() {
-    if (isFrozenBySpecial()) return;
+    if (isActionFrozen()) return;
     if (!leftIntervalRef.current && !rightIntervalRef.current) {
       setPlayer((p) => idleBattle(p));
     }
   }
 
   function moveUpBattle() {
-    if (isFrozenBySpecial()) return;
+    if (isActionFrozen()) return;
     if (!canJump(isJumping.current)) return;
 
     setPlayer((p) => {
@@ -222,7 +223,7 @@ export function useBattleMovement(
   }
 
   function blockStartAction() {
-    if (isFrozenBySpecial()) return;
+    if (isActionFrozen()) return;
     if (downLockRef.current) return;
     downLockRef.current = true;
     lastBlockPressRef.current = Date.now();
@@ -243,7 +244,7 @@ export function useBattleMovement(
   }
 
   function toggleCrouch() {
-    if (isFrozenBySpecial()) return;
+    if (isActionFrozen()) return;
     setPlayer((p) => {
       if (isPlayerAttackHolding(p)) return p;
       if (isPlayerFrozen(p)) return p;
@@ -252,7 +253,7 @@ export function useBattleMovement(
   }
 
   function attack() {
-    if (isFrozenBySpecial()) return;
+    if (isActionFrozen()) return;
     if (lastAttackPressRef) lastAttackPressRef.current = Date.now();
 
     let comboWindup: PlayerState | null = null;
@@ -374,15 +375,21 @@ export function useBattleMovement(
     });
   }
 
-  function special() {
-    if (isFrozenBySpecial()) return;
+  /**
+   * Entrada genérica da habilidade ativa do botão (Artur/Killer Queen,
+   * Larissa/Explosão de Stacks). Substituiu o antigo "special" universal: entra
+   * no windup (`preAbility`) e quem tem fluxo próprio o sobrescreve em
+   * `animationFlow`. No ar, a variante `preAbilityInAir` segura o personagem.
+   */
+  function startAbility() {
+    if (isActionFrozen()) return;
     setPlayer((p) => {
       if (isPlayerFrozen(p) || isPlayerParalyzed(p)) return p;
       if (ALL_PREDICATES.isInvulnerable(p.state)) return p;
       if (ALL_PREDICATES.isAirFalling(p.state))
-        return { ...p, state: "preSpecialInAir" };
+        return { ...p, state: "preAbilityInAir" };
       if (p.state !== "idle") return p;
-      return { ...p, state: "preSpecial" };
+      return { ...p, state: "preAbility" };
     });
   }
 
@@ -394,7 +401,7 @@ export function useBattleMovement(
   }
 
   function dash(direction: "left" | "right") {
-    if (isFrozenBySpecial()) return;
+    if (isActionFrozen()) return;
     if (dashIntervalRef.current) return;
 
     if (leftIntervalRef.current) {
@@ -458,7 +465,7 @@ export function useBattleMovement(
     blockEnd: blockEndAction,
     toggleCrouch,
     attack,
-    special,
+    startAbility,
     dash,
     setPlayerState,
   };
