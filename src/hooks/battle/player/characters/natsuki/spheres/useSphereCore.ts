@@ -55,6 +55,7 @@ type Props = {
     onActivate: () => void,
     ability?: string,
     form?: MarceloBattleForm,
+    onCancel?: () => void,
   ) => boolean;
   /** +5 cargas da Expansão por uso (a purple conta como dois: 2×). */
   onUsed?: (times?: number) => void;
@@ -255,19 +256,51 @@ export function useSphereCore({
       if (!canUseRef.current) return;
 
       // Custo por uso: a red cobra 10% e a purple 25% da energia MÁXIMA (a blue
-      // não passa por aqui). Consome ANTES de armar o cast; sem saldo, o
-      // aperto morre sem gastar carga nem abrir a intro.
-      const mana = battleManaRef.current;
+      // não passa por aqui). O SALDO é conferido já no aperto (o botão usa a
+      // mesma conta), mas o gasto é adiado para o `run`: a intro pode ser
+      // cancelada por uma tomada de controle (O Abençoado) e o recurso não pode
+      // ter sumido por uma esfera que nunca entrou em campo.
       if (variant !== "blue") {
-        const cost = sphereEnergyCost(variant, mana?.playerMaxMana ?? 0);
-        if (cost > 0 && (!mana || !mana.consumeMana(cost))) return;
+        const mana = battleManaRef.current;
+        if (!mana) return;
+        if (mana.playerMana < sphereEnergyCost(variant, mana.playerMaxMana)) {
+          return;
+        }
       }
 
-      // A purple é a fusão das duas esferas: vale como dois usos (+10 cargas).
-      onUsedRef.current?.(variant === "purple" ? 2 : 1);
       activeRef.current = true;
 
+      // A intro pendente foi descartada (tomada de controle): desarma sem
+      // congelar o mundo nem trocar a pose.
+      const cancel = () => {
+        activeRef.current = false;
+      };
+
       const run = () => {
+        // A intro terminou depois de algo tomar o controle do personagem (O
+        // Abençoado): desarma em vez de sobrescrever a coreografia.
+        if (!canUseRef.current || shouldCancelRef.current()) {
+          activeRef.current = false;
+          return;
+        }
+
+        if (variant !== "blue") {
+          const mana = battleManaRef.current;
+          if (!mana) {
+            activeRef.current = false;
+            return;
+          }
+          if (
+            !mana.consumeMana(sphereEnergyCost(variant, mana.playerMaxMana))
+          ) {
+            activeRef.current = false;
+            return;
+          }
+        }
+
+        // A purple é a fusão das duas esferas: vale como dois usos (+10 cargas).
+        onUsedRef.current?.(variant === "purple" ? 2 : 1);
+
         const p = playerRef.current;
         freezeWorld(
           variant === "purple" ? PURPLE_CAST_FREEZE_MS : SPHERE_CAST_FREEZE_MS,
@@ -282,7 +315,13 @@ export function useSphereCore({
       // O intro abre o background (blue|red|purple) em slow-motion e chama
       // `run` ao fim; se já houver um intro em andamento ele não roda, e o cast
       // precisa sair na hora para a ativação (e o recurso) não sumirem.
-      const started = startIntroRef.current("riquelme", run, variant);
+      const started = startIntroRef.current(
+        "riquelme",
+        run,
+        variant,
+        undefined,
+        cancel,
+      );
       if (!started) run();
     },
     [
@@ -295,6 +334,7 @@ export function useSphereCore({
       playerRef,
       publish,
       setPlayerState,
+      shouldCancelRef,
       startIntroRef,
     ],
   );

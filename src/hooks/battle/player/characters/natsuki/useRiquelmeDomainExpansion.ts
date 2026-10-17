@@ -23,6 +23,7 @@ import {
 } from "@/data/characters/riquelme/riquelme";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { SoundId } from "@/utils/audio/soundId";
+import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 
 type Props = {
@@ -63,6 +64,8 @@ type Props = {
     character: string,
     onActivate: () => void,
     ability?: string,
+    form?: MarceloBattleForm,
+    onCancel?: () => void,
   ) => boolean;
   playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
   /** Carga atual da barra da Expansão (o uso consome tudo: vira 0). */
@@ -270,11 +273,15 @@ export function useRiquelmeDomainExpansion({
       return;
     }
 
-    // O vidro leva `DOMAIN_SHATTER_MS` para sair de cena: o player segue
-    // travado até lá (o lock do press só cobria o dreno).
-    freezeActionsUntilRef.current = Math.max(
-      freezeActionsUntilRef.current,
-      Date.now() + DOMAIN_SHATTER_MS,
+    // A quebra do vidro é SÓ visual: o personagem já recupera o controle no
+    // instante em que ela começa (`DOMAIN_SHATTER_MS` é só o tempo do
+    // expansion.svg caindo de cena). Antes ele ficava travado os 1,5s da queda,
+    // abrindo uma janela para ser atacado sem reagir.
+    freezeActionsUntilRef.current = Date.now();
+    setPlayer((p) =>
+      p.mode !== "battle" || !ALL_PREDICATES.isRiquelmeDomain(p.state)
+        ? p
+        : { ...p, state: "idle" },
     );
     setShattering(true);
     playSoundRef.current("domainBreak");
@@ -287,6 +294,7 @@ export function useRiquelmeDomainExpansion({
     freezeActionsUntilRef,
     hasSurvivor,
     playSoundRef,
+    setPlayer,
     timeRef,
   ]);
 
@@ -294,6 +302,25 @@ export function useRiquelmeDomainExpansion({
 
   /** Início do domínio de fato: congela o mundo, trava o player e liga o dreno. */
   const startDomain = useCallback(() => {
+    // Se algo tomou o controle no meio da intro (O Abençoado), o domínio morre
+    // aqui: não congela, não trava e não paga nada.
+    if (shouldCancelRef.current()) {
+      activeRef.current = false;
+      return;
+    }
+
+    // O custo é a barra inteira: as 40 cargas somem no uso (sem cooldown) —
+    // mais `RIQUELME_DOMAIN_MANA_RATIO` da energia amaldiçoada que ele tem no
+    // momento. Como é sempre metade do que existe, não há mínimo exigido: o
+    // domínio sempre paga (e esvazia o tanque pela metade).
+    setDeliciaRef.current(0);
+    const mana = battleManaRef.current;
+    if (mana) {
+      mana.consumeMana(
+        Math.floor(mana.playerMana * RIQUELME_DOMAIN_MANA_RATIO),
+      );
+    }
+
     setShattering(false);
     setActive(true);
     // Regra de time: o domínio para o mundo inteiro. O player fica de fora do
@@ -319,11 +346,14 @@ export function useRiquelmeDomainExpansion({
       setTimeout(() => endDomainRef.current(), RIQUELME_DOMAIN_MS),
     );
   }, [
+    battleManaRef,
     clearDrain,
     drainTickRef,
     endDomainRef,
     freezeActionsUntilRef,
     playSoundRef,
+    setDeliciaRef,
+    shouldCancelRef,
     timeRef,
   ]);
 
@@ -333,19 +363,11 @@ export function useRiquelmeDomainExpansion({
     if (activeRef.current) return;
     if (!usableRef.current) return;
 
-    // O custo é a barra inteira: as 40 cargas somem no uso (sem cooldown) —
-    // mais `RIQUELME_DOMAIN_MANA_RATIO` da energia amaldiçoada que ele tem no
-    // momento. Como é sempre metade do que existe, não há mínimo exigido: o
-    // domínio sempre paga (e esvazia o tanque pela metade).
-    setDeliciaRef.current(0);
-    const mana = battleManaRef.current;
-    if (mana) {
-      mana.consumeMana(
-        Math.floor(mana.playerMana * RIQUELME_DOMAIN_MANA_RATIO),
-      );
-    }
     // Trava já no press: cobre a intro (background.svg) + o dreno. A quebra do
-    // vidro, quando acontece, adia o lock no `endDomain` (só aí ele é maior).
+    // vidro, quando acontece, devolve o controle na hora (ver `endDomain`). O
+    // CUSTO é cobrado no `startDomain`: a intro pode ser cancelada por uma
+    // tomada de controle (O Abençoado) e o domínio não pode pagar por algo que
+    // nunca entrou em cena.
     freezeActionsUntilRef.current = Math.max(
       freezeActionsUntilRef.current,
       Date.now() + RIQUELME_DOMAIN_MS,
@@ -377,14 +399,17 @@ export function useRiquelmeDomainExpansion({
       "riquelme",
       () => startDomainRef.current(),
       "domainExpansion",
+      undefined,
+      () => {
+        activeRef.current = false;
+        clearTimers();
+      },
     );
     if (!started) startDomainRef.current();
   }, [
-    battleManaRef,
     clearTimers,
     freezeActionsUntilRef,
     playSoundRef,
-    setDeliciaRef,
     setPlayer,
     shouldCancelRef,
     startDomainRef,

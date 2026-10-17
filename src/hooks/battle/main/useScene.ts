@@ -164,6 +164,7 @@ export function useBattleScene({
   const {
     honoredOneActiveRef,
     honoredOneActive,
+    honoredSequence,
     honoredRegenActive,
     honoredFleeRef,
     surviveLethalHitRef,
@@ -409,6 +410,7 @@ export function useBattleScene({
     honoredOneActiveRef,
     honoredFleeRef,
     surviveLethalHitRef,
+    honoredSequence,
     honoredRegenActive,
     vastolordMultiplierRef,
     vastolordActive,

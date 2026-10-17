@@ -313,17 +313,21 @@ export function useDomainExpansion({
       clearTimeout(capTimerRef.current);
       capTimerRef.current = null;
     }
-    // O player segue travado enquanto o vidro desce: o lock do press só cobria
-    // a varredura.
-    freezeActionsUntilRef.current = Math.max(
-      freezeActionsUntilRef.current,
-      Date.now() + DOMAIN_SHATTER_MS,
+    // A quebra do vidro é SÓ visual: o personagem já recupera o controle no
+    // instante em que ela começa (`DOMAIN_SHATTER_MS` é só o tempo do
+    // expansion.svg caindo de cena). Antes ele ficava travado os 1,5s da queda,
+    // abrindo uma janela para ser atacado sem reagir.
+    freezeActionsUntilRef.current = Date.now();
+    setPlayer((p) =>
+      p.mode !== "battle" || !ALL_PREDICATES.isDomainExpansion(p.state)
+        ? p
+        : { ...p, state: "idle" },
     );
     setShattering(true);
     timersRef.current.push(
       setTimeout(() => finishRef.current(), DOMAIN_SHATTER_MS),
     );
-  }, [finishRef, freezeActionsUntilRef, hasSurvivor]);
+  }, [finishRef, freezeActionsUntilRef, hasSurvivor, setPlayer]);
 
   const endDomainRef = useLatestRef(endDomain);
 

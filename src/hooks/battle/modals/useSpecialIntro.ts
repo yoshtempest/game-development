@@ -27,6 +27,11 @@ type Props = {
  * já existe um intro em andamento e o `onActivate` passado nunca roda: quem
  * consome precisa executar a ação por conta própria, senão a habilidade some
  * junto com o recurso que ela consumiu no `press`.
+ *
+ * `cancelSpecialIntro` descarta a ativação pendente e o overlay sem executar o
+ * `onActivate` — é a saída para uma tomada de controle que precisa se sobrepor
+ * à habilidade em preparo (ex.: O Abençoado). O `onCancel` opcional avisa a
+ * habilidade para ela desarmar o próprio estado, já que o `onActivate` não roda.
  */
 export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
   const { showAbilityIntro } = useSettings();
@@ -38,6 +43,7 @@ export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
   const activeRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onActivateRef = useRef<(() => void) | null>(null);
+  const onCancelRef = useRef<(() => void) | null>(null);
 
   const startSpecialIntro = useCallback(
     (
@@ -45,6 +51,7 @@ export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
       onActivate: () => void,
       ability?: string,
       form?: MarceloBattleForm,
+      onCancel?: () => void,
     ) => {
       // Intro desligado na config: a ação sai imediatamente, sem overlay e
       // sem slow-motion (a habilidade já trava o player por conta própria).
@@ -57,6 +64,7 @@ export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
 
       activeRef.current = true;
       onActivateRef.current = onActivate;
+      onCancelRef.current = onCancel ?? null;
       setSpecialIntro({ character, ability, form });
       setTimeScale(SPECIAL_INTRO_TIME_SCALE);
 
@@ -67,6 +75,7 @@ export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
 
         const activate = onActivateRef.current;
         onActivateRef.current = null;
+        onCancelRef.current = null;
 
         setSpecialIntro(null);
         resetTimeScale();
@@ -78,10 +87,38 @@ export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
     [setTimeScale, resetTimeScale, showAbilityIntro],
   );
 
+  /**
+   * Descarta o intro pendente SEM ativar a habilidade: o overlay some, o tempo
+   * volta ao normal e o `onCancel` da habilidade desarma o estado dela. É o que
+   * permite uma tomada de controle (O Abençoado) se sobrepor a um cast/preparo.
+   *
+   * Não faz nada quando não há intro em andamento — chamar no gatilho da
+   * tomada de controle é seguro em qualquer caso.
+   */
+  const cancelSpecialIntro = useCallback(() => {
+    if (!activeRef.current) return;
+    activeRef.current = false;
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    const onCancel = onCancelRef.current;
+    onActivateRef.current = null;
+    onCancelRef.current = null;
+
+    setSpecialIntro(null);
+    resetTimeScale();
+    onCancel?.();
+  }, [resetTimeScale]);
+
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = null;
+      onActivateRef.current = null;
+      onCancelRef.current = null;
       resetTimeScale();
     };
   }, [resetTimeScale]);
@@ -92,5 +129,6 @@ export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
     specialIntroAbility: specialIntro?.ability ?? null,
     specialIntroForm: specialIntro?.form ?? null,
     startSpecialIntro,
+    cancelSpecialIntro,
   };
 }

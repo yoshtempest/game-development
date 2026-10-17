@@ -54,6 +54,8 @@ export function useHonoredOne({
   const honoredOneUsedRef = useRef(false);
   const honoredOneActiveRef = useRef(false);
   const [honoredOneActive, setHonoredOneActive] = useState(false);
+  /** True do gatilho até o pouso: a coreografia tomou o controle do personagem. */
+  const [honoredSequence, setHonoredSequence] = useState(false);
   /** Regeneração passiva de energia amaldiçoada (10/s) valendo pelo resto da batalha. */
   const [honoredRegenActive, setHonoredRegenActive] = useState(false);
   const honoredOneTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -69,6 +71,7 @@ export function useHonoredOne({
     honoredOneUsedRef.current = false;
     honoredOneActiveRef.current = false;
     setHonoredOneActive(false);
+    setHonoredSequence(false);
     setHonoredRegenActive(false);
     honoredRiseStartRef.current = 0;
     honoredFleeRef.current = false;
@@ -99,6 +102,7 @@ export function useHonoredOne({
     honoredRiseStartYRef.current = player.y;
     honoredFleeRef.current = true;
     setHonoredRegenActive(true);
+    setHonoredSequence(true);
     // TEMP-DEBUG honored-regen
     console.log(
       "[honored-regen] sequence start: setHonoredRegenActive(true), mana=",
@@ -158,6 +162,7 @@ export function useHonoredOne({
     honoredFallRef.current = false;
     honoredRiseStartRef.current = 0;
     honoredFleeRef.current = false;
+    setHonoredSequence(false);
     refs.timeRef.current = clearTime(refs.timeRef.current, HONORED_ONE_TIME_ID);
     // A sequência acabou no pouso: o slow e o lock do player valem só até
     // aqui, senão o riquelme ficaria travado no resto dos ~7.3s do efeito.
@@ -190,6 +195,7 @@ export function useHonoredOne({
     honoredOneUsedRef,
     honoredOneActiveRef,
     honoredOneActive,
+    honoredSequence,
     setHonoredOneActive,
     honoredRegenActive,
     setHonoredRegenActive,

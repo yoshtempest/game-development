@@ -48,6 +48,7 @@ type Props = {
     onActivate: () => void,
     ability?: string,
     form?: MarceloBattleForm,
+    onCancel?: () => void,
   ) => boolean;
   /** +5 cargas da Expansão pelo uso (a purple conta como dois: 2×). */
   onUsed?: (times?: number) => void;

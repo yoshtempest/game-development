@@ -122,6 +122,8 @@ type Props = {
   honoredOneActiveRef: RefObject<boolean>;
   honoredFleeRef: RefObject<boolean>;
   surviveLethalHitRef: RefObject<() => boolean>;
+  /** O Abençoado está na coreografia (gatilho → pouso): trava todo controle. */
+  honoredSequence: boolean;
   honoredRegenActive: boolean;
   vastolordMultiplierRef: RefObject<() => number>;
   vastolordActive: boolean;
@@ -156,6 +158,7 @@ export function useBattleCombat({
   honoredOneActiveRef,
   honoredFleeRef,
   surviveLethalHitRef,
+  honoredSequence,
   honoredRegenActive,
   vastolordMultiplierRef,
   vastolordActive,
@@ -523,6 +526,19 @@ export function useBattleCombat({
   // Preenchido pelo useArturOraPunch com o multiplicador atual (escala ORA).
   const arturOraMultiplierRef = useRef<() => number>(() => 1);
 
+  // O gatilho de O Abençoado vive no funil de dano (useSystem/useExternal), que
+  // só conhece o `surviveLethalHitRef`. Envolvemos ele para, no mesmo instante
+  // em que a passiva salva o player, descartar qualquer habilidade que esteja
+  // sendo PREPARADA (intro pendente) — a coreografia não pode ser sobrescrita
+  // por um cast que terminaria depois dela. O `cancelSpecialIntro` real é
+  // preenchido mais abaixo, junto do `useSpecialIntro`.
+  const cancelSpecialIntroRef = useRef<() => void>(() => {});
+  const honoredLethalRef = useLatestRef(() => {
+    const survived = surviveLethalHitRef.current?.() ?? false;
+    if (survived) cancelSpecialIntroRef.current();
+    return survived;
+  });
+
   const battle = useBattleSystem({
     playerX: player.x,
     playerY: player.y,
@@ -573,7 +589,7 @@ export function useBattleCombat({
     npcStatMultiplier: isAlfa ? 2 : 1,
     npcArmorBonus,
     weapon: lucasWeapon,
-    surviveLethalHitRef,
+    surviveLethalHitRef: honoredLethalRef,
   });
 
   // Vida dos projéteis destrutíveis = 1/3 do dano que causariam no jogador.
@@ -980,7 +996,11 @@ export function useBattleCombat({
     specialIntroAbility,
     specialIntroForm,
     startSpecialIntro,
+    cancelSpecialIntro,
   } = useSpecialIntro({ setTimeScale, resetTimeScale });
+
+  // O gatilho de O Abençoado (definido lá em cima) cancela a intro pendente.
+  cancelSpecialIntroRef.current = cancelSpecialIntro;
 
   // Artur não usa o charge (segurar onConfirm = ORA ORA). Os demais mantêm.
   const canCharge =
@@ -988,6 +1008,7 @@ export function useBattleCombat({
 
   const controlsDisabled =
     isPausedRef.current ||
+    honoredSequence ||
     isPhaseTransitioning ||
     isThrown ||
     alfaIntroActive ||
