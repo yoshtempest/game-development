@@ -21,9 +21,14 @@ export function rollEquipmentDrops(
 
   for (const slot of slots) {
     const rank = rollSlotDrop(npcClass, luckBonus);
-    if (!rank) continue;
-    if (rank === "EX") continue;
-    if (rank >= 9) continue;
+    // `rank === null` explícito: um `!rank` genérico engoliria o rank 0
+    // (Transcendente), que é um rank válido e não um nulo.
+    if (rank === null) continue;
+    // Rank 0 (Transcendente) e EX são exclusivos de baús lendários+ — a
+    // tabela de batalha já zera o peso deles, isto é a trava de redundância.
+    // O gate antigo era `rank >= 9`: bloqueava rank 9 (tinha peso na tabela)
+    // e deixava rank 0 passar até o `!rank` falso-o matar.
+    if (rank === "EX" || rank === 0) continue;
 
     const candidates = getEquipmentBySlotAndRank(slot, rank).filter(
       (e) => !e.craftOnly,

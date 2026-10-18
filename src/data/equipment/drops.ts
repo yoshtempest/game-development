@@ -3,6 +3,15 @@ type DropConfig = {
   rankWeights: Record<EquipmentRank, number>;
 };
 
+/**
+ * Tabela de rank por classe de NPC para DROPS DE BATALHA.
+ *
+ * Ranks 0 (Transcendente) e EX nunca entram aqui: eles são exclusivos de
+ * baús lendários ou melhores (ver `CHEST_DROP_TABLES`). As sobras de peso
+ * deles foram redistribuídas para o rank 9 — antes ficavam em massas mortas
+ * que o `rollEquipmentDrops` descartava, o que também fazia rank 0 vazar
+ * (o gate antigo era `rank >= 9`, e 0 < 9).
+ */
 export const DROP_CONFIG: Record<NPCClass, DropConfig> = {
   common: {
     baseChance: 0.08,
@@ -22,7 +31,7 @@ export const DROP_CONFIG: Record<NPCClass, DropConfig> = {
   },
 
   rare: {
-    baseChance: 0.15,
+    baseChance: 0.12,
     rankWeights: {
       1: 15,
       2: 30,
@@ -39,7 +48,7 @@ export const DROP_CONFIG: Record<NPCClass, DropConfig> = {
   },
 
   epic: {
-    baseChance: 0.35,
+    baseChance: 0.18,
     rankWeights: {
       1: 5,
       2: 10,
@@ -56,7 +65,7 @@ export const DROP_CONFIG: Record<NPCClass, DropConfig> = {
   },
 
   boss: {
-    baseChance: 0.55,
+    baseChance: 0.25,
     rankWeights: {
       1: 0,
       2: 5,
@@ -65,15 +74,15 @@ export const DROP_CONFIG: Record<NPCClass, DropConfig> = {
       5: 20,
       6: 18,
       7: 15,
-      8: 10,
+      8: 12,
       9: 5,
-      0: 2,
+      0: 0,
       EX: 0,
     },
   },
 
   legendary: {
-    baseChance: 0.8,
+    baseChance: 0.32,
     rankWeights: {
       1: 0,
       2: 0,
@@ -83,14 +92,14 @@ export const DROP_CONFIG: Record<NPCClass, DropConfig> = {
       6: 15,
       7: 20,
       8: 18,
-      9: 15,
-      0: 10,
-      EX: 5,
+      9: 30,
+      0: 0,
+      EX: 0,
     },
   },
 
   supreme: {
-    baseChance: 0.9,
+    baseChance: 0.4,
     rankWeights: {
       1: 0,
       2: 0,
@@ -100,14 +109,14 @@ export const DROP_CONFIG: Record<NPCClass, DropConfig> = {
       6: 10,
       7: 15,
       8: 20,
-      9: 22,
-      0: 16,
-      EX: 10,
+      9: 48,
+      0: 0,
+      EX: 0,
     },
   },
 
   omega: {
-    baseChance: 1,
+    baseChance: 0.5,
     rankWeights: {
       1: 0,
       2: 0,
@@ -117,21 +126,29 @@ export const DROP_CONFIG: Record<NPCClass, DropConfig> = {
       6: 5,
       7: 10,
       8: 15,
-      9: 25,
-      0: 25,
-      EX: 18,
+      9: 68,
+      0: 0,
+      EX: 0,
     },
   },
 };
 
+/**
+ * Chance por slot de equipamento por kill, por classe. O loop de drops
+ * faz um roll independente por slot (7 slots), então o total esperado por
+ * kill é ~7× este número. Os valores caíram ~50% em relação à versão
+ * anterior (0.15→1.0), que dava ~1 item por mob comum e ~7 por omega —
+ * com o catálogo ~5× maior, a diluição por item específico já cuida do
+ * resto.
+ */
 const SLOT_CHANCE: Record<NPCClass, number> = {
-  common: 0.15,
-  rare: 0.25,
-  epic: 0.4,
-  boss: 0.55,
-  legendary: 0.7,
-  supreme: 0.85,
-  omega: 1,
+  common: 0.08,
+  rare: 0.12,
+  epic: 0.18,
+  boss: 0.25,
+  legendary: 0.32,
+  supreme: 0.4,
+  omega: 0.5,
 };
 
 const RANKS: EquipmentRank[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "EX"];

@@ -323,10 +323,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const blockEnd = useCallback(() => battleRef.current.blockEnd(), []);
   const toggleCrouch = useCallback(() => battleRef.current.toggleCrouch(), []);
   const attack = useCallback(() => battleRef.current.attack(), []);
-  const startAbility = useCallback(
-    () => battleRef.current.startAbility(),
-    [],
-  );
+  const startAbility = useCallback(() => battleRef.current.startAbility(), []);
   const dash = useCallback(
     (direction: "left" | "right") => battleRef.current.dash(direction),
     [],

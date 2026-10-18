@@ -1,10 +1,6 @@
 import { LucauaEnergyConstants } from "@/data/characters/lucaua";
-import type {
-  LucauaTarget,
-} from "@/utils/types/character/lucaua";
-import type {
-  LucauaAttackPlan,
-} from "@/utils/types/character/lucaua/attack";
+import type { LucauaTarget } from "@/utils/types/character/lucaua";
+import type { LucauaAttackPlan } from "@/utils/types/character/lucaua/attack";
 
 /**
  * Há inimigos vivos em cada lado do player (dentro da tolerância vertical)?

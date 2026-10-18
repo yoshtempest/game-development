@@ -11,8 +11,6 @@
   display: flex;
   align-items: stretch;
 
-  border-radius: var(--border-radius-size-medium);
-
   background: linear-gradient(90deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.35));
 
   isolation: isolate;

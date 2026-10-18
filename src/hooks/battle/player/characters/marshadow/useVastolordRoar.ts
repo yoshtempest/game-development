@@ -23,7 +23,10 @@ type Props = {
 };
 
 /** Distância horizontal até a origem e direção para longe dela. */
-function awayFrom(originX: number, x: number): { distance: number; dir: 1 | -1 } {
+function awayFrom(
+  originX: number,
+  x: number,
+): { distance: number; dir: 1 | -1 } {
   return { distance: Math.abs(x - originX), dir: x >= originX ? 1 : -1 };
 }
 

@@ -76,9 +76,9 @@ export const CHEST_DROP_TABLES: Record<NPCClass, ChestDropTable> = {
       5: 20,
       6: 18,
       7: 15,
-      8: 10,
+      8: 12,
       9: 5,
-      0: 2,
+      0: 0,
       EX: 0,
     },
     petDropChance: 0.12,
@@ -190,18 +190,23 @@ function pickWeighted<K extends string | number>(
  * Sorteia o conteúdo de um baú.
  *
  * Materiais são acumulados por id em vez de virar uma entrada por
- * sorteio. Como o baú faz de 5 a 11 sorteios sobre uma tabela de 2 ou 3
+ * sorteio. Como o baú faz de 4 a 9 sorteios sobre uma tabela de 2 ou 3
  * materiais, repetir é o caso normal — em amostragem de 10 mil baús,
  * 96% a 99% deles repetem pelo menos um id. Uma entrada por sorteio
  * fazia a tela de recompensa listar o mesmo material várias vezes com
  * quantidades parciais, e colidia a key do React, que usa o id.
+ *
+ * Ranks 0 (Transcendente) e EX só saem de baús lendários ou melhores —
+ * em baús inferiores a tabela deles é ignorada (antes só o baú "legendary"
+ * liberava, e supreme/omega tinham 25%–45% do peso da tabela virando
+ * massa morta).
  */
 export function openChest(
   chestTier: NPCClass,
   petChance?: number,
 ): ChestDropResult {
   const table = CHEST_DROP_TABLES[chestTier];
-  const dropCount = Math.floor(Math.random() * 7) + 5;
+  const dropCount = Math.floor(Math.random() * 6) + 4;
   const result: ChestDropResult = { materials: [], equipment: [], pets: [] };
   const materialsById = new Map<string, ChestDropResult["materials"][number]>();
 
@@ -217,7 +222,7 @@ export function openChest(
   };
 
   for (let i = 0; i < dropCount; i++) {
-    const isMaterial = Math.random() < 0.7;
+    const isMaterial = Math.random() < 0.75;
 
     if (isMaterial) {
       const matId = pickWeighted(table.materialWeights);
@@ -235,11 +240,15 @@ export function openChest(
       }
     } else {
       const rank = pickWeighted(table.equipmentRankWeights);
-      if (!rank) continue;
+      // `rank === null` explícito: `!rank` engoliria o rank 0 (Transcendente).
+      if (rank === null) continue;
 
-      const rankNum = rank as number;
-      if (chestTier !== "legendary" && (rank === "EX" || rankNum === 0))
-        continue;
+      // Rank 0/EX só de baú lendário ou melhor (ver JSDoc de openChest).
+      const canDropTopRank =
+        chestTier === "legendary" ||
+        chestTier === "supreme" ||
+        chestTier === "omega";
+      if (!canDropTopRank && (rank === "EX" || rank === 0)) continue;
 
       const slot = SLOTS[Math.floor(Math.random() * SLOTS.length)]!;
       const candidates = getEquipmentBySlotAndRank(slot, rank).filter(

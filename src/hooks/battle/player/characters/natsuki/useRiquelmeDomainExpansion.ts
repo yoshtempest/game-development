@@ -208,12 +208,7 @@ export function useRiquelmeDomainExpansion({
       alive.map((s) => [s.id, tickDamage(s.maxHp)] as const),
     );
     for (const s of alive) {
-      spawnDamageRef.current(
-        damageById.get(s.id) ?? 1,
-        s.x,
-        s.y,
-        "summon",
-      );
+      spawnDamageRef.current(damageById.get(s.id) ?? 1, s.x, s.y, "summon");
     }
     setSummonsRef.current((prev) =>
       prev.map((s) => {

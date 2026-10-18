@@ -18,16 +18,12 @@ export type PortalWarp = { dest: LucauaPortal; source: LucauaPortal };
 export type PortalTravelGroup = "npc" | "summon" | "ally" | "pet";
 
 export type PickWarpResult =
-  | { kind: "none" }
-  | { kind: "disarm" }
-  | { kind: "arm"; warp: PortalWarp };
+  { kind: "none" } | { kind: "disarm" } | { kind: "arm"; warp: PortalWarp };
 
 export type PickProjectileResult =
-  | { kind: "none" }
-  | { kind: "disarm" }
-  | { kind: "warp"; dest: LucauaPortal };
+  { kind: "none" } | { kind: "disarm" } | { kind: "warp"; dest: LucauaPortal };
 
-  /**
+/**
  * Especificação do efeito de time aplicado enquanto alguém atravessa um
  * portal: congela **só** as classes que têm alguém em travessia, isenta quem
  * da mesma classe ficou para trás e decide se o player (que não é

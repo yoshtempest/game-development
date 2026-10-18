@@ -42,7 +42,6 @@ import type {
 } from "@/utils/types/character/lucaua";
 import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
 
-
 type Battle = ReturnType<typeof useBattleSystem>;
 type Npc = ReturnType<typeof useNpcAI>;
 

@@ -55,7 +55,9 @@ export function pickWarpDecision(
     return { kind: "none" };
   }
 
-  const warp: PortalWarp = inA ? { dest: b, source: a } : { dest: a, source: b };
+  const warp: PortalWarp = inA
+    ? { dest: b, source: a }
+    : { dest: a, source: b };
   return { kind: "arm", warp };
 }
 
