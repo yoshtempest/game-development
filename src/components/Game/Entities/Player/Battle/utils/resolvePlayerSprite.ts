@@ -1,7 +1,6 @@
 import {
   resolveBattleSprite,
   playerPath,
-  playerPathMarshadowHabilities,
 } from "@/utils/paths";
 import { resolveSpriteState } from "@/gameRules/battle/playerStates";
 
@@ -29,7 +28,6 @@ export function resolvePlayerSprite({
   form,
   transformationFrame,
   teleportSprite,
-  preAtomic,
   outroExpression = null,
   lucauaAttackVariant,
   lucauaPortalLanding = false,
@@ -49,9 +47,8 @@ export function resolvePlayerSprite({
     return playerPath("/lucaua/inFight/landing.svg");
   }
 
-  if (preAtomic && character === "marcelo" && state === "idle") {
-    return playerPathMarshadowHabilities("/atomic/starting.svg");
-  }
+  // Não trocar o sprite do Marcelo para `starting.svg` quando qualquer habilidade
+  // é "preparada": o cliente pediu para manter o sprite base do personagem.
 
   if (form === "vastolordForm" && transformationFrame != null) {
     const frame = TRANSFORMATION_FRAMES[transformationFrame] ?? "screamOne";
