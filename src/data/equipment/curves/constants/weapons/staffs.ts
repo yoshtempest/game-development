@@ -1,0 +1,88 @@
+// Cajado (espírito + escudo)
+const STAFF_SPIRIT: ByRank = {
+  1: 1,
+  2: 2,
+  3: 2,
+  4: 3,
+  5: 3,
+  6: 4,
+  7: 4,
+  8: 5,
+  9: 6,
+  0: 7,
+  EX: 9,
+};
+const STAFF_SHIELD: ByRank = {
+  1: 1,
+  2: 1,
+  3: 2,
+  4: 2,
+  5: 3,
+  6: 3,
+  7: 4,
+  8: 4,
+  9: 5,
+  0: 6,
+  EX: 8,
+};
+const STAFF_STR: ByRank = {
+  1: 0,
+  2: 0,
+  3: 1,
+  4: 1,
+  5: 1,
+  6: 2,
+  7: 2,
+  8: 2,
+  9: 3,
+  0: 3,
+  EX: 4,
+};
+const STAFF_VAMP: ByRank = {
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 0,
+  6: 1,
+  7: 2,
+  8: 2,
+  9: 3,
+  0: 3,
+  EX: 4,
+};
+const STAFF_TRUE: ByRank = {
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 1,
+  6: 1,
+  7: 1,
+  8: 2,
+  9: 2,
+  0: 3,
+  EX: 4,
+};
+const STAFF_MAX_HP: ByRank = {
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 1,
+  6: 1,
+  7: 1,
+  8: 1,
+  9: 2,
+  0: 2,
+  EX: 3,
+};
+
+export const STAFFS = {
+  MAX_HP: STAFF_MAX_HP,
+  TRUE: STAFF_TRUE,
+  STR: STAFF_STR,
+  VAMP: STAFF_VAMP,
+  SHIELD: STAFF_SHIELD,
+  SPIRIT: STAFF_SPIRIT,
+};

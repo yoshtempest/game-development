@@ -1,5 +1,5 @@
 import { createEquipmentList } from "@/utils/equipment/createEquipmentList";
-import { armorStats } from "./curves";
+import { armorStats } from "./curves/curves";
 
 /**
  * Botas — 3 itens por rank (guardião/robusto/ágil). Sets por rank: andarilho

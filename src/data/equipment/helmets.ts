@@ -1,5 +1,5 @@
 import { createEquipmentList } from "@/utils/equipment/createEquipmentList";
-import { armorStats } from "./curves";
+import { armorStats } from "./curves/curves";
 
 /**
  * Capacetes — 3 itens por rank (perfis guardião/robusto/ágil de

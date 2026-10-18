@@ -1,5 +1,5 @@
 import { createEquipmentList } from "@/utils/equipment/createEquipmentList";
-import { bowStats } from "@/data/equipment/curves";
+import { bowStats } from "@/data/equipment/curves/curves";
 
 /**
  * Arcos (arma de técnica) — 3 itens por rank (perfis longo/pontaria/

@@ -1,5 +1,5 @@
 import { createEquipmentList } from "@/utils/equipment/createEquipmentList";
-import { bladeStats } from "@/data/equipment/curves";
+import { bladeStats } from "@/data/equipment/curves/curves";
 
 /**
  * Lâminas (arma de força) — 3 itens por rank (perfis aco/sangue/cortante

@@ -592,6 +592,8 @@ declare global {
     enhance: number;
   };
 
+  type ByRank = Record<EquipmentRank, number>;
+
   type ItemDropInfo = {
     id: ItemId;
     name: string;

@@ -1,5 +1,5 @@
 import { createEquipmentList } from "@/utils/equipment/createEquipmentList";
-import { accessoryStats } from "./curves";
+import { accessoryStats } from "./curves/curves";
 
 /**
  * Acessórios — 3 itens por rank (perfis guerreiro/arcano/nomade de

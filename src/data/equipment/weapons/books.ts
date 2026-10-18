@@ -1,5 +1,5 @@
 import { createEquipmentList } from "@/utils/equipment/createEquipmentList";
-import { bookStats } from "@/data/equipment/curves";
+import { bookStats } from "@/data/equipment/curves/curves";
 
 /**
  * Livros (arma de espírito + cooldown) — 3 itens por rank (perfis

@@ -1,5 +1,5 @@
 import { createEquipmentList } from "@/utils/equipment/createEquipmentList";
-import { staffStats } from "@/data/equipment/curves";
+import { staffStats } from "@/data/equipment/curves/curves";
 
 /**
  * Cajados (arma de espírito + escudo) — 3 itens por rank (perfis

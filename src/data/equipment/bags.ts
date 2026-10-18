@@ -1,5 +1,5 @@
 import { createEquipmentList } from "@/utils/equipment/createEquipmentList";
-import { bagBonusSlots } from "./curves";
+import { bagBonusSlots } from "./curves/curves";
 
 /**
  * Mochilas — 3 por rank, sem status de combate (só espaço de inventário,
