@@ -58,7 +58,7 @@ export function useActiveSkills({
     battle.setPlayerHP((hp) => Math.min(battle.playerMaxHp, hp + heal));
     // Usar habilidade concede carga da Expansão de Domínio (custo da barra).
     battle.setDelicia((d) => gainAbilityCharge(d, battle.hitsToSpecial));
-    playSound("drinkingPotion");
+    playSound("reversalRed");
     if (player.character === "riquelme") {
       setPlayer((p) => ({ ...p, state: "heal" }));
     }

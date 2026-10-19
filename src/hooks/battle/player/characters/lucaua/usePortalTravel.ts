@@ -174,7 +174,7 @@ export function usePortalTravel({
       landingEngagedRef.current = true;
       landingUntilRef.current = now + LucauaPortalConstants.LANDING_MS;
     }
-    playSoundRef.current("emanuelTeleport");
+    playSoundRef.current("portalTeleport");
   }
 
   /**
@@ -235,7 +235,7 @@ export function usePortalTravel({
       return;
     }
     writeEntity(group, id, warp.dest.x, warp.dest.y);
-    playSoundRef.current("emanuelTeleport");
+    playSoundRef.current("portalTeleport");
     const ground = landingGround(warp.dest, obstaclesRef.current);
     if (ground !== null) {
       travelRef.current.push({
@@ -260,7 +260,7 @@ export function usePortalTravel({
     for (const travel of list) {
       const step = advanceEntityTravel(travel, obstaclesRef.current);
       writeEntity(travel.group, travel.id, step.x, step.y);
-      if (step.crossed) playSoundRef.current("emanuelTeleport");
+      if (step.crossed) playSoundRef.current("portalTeleport");
       if (step.next) remaining.push(step.next);
     }
     travelRef.current = remaining;
@@ -308,7 +308,7 @@ export function usePortalTravel({
           groundUnder(petWarp.dest, obstaclesRef.current),
         );
         writeEntity("pet", "pet", petWarp.dest.x, petY);
-        playSoundRef.current("emanuelTeleport");
+        playSoundRef.current("portalTeleport");
       }
     }
   }

@@ -12,6 +12,7 @@ import {
   usedItemPath,
   npcSoundPath,
 } from "@/utils/paths";
+import { lucauaSoundPath } from "./paths/song/characters/lucauaPath";
 
 export function createSounds() {
   return {
@@ -55,6 +56,10 @@ export function createSounds() {
     explosion: sfx("explosion.mp3"),
     hollowPurple: riquelmeSoundPath("hollowPurple.mp3"),
     riquelmeOpenedDomain: riquelmeSoundPath("openedDomain.mp3"),
+    reversalRed: riquelmeSoundPath("reversalRed.mp3"),
+    portalTeleport: lucauaSoundPath("teleport.mp3"),
+    openPortal: lucauaSoundPath("openPortal.mp3"),
+    shot: lucauaSoundPath("shot.mp3"),
     riquelmeRioiki: riquelmeSoundPath("rioiki.mp3"),
     kokusen: riquelmeSoundPath("kokusen.mp3"),
     impact: sfx("impact.mp3"),

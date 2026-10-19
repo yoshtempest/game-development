@@ -179,7 +179,7 @@ export function usePortalFlow({
     };
 
     commitPortals([...portalsRef.current, portal]);
-    playSoundRef.current("blink");
+    playSoundRef.current("openPortal");
     endFlow();
   }
 

@@ -6,11 +6,15 @@ type OutroLines = {
 export const OUTRO_LINES: Record<string, OutroLines> = {
   marcelo: {
     victory: "E vai tomando!",
-    defeat: "Agora deu o carai mermo!",
+    defeat: "Não aconteceu nada...",
   },
   lucaua: {
-    victory: "Ai sim Lupita!",
+    victory: "Idiota",
     defeat: "Wubba lubba dub dub!",
+  },
+  camilly: {
+    victory: "...",
+    defeat: "...",
   },
   emanuel: {
     victory: "Você não passa de um fracassado.",
@@ -33,7 +37,7 @@ export const OUTRO_LINES: Record<string, OutroLines> = {
     defeat: "Killer Queen, bites the dust!",
   },
   riquelme: {
-    victory: "Eu sou o mais honrado!",
+    victory: "Yowai Mo",
     defeat: "Gomen Yamanai...",
   },
   eduarda: {
