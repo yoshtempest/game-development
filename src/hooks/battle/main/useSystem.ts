@@ -400,6 +400,7 @@ export function useBattleSystem(props: Props) {
     enabled: petIsBattle,
     cooldownMs: petSkillDef?.skill.cooldownMs ?? PET_SKILL_COOLDOWN_MS,
     isPaused: isEnding.current,
+    isPausedRef,
     onTrigger: () => onPetSkillRef?.current?.(),
   });
 

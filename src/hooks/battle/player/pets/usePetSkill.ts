@@ -1,10 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { RefObject } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
+import {
+  ABILITY_COOLDOWN_TICK_MS,
+  useCooldownPauseTick,
+} from "@/hooks/battle/utilities/useCooldowns";
 
 type Props = {
   enabled: boolean;
   cooldownMs: number;
   isPaused: boolean;
+  /**
+   * Pausa global da batalha (menu de batalha aberto, intro, vitória...):
+   * congela o cooldown — a batalha pausada não regenera habilidade.
+   */
+  isPausedRef?: RefObject<boolean>;
   onTrigger: () => void;
 };
 
@@ -12,6 +22,7 @@ export function usePetSkillCooldown({
   enabled,
   cooldownMs,
   isPaused,
+  isPausedRef,
   onTrigger,
 }: Props) {
   const [remaining, setRemaining] = useState(0);
@@ -28,17 +39,20 @@ export function usePetSkillCooldown({
     }
   }, [enabled]);
 
+  const cooldownTick = useCooldownPauseTick({ readyAtRef, isPausedRef });
+
   useEffect(() => {
     if (!isActive || isPaused) return;
 
     const id = setInterval(() => {
+      if (!cooldownTick()) return;
       const left = Math.max(0, (readyAtRef.current - Date.now()) / 1000);
       setRemaining(left);
       if (left <= 0) setIsActive(false);
-    }, 200);
+    }, ABILITY_COOLDOWN_TICK_MS);
 
     return () => clearInterval(id);
-  }, [isActive, isPaused]);
+  }, [cooldownTick, isActive, isPaused]);
 
   const trigger = useCallback(() => {
     if (!enabled || Date.now() < readyAtRef.current) return;

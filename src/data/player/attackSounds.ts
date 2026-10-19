@@ -2,6 +2,7 @@ import { charactersSoundPath } from "@/utils/paths/song/charactersSoundPath";
 
 type AttackSoundConfig = {
   volume: number;
+  /** Elementos de áudio pré-resolvidos (singleton por arquivo). */
   sounds: HTMLAudioElement[];
 };
 

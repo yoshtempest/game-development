@@ -20,6 +20,10 @@ import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import type { SoundId } from "@/utils/audio/soundId";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
+import {
+  ABILITY_COOLDOWN_TICK_MS,
+  useCooldownPauseTick,
+} from "@/hooks/battle/utilities/useCooldowns";
 import type {
   AtomicBoomPayload,
   AtomicCut,
@@ -365,13 +369,17 @@ export function useAtomic({
     usableRef,
   ]);
 
-  // Tick do cooldown restante do botão (20s).
+  // Tick do cooldown restante do botão (20s). Com o menu de batalha aberto o
+  // cooldown congela: a batalha pausada não regenera habilidade.
+  const cooldownTick = useCooldownPauseTick({ readyAtRef, isPausedRef });
+
   useEffect(() => {
     const id = setInterval(() => {
+      if (!cooldownTick()) return;
       setRemaining(Math.max(0, (readyAtRef.current - Date.now()) / 1000));
-    }, 200);
+    }, ABILITY_COOLDOWN_TICK_MS);
     return () => clearInterval(id);
-  }, []);
+  }, [cooldownTick]);
 
   useEffect(() => {
     return () => {

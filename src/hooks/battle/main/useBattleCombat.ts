@@ -86,7 +86,10 @@ import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa/larissa";
 import { LUCAS_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import { cursedEnergyFromDamage } from "@/gameRules/battle/cursedEnergy";
 import { PET_ROOT_DURATION_MS } from "@/data/characters/pets/petSkills";
-import { TWO_HUNDRED_MS } from "@/data/ms";
+import {
+  ABILITY_COOLDOWN_TICK_MS,
+  useCooldownPauseTick,
+} from "@/hooks/battle/utilities/useCooldowns";
 import { runPetSkill } from "@/gameRules/battle/petSkill/petSkill";
 import { applyPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import {
@@ -1077,15 +1080,22 @@ export function useBattleCombat({
   ]);
 
   // Tick do cooldown restante do botão de habilidade ativa (mesmo intervalo
-  // dos cooldowns do marcelo).
+  // dos cooldowns do marcelo). Com o menu de batalha aberto o cooldown
+  // congela: a batalha pausada não regenera habilidade.
+  const activeAbilityCooldownTick = useCooldownPauseTick({
+    readyAtRef: activeAbilityReadyAtRef,
+    isPausedRef,
+  });
+
   useEffect(() => {
     const id = setInterval(() => {
+      if (!activeAbilityCooldownTick()) return;
       setActiveAbilityRemaining(
         Math.max(0, (activeAbilityReadyAtRef.current - Date.now()) / 1000),
       );
-    }, TWO_HUNDRED_MS);
+    }, ABILITY_COOLDOWN_TICK_MS);
     return () => clearInterval(id);
-  }, []);
+  }, [activeAbilityCooldownTick]);
 
   useBattleControls({
     attack: () => {
