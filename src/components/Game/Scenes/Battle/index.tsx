@@ -37,6 +37,7 @@ import { DivergentFistAnimation } from "@/components/Game/Battle/Effects/Natsuki
 import { BlackFlashAnimation } from "@/components/Game/Battle/Effects/Natsuki/BlackFlashAnimation";
 import { VastolordTimer } from "@/components/Game/Battle/Effects/Marshadow/VastolordTimer";
 import { SpecialIntro } from "@/components/Game/Battle/Effects/SpecialIntro";
+import { DomainExpansionIntro } from "@/components/Game/Battle/Effects/DomainExpansionIntro";
 import { DomainExpansionBackground } from "@/components/Game/Battle/Effects/DomainExpansionBackground";
 import { DomainBurstOverlay } from "@/components/Game/Battle/Effects/DomainBurstOverlay";
 import { AlfaAbility } from "@/components/Game/Battle/Effects/AlfaAbility";
@@ -562,13 +563,22 @@ export function BattleScene(props: Props) {
       />
 
       {/* Renderizado antes do `.SceneMap`: fica acima do fundo da batalha,
-          mas abaixo do jogador/NPCs (que são filhos do SceneMap). */}
-      <SpecialIntro
-        active={specialIntroActive}
-        character={specialIntroCharacter}
-        ability={specialIntroAbility}
-        form={specialIntroForm}
-      />
+          mas abaixo do jogador/NPCs (que são filhos do SceneMap). A Expansão
+          de Domínio é especial: ela tem intro própria (varredura) e o
+          SpecialIntro fica restrito às habilidades normais. */}
+      {specialIntroAbility === "domainExpansion" ? (
+        <DomainExpansionIntro
+          active={specialIntroActive}
+          character={specialIntroCharacter}
+        />
+      ) : (
+        <SpecialIntro
+          active={specialIntroActive}
+          character={specialIntroCharacter}
+          ability={specialIntroAbility}
+          form={specialIntroForm}
+        />
+      )}
 
       <AlfaAbility active={alfaDigActive} npcType={npcType} />
 

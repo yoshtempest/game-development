@@ -2,9 +2,8 @@ import type {
   EquipmentRank,
   EquipmentStats,
 } from "@/utils/types/player/equipment";
-import { WEAPONS } from "../constants"
-
-type BladeFlavor = "aco" | "sangue" | "cortante";
+import type { BladeFlavor } from "../types";
+import { WEAPONS } from "../constants";
 
 /** Lâminas: `aco` (força+técnica), `sangue` (força+vampirismo+dano verdadeiro), `cortante` (força+técnica+dano verdadeiro). */
 export function bladeStats(

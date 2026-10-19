@@ -2,9 +2,8 @@ import type {
   EquipmentRank,
   EquipmentStats,
 } from "@/utils/types/player/equipment";
-import { WEAPONS } from "../constants"
-
-type StaffFlavor = "runico" | "real" | "ancestral";
+import type { StaffFlavor } from "../types";
+import { WEAPONS } from "../constants";
 
 /** Cajados: `runico` (espírito+escudo), `real` (espírito+força+vampirismo), `ancestral` (espírito+escudo+dano verdadeiro/% vida). */
 export function staffStats(

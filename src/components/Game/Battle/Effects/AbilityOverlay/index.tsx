@@ -5,15 +5,21 @@ type Props = {
   active: boolean;
   /** Imagem de fundo exibida centralizada no overlay. */
   src: string | null;
+  /**
+   * Variante da animação da imagem: `enter` (fade-in centralizado — special
+   * normal e intro do alfa) ou `sweep` (varredura da Expansão de Domínio).
+   */
+  motion?: "enter" | "sweep";
 };
 
 /**
- * Overlay de abertura de habilidade (special do jogador, habilidade do alfa).
- * Exibição única: flash, faixas em movimento, streaks e imagem centralizada.
- * Fica acima do fundo da batalha, mas abaixo do jogador/NPCs (renderizado antes
+ * Overlay de abertura de habilidade (special do jogador, habilidade do alfa
+ * e intro da Expansão de Domínio). Exibição única: flash, faixas em movimento,
+ * streaks e imagem centralizada — ou em varredura, quando é o domínio. Fica
+ * acima do fundo da batalha, mas abaixo do jogador/NPCs (renderizado antes
  * do `.SceneMap`). Se a imagem falhar, o único fallback é escondê-la.
  */
-export function AbilityOverlay({ active, src }: Props) {
+export function AbilityOverlay({ active, src, motion = "enter" }: Props) {
   const [imageFailed, setImageFailed] = useState(false);
 
   useEffect(() => {
@@ -36,7 +42,9 @@ export function AbilityOverlay({ active, src }: Props) {
           <img
             src={src}
             alt=""
-            className={styles.character}
+            className={
+              motion === "sweep" ? styles.characterSweep : styles.character
+            }
             onError={() => setImageFailed(true)}
           />
           {/* <span>{ability.name}</span> */}

@@ -2,9 +2,8 @@ import type {
   EquipmentRank,
   EquipmentStats,
 } from "@/utils/types/player/equipment";
+import type { AccessoryFlavor } from "../types";
 import { PIECES, ACCESSORIES } from "../constants";
-
-type AccessoryFlavor = "guerreiro" | "arcano" | "nomade";
 
 /**
  * Acessórios — três perfis:

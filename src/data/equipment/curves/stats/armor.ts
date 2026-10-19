@@ -2,9 +2,8 @@ import type {
   EquipmentRank,
   EquipmentStats,
 } from "@/utils/types/player/equipment";
+import type { ArmorFlavor, ArmorSlot } from "../types";
 import { ARMOR_CURVE, PIECES } from "../constants";
-
-type ArmorFlavor = "guardiao" | "robusto" | "agil";
 
 /**
  * Estatísticas de uma peça de armadura.
@@ -14,7 +13,7 @@ type ArmorFlavor = "guardiao" | "robusto" | "agil";
  * Reflexo (rank 6+) entra em todos os perfis — nas peças antigas era padrão.
  */
 export function armorStats(
-  slot: "helmet" | "chestplate" | "pants" | "boots",
+  slot: ArmorSlot,
   rank: EquipmentRank,
   flavor: ArmorFlavor,
 ): Partial<EquipmentStats> {

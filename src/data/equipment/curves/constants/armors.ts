@@ -1,8 +1,7 @@
+import type { ArmorSlot } from "../types";
+
 /** Armadura-base por slot de armadura (perfil "guardião" = valor cheio). */
-export const ARMOR_CURVE: Record<
-  "helmet" | "chestplate" | "pants" | "boots",
-  ByRank
-> = {
+export const ARMOR_CURVE: Record<ArmorSlot, ByRank> = {
   helmet: {
     1: 2,
     2: 3,

@@ -40,6 +40,26 @@
   animation: characterEnter 1000ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
+/* Varredura da intro da Expansão de Domínio: a imagem entra da esquerda em
+   velocidade normal crescendo, chega ao centro, desacelera muito (onde cresce
+   mais) e volta à velocidade normal encolhendo um pouco até sair pela direita.
+   Com `linear`, a distância/tempo de cada trecho dos keyframes É a velocidade:
+   0→35% e 65→100% percorrem os mesmos 60vw no mesmo tempo (velocidade normal)
+   e 35→65% cobre só 6vw (bem mais lenta). Dura 1000ms, igual
+   SPECIAL_INTRO_DURATION — a ação do domínio só dispara no fim. */
+.characterSweep {
+  position: relative;
+
+  width: var(--size-512);
+  max-height: auto;
+
+  object-fit: contain;
+
+  z-index: 20;
+
+  animation: characterSweep 1000ms linear forwards;
+}
+
 /* =========================
    FAIXA SUPERIOR
 ========================= */
@@ -198,6 +218,28 @@
 
     transform: translateX(0) scale(1);
     filter: brightness(1);
+  }
+}
+
+@keyframes characterSweep {
+  /* Entra da esquerda já crescendo, em velocidade normal. */
+  0% {
+    transform: translateX(-60vw) scale(0.65);
+  }
+
+  /* Centro da tela — fim da fase rápida. */
+  35% {
+    transform: translateX(0) scale(1);
+  }
+
+  /* Fase lenta: quase parada no centro, crescendo bem. */
+  65% {
+    transform: translateX(6vw) scale(1.35);
+  }
+
+  /* Velocidade normal de volta e um pouco menor ao sair. */
+  100% {
+    transform: translateX(66vw) scale(1.1);
   }
 }
 
