@@ -1,5 +1,5 @@
-import { playerSoundPath } from "@/utils/paths/song/playerSoundPath";
+import { charactersSoundPath } from "@/utils/paths/song/charactersSoundPath";
 
 export function mayraSoundPath(path: string) {
-  return playerSoundPath(`characters/mayra/${path}`);
+  return charactersSoundPath(`mayra/${path}`);
 }

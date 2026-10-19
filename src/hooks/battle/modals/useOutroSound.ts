@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAudio } from "@/hooks/audio/useAudio";
-import { soundEffectPath } from "@/utils/paths";
+import { charactersSoundPath } from "@/utils/paths/song/charactersSoundPath";
 
 const OUTRO_SOUND_VOLUME = 1;
 
@@ -20,8 +20,8 @@ export function useBattleOutroSound(
 
   useEffect(() => {
     const battleResult = type === "victory" ? "victory.mp3" : "defeat.mp3";
-    const primarySrc = soundEffectPath(`/player/${character}/${battleResult}`);
-    const fallbackSrc = soundEffectPath("/player/artur/defeat.mp3");
+    const primarySrc = charactersSoundPath(`${character}/${battleResult}`).src;
+    const fallbackSrc = charactersSoundPath("artur/defeat.mp3").src;
 
     const audio = new Audio();
     audio.preload = "auto";

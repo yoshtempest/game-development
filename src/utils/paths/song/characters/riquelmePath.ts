@@ -1,5 +1,5 @@
-import { playerSoundPath } from "@/utils/paths/song/playerSoundPath";
+import { charactersSoundPath } from "@/utils/paths/song/charactersSoundPath";
 
 export function riquelmeSoundPath(path: string) {
-  return playerSoundPath(`characters/riquelme/${path}`);
+  return charactersSoundPath(`riquelme/${path}`);
 }
