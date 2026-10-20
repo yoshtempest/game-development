@@ -140,6 +140,7 @@ export function BattleScene(props: Props) {
     getReplayData,
     training: isTraining,
     controlsDisabled,
+    battlePaused,
     showRetry,
     playerProjectile,
     killerQueen,
@@ -522,6 +523,7 @@ export function BattleScene(props: Props) {
         active={domainBackgroundActive}
         src={domainExpansionArt}
         shattering={domainShattering}
+        paused={battlePaused}
       />
       <BattleHUD
         battle={battle}
@@ -560,6 +562,7 @@ export function BattleScene(props: Props) {
         active={domainBurstActive}
         name={domainConfig.name}
         accent={domainConfig.accent}
+        paused={battlePaused}
       />
 
       {/* Renderizado antes do `.SceneMap`: fica acima do fundo da batalha,
@@ -570,6 +573,7 @@ export function BattleScene(props: Props) {
         <DomainExpansionIntro
           active={specialIntroActive}
           character={specialIntroCharacter}
+          paused={battlePaused}
         />
       ) : (
         <SpecialIntro
@@ -577,6 +581,7 @@ export function BattleScene(props: Props) {
           character={specialIntroCharacter}
           ability={specialIntroAbility}
           form={specialIntroForm}
+          paused={battlePaused}
         />
       )}
 

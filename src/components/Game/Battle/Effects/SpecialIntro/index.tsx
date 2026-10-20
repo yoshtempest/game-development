@@ -12,6 +12,8 @@ type Props = {
    * habilidades da Forma Vastolord (o laser) têm sprites em `vastolordForm/`.
    */
   form?: MarceloBattleForm | null;
+  /** Pausa da batalha (menu aberto): congela a animação CSS no lugar. */
+  paused?: boolean;
 };
 
 export function SpecialIntro({
@@ -19,6 +21,7 @@ export function SpecialIntro({
   character,
   ability = null,
   form,
+  paused = false,
 }: Props) {
   if (!active || !character) return null;
 
@@ -26,5 +29,5 @@ export function SpecialIntro({
     ? playerAbilityBackgroundPath(character, ability, form ?? undefined)
     : playerPath(`/${character}/specialBackground.svg`);
 
-  return <AbilityOverlay active={active} src={backgroundSrc} />;
+  return <AbilityOverlay active={active} src={backgroundSrc} paused={paused} />;
 }

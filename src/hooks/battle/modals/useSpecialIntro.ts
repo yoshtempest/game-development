@@ -1,14 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ONE_THOUSAND_MS } from "@/data/ms";
+import { ONE_THOUSAND_MS, THREE_THOUSAND_MS } from "@/data/ms";
 import type { MarceloBattleForm } from "@/utils/paths";
 import { useSettings } from "@/hooks/settings/useSetting";
+import { usePausableTimers } from "@/hooks/battle/utilities/usePausableTimers";
 
 export const SPECIAL_INTRO_DURATION = ONE_THOUSAND_MS;
+export const DOMAIN_EXPANSION_INTRO_DURATION = THREE_THOUSAND_MS;
 export const SPECIAL_INTRO_TIME_SCALE = 0.1;
 
 type Props = {
   setTimeScale: (scale: number) => void;
   resetTimeScale: () => void;
+  /**
+   * Menu da batalha aberto: o timer do intro congela com o tempo restante e
+   * continua de onde parou no unpause (o overlay acompanha via `battlePaused`).
+   */
+  isMenuOpen: boolean;
 };
 
 /**
@@ -33,7 +40,11 @@ type Props = {
  * à habilidade em preparo (ex.: O Abençoado). O `onCancel` opcional avisa a
  * habilidade para ela desarmar o próprio estado, já que o `onActivate` não roda.
  */
-export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
+export function useSpecialIntro({
+  setTimeScale,
+  resetTimeScale,
+  isMenuOpen,
+}: Props) {
   const { showAbilityIntro } = useSettings();
   const [specialIntro, setSpecialIntro] = useState<{
     character: string;
@@ -41,9 +52,10 @@ export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
     form?: MarceloBattleForm;
   } | null>(null);
   const activeRef = useRef(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onActivateRef = useRef<(() => void) | null>(null);
   const onCancelRef = useRef<(() => void) | null>(null);
+
+  const timers = usePausableTimers(isMenuOpen);
 
   const startSpecialIntro = useCallback(
     (
@@ -68,9 +80,8 @@ export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
       setSpecialIntro({ character, ability, form });
       setTimeScale(SPECIAL_INTRO_TIME_SCALE);
 
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
-        timerRef.current = null;
+      timers.clear();
+      timers.schedule(() => {
         activeRef.current = false;
 
         const activate = onActivateRef.current;
@@ -84,7 +95,7 @@ export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
 
       return true;
     },
-    [setTimeScale, resetTimeScale, showAbilityIntro],
+    [setTimeScale, resetTimeScale, showAbilityIntro, timers],
   );
 
   /**
@@ -99,10 +110,7 @@ export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
     if (!activeRef.current) return;
     activeRef.current = false;
 
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
+    timers.clear();
 
     const onCancel = onCancelRef.current;
     onActivateRef.current = null;
@@ -111,12 +119,12 @@ export function useSpecialIntro({ setTimeScale, resetTimeScale }: Props) {
     setSpecialIntro(null);
     resetTimeScale();
     onCancel?.();
-  }, [resetTimeScale]);
+  }, [resetTimeScale, timers]);
 
   useEffect(() => {
+    // Os timers pendentes são limpos pelo próprio `usePausableTimers` na
+    // desmontagem; aqui sobra só desarmar as referências da habilidade.
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = null;
       onActivateRef.current = null;
       onCancelRef.current = null;
       resetTimeScale();

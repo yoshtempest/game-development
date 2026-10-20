@@ -87,6 +87,8 @@ export type BattleSceneApi = {
   isRecording: boolean;
   training: boolean | undefined;
   controlsDisabled: boolean;
+  /** Menu da batalha aberto: a cena congela as animações de intro/domínio. */
+  battlePaused: boolean;
   showRetry: boolean;
   playerProjectile: ReturnType<
     typeof usePlayerSpecialProjectile

@@ -22,6 +22,9 @@ import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import type { SoundId } from "@/utils/audio/soundId";
 import type { NPCBattleState, SummonedNpc } from "@/utils/types/npc/npc";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
+import { usePausableTimers } from "@/hooks/battle/utilities/usePausableTimers";
+import type { PausableTimerHandle } from "@/hooks/battle/utilities/usePausableTimers";
+import { useMenuPauseShift } from "@/hooks/battle/utilities/useMenuPauseShift";
 import { DOMAIN_SHATTER_MS } from "@/data/characters/domainExpansions";
 import {
   DOMAIN_EXPANSION_BLINK_IN_MS,
@@ -81,6 +84,11 @@ type Props = {
   /** Efeitos de time da batalha (regra `gameRules/battle/time`). */
   timeRef: RefObject<TimeEffect[]>;
   isPausedRef: RefObject<boolean>;
+  /**
+   * Menu da batalha aberto (pausa dirigida pelo jogador): congela a linha do
+   * tempo do domínio — timers, frente da varredura, lock de ação e mundo.
+   */
+  isMenuOpen: boolean;
   battleEndedRef: RefObject<boolean>;
   disabledRef: RefObject<boolean>;
   /** specialIntro: abre o background da habilidade (habilities/domainExpansion/...). */
@@ -147,6 +155,7 @@ export function useDomainExpansion({
   freezeActionsUntilRef,
   timeRef,
   isPausedRef,
+  isMenuOpen,
   battleEndedRef,
   disabledRef,
   startSpecialIntro,
@@ -176,10 +185,9 @@ export function useDomainExpansion({
   const completeFiredRef = useRef(false);
   /** True quando o fim da varredura já foi resolvido (dreno/teardown/quebra). */
   const endFiredRef = useRef(false);
-  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const tickTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  /** Watchdog de `DOMAIN_EXPANSION_TOTAL_MS` — pode ser adiado pela quebra. */
-  const capTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Watchdog `DOMAIN_EXPANSION_TOTAL_MS` — handle do timer pausável. */
+  const capHandleRef = useRef<PausableTimerHandle | null>(null);
 
   const playerRef = useLatestRef(player);
   const npcRef = useLatestRef(npc);
@@ -195,6 +203,7 @@ export function useDomainExpansion({
   const chargesRef = useLatestRef(charges);
   const chargesMaxRef = useLatestRef(chargesMax);
   const setDeliciaRef = useLatestRef(setDelicia);
+  const isMenuOpenRef = useLatestRef(isMenuOpen);
 
   const { usable, usableRef, shouldCancelRef } = useSkillGuard({
     player,
@@ -208,14 +217,12 @@ export function useDomainExpansion({
     extraCancel: () => !activeRef.current,
   });
 
+  const timers = usePausableTimers(isMenuOpen);
+
   const clearTimers = useCallback(() => {
-    for (const timer of timersRef.current) clearTimeout(timer);
-    timersRef.current = [];
-    if (capTimerRef.current != null) {
-      clearTimeout(capTimerRef.current);
-      capTimerRef.current = null;
-    }
-  }, []);
+    timers.clear();
+    capHandleRef.current = null;
+  }, [timers]);
 
   const clearTimer = useCallback(() => {
     if (tickTimerRef.current != null) {
@@ -223,6 +230,23 @@ export function useDomainExpansion({
       tickTimerRef.current = null;
     }
   }, []);
+
+  // Pausa do jogador congela o domínio: ao fechar o menu, devolve o tempo que
+  // ficou parado à frente da varredura, ao lock de ação e ao congelamento do
+  // mundo — sem isso a Expansão "queimaria" o próprio tempo dentro do menu e
+  // retomaria perto do fim (ou já morta).
+  useMenuPauseShift(isMenuOpen, ({ pausedMs, pauseStart }) => {
+    if (!activeRef.current) return;
+    if (sweepStartRef.current !== 0) sweepStartRef.current += pausedMs;
+    if (freezeActionsUntilRef.current > pauseStart) {
+      freezeActionsUntilRef.current += pausedMs;
+    }
+    timeRef.current = timeRef.current.map((effect) =>
+      effect.until > pauseStart
+        ? { ...effect, until: effect.until + pausedMs }
+        : effect,
+    );
+  });
 
   /**
    * Registra um alvo sendo desintegrado pela varredura. O corte na cena
@@ -235,14 +259,12 @@ export function useDomainExpansion({
       setDisintegrating((prev) =>
         prev.some((t) => t.id === target.id) ? prev : [...prev, target],
       );
-      timersRef.current.push(
-        setTimeout(() => {
-          pendingDisintegrationsRef.current -= 1;
-          setDisintegrating((prev) => prev.filter((t) => t.id !== target.id));
-        }, DOMAIN_EXPANSION_DISINTEGRATION_MS),
-      );
+      timers.schedule(() => {
+        pendingDisintegrationsRef.current -= 1;
+        setDisintegrating((prev) => prev.filter((t) => t.id !== target.id));
+      }, DOMAIN_EXPANSION_DISINTEGRATION_MS);
     },
-    [],
+    [timers],
   );
 
   /** Encerra a habilidade (fim da varredura + corte ou cancelamento) e restaura o idle. */
@@ -297,7 +319,7 @@ export function useDomainExpansion({
    * sobrevivente, encerra direto (a vitória vem pelo `finish`).
    *
    * Chamado pelo tick (16ms), que continua rodando até o `finish` — daí o
-   * `endFiredRef` (uma vez só) e o watchdog (`capTimerRef`, que cortaria o
+   * `endFiredRef` (uma vez só) e o watchdog (`capHandleRef`, que cortaria o
    * vidro no meio) sair de cena quando a quebra vai acontecer.
    */
   const endDomain = useCallback(() => {
@@ -309,9 +331,9 @@ export function useDomainExpansion({
       return;
     }
 
-    if (capTimerRef.current != null) {
-      clearTimeout(capTimerRef.current);
-      capTimerRef.current = null;
+    if (capHandleRef.current != null) {
+      timers.cancel(capHandleRef.current);
+      capHandleRef.current = null;
     }
     // A quebra do vidro é SÓ visual: o personagem já recupera o controle no
     // instante em que ela começa (`DOMAIN_SHATTER_MS` é só o tempo do
@@ -324,10 +346,14 @@ export function useDomainExpansion({
         : { ...p, state: "idle" },
     );
     setShattering(true);
-    timersRef.current.push(
-      setTimeout(() => finishRef.current(), DOMAIN_SHATTER_MS),
-    );
-  }, [finishRef, freezeActionsUntilRef, hasSurvivor, setPlayer]);
+    timers.schedule(() => finishRef.current(), DOMAIN_SHATTER_MS);
+  }, [
+    finishRef,
+    freezeActionsUntilRef,
+    hasSurvivor,
+    setPlayer,
+    timers,
+  ]);
 
   const endDomainRef = useLatestRef(endDomain);
 
@@ -468,6 +494,10 @@ export function useDomainExpansion({
 
   const tickRef = useLatestRef(
     useCallback(() => {
+      // Pausa (menu aberto): a frente congela no lugar; o tempo parado é
+      // devolvido por `useMenuPauseShift` quando o jogador despausa.
+      if (isMenuOpenRef.current) return;
+
       // varredura já chegou na outra ponta: falta só o corte dos alvos terminar.
       if (sweepEndedRef.current) {
         if (pendingDisintegrationsRef.current === 0) {
@@ -507,7 +537,7 @@ export function useDomainExpansion({
       }
 
       setMugetsuSweep((prev) => (prev ? { ...prev, x: frontX } : prev));
-    }, [applyKillAtRef, endDomainRef, sweepRef]),
+    }, [applyKillAtRef, endDomainRef, isMenuOpenRef, sweepRef]),
   );
 
   const press = useCallback(() => {
@@ -555,90 +585,88 @@ export function useDomainExpansion({
     const mugetsuAt = DOMAIN_EXPANSION_PRE_MS;
     const sweepAt = mugetsuAt + DOMAIN_EXPANSION_MUGETSU_MS;
 
-    timersRef.current = [
-      // Turn 1 do jogador para preMugetsu.svg + blink de saída (teleporte logo em seguida).
-      setTimeout(() => {
-        if (shouldCancelRef.current()) {
-          cleanupRef.current();
-          return;
-        }
-        setPlayer((pp) =>
-          pp.mode !== "battle" ? pp : { ...pp, state: "preMugetsu" },
-        );
-        setMugetsuBlink("out");
-        playSound("preAtomic");
-      }, 0),
+    // A linha do tempo roda em timers pausáveis: com o menu aberto ela congela
+    // (cada um com o tempo restante exato) e continua de onde parou no unpause.
+    timers.schedule(() => {
+      if (shouldCancelRef.current()) {
+        cleanupRef.current();
+        return;
+      }
+      setPlayer((pp) =>
+        pp.mode !== "battle" ? pp : { ...pp, state: "preMugetsu" },
+      );
+      setMugetsuBlink("out");
+      playSound("preAtomic");
+    }, 0);
 
-      // Teleporte para a ponta mais próxima no meio do blink + blink de chegada.
-      setTimeout(() => {
-        if (shouldCancelRef.current()) {
-          cleanupRef.current();
-          return;
-        }
-        setPlayer((pp) =>
-          pp.mode !== "battle"
-            ? pp
-            : {
-                ...pp,
-                x: fromX,
-                battleDirection: sweepDirection,
-              },
-        );
-        setMugetsuBlink("in");
-      }, DOMAIN_EXPANSION_BLINK_OUT_MS),
+    // Teleporte para a ponta mais próxima no meio do blink + blink de chegada.
+    timers.schedule(() => {
+      if (shouldCancelRef.current()) {
+        cleanupRef.current();
+        return;
+      }
+      setPlayer((pp) =>
+        pp.mode !== "battle"
+          ? pp
+          : {
+              ...pp,
+              x: fromX,
+              battleDirection: sweepDirection,
+            },
+      );
+      setMugetsuBlink("in");
+    }, DOMAIN_EXPANSION_BLINK_OUT_MS);
 
-      setTimeout(() => {
-        if (shouldCancelRef.current()) {
-          cleanupRef.current();
-          return;
-        }
-        setMugetsuBlink(null);
-      }, DOMAIN_EXPANSION_BLINK_OUT_MS + DOMAIN_EXPANSION_BLINK_IN_MS),
+    timers.schedule(() => {
+      if (shouldCancelRef.current()) {
+        cleanupRef.current();
+        return;
+      }
+      setMugetsuBlink(null);
+    }, DOMAIN_EXPANSION_BLINK_OUT_MS + DOMAIN_EXPANSION_BLINK_IN_MS);
 
-      // Pico: sprite mugetsu.svg + som dedicado.
-      setTimeout(() => {
-        if (shouldCancelRef.current()) {
-          cleanupRef.current();
-          return;
-        }
-        setPlayer((pp) =>
-          pp.mode !== "battle" ? pp : { ...pp, state: "mugetsu" },
-        );
-        playSound("mugetsu");
-      }, mugetsuAt),
+    // Pico: sprite mugetsu.svg + som dedicado.
+    timers.schedule(() => {
+      if (shouldCancelRef.current()) {
+        cleanupRef.current();
+        return;
+      }
+      setPlayer((pp) =>
+        pp.mode !== "battle" ? pp : { ...pp, state: "mugetsu" },
+      );
+      playSound("mugetsu");
+    }, mugetsuAt);
 
-      // Criação do mugetsuEffect: a partir daqui a câmera segue a varredura,
-      // o jogador volta ao preMugetsu.svg e o isEnding bloqueia o lifecycle.
-      setTimeout(() => {
-        if (shouldCancelRef.current()) {
-          cleanupRef.current();
-          return;
-        }
-        battleEndedRef.current = true;
-        setPlayer((pp) =>
-          pp.mode !== "battle" ? pp : { ...pp, state: "preMugetsu" },
-        );
-        setMugetsuSweep({
-          x: fromX,
-          fromX,
-          toX,
-          direction: sweepDirection,
-          y: p.y,
-        });
-        sweepStartRef.current = Date.now();
-        playSound("chargeAttack");
-        clearTimer();
-        tickTimerRef.current = setInterval(tickRef.current, 16);
-      }, sweepAt),
-    ];
+    // Criação do mugetsuEffect: a partir daqui a câmera segue a varredura,
+    // o jogador volta ao preMugetsu.svg e o isEnding bloqueia o lifecycle.
+    timers.schedule(() => {
+      if (shouldCancelRef.current()) {
+        cleanupRef.current();
+        return;
+      }
+      battleEndedRef.current = true;
+      setPlayer((pp) =>
+        pp.mode !== "battle" ? pp : { ...pp, state: "preMugetsu" },
+      );
+      setMugetsuSweep({
+        x: fromX,
+        fromX,
+        toX,
+        direction: sweepDirection,
+        y: p.y,
+      });
+      sweepStartRef.current = Date.now();
+      playSound("chargeAttack");
+      clearTimer();
+      tickTimerRef.current = setInterval(tickRef.current, 16);
+    }, sweepAt);
 
     // O watchdog também fica com handle próprio: a quebra do vidro precisa
-    // adiá-lo (ele encerraria a habilidade com o vidro ainda em cena).
-    capTimerRef.current = setTimeout(
+    // cancelá-lo (ele encerraria a habilidade com o vidro ainda em cena).
+    capHandleRef.current = timers.schedule(
       () => cleanupRef.current(),
       DOMAIN_EXPANSION_TOTAL_MS,
     );
-    timersRef.current.push(capTimerRef.current);
   }, [
     battleEndedRef,
     clearTimer,
@@ -653,6 +681,7 @@ export function useDomainExpansion({
     startSpecialIntro,
     timeRef,
     tickRef,
+    timers,
     usableRef,
   ]);
 

@@ -10,6 +10,8 @@ import {
 
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
+import { usePausableTimers } from "@/hooks/battle/utilities/usePausableTimers";
+import { useMenuPauseShift } from "@/hooks/battle/utilities/useMenuPauseShift";
 import { applyTime, clearTime, freezeWorldSpec } from "@/gameRules/battle/time";
 import type { TimeEffect } from "@/gameRules/battle/time";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
@@ -57,6 +59,11 @@ type Props = {
   /** Efeitos de time da batalha (regra `gameRules/battle/time`). */
   timeRef: RefObject<TimeEffect[]>;
   isPausedRef: RefObject<boolean>;
+  /**
+   * Menu da batalha aberto (pausa dirigida pelo jogador): congela o domínio —
+   * timers, lock de ação e congelamento do mundo.
+   */
+  isMenuOpen: boolean;
   battleEndedRef: RefObject<boolean>;
   disabledRef: RefObject<boolean>;
   /** specialIntro: abre o `habilities/domainExpansion/background.svg`. */
@@ -122,6 +129,7 @@ export function useRiquelmeDomainExpansion({
   battleManaRef,
   timeRef,
   isPausedRef,
+  isMenuOpen,
   battleEndedRef,
   disabledRef,
   startSpecialIntro,
@@ -134,8 +142,9 @@ export function useRiquelmeDomainExpansion({
   const [shattering, setShattering] = useState(false);
 
   const activeRef = useRef(false);
-  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const drainTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const timers = usePausableTimers(isMenuOpen);
 
   const npcRef = useLatestRef(npc);
   const npcHPRef = useLatestRef(npcHP);
@@ -150,6 +159,21 @@ export function useRiquelmeDomainExpansion({
   const startIntroRef = useLatestRef(startSpecialIntro);
   const playSoundRef = useLatestRef(playSound);
 
+  // Pausa do jogador congela o domínio: ao fechar o menu, o tempo parado é
+  // devolvido ao lock de ação e ao congelamento do mundo — senão os 5s do
+  // dreno "queimariam" dentro do menu e o domínio retomaria já no fim.
+  useMenuPauseShift(isMenuOpen, ({ pausedMs, pauseStart }) => {
+    if (!activeRef.current) return;
+    if (freezeActionsUntilRef.current > pauseStart) {
+      freezeActionsUntilRef.current += pausedMs;
+    }
+    timeRef.current = timeRef.current.map((effect) =>
+      effect.until > pauseStart
+        ? { ...effect, until: effect.until + pausedMs }
+        : effect,
+    );
+  });
+
   const { usable, usableRef, shouldCancelRef } = useSkillGuard({
     player,
     character: "riquelme",
@@ -163,9 +187,8 @@ export function useRiquelmeDomainExpansion({
   });
 
   const clearTimers = useCallback(() => {
-    for (const timer of timersRef.current) clearTimeout(timer);
-    timersRef.current = [];
-  }, []);
+    timers.clear();
+  }, [timers]);
 
   const clearDrain = useCallback(() => {
     if (drainTimerRef.current != null) {
@@ -280,9 +303,7 @@ export function useRiquelmeDomainExpansion({
     );
     setShattering(true);
     playSoundRef.current("domainBreak");
-    timersRef.current.push(
-      setTimeout(() => finishRef.current(), DOMAIN_SHATTER_MS),
-    );
+    timers.schedule(() => finishRef.current(), DOMAIN_SHATTER_MS);
   }, [
     clearDrain,
     finishRef,
@@ -291,6 +312,7 @@ export function useRiquelmeDomainExpansion({
     playSoundRef,
     setPlayer,
     timeRef,
+    timers,
   ]);
 
   const endDomainRef = useLatestRef(endDomain);
@@ -331,18 +353,15 @@ export function useRiquelmeDomainExpansion({
     playSoundRef.current("domainInitiate");
     playSoundRef.current("riquelmeOpenedDomain");
 
-    clearDrain();
+    timers.clear();
     drainTickRef.current();
     drainTimerRef.current = setInterval(
       () => drainTickRef.current(),
       RIQUELME_DOMAIN_DRAIN_INTERVAL_MS,
     );
-    timersRef.current.push(
-      setTimeout(() => endDomainRef.current(), RIQUELME_DOMAIN_MS),
-    );
+    timers.schedule(() => endDomainRef.current(), RIQUELME_DOMAIN_MS);
   }, [
     battleManaRef,
-    clearDrain,
     drainTickRef,
     endDomainRef,
     freezeActionsUntilRef,
@@ -350,6 +369,7 @@ export function useRiquelmeDomainExpansion({
     setDeliciaRef,
     shouldCancelRef,
     timeRef,
+    timers,
   ]);
 
   const startDomainRef = useLatestRef(startDomain);
@@ -375,12 +395,10 @@ export function useRiquelmeDomainExpansion({
     setShattering(false);
 
     // Pose `rioiki.svg` imediata (mesmo com o intro ligado, ela fica embaixo).
-    timersRef.current.push(
-      setTimeout(() => {
-        if (shouldCancelRef.current()) return;
-        setPlayer((p) => (p.mode !== "battle" ? p : { ...p, state: "rioiki" }));
-      }, 0),
-    );
+    timers.schedule(() => {
+      if (shouldCancelRef.current()) return;
+      setPlayer((p) => (p.mode !== "battle" ? p : { ...p, state: "rioiki" }));
+    }, 0);
 
     // SFX da abertura: sai junto com a intro `background.svg` entrando na
     // tela (é o grito/pose do `rioiki.svg`). O som do domínio em si —
@@ -409,6 +427,7 @@ export function useRiquelmeDomainExpansion({
     shouldCancelRef,
     startDomainRef,
     startIntroRef,
+    timers,
     usableRef,
   ]);
 

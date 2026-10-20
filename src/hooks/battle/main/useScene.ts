@@ -2,6 +2,11 @@ import { useEffect, useMemo, useRef } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useNavigate, useLocation } from "react-router";
 import { useBattleMana } from "@/contexts/BattleManaContext";
+import { useSoundEffects } from "@/contexts/SoundEffectsContext";
+import {
+  pauseAttackSounds,
+  resumeAttackSounds,
+} from "@/utils/audio/playAttackSound";
 import { useBattleLoot } from "@/hooks/battle/loot/useBattleLoot";
 import { useLootNotifications } from "@/hooks/battle/loot/useLootNotifications";
 import { useBattleRefs } from "@/hooks/battle/utilities/useRefs";
@@ -156,8 +161,27 @@ export function useBattleScene({
   const battleManaRef = useLatestRef(battleMana);
 
   const isConfigOpen = isNavOpen && navScreen === "config";
+  // Pausa dirigida pelo jogador: é o sinal que congela a Expansão de Domínio,
+  // o intro de habilidade e os efeitos sonoros (o `isPaused` amplo também
+  // cobre vitória/derrota/cutscenes, onde nada disso pode ser congelado).
   const isMenuOpen = isNavOpen || isBattleNavOpen;
   const isMenuOpenRef = useLatestRef(isMenuOpen);
+  const { pauseAllPlaying, resumeAllPaused } = useSoundEffects();
+
+  // Menu aberto congela os SFX em curso — pausa, não para: no fechamento cada
+  // som retoma exatamente de onde estava (a música de fundo não entra aqui).
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    pauseAllPlaying();
+    pauseAttackSounds();
+
+    return () => {
+      resumeAllPaused();
+      resumeAttackSounds();
+    };
+  }, [isMenuOpen, pauseAllPlaying, resumeAllPaused]);
+
   const honoredOneEnabled =
     getCharacterPassive(player.character, "honoredOne") != null && !training;
 
@@ -407,6 +431,7 @@ export function useBattleScene({
     battleManaRef,
     isPausedRef,
     isMenuOpenRef,
+    isMenuOpen,
     honoredOneActiveRef,
     honoredFleeRef,
     surviveLethalHitRef,
@@ -782,6 +807,7 @@ export function useBattleScene({
     isRecording,
     training,
     controlsDisabled,
+    battlePaused: isMenuOpen,
     showRetry: true,
     playerProjectile,
     killerQueen,

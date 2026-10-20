@@ -35,6 +35,13 @@
   animation: domainBurstName 900ms ease-out forwards;
 }
 
+/* Pausa da batalha (menu aberto): congela o flash e o nome no quadro atual,
+   junto com o timer do burst — retomam juntos no unpause. */
+.paused,
+.paused * {
+  animation-play-state: paused;
+}
+
 @keyframes domainBurst {
   0% {
     opacity: 0;

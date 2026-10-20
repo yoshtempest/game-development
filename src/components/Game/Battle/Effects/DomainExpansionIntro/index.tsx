@@ -4,6 +4,8 @@ import { AbilityOverlay } from "@/components/Game/Battle/Effects/AbilityOverlay"
 type Props = {
   active: boolean;
   character: string | null;
+  /** Pausa da batalha (menu aberto): congela a varredura no lugar. */
+  paused?: boolean;
 };
 
 /**
@@ -13,7 +15,11 @@ type Props = {
  * centro, desacelera bem (onde cresce mais) e volta à velocidade normal
  * encolhendo um pouco até sair pela direita (`motion="sweep"` no overlay).
  */
-export function DomainExpansionIntro({ active, character }: Props) {
+export function DomainExpansionIntro({
+  active,
+  character,
+  paused = false,
+}: Props) {
   if (!active || !character) return null;
 
   return (
@@ -21,6 +27,7 @@ export function DomainExpansionIntro({ active, character }: Props) {
       active={active}
       src={playerAbilityBackgroundPath(character, "domainExpansion")}
       motion="sweep"
+      paused={paused}
     />
   );
 }

@@ -9,6 +9,8 @@ import {
 } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
+import { usePausableTimers } from "@/hooks/battle/utilities/usePausableTimers";
+import { useMenuPauseShift } from "@/hooks/battle/utilities/useMenuPauseShift";
 import { ONE_THOUSAND_MS, SIX_HUNDRED_MS } from "@/data/ms";
 import type { SoundId } from "@/utils/audio/soundId";
 
@@ -31,6 +33,11 @@ type Props = {
   setDelicia: Dispatch<SetStateAction<number>>;
   freezeActionsUntilRef: RefObject<number>;
   isPausedRef: RefObject<boolean>;
+  /**
+   * Menu da batalha aberto (pausa dirigida pelo jogador): congela o overlay do
+   * burst e o lock de ação.
+   */
+  isMenuOpen: boolean;
   battleEndedRef: RefObject<boolean>;
   disabledRef: RefObject<boolean>;
   /** Aplica o dano em todos os inimigos (implementado no useBattleCombat). */
@@ -60,6 +67,7 @@ export function useDomainExpansionBurst({
   setDelicia,
   freezeActionsUntilRef,
   isPausedRef,
+  isMenuOpen,
   battleEndedRef,
   disabledRef,
   onBurst,
@@ -68,12 +76,22 @@ export function useDomainExpansionBurst({
   const [active, setActive] = useState(false);
 
   const activeRef = useRef(false);
-  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const timers = usePausableTimers(isMenuOpen);
 
   const chargesRef = useLatestRef(charges);
   const chargesMaxRef = useLatestRef(chargesMax);
   const setDeliciaRef = useLatestRef(setDelicia);
   const onBurstRef = useLatestRef(onBurst);
+
+  // Pausa do jogador: o tempo parado é devolvido ao lock de ação no unpause
+  // (os 600ms do flash não podem escorrer com o menu aberto).
+  useMenuPauseShift(isMenuOpen, ({ pausedMs, pauseStart }) => {
+    if (!activeRef.current) return;
+    if (freezeActionsUntilRef.current > pauseStart) {
+      freezeActionsUntilRef.current += pausedMs;
+    }
+  });
 
   const { usable, usableRef } = useSkillGuard({
     player,
@@ -87,9 +105,8 @@ export function useDomainExpansionBurst({
   });
 
   const clearTimers = useCallback(() => {
-    for (const timer of timersRef.current) clearTimeout(timer);
-    timersRef.current = [];
-  }, []);
+    timers.clear();
+  }, [timers]);
 
   const cleanup = useCallback(() => {
     activeRef.current = false;
@@ -114,15 +131,15 @@ export function useDomainExpansionBurst({
     // playSound("explosion");
     onBurstRef.current();
 
-    timersRef.current = [
-      setTimeout(() => cleanupRef.current(), DOMAIN_BURST_MS),
-    ];
+    timers.clear();
+    timers.schedule(() => cleanupRef.current(), DOMAIN_BURST_MS);
   }, [
     cleanupRef,
     freezeActionsUntilRef,
     onBurstRef,
     // playSound,
     setDeliciaRef,
+    timers,
     usableRef,
   ]);
 

@@ -82,6 +82,8 @@ type Props = {
    * Expansões de Domínio (`DOMAIN_SHATTER_MS`).
    */
   shattering: boolean;
+  /** Pausa da batalha (menu aberto): congela a entrada/quebra no lugar. */
+  paused?: boolean;
 };
 
 /**
@@ -90,13 +92,18 @@ type Props = {
  * inimigo sobrevive, a imagem estilhaça em pedaços de vidro e o conjunto desce
  * e sai de cena, devolvendo o background normal da batalha.
  */
-export function DomainExpansionBackground({ active, src, shattering }: Props) {
+export function DomainExpansionBackground({
+  active,
+  src,
+  shattering,
+  paused = false,
+}: Props) {
   if (!active || !src) return null;
 
   return (
     <div
       role="presentation"
-      className={`${styles.overlay} ${shattering ? styles.shattering : ""}`}
+      className={`${styles.overlay} ${shattering ? styles.shattering : ""} ${paused ? styles.paused : ""}`}
       // Na quebra o elemento-base não desenha a imagem: só os pedaços a
       // desenham (senão a imagem intacta apareceria nas frestas).
       style={shattering ? undefined : { backgroundImage: `url(${src})` }}

@@ -42,6 +42,14 @@
   animation: slideDown 900ms 600ms cubic-bezier(0.45, 0, 0.55, 1) forwards;
 }
 
+/* Pausa da batalha (menu aberto): congela a entrada/o estilhaço/ a descida no
+   quadro atual, junto com os timers do domínio. Declaração por último para
+   vencer o `renderBottomToTop`/`slideDown` (mesma especificidade). */
+.paused,
+.paused * {
+  animation-play-state: paused;
+}
+
 /* Um pedaço do vidro: carrega o expansion.svg inteiro e recorta só a sua fatia
    (clip-path vem inline). Voam para fora do centro no estilhaço. */
 .shard {

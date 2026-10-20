@@ -12,6 +12,15 @@
   animation: overlayAppear 1000ms ease-out forwards;
 }
 
+/* Pausa da batalha (menu aberto): as animações internas congelam no quadro
+   atual e continuam de onde pararam no unpause — o overlay e o timer do intro
+   congelam juntos, então os dois retomam em sincronia. O `*` cobre flash,
+   faixas, streaks e a imagem central; o fundo do overlay é estático. */
+.paused,
+.paused * {
+  animation-play-state: paused;
+}
+
 /* =========================
    PERSONAGEM
 ========================= */

@@ -10,6 +10,8 @@ type Props = {
    * normal e intro do alfa) ou `sweep` (varredura da Expansão de Domínio).
    */
   motion?: "enter" | "sweep";
+  /** Pausa da batalha (menu aberto): congela a animação CSS no lugar. */
+  paused?: boolean;
 };
 
 /**
@@ -19,7 +21,12 @@ type Props = {
  * acima do fundo da batalha, mas abaixo do jogador/NPCs (renderizado antes
  * do `.SceneMap`). Se a imagem falhar, o único fallback é escondê-la.
  */
-export function AbilityOverlay({ active, src, motion = "enter" }: Props) {
+export function AbilityOverlay({
+  active,
+  src,
+  motion = "enter",
+  paused = false,
+}: Props) {
   const [imageFailed, setImageFailed] = useState(false);
 
   useEffect(() => {
@@ -29,7 +36,10 @@ export function AbilityOverlay({ active, src, motion = "enter" }: Props) {
   if (!active || !src) return null;
 
   return (
-    <div className={styles.overlay} role="presentation">
+    <div
+      className={`${styles.overlay} ${paused ? styles.paused : ""}`}
+      role="presentation"
+    >
       <div className={styles.flash} />
 
       <div className={styles.topMotion}>

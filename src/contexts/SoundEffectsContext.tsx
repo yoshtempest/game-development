@@ -16,9 +16,22 @@ type SoundEffectsContextType = {
   playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
   stopSound: (sound: SoundId) => void;
   stopAll: () => void;
+  /** Congela todos os SFX em curso (pausa da batalha): pausa, não para. */
+  pauseAllPlaying: () => void;
+  /** Retoma exatamente o que `pauseAllPlaying` congelou. */
+  resumeAllPaused: () => void;
 };
 
 const SoundEffectsContext = createContext<SoundEffectsContextType | null>(null);
+
+/** Fallback estável (identidade fixa) para consumir o hook sem provider. */
+const FALLBACK_SOUNDS: SoundEffectsContextType = {
+  playSound: () => {},
+  stopSound: () => {},
+  stopAll: () => {},
+  pauseAllPlaying: () => {},
+  resumeAllPaused: () => {},
+};
 
 const SOUND_VOLUMES: Partial<Record<SoundId, number>> = {
   boom: 1.3,
@@ -39,6 +52,8 @@ export function SoundEffectsProvider({ children }: { children: ReactNode }) {
   const soundsRef = useRef<Record<SoundId, HTMLAudioElement>>(
     {} as Record<SoundId, HTMLAudioElement>,
   );
+  /** Elementos congelados pela pausa da batalha — retomados no fechamento. */
+  const pausedByPauseRef = useRef<Set<HTMLAudioElement>>(new Set());
 
   useEffect(() => {
     soundsRef.current = createSounds();
@@ -68,6 +83,10 @@ export function SoundEffectsProvider({ children }: { children: ReactNode }) {
 
       if (!audio) return;
 
+      // Religado durante a pausa: deixa de estar na lista "para continuar
+      // depois" — o playback novo já é o comportamento pós-unpause desejado.
+      pausedByPauseRef.current.delete(audio);
+
       try {
         audio.pause();
         audio.currentTime = 0;
@@ -90,20 +109,49 @@ export function SoundEffectsProvider({ children }: { children: ReactNode }) {
 
     if (!audio) return;
 
+    // Parado não é pausado: quem foi stopado durante a pausa não volta no
+    // fechamento (o próprio stop já definiu o comportamento).
+    pausedByPauseRef.current.delete(audio);
     audio.pause();
     audio.currentTime = 0;
   }, []);
 
   const stopAll = useCallback(() => {
+    pausedByPauseRef.current.clear();
     Object.values(soundsRef.current).forEach((audio) => {
       audio.pause();
       audio.currentTime = 0;
     });
   }, []);
 
+  const pauseAllPlaying = useCallback(() => {
+    const paused = pausedByPauseRef.current;
+    Object.values(soundsRef.current).forEach((audio) => {
+      if (audio.paused || audio.ended) return;
+      audio.pause();
+      paused.add(audio);
+    });
+  }, []);
+
+  const resumeAllPaused = useCallback(() => {
+    const paused = pausedByPauseRef.current;
+    paused.forEach((audio) => {
+      // Só o que a pausa congelou volta a tocar: se o som acabou ou foi
+      // religado durante o menu, deixa como está.
+      if (audio.paused && !audio.ended) audio.play().catch(() => {});
+    });
+    paused.clear();
+  }, []);
+
   const value = useMemo(
-    () => ({ playSound, stopSound, stopAll }),
-    [playSound, stopSound, stopAll],
+    () => ({
+      playSound,
+      stopSound,
+      stopAll,
+      pauseAllPlaying,
+      resumeAllPaused,
+    }),
+    [playSound, stopSound, stopAll, pauseAllPlaying, resumeAllPaused],
   );
 
   return (
@@ -117,11 +165,5 @@ export function SoundEffectsProvider({ children }: { children: ReactNode }) {
 export function useSoundEffects(): SoundEffectsContextType {
   const context = useContext(SoundEffectsContext);
 
-  return (
-    context ?? {
-      playSound: () => {},
-      stopSound: () => {},
-      stopAll: () => {},
-    }
-  );
+  return context ?? FALLBACK_SOUNDS;
 }

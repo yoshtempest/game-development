@@ -122,6 +122,12 @@ type Props = {
   battleManaRef: RefObject<BattleManaApi | null>;
   isPausedRef: RefObject<boolean>;
   isMenuOpenRef: RefObject<boolean>;
+  /**
+   * Menu da batalha aberto (pausa dirigida pelo jogador), na forma booleana:
+   * os hooks de Expansão de Domínio e o intro usam para congelar os próprios
+   * timers e prazos, que precisam de reatividade (não de um ref).
+   */
+  isMenuOpen: boolean;
   honoredOneActiveRef: RefObject<boolean>;
   honoredFleeRef: RefObject<boolean>;
   surviveLethalHitRef: RefObject<() => boolean>;
@@ -158,6 +164,7 @@ export function useBattleCombat({
   battleManaRef,
   isPausedRef,
   isMenuOpenRef,
+  isMenuOpen,
   honoredOneActiveRef,
   honoredFleeRef,
   surviveLethalHitRef,
@@ -1000,7 +1007,7 @@ export function useBattleCombat({
     specialIntroForm,
     startSpecialIntro,
     cancelSpecialIntro,
-  } = useSpecialIntro({ setTimeScale, resetTimeScale });
+  } = useSpecialIntro({ setTimeScale, resetTimeScale, isMenuOpen });
 
   // O gatilho de O Abençoado (definido lá em cima) cancela a intro pendente.
   cancelSpecialIntroRef.current = cancelSpecialIntro;
@@ -1489,6 +1496,7 @@ export function useBattleCombat({
     freezeActionsUntilRef,
     timeRef: refs.timeRef,
     isPausedRef,
+    isMenuOpen,
     battleEndedRef: battle.isEnding,
     disabledRef: cloneDisabledRef,
     startSpecialIntro,
@@ -1563,6 +1571,7 @@ export function useBattleCombat({
     setDelicia: battle.setDelicia,
     freezeActionsUntilRef,
     isPausedRef,
+    isMenuOpen,
     battleEndedRef: battle.isEnding,
     disabledRef: cloneDisabledRef,
     onBurst: handleDomainBurst,
@@ -1592,6 +1601,7 @@ export function useBattleCombat({
     battleManaRef,
     timeRef: refs.timeRef,
     isPausedRef,
+    isMenuOpen,
     battleEndedRef: battle.isEnding,
     disabledRef: cloneDisabledRef,
     startSpecialIntro,

@@ -110,7 +110,7 @@ export function useBattleLoot({
       setBags((prev) => prev.filter((b) => b.id !== id));
       onCollectRef.current(bag.contents);
       onNotifyRef.current(bag.contents, bag.x, bag.y);
-      playSoundRef.current("receivedItem");
+      playSoundRef.current("equip");
     },
     [bagsRef, onCollectRef, onNotifyRef, playSoundRef],
   );
