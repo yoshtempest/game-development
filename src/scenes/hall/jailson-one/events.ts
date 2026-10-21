@@ -21,7 +21,8 @@ export const jailsonOneEvents: SceneEvent[] = [
     condition: { hasQuest: "create_map", hasItem: "desired_gear" },
     then: [
       { type: "removeItem", itemId: "desired_gear" },
-      { type: "addItem", itemId: "jorjao_map" },
+      // Jailson entrega o mapa do Jorjão
+      { type: "npcGiveItem", itemId: "jorjao_map", npcName: "Jailson", npcImage: "npc/jailson/right.svg" },
       { type: "progressQuest", id: "create_map", value: 1 },
     ],
   },

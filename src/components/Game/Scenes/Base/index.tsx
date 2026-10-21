@@ -97,7 +97,7 @@ export function SceneBase({
   const { player, setMode, setPosition } = usePlayer();
   const { quests } = useQuests();
   const { hasFlag } = useFlags();
-  const { hasItem, addItem, removeItem } = useInventory();
+  const { hasItem, addItem, removeItem, giveItem, npcGiveItem } = useInventory();
   const { closeNavbar } = useNavbar();
   const { giveQuest, progressQuest } = useQuestActions();
   const { prepareTombstoneSpawn } = useTombstones();
@@ -193,6 +193,14 @@ export function SceneBase({
                 if (!quest) return;
 
                 giveQuest(quest);
+              },
+              giveItem: (itemId, npcName) => {
+                const item = ITEMS[itemId];
+                if (item) giveItem(itemId, npcName);
+              },
+              npcGiveItem: (itemId, npcName, npcImage) => {
+                const item = ITEMS[itemId];
+                if (item) npcGiveItem(itemId, npcName, npcImage);
               },
               progressQuest,
               prepareTombstoneSpawn: (locationId: string) => {

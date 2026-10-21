@@ -61,7 +61,7 @@ export function createExchangeHandler(config: ExchangeHandlerConfig) {
   return (deps: ExchangeHandlerDeps) => {
     if (deps.hasItem(config.requiredItem)) {
       deps.setPopup(config.successMessage);
-      deps.removeItem(config.requiredItem);
+      deps.giveItem(config.requiredItem, config.npcName);
       deps.addItem(config.item);
     }
   };

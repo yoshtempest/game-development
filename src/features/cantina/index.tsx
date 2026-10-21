@@ -25,7 +25,7 @@ type Props = {
 
 export function CantinaScene({ sceneId }: Props) {
   const scene = CANTINA_SCENES[sceneId];
-  const { addItem } = useInventory();
+  const { addItem, npcGiveItem } = useInventory();
   const { isReady, giveFood } = useJesoFoodCooldown();
   const { hasFlag, setFlag } = useFlags();
 
@@ -63,7 +63,8 @@ export function CantinaScene({ sceneId }: Props) {
                 if (isReady) {
                   const foods = giveFood();
                   for (const id of foods) {
-                    addItem({ id: id as ItemId });
+                    // NPC Jeso entrega comida: usa npcGiveItem para mostrar toast com imagem do Jeso
+                    npcGiveItem(id as ItemId, "Jeso", "npc/jeso/right.svg");
                   }
                   startDialogue(cantinaJesoDialogue);
                 } else {
@@ -74,7 +75,7 @@ export function CantinaScene({ sceneId }: Props) {
           : npc,
       ),
     };
-  }, [scene, sceneId, isReady, giveFood, addItem]);
+  }, [scene, sceneId, isReady, giveFood, npcGiveItem]);
 
   if (!scene || !sceneWithJeso) {
     return <div>Scene não encontrada</div>;

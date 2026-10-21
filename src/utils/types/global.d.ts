@@ -216,6 +216,10 @@ declare global {
     | { type: "giveQuest"; questId: QuestId }
     | { type: "addItem"; itemId: ItemId }
     | { type: "removeItem"; itemId: ItemId }
+    /** Entrega item a NPC com toast: remove do inventário e exibe notificação. */
+    | { type: "giveItem"; itemId: ItemId; npcName?: string }
+    /** NPC entrega item ao jogador com toast: adiciona ao inventário e exibe notificação com imagem do NPC. */
+    | { type: "npcGiveItem"; itemId: ItemId; npcName: string; npcImage?: string }
     | { type: "prepareTombstone"; locationId: string }
     | {
         type: "conditional";

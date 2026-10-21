@@ -8,6 +8,7 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
+import { useToast } from "@/contexts/ToastContext";
 import { DAILY_QUEST_POOL, WEEKLY_QUEST_POOL } from "@/data/quests";
 import {
   getTodayDate,
@@ -41,6 +42,7 @@ const QuestContext = createContext<QuestContextType | null>(null);
 export function QuestProvider({ children }: Props) {
   const [quests, setQuests] = useCompressedStorage<Quest[]>(QUESTS_KEY, []);
   const { playSound } = useSoundEffects();
+  const { showToast } = useToast();
 
   /**
    * Sinaliza que uma mutação de quest de fato alterou algo; o som dispara
@@ -109,8 +111,13 @@ export function QuestProvider({ children }: Props) {
           },
         ];
       });
+      // Toast de nova missão: imagem do NPC + nome da missão
+      showToast({
+        icon: newQuest.image,
+        text: `Nova missão: ${newQuest.name}!`,
+      });
     },
-    [setQuests],
+    [setQuests, showToast],
   );
 
   const updateProgress = useCallback(

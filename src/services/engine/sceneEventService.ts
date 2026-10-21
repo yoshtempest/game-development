@@ -20,6 +20,10 @@ export type SceneEventContext = {
   // inventory
   addItem?: (item: ItemId) => void;
   removeItem?: (itemId: ItemId) => void;
+  /** Entrega item a NPC: remove do inventário e exibe toast. */
+  giveItem?: (itemId: ItemId, npcName?: string) => void;
+  /** NPC entrega item ao jogador: adiciona ao inventário e exibe toast com imagem do NPC. */
+  npcGiveItem?: (itemId: ItemId, npcName: string, npcImage?: string) => void;
   hasItem?: (itemId: ItemId) => boolean;
 
   // tombstone
@@ -103,6 +107,14 @@ export class SceneEventService {
 
         case "removeItem":
           this.ctx.removeItem?.(event.itemId);
+          break;
+
+        case "giveItem":
+          this.ctx.giveItem?.(event.itemId, event.npcName);
+          break;
+
+        case "npcGiveItem":
+          this.ctx.npcGiveItem?.(event.itemId, event.npcName, event.npcImage);
           break;
 
         case "prepareTombstone":

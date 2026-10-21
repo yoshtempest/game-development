@@ -31,7 +31,7 @@ export function DirectorScene({ sceneId }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { addItem, hasItem, removeItem } = useInventory();
+  const { addItem, hasItem, removeItem, giveItem, npcGiveItem } = useInventory();
   const { progressQuest } = useQuestActions();
   const { hasFlag, setFlag } = useFlags();
 
@@ -68,6 +68,8 @@ export function DirectorScene({ sceneId }: Props) {
         hasItem,
         addItem,
         removeItem,
+        giveItem,
+        npcGiveItem,
         navigate: navigateFrom,
         setPopup: (msg) => setPopup(msg),
         showImage: (src, message, name) => {
@@ -88,6 +90,8 @@ export function DirectorScene({ sceneId }: Props) {
       hasItem,
       addItem,
       removeItem,
+      giveItem,
+      npcGiveItem,
       navigateFrom,
       gotKey,
       setFlag,

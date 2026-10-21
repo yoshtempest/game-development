@@ -11,6 +11,10 @@ export type InventoryDeps = BaseDeps & {
   hasItem: (id: ItemId) => boolean;
   addItem: (item: InventoryItem, options?: AddItemOptions) => void;
   removeItem: (id: ItemId) => void;
+  /** Entrega item a NPC: remove do inventário e exibe toast. */
+  giveItem: (id: ItemId, npcName?: string, qty?: number) => void;
+  /** NPC entrega item ao jogador: adiciona ao inventário e exibe toast com imagem do NPC. */
+  npcGiveItem: (itemId: ItemId, npcName: string, npcImage?: string) => void;
   navigate?: (path: string) => void;
 };
 
@@ -72,6 +76,8 @@ export type ExchangeHandlerConfig = {
   requiredItem: ItemId;
   item: InventoryItem;
   successMessage: string;
+  /** Nome do NPC para o toast de entrega (opcional). */
+  npcName?: string;
 };
 
 export type ImageHandlerConfig = {

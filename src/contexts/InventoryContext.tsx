@@ -27,6 +27,10 @@ type InventoryContextType = {
 
   addItem: (item: InventoryItem, options?: AddItemOptions) => boolean;
   removeItem: (id: ItemId, qty?: number) => void;
+  /** Entrega item a um NPC: remove do inventário e exibe toast. */
+  giveItem: (id: ItemId, npcName?: string, qty?: number) => void;
+  /** NPC entrega item ao jogador: adiciona ao inventário e exibe toast com imagem do NPC. */
+  npcGiveItem: (itemId: ItemId, npcName: string, npcImage?: string) => void;
   hasItem: (id: ItemId) => boolean;
   hasSpaceFor: (incoming: InventoryItem[]) => boolean;
 
@@ -124,6 +128,42 @@ export function InventoryProvider({ children }: { children: ReactNode }) {
     [inventoryService, commit],
   );
 
+  /** Entrega item a NPC: remove do inventário e exibe toast. */
+  const giveItem = useCallback(
+    (id: ItemId, npcName = "um NPC", qty = 1) => {
+      const itemData = ITEMS[id];
+      const result = inventoryService.removeItem(
+        latestItemsRef.current,
+        id,
+        qty,
+      );
+      commit(result.items, result.sound);
+      if (result.removed && itemData) {
+        showToast({
+          icon: itemData.image ?? itemPath(`${id}.svg`),
+          text: `Você entregou ${itemData.name} para ${npcName}.`,
+        });
+      }
+    },
+    [inventoryService, commit, showToast],
+  );
+
+  /** NPC entrega item ao jogador: adiciona ao inventário e exibe toast com imagem do NPC. */
+  const npcGiveItem = useCallback(
+    (itemId: ItemId, npcName: string, npcImage?: string) => {
+      const itemData = ITEMS[itemId];
+      const result = inventoryService.addItem(latestItemsRef.current, { id: itemId });
+      commit(result.items, result.sound);
+      if (result.added && itemData) {
+        showToast({
+          icon: npcImage ?? itemData.image ?? itemPath(`${itemId}.svg`),
+          text: `${npcName} lhe entregou ${itemData.name}.`,
+        });
+      }
+    },
+    [inventoryService, commit, showToast],
+  );
+
   const hasItem = useCallback(
     (id: ItemId) => items.some((item) => item.id === id),
     [items],
@@ -141,6 +181,8 @@ export function InventoryProvider({ children }: { children: ReactNode }) {
       setItems,
       addItem,
       removeItem,
+      giveItem,
+      npcGiveItem,
       hasItem,
       hasSpaceFor,
       isOpen,
@@ -155,6 +197,8 @@ export function InventoryProvider({ children }: { children: ReactNode }) {
       setItems,
       addItem,
       removeItem,
+      giveItem,
+      npcGiveItem,
       hasItem,
       hasSpaceFor,
       isOpen,

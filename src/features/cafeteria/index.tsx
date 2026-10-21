@@ -24,7 +24,7 @@ type Props = {
 export function CafeteriaScene({ sceneId }: Props) {
   const scene = CAFETERIA_SCENES[sceneId];
 
-  const { addItem, hasItem, removeItem } = useInventory();
+  const { addItem, hasItem, removeItem, giveItem, npcGiveItem } = useInventory();
   const { progressQuest } = useQuestActions();
   const { setFlag } = useFlags();
 
@@ -36,7 +36,8 @@ export function CafeteriaScene({ sceneId }: Props) {
     size: CAFETERIA_FRIDGE.size,
     cols: CAFETERIA_FRIDGE.cols,
     onPickup: (_index, slot) => {
-      addItem(slot);
+      // showToast: true para exibir toast de item coletado da geladeira
+      addItem(slot, { showToast: true });
       setFlag("picked_sausage");
       progressQuest("go_cafeteria", 1);
       return true;
@@ -49,11 +50,13 @@ export function CafeteriaScene({ sceneId }: Props) {
         hasItem,
         addItem,
         removeItem,
+        giveItem,
+        npcGiveItem,
         setPopup,
         progressQuest,
         openContainer: fridge.open,
       }),
-    [addItem, hasItem, removeItem, setPopup, progressQuest, fridge.open],
+    [addItem, hasItem, removeItem, giveItem, npcGiveItem, setPopup, progressQuest, fridge.open],
   );
 
   useRandomEncounter({
