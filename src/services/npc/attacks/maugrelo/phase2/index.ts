@@ -134,7 +134,8 @@ export function maugreloPhase2(
     }
 
     updateLaser(ai, ctx, now);
-    return { x: npc.x, y: ai.riseStartY, state: "laser" };
+    // Mantém a direção fixa durante o laser: não vira para seguir o jogador.
+    return { x: npc.x, y: ai.riseStartY, state: "laser", direction: npc.direction };
   }
 
   if (ai.phase2State === "vulnerable") {
