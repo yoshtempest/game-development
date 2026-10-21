@@ -11,29 +11,10 @@ export const ATTACK_FOLDER_ALT = new Set([
   "emanuel",
 ]);
 
-// Emanuel não tem as pastas de movimento na raiz do `inFight/` (diferente do
-// riquelme/marcelo que têm `inFight/idle/`, `inFight/jump/` + `.svg` soltos).
-// Tudo que é movimento fica aninhado em `inFight/movement/`:
-//   idle  → inFight/movement/idle/idle.svg
-//   jump  → inFight/movement/jump/jump.svg
-//   run   → inFight/movement/movement/run.svg
-// Isso exige um mapeamento por character + estado (o STATE_FOLDER genérico
-// retorna "idle"/"jump"/"movement" como pasta raiz do inFight → 404 p/ emanuel).
 export const CHARACTER_STATE_FOLDER_ALT: Record<
   string,
   Partial<Record<PlayerState, string>>
 > = {
-  emanuel: {
-    idle: "movement/idle",
-    idleCrounched: "movement/idle",
-    walk: "movement/movement",
-    run: "movement/movement",
-    preWalk: "movement/movement",
-    preRun: "movement/movement",
-    jump: "movement/jump",
-    preJump: "movement/jump",
-    falling: "movement/jump",
-  },
   marcelo: {
     // O marcelo NÃO tem pasta de movimento própria na raiz do inFight:
     // as animações de andar/atacar ficam em `inFight/default/${state}.svg`

@@ -79,6 +79,7 @@ export const SPEAKERS = {
     pose: "right",
   },
   juanDerson: { name: "Juan Derson", base: "/janderson", pose: "right" },
+  rickPrime: { name: "Rick prime", base: "/rickPrime", pose: "right" },
 
   surica: { name: "Surica", base: "/surica", pose: "default" },
   suricaIncrivel: {
