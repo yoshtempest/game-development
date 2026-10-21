@@ -1,0 +1,65 @@
+/* Overlay preto 10% cobrindo 100% largura × 60% altura da área central do jogo */
+.overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 60%;
+  top: 20%; /* Centralizado verticalmente: 20% + 60% = 80%, então 20% de margem superior */
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 50;
+  animation: clearOverlayFade 1500ms ease-out forwards;
+}
+
+/* Texto "Clear" deslizando da esquerda para direita */
+.clearText {
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(2rem, 8vw, 4rem);
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 8px #ffd700, 0 0 16px #ff8c00, 0 0 24px #ff4500;
+  white-space: nowrap;
+  transform: translateX(-150%);
+  animation: clearSlide 1500ms ease-out forwards;
+}
+
+/* Animação do overlay: fade in rápido, mantém, fade out */
+@keyframes clearOverlayFade {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Animação do texto: entra da esquerda, passa pelo centro, sai à direita */
+@keyframes clearSlide {
+  0% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+}

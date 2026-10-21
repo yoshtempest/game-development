@@ -1,4 +1,5 @@
 import { BattleHUD } from "@/components/Game/Battle/HUD";
+import { BattleClear } from "@/components/Game/Battle/Clear";
 import { PetSkillButton } from "@/components/Game/Battle/Buttons/PetSkill";
 import { WeaponSwitchButton } from "@/components/Game/Battle/Buttons/WeaponSwitch";
 import { CursedEnergyButton } from "@/components/Game/Battle/Buttons/Natsuki/CursedEnergy";
@@ -117,6 +118,7 @@ export function BattleScene(props: Props) {
     showVictory,
     showDefeat,
     showOutro,
+    showClear,
     showHighlight,
     highlightData,
     handleCloseHighlight,
@@ -718,6 +720,9 @@ export function BattleScene(props: Props) {
           )}
         </GameMap>
       </div>
+      {showClear && !isTraining && (
+        <BattleClear />
+      )}
       {showOutro && !isTraining && (
         <BattleOutro
           character={player.character}

@@ -33,6 +33,8 @@ export function useBattleOutro({
 
   const { highlightData, prepareHighlight, clearHighlight } = useHighlight();
   const [showHighlight, setShowHighlight] = useState(false);
+  // Nova fase: "clear" para a animação Clear antes do outro
+  const [showClear, setShowClear] = useState(false);
 
   const showHighlightEnabledRef = useLatestRef(showHighlightEnabled);
   const getReplayDataRef = useLatestRef(getReplayData);
@@ -48,30 +50,47 @@ export function useBattleOutro({
     }
   }, [prepareHighlight, getReplayDataRef, showHighlightEnabledRef]);
 
+  // Sequência de vitória: Clear (1.5s) → Outro (2.5s) → Highlight
   useEffect(() => {
     if (!showVictory) return undefined;
-    setShowOutro("victory");
-    outroTimeoutRef.current = setTimeout(() => {
-      setShowOutro(null);
-      prepareAndShowHighlight();
-    }, 2500);
-    return () => clearTimeout(outroTimeoutRef.current);
+
+    // 1. Mostra Clear imediatamente
+    setShowClear(true);
+
+    // 2. Após Clear (1.5s), mostra Outro
+    const clearTimeoutId = setTimeout(() => {
+      setShowClear(false);
+      setShowOutro("victory");
+
+      // 3. Após Outro (2.5s), prepara highlight
+      outroTimeoutRef.current = setTimeout(() => {
+        setShowOutro(null);
+        prepareAndShowHighlight();
+      }, 2500);
+    }, 1500); // Clear dura 1.5s
+
+    return () => {
+      window.clearTimeout(clearTimeoutId);
+      if (outroTimeoutRef.current) window.clearTimeout(outroTimeoutRef.current);
+    };
   }, [showVictory, prepareAndShowHighlight]);
 
   useEffect(() => {
     if (!showDefeat) return undefined;
+
     setShowOutro("defeat");
     outroTimeoutRef.current = setTimeout(() => {
       setShowOutro(null);
       prepareAndShowHighlight();
     }, 2500);
-    return () => clearTimeout(outroTimeoutRef.current);
+    return () => window.clearTimeout(outroTimeoutRef.current);
   }, [showDefeat, prepareAndShowHighlight]);
 
   const handleCloseOutro = useCallback(() => {
-    clearTimeout(outroTimeoutRef.current);
+    if (outroTimeoutRef.current) window.clearTimeout(outroTimeoutRef.current);
     setShowOutro(null);
     setSkipVictoryDelay(true);
+    // Se pulou o outro, ainda tenta preparar highlight
     prepareAndShowHighlight();
   }, [prepareAndShowHighlight]);
 
@@ -107,6 +126,7 @@ export function useBattleOutro({
     setShowDefeat,
     showOutro,
     setShowOutro,
+    showClear,
     showHighlight,
     highlightData,
     handleCloseHighlight,

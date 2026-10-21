@@ -97,4 +97,10 @@ export const PETS = createEquipmentList("pet", [
     rank: 0,
     stats: {},
   },
+  {
+    id: "pet_mahoraga",
+    name: "Mahoraga",
+    rank: 0,
+    stats: {},
+  },
 ]);

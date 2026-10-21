@@ -42,6 +42,11 @@ export const PET_DROPS: Record<string, PetDropInfo> = {
     npcLabel: "2 Corvos",
     chance: 0.01,
   },
+  pet_mahoraga: {
+    npcType: "mahoraga",
+    npcLabel: "Mahoraga",
+    chance: 0,
+  },
   pet_turkey: {
     npcType: "turkey",
     npcLabel: "Peru",

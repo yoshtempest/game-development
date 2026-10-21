@@ -8,7 +8,9 @@ export function useHighlight() {
   const prepareHighlight = useCallback(
     (getReplayData: () => ReplayData | null) => {
       const data = getReplayData();
-      if (!data || data.frames.length < 5) {
+      // Reduzido de 5 para 2 frames (200ms) para permitir highlights em
+      // batalhas rápidas. O jogo grava frames a cada 100ms.
+      if (!data || data.frames.length < 2) {
         setHighlightData(null);
         return false;
       }
