@@ -69,6 +69,8 @@ type Props = {
   onNpcCutInRef: RefObject<() => void>;
   freezeActionsUntilRef: RefObject<number>;
   isPausedRef: RefObject<boolean>;
+  /** Menu da batalha aberto: pausa os timers da animação para ela não completar durante a pausa. */
+  isMenuOpenRef: RefObject<boolean>;
   battleEndedRef: RefObject<boolean>;
   disabledRef: RefObject<boolean>;
   playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
@@ -119,6 +121,7 @@ export function useAtomic({
   onNpcCutInRef,
   freezeActionsUntilRef,
   isPausedRef,
+  isMenuOpenRef,
   battleEndedRef,
   disabledRef,
   playSound,
@@ -168,6 +171,22 @@ export function useAtomic({
   }, []);
 
   const cleanup = useCallback(() => {
+    // Se o menu estiver aberto, não limpa o estado visual (halo, explosão, cuts, flash)
+    // para que a animação não desapareça durante a pausa. A limpeza real acontece
+    // quando o menu fecha (via useEffect abaixo) ou quando a habilidade é cancelada
+    // de verdade (vitória/derrota).
+    if (isMenuOpenRef.current) {
+      activeRef.current = false;
+      clearTimers();
+      // Só reseta o player se estivermos em modo battle; no menu o estado fica
+      // congelado no sprite da habilidade.
+      setPlayer((p) =>
+        p.mode !== "battle" || !ALL_PREDICATES.isAtomic(p.state)
+          ? p
+          : { ...p, state: "idle" },
+      );
+      return;
+    }
     activeRef.current = false;
     clearTimers();
     setHalo(false);
@@ -180,9 +199,26 @@ export function useAtomic({
         ? p
         : { ...p, state: "idle" },
     );
-  }, [clearTimers, setPlayer]);
+  }, [clearTimers, isMenuOpenRef, setPlayer]);
 
   const cleanupRef = useLatestRef(cleanup);
+
+  // Quando o menu fecha, se a habilidade estava ativa, faz a limpeza completa.
+  useEffect(() => {
+    if (isMenuOpenRef.current) return;
+    if (!activeRef.current) return;
+    // O menu acabou de fechar: se a habilidade já completou (timers dispararam),
+    // o cleanup já foi chamado mas pulou a limpeza visual. Fazemos agora.
+    const timer = setTimeout(() => {
+      if (!activeRef.current) return;
+      setHalo(false);
+      setExplosion(null);
+      setFlash(false);
+      setCuts([]);
+      targetRef.current = null;
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [isMenuOpenRef, activeRef]);
 
   /** Inimigo com a maior vida máxima — o alvo da explosão (2x de dano). */
   const findTarget = useCallback(() => {

@@ -53,6 +53,8 @@ type Props = {
   /** +5 cargas da Expansão pelo uso (a purple conta como dois: 2×). */
   onUsed?: (times?: number) => void;
   isPausedRef: RefObject<boolean>;
+  /** Menu da batalha aberto: pausa o tick das esferas para elas não completarem durante a pausa. */
+  isMenuOpenRef: RefObject<boolean>;
   disabledRef: RefObject<boolean>;
   battleEndedRef: RefObject<boolean>;
   /** Proporção especial/básico (ver `specialDamageRatio` no useBattleCombat). */
@@ -98,6 +100,7 @@ export function useRiquelmeSpheres({
   startSpecialIntro,
   onUsed,
   isPausedRef,
+  isMenuOpenRef,
   disabledRef,
   battleEndedRef,
   specialDamageRatio,
@@ -150,6 +153,10 @@ export function useRiquelmeSpheres({
    * núcleo; quem a esfera vira em campo depende da variante.
    */
   function tick() {
+    // Pausa o tick das esferas enquanto o menu estiver aberto: evita que
+    // a animação complete e a esfera desapareça durante a pausa.
+    if (isMenuOpenRef.current) return;
+
     const s = core.sphereRef.current;
     if (!s) return;
 

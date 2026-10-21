@@ -82,6 +82,8 @@ type Props = {
   registerHitRef: RefObject<(damage: number) => void>;
   freezeActionsUntilRef: RefObject<number>;
   isPausedRef: RefObject<boolean>;
+  /** Menu da batalha aberto: pausa o loop da lâmina para ela não completar durante a pausa. */
+  isMenuOpenRef: RefObject<boolean>;
   battleEndedRef: RefObject<boolean>;
   disabledRef: RefObject<boolean>;
   /** specialIntro: abre o background da habilidade (habilities/granReyCero/...). */
@@ -144,6 +146,7 @@ export function useGranReyCero({
   registerHitRef,
   freezeActionsUntilRef,
   isPausedRef,
+  isMenuOpenRef,
   battleEndedRef,
   disabledRef,
   startSpecialIntro,
@@ -370,6 +373,14 @@ export function useGranReyCero({
       return;
     }
 
+    // Pausa o loop da lâmina enquanto o menu estiver aberto: evita que a
+    // habilidade complete e desapareça durante a pausa, mantendo o jogador
+    // no sprite da animação. Ao fechar o menu, o loop retoma de onde parou.
+    if (isMenuOpenRef.current) {
+      rafRef.current = requestAnimationFrame(frameRef.current);
+      return;
+    }
+
     const now = Date.now();
     const dt = now - lastFrameRef.current;
     lastFrameRef.current = now;
@@ -432,6 +443,7 @@ export function useGranReyCero({
     freezeActionsUntilRef,
     frameRef,
     hasTargetRef,
+    isMenuOpenRef,
     shouldCancelRef,
   ]);
 

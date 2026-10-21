@@ -9,7 +9,6 @@ import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { useInventory } from "@/contexts/InventoryContext";
 import { useQuests } from "@/contexts/QuestContext";
 import { useNavbar } from "@/contexts/NavbarContext";
-import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { useTitles } from "@/contexts/TitleContext";
 import { usePlayTimeActions } from "@/contexts/PlayTimeContext";
 import { useSettings } from "@/hooks/settings/useSetting";
@@ -83,8 +82,7 @@ export function useBattleStageSetup({ npcType, npcLevelProp, isAlfa }: Props) {
   const petSkillDef = petId ? getPetSkillDefinition(petId) : null;
   const { items: inventoryItems, closeInventory } = useInventory();
   const { quests, progressDailyWeekly } = useQuests();
-  const { closeNavbar, isNavOpen, screen: navScreen } = useNavbar();
-  const { isBattleNavOpen } = useBattleNavbar();
+  const { closeNavbar } = useNavbar();
   const {
     handleDefeat,
     incrementBlockCounter,
@@ -269,9 +267,6 @@ export function useBattleStageSetup({ npcType, npcLevelProp, isAlfa }: Props) {
     quests,
     progressDailyWeekly,
     closeNavbar,
-    isNavOpen,
-    navScreen,
-    isBattleNavOpen,
     handleDefeat,
     incrementBlockCounter,
     incrementDamageTaken,

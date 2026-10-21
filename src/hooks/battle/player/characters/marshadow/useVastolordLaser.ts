@@ -75,6 +75,8 @@ type Props = {
   registerHitRef: RefObject<(damage: number) => void>;
   freezeActionsUntilRef: RefObject<number>;
   isPausedRef: RefObject<boolean>;
+  /** Menu da batalha aberto: pausa o tick do feixe para ele não completar durante a pausa. */
+  isMenuOpenRef: RefObject<boolean>;
   battleEndedRef: RefObject<boolean>;
   disabledRef: RefObject<boolean>;
   /** specialIntro: abre o background da habilidade (vastolordForm/habilities/laser/...). */
@@ -137,6 +139,7 @@ export function useVastolordLaser({
   registerHitRef,
   freezeActionsUntilRef,
   isPausedRef,
+  isMenuOpenRef,
   battleEndedRef,
   disabledRef,
   startSpecialIntro,
@@ -218,6 +221,10 @@ export function useVastolordLaser({
 
   const tickRef = useLatestRef(
     useCallback(() => {
+      // Pausa o tick do feixe enquanto o menu estiver aberto: evita que o
+      // laser complete e desapareça durante a pausa.
+      if (isMenuOpenRef.current) return;
+
       if (shouldCancelRef.current()) {
         finishRef.current();
         return;
@@ -368,6 +375,7 @@ export function useVastolordLaser({
       beamRef,
       finishRef,
       giveSummonRewards,
+      isMenuOpenRef,
       npcArmorRef,
       npcRef,
       playerMaxHp,

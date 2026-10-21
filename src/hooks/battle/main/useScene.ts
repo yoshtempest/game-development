@@ -14,6 +14,7 @@ import { useBattleOutro } from "@/hooks/battle/modals/useOutro";
 import { useBattleStageSetup } from "@/hooks/battle/useBattleStageSetup";
 import { useBattleCombat } from "@/hooks/battle/main/useBattleCombat";
 import { useBattlePresentation } from "@/hooks/battle/utilities/useBattlePresentation";
+import { useMenuPause } from "@/hooks/battle/utilities/useMenuPause";
 import { VASTOLORD_TRANSFORM_MS } from "@/hooks/battle/player/characters/marshadow/useVastolordForm";
 import { useBattleRecording } from "@/hooks/battle/recording/useBattleRecording";
 import { useRewind } from "@/hooks/battle/rewind/useRewind";
@@ -89,9 +90,6 @@ export function useBattleScene({
     setBattleMana,
     playerLevel,
     showHighlightEnabled,
-    isNavOpen,
-    navScreen,
-    isBattleNavOpen,
     handleDefeat,
     addBattleTime,
     playSound,
@@ -160,12 +158,13 @@ export function useBattleScene({
   const battleMana = useBattleMana();
   const battleManaRef = useLatestRef(battleMana);
 
-  const isConfigOpen = isNavOpen && navScreen === "config";
   // Pausa dirigida pelo jogador: é o sinal que congela a Expansão de Domínio,
   // o intro de habilidade e os efeitos sonoros (o `isPaused` amplo também
   // cobre vitória/derrota/cutscenes, onde nada disso pode ser congelado).
-  const isMenuOpen = isNavOpen || isBattleNavOpen;
-  const isMenuOpenRef = useLatestRef(isMenuOpen);
+  //
+  // A pausa NÃO aborta a habilidade em curso: enquanto o menu está aberto o
+  // golpe continua (a entidade gerada não pode sumir no meio do caminho).
+  const { isMenuOpen, isMenuOpenRef } = useMenuPause();
   const { pauseAllPlaying, resumeAllPaused } = useSoundEffects();
 
   // Menu aberto congela os SFX em curso — pausa, não para: no fechamento cada
@@ -288,8 +287,7 @@ export function useBattleScene({
     showOutro != null ||
     showHighlight ||
     rewindFrames != null ||
-    isConfigOpen ||
-    isBattleNavOpen ||
+    isMenuOpen ||
     cameraFocus.isFrozen ||
     transformationFrame != null;
   isPausedRef.current = isPaused;
