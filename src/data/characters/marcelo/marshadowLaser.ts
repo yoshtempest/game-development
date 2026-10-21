@@ -6,10 +6,14 @@
  * importar nada de `src/hooks/`.
  */
 
-import { THREE_THOUSAND_MS } from "@/data/ms";
+import { THREE_THOUSAND_MS, FIVE_HUNDRED_MS } from "@/data/ms";
 
 /** Duração total do feixe (3s) — o marcelo fica travado no sprite laser.svg. */
 export const VASTOLORD_LASER_DURATION_MS = THREE_THOUSAND_MS;
+/** Duração da animação de entrada do feixe (cresce do centro). */
+export const VASTOLORD_LASER_STARTUP_MS = FIVE_HUNDRED_MS;
+/** Duração da animação de saída do feixe (encolhe + fade). */
+export const VASTOLORD_LASER_FADE_MS = FIVE_HUNDRED_MS;
 /**
  * Intervalo de dano/empurrão: 1% do dano base por tick.
  *

@@ -5,6 +5,7 @@ import {
   type VastolordLaserBeam,
 } from "@/gameRules/battle/characters/marcelo/vastolordLaser";
 import type { BattleEntityPositioning } from "@/components/Game/Battle/Entities/types";
+import styles from "./styles.module.css";
 
 type Props = BattleEntityPositioning & {
   beam: VastolordLaserBeam | null;
@@ -18,6 +19,11 @@ type Props = BattleEntityPositioning & {
  * ponta do mapa na direção que ele mira, centralizada na imagem do jogador:
  * o centro vertical do feixe coincide com o centro vertical do sprite
  * renderizado do marcelo na Forma Vastolord.
+ *
+ * Animações:
+ * - starting: cresce do centro (scaleX 0 -> 1) em 300ms
+ * - active: pulso sutil de glow contínuo
+ * - ending: encolhe para o centro + fade out em 300ms
  */
 export function VastolordLaser({
   beam,
@@ -32,21 +38,28 @@ export function VastolordLaser({
   const left = beam.fromX * battleScaleX;
   const top = vastolordLaserTop(beam.y, PLAYER_SIZE) * battleScaleY;
 
+  const phaseClass = beam.phase === "starting"
+    ? styles.starting
+    : beam.phase === "ending"
+    ? styles.ending
+    : styles.active;
+
   return (
-    <img
-      src={playerProjectilePath("vastolordLaser.svg")}
-      alt=""
-      draggable={false}
+    <div
+      className={`${styles.container} ${phaseClass}`}
       style={{
-        position: "absolute",
         left,
         top,
         width,
         height,
-        objectFit: "fill",
-        zIndex: 4,
-        pointerEvents: "none",
       }}
-    />
+    >
+      <img
+        src={playerProjectilePath("vastolordLaser.svg")}
+        alt=""
+        draggable={false}
+        className={styles.beam}
+      />
+    </div>
   );
 }

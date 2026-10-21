@@ -28,9 +28,11 @@ import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
 import {
   VASTOLORD_LASER_DAMAGE_RATIO,
   VASTOLORD_LASER_DURATION_MS,
+  VASTOLORD_LASER_FADE_MS,
   VASTOLORD_LASER_PUSH_PX,
   VASTOLORD_LASER_BEAM_HEIGHT,
   VASTOLORD_LASER_START_STACKS,
+  VASTOLORD_LASER_STARTUP_MS,
   VASTOLORD_LASER_TICK_MS,
 } from "@/data/characters/marcelo/marshadowLaser";
 import {
@@ -204,12 +206,20 @@ export function useVastolordLaser({
     rawAccRef.current = 0;
     shownAccRef.current.clear();
     shotStartRef.current = 0;
-    setBeam(null);
-    setPlayer((p) =>
-      p.mode !== "battle" || !ALL_PREDICATES.isLaser(p.state)
-        ? p
-        : { ...p, state: "idle" },
-    );
+
+    // Animação de saída: transiciona para 'ending' e depois limpa.
+    setBeam((prev) => (prev ? { ...prev, phase: "ending" } : null));
+    const fadeTimer = setTimeout(() => {
+      setBeam(null);
+      setPlayer((p) =>
+        p.mode !== "battle" || !ALL_PREDICATES.isLaser(p.state)
+          ? p
+          : { ...p, state: "idle" },
+      );
+    }, VASTOLORD_LASER_FADE_MS);
+
+    // Cleanup do timer de fade no unmount.
+    return () => clearTimeout(fadeTimer);
   }, [clearTimer, setPlayer, stopSound]);
 
   const finishRef = useLatestRef(finish);
@@ -413,16 +423,25 @@ export function useVastolordLaser({
       fromX: isFacingLeft ? 0 : p.x,
       toX: isFacingLeft ? p.x : ProjectileConstants.MAP_WIDTH,
       y: p.y,
+      phase: "starting",
     });
     setPlayer((pp) => (pp.mode !== "battle" ? pp : { ...pp, state: "laser" }));
     // O som do feixe fica em loop enquanto o laser estiver ativo.
     playSound("laser", true);
+
+    // Transição de 'starting' para 'active' após a animação de entrada.
+    const startupTimer = setTimeout(() => {
+      setBeam((prev) => (prev ? { ...prev, phase: "active" } : null));
+    }, VASTOLORD_LASER_STARTUP_MS);
 
     clearTimer();
     tickTimerRef.current = setInterval(
       tickRef.current,
       VASTOLORD_LASER_TICK_MS,
     );
+
+    // Limpa o timer de startup no unmount/fim.
+    return () => clearTimeout(startupTimer);
   }, [
     clearTimer,
     freezeActionsUntilRef,

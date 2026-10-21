@@ -39,4 +39,6 @@ export type VastolordLaserBeam = {
   toX: number;
   /** y do jogador no instante do disparo (pés) — centro do feixe = centro do sprite acima dele. */
   y: number;
+  /** Fase visual para animações: 'starting' cresce, 'active' mantém, 'ending' encolhe/fade. */
+  phase: "starting" | "active" | "ending";
 };
