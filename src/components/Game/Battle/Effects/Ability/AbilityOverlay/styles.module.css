@@ -25,6 +25,7 @@
    PERSONAGEM
 ========================= */
 
+
 .characterContainer {
   position: absolute;
   inset: 0;
@@ -32,42 +33,60 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
 
-  overflow: hidden;
+.characterWrapper {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.characterWrapperEnter {
+  animation: characterEnter 1000ms
+    cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.characterWrapperSweep {
+  animation: characterSweep 1000ms linear forwards;
 }
 
 .character {
+  display: block;
   position: relative;
 
   width: var(--size-512);
-  max-height: auto;
+  height: auto;
+  max-height: 80vh;
 
   object-fit: contain;
-
   z-index: 20;
-
-  animation: characterEnter 1000ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-/* Varredura da intro da Expansão de Domínio: a imagem entra da esquerda em
-   velocidade normal crescendo, chega ao centro, desacelera muito (onde cresce
-   mais) e volta à velocidade normal encolhendo um pouco até sair pela direita.
-   Com `linear`, a distância/tempo de cada trecho dos keyframes É a velocidade:
-   0→35% e 65→100% percorrem os mesmos 60vw no mesmo tempo (velocidade normal)
-   e 35→65% cobre só 6vw (bem mais lenta). Dura 1000ms, igual
-   SPECIAL_INTRO_DURATION — a ação do domínio só dispara no fim. */
-.characterSweep {
-  position: relative;
+.abilityName {
+  position: absolute;
 
-  width: var(--size-512);
-  max-height: auto;
+  left: 50%;
+  bottom: var(--size-16);
+  transform: translateX(-50%);
 
-  object-fit: contain;
+  white-space: nowrap;
+  text-align: center;
 
-  z-index: 20;
+  font-family: "Press Start 2P", monospace;
+  font-size: var(--size-32);
+  font-weight: bold;
+  color: var(--white);
 
-  animation: characterSweep 1000ms linear forwards;
+  text-shadow:
+    0 0 var(--size-4) var(--black),
+    0 0 var(--size-8) var(--red-vivid),
+    0 0 var(--size-12) var(--red-vivid);
+
+  z-index: 25;
 }
+
 
 /* =========================
    FAIXA SUPERIOR
@@ -189,6 +208,8 @@
    ANIMAÇÕES
 ========================= */
 
+
+
 @keyframes overlayAppear {
   0% {
     opacity: 0;
@@ -284,5 +305,16 @@
 
   100% {
     opacity: 0;
+  }
+}
+
+@keyframes abilityNameAppear {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(var(--size-8));
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 }

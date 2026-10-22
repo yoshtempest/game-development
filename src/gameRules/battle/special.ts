@@ -7,7 +7,7 @@
  * O valor é fixo para todo mundo — o antigo getMaxSpecial variava por classe
  * (fracote 7, default 9) e personagem (artur 1.5x).
  */
-export const DOMAIN_EXPANSION_MAX_CHARGES = 40;
+export const DOMAIN_EXPANSION_MAX_CHARGES = 0;
 
 /**
  * Carga que o uso de uma habilidade ativa rende à barra (ver

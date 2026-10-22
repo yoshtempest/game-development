@@ -576,6 +576,7 @@ export function BattleScene(props: Props) {
           active={specialIntroActive}
           character={specialIntroCharacter}
           paused={battlePaused}
+          abilityName="Expansão de Domínio"
         />
       ) : (
         <SpecialIntro

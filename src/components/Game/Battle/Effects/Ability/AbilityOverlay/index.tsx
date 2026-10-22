@@ -12,6 +12,8 @@ type Props = {
   motion?: "enter" | "sweep";
   /** Pausa da batalha (menu aberto): congela a animação CSS no lugar. */
   paused?: boolean;
+  /** Nome da habilidade exibido acima da imagem (opcional). */
+  abilityName?: string;
 };
 
 /**
@@ -26,6 +28,7 @@ export function AbilityOverlay({
   src,
   motion = "enter",
   paused = false,
+  abilityName,
 }: Props) {
   const [imageFailed, setImageFailed] = useState(false);
 
@@ -36,6 +39,7 @@ export function AbilityOverlay({
   if (!active || !src) return null;
 
   return (
+
     <div
       className={`${styles.overlay} ${paused ? styles.paused : ""}`}
       role="presentation"
@@ -49,15 +53,25 @@ export function AbilityOverlay({
       </div>
       {!imageFailed && (
         <div className={styles.characterContainer}>
-          <img
-            src={src}
-            alt=""
-            className={
-              motion === "sweep" ? styles.characterSweep : styles.character
-            }
-            onError={() => setImageFailed(true)}
-          />
-          {/* <span>{ability.name}</span> */}
+          <div  
+            className={`${styles.characterWrapper} ${
+              motion === "sweep"
+                ? styles.characterWrapperSweep
+                : styles.characterWrapperEnter
+            }`}>
+            {abilityName && (
+              <div className={styles.abilityName}>
+                {abilityName}
+              </div>
+            )}
+
+            <img
+              src={src}
+              alt=""
+              className={styles.character}
+              onError={() => setImageFailed(true)}
+            />
+          </div>
         </div>
       )}
       <div className={styles.bottomMotion}>
