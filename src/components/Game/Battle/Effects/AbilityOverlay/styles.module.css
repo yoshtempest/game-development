@@ -77,23 +77,24 @@
 .bottomMotion {
   position: absolute;
   left: -20%;
-  width: 140%;
+  width: 1000%;
+  background-color: red;
+
 
   z-index: 3;
 
   pointer-events: none;
-
-  background: repeating-linear-gradient(
+    background: repeating-linear-gradient(
     -12deg,
-    transparent 0,
     transparent var(--size-12),
-    var(--surface-void-95) var(--size-13),
-    var(--c-8c00ff) var(--size-19),
+    transparent var(--size-12),
+    red var(--size-13),
+    red var(--size-19),
     transparent var(--size-20),
     transparent var(--size-35)
   );
-
   filter: blur(var(--px-0-4));
+  animation: motion 1000ms ease-in-out infinite;
 }
 
 .topMotion {
@@ -103,10 +104,6 @@
   transform: skewX(-12deg);
 
   clip-path: polygon(0 0, 100% 0, 100% 65%, 75% 75%, 50% 60%, 25% 80%, 0 60%);
-
-  background-color: var(--red-600);
-
-  animation: topMotion 1000ms ease-out forwards;
 }
 
 .bottomMotion {
@@ -124,10 +121,6 @@
     100% 100%,
     0 100%
   );
-
-  background-color: var(--red-600);
-
-  animation: bottomMotion 1000ms ease-out forwards;
 }
 
 /* =========================
@@ -147,7 +140,7 @@
 
   transform: skewX(-20deg);
 
-  animation: streakMove 500ms ease-out forwards;
+  animation: streakMove 500ms ease-out infinite;
 }
 
 .streakOne {
@@ -252,26 +245,10 @@
   }
 }
 
-@keyframes topMotion {
+@keyframes motion {
   0% {
     transform: translateX(-100%) skewX(-12deg);
-    opacity: 0;
-  }
-
-  20% {
     opacity: 1;
-  }
-
-  100% {
-    transform: translateX(0) skewX(-12deg);
-    opacity: 1;
-  }
-}
-
-@keyframes bottomMotion {
-  0% {
-    transform: translateX(100%) skewX(-12deg);
-    opacity: 0;
   }
 
   20% {
