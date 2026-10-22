@@ -4,7 +4,7 @@ const BASE_COMBOS: ComboMove[] = [
   {
     id: "basicAttack",
     name: "Ataque Básico",
-    sequence: ["Z"],
+    sequence: ["L"],
     states: ["attack"],
     description: "Ataque rápido com dano moderado.",
     situation: "Use para construir a barra e manter pressão.",
@@ -12,7 +12,7 @@ const BASE_COMBOS: ComboMove[] = [
   {
     id: "fallingAttack",
     name: "Golpe Aéreo",
-    sequence: ["↑", "Z"],
+    sequence: ["↑", "L"],
     states: ["falling", "fallingAttack"],
     description: "Golpe ao cair. causa 1.2× de dano.",
     situation: "Use ao cair de um pulo para acertar o inimigo de surpresa.",
@@ -20,7 +20,7 @@ const BASE_COMBOS: ComboMove[] = [
   {
     id: "blockAttack",
     name: "Contra-Ataque",
-    sequence: ["X", "Z"],
+    sequence: ["X", "L"],
     states: ["blocked", "blockAttack"],
     description:
       "Ataque rápido saindo da defesa. causa 0.7× de dano e empurra o inimigo.",

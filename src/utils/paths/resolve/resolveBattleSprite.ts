@@ -70,6 +70,12 @@ export function resolveBattleSprite(
       // caem no ataque básico via o fallback no final da função.
       return playerPathEmanuelHabilities(`/teleport/teleport.svg`);
     }
+    // blockAttack, fallingAttack e lowKick usam o mesmo sprite (lowKick.svg).
+    // Os arquivos blockAttack.svg e fallingAttack.svg foram removidos por serem
+    // duplicatas exatas — economiza ~3.8 MB no bundle.
+    if (state === "blockAttack" || state === "fallingAttack") {
+      return playerPath(`/emanuel/inFight/attacks/lowKick.svg`);
+    }
   }
   // Lucaua não tem `blocked.svg`: o bloqueio dele é o overlay `shield.svg`
   // (renderizado pelo `PlayerBattle`). O corpo fica parado no idle enquanto o

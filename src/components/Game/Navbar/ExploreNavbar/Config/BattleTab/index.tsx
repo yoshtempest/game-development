@@ -3,7 +3,7 @@ import { usePlayer } from "@/contexts/PlayerContext";
 import { Link } from "react-router";
 import { useBattleInfo } from "@/contexts/BattleInfoContext";
 import { CardRedeem } from "./CardRedeem";
-import { ElementChart } from "./ElementChart";
+import { ElementChart } from "../../../shared/ElementChart";
 
 type Props = {
   showComboAction: boolean;

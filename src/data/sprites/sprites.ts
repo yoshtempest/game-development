@@ -133,6 +133,8 @@ export const STATE_FOLDER: Partial<Record<PlayerState, string | null>> = {
 
   // Combo do emanuel: golpes resolvem para a pasta `attacks/` via
   // ATTACK_FOLDER_ALT (mesmo mecanismo do preAttack/attack padrão).
+  // blockAttack, fallingAttack e lowKick usam o mesmo arquivo (lowKick.svg) —
+  // os duplicados blockAttack.svg e fallingAttack.svg foram removidos.
   punch: "attack",
   hook: "attack",
   lowKick: "attack",

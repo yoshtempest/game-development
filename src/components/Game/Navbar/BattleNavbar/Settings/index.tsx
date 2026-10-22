@@ -5,7 +5,7 @@ import { ComboList } from "@/components/Game/Navbar/ExploreNavbar/Status/ComboLi
 import { getCharacterElementTypes } from "@/data/types/characterElementTypes";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
 import { BattleCard } from "./BattleCard";
-import { ElementTable } from "./ElementTable";
+import { ElementChart } from "@/components/Game/Navbar/shared/ElementChart";
 
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -261,12 +261,7 @@ export function Settings() {
             </div>
             <ComboList characterId={player.character} />
 
-            <ElementTable
-              playerElementTypes={playerElementTypes}
-              npcElementTypes={
-                battleInfo ? getNpcElementTypes(battleInfo.npcType) : []
-              }
-            />
+            <ElementChart />
           </>
         )}
       </div>

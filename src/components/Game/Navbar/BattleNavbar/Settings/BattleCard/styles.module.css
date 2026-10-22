@@ -9,6 +9,11 @@
   gap: var(--fs-8);
 }
 
+.sprite {
+  display: flex;
+  max-height: 20vh;
+}
+
 .rank {
   font-size: var(--small);
   color: var(--accent-color);
