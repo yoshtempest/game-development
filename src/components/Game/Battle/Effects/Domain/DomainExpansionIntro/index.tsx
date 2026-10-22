@@ -21,7 +21,7 @@ export function DomainExpansionIntro({
   active,
   character,
   paused = false,
-  abilityName = "Expansão de Domínio",
+  abilityName,
 }: Props) {
   if (!active || !character) return null;
 

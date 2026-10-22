@@ -66,10 +66,11 @@
 
 .abilityName {
   position: absolute;
-
   left: 50%;
   bottom: var(--size-16);
   transform: translateX(-50%);
+
+  padding: var(--size-12) var(--size-16);
 
   white-space: nowrap;
   text-align: center;
@@ -305,16 +306,5 @@
 
   100% {
     opacity: 0;
-  }
-}
-
-@keyframes abilityNameAppear {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(var(--size-8));
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
   }
 }

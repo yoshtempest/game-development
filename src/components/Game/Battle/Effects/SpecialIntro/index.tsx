@@ -14,6 +14,7 @@ type Props = {
   form?: MarceloBattleForm | null;
   /** Pausa da batalha (menu aberto): congela a animação CSS no lugar. */
   paused?: boolean;
+  /** Nome da habilidade exibido acima da imagem (opcional). */
 };
 
 export function SpecialIntro({
@@ -29,5 +30,11 @@ export function SpecialIntro({
     ? playerAbilityBackgroundPath(character, ability, form ?? undefined)
     : playerPath(`/${character}/specialBackground.svg`);
 
-  return <AbilityOverlay active={active} src={backgroundSrc} paused={paused} />;
+  return (
+    <AbilityOverlay
+      active={active}
+      src={backgroundSrc}
+      paused={paused} 
+      />
+  );
 }

@@ -60,7 +60,9 @@ export function AbilityOverlay({
                 : styles.characterWrapperEnter
             }`}>
             {abilityName && (
-              <div className={styles.abilityName}>
+              <div
+                className={styles.abilityName}
+              >
                 {abilityName}
               </div>
             )}
