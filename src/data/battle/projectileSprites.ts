@@ -19,4 +19,7 @@ export const spriteMap: Record<string, string> = {
   redSphere: playerProjectilePath("/redSphere.svg"),
   purpleSphere: playerProjectilePath("/purpleSphere.svg"),
   energyAttack: playerProjectilePath("/energyAttack.svg"),
+  // Genki Dama do Emanuel: projétil e effect ficam em player/projectiles/
+  genkiDama: playerProjectilePath("/genkiDama.svg"),
+  genkiDamaChargeEffect: playerProjectilePath("/chargeEffect.svg"),
 };

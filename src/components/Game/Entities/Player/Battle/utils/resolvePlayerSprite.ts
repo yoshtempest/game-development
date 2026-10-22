@@ -1,4 +1,4 @@
-import { resolveBattleSprite, playerPath } from "@/utils/paths";
+import { resolveBattleSprite, playerPath, playerPathEmanuelHabilities } from "@/utils/paths";
 import { resolveSpriteState } from "@/gameRules/battle/playerStates";
 
 import { TRANSFORMATION_FRAMES } from "@/components/Game/Entities/Player/Battle/constants";
@@ -56,7 +56,7 @@ export function resolvePlayerSprite({
   }
 
   if (teleportSprite && character === "emanuel") {
-    return playerPath("/emanuel/inFight/attacks/teleport.svg");
+    return playerPathEmanuelHabilities(`/teleport/teleport.svg`);
   }
 
   return resolveBattleSprite(

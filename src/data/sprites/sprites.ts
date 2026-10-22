@@ -126,8 +126,8 @@ export const STATE_FOLDER: Partial<Record<PlayerState, string | null>> = {
   blocked: null,
   stun: null,
   charging: null,
-  // Carga de Ki do emanuel: resolves para a pasta `attacks/` (same file exists
-  // só lá: `inFight/attacks/chargingKi.svg`).
+  // Carga de Ki do emanuel: resolve para `inFight/habilities/chargingKi/`
+  // (sprite base `chargingKi.svg` e effect `chargingKiEffect.svg`).
   chargingKi: "attacks",
   fallen: null,
 
@@ -138,6 +138,7 @@ export const STATE_FOLDER: Partial<Record<PlayerState, string | null>> = {
   lowKick: "attack",
   airGrab: "attack",
   airKick: "attack",
-  // Genki Dama do emanuel: estados do hold ficam na pasta `attacks/`.
+  // Genki Dama do emanuel: a fase de subida usa `falling.svg` de movement/jump;
+  // preparando e arremesso usam sprites dedicados em `habilities/genkiDama/`.
   genkiDamaRising: null, // sprite resolvido como falling (movement) em paths.ts
 };

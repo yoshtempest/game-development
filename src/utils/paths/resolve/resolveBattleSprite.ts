@@ -11,6 +11,7 @@ import { playerPath } from "@/utils/paths/player/playerPath";
 import { playerPathMarshadowHabilities } from "@/utils/paths/characters/marcelo/playerPathMarshadowHabilities";
 import { playerPathArturHabilities } from "@/utils/paths/characters/artur/playerPathArturHabilities";
 import { playerPathRiquelmeHabilities } from "@/utils/paths/characters/riquelme/playerPathRiquelmeHabilities";
+import { playerPathEmanuelHabilities } from "@/utils/paths/characters/emanuel/playerPathEmanuelHabilities";
 import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
 import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
 
@@ -49,6 +50,26 @@ export function resolveBattleSprite(
   // existe `genkiDamaRising.svg`) — o custo fica na pasta de movimento/jump.
   if (state === "genkiDamaRising" && character === "emanuel") {
     return playerPath(`/emanuel/inFight/movement/jump/falling.svg`);
+  }
+  // Habilidades do emanuel: os sprites ficam em `inFight/habilities/<ability>/`.
+  if (character === "emanuel") {
+    // Carga de Ki: sprite base e effect.
+    if (state === "chargingKi") {
+      return playerPathEmanuelHabilities(`/chargingKi/chargingKi.svg`);
+    }
+    // Genki Dama: preparando e arremesso.
+    if (state === "preparingGenkiDama") {
+      return playerPathEmanuelHabilities(`/genkiDama/preparingGenkiDama.svg`);
+    }
+    if (state === "throwGenkiDama") {
+      return playerPathEmanuelHabilities(`/genkiDama/throwGenkiDama.svg`);
+    }
+    // Teleporte (clone): sprite do teleporte.
+    if (state === "ability" || state === "preAbility" || state === "preAbility2") {
+      // O teleporte usa o sprite dedicado; os outros estados de habilidade
+      // caem no ataque básico via o fallback no final da função.
+      return playerPathEmanuelHabilities(`/teleport/teleport.svg`);
+    }
   }
   // Lucaua não tem `blocked.svg`: o bloqueio dele é o overlay `shield.svg`
   // (renderizado pelo `PlayerBattle`). O corpo fica parado no idle enquanto o
