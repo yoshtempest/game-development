@@ -2,7 +2,7 @@ import { LUCAS_WEAPON_LABELS } from "@/data/characters/lucas/lucasWeapons";
 import { playerPath } from "@/utils/paths";
 
 import styles from "./styles.module.css";
-import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   weapon?: LucasWeapon;

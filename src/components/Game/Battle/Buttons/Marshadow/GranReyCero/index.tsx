@@ -3,7 +3,7 @@ import { playerPathMarshadowHabilities } from "@/utils/paths";
 import { GRAN_REY_CERO_AOE_RADIUS } from "@/data/characters/marcelo/granReyCero";
 
 import styles from "./styles.module.css";
-import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 /**
  * Botão do "Gran Rey Cero": dispara a lâmina que corre 500px na direção de

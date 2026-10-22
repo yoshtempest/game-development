@@ -1,7 +1,7 @@
 import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa/larissa";
 
 import styles from "./styles.module.css";
-import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   ready: boolean;

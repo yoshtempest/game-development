@@ -3,7 +3,7 @@ import { type ReactNode, type CSSProperties } from "react";
 import styles from "./styles.module.css";
 
 /** Tipos de comportamento do botão de habilidade. */
-export type AbilityButtonType =
+type AbilityButtonType =
   | "standard"          // Habilidade padrão com cooldown (Atomic, GranReyCero, etc.)
   | "hold"              // Habilidade de hold (KiCharge) - onPress/onRelease
   | "count"             // Habilidade com contador (Portals) - count/max
@@ -11,29 +11,7 @@ export type AbilityButtonType =
   | "combo"             // Ação de combo - sem cooldown, apenas visual
   | "custom";           // Totalmente customizado (usa classes do próprio botão)
 
-/** Classes CSS customizadas que cada botão pode sobrescrever. */
-export type CustomAbilityClasses = {
-  button?: string;
-  label?: string;
-  abilityLabel?: string;
-  cooldown?: string;
-  cost?: string;
-  value?: string;
-  count?: string;
-  full?: string;
-  ready?: string;
-  active?: string;
-  depleted?: string;
-  charges?: string;
-  weaponName?: string;
-  energyBar?: string;
-  heal?: string;
-  skillName?: string;
-  wrap?: string;
-  container?: string;
-};
-
-export type AbilityButtonProps = {
+type AbilityButtonProps = {
   /** Tipo da habilidade - define o comportamento e layout. */
   type: AbilityButtonType;
 

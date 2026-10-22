@@ -668,4 +668,26 @@ declare global {
     y: number;
     phase: "bomb" | "explosion";
   };
+  
+  /** Classes CSS customizadas que cada botão pode sobrescrever. */
+  type CustomAbilityClasses = {
+    button?: string;
+    label?: string;
+    abilityLabel?: string;
+    cooldown?: string;
+    cost?: string;
+    value?: string;
+    count?: string;
+    full?: string;
+    ready?: string;
+    active?: string;
+    depleted?: string;
+    charges?: string;
+    weaponName?: string;
+    energyBar?: string;
+    heal?: string;
+    skillName?: string;
+    wrap?: string;
+    container?: string;
+  };
 }

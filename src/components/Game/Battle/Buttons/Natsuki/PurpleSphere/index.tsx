@@ -1,7 +1,7 @@
 import { spriteMap } from "@/data/battle/projectileSprites";
 
 import styles from "./styles.module.css";
-import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   disabled?: boolean;
