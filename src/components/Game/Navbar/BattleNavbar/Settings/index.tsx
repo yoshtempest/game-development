@@ -6,6 +6,7 @@ import { getCharacterElementTypes } from "@/data/types/characterElementTypes";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
 import { BattleCard } from "./BattleCard";
 import { ElementChart } from "@/components/Game/Navbar/shared/ElementChart";
+import { battleConfigDialogue } from "@/data/dialogues/battleConfig/configs";
 
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -32,6 +33,10 @@ import {
   NO_ARMOR,
   scaleArmor,
 } from "@/gameRules/battle/damage/armor";
+
+import Talking from "@/components/Game/Interactions/Talking";
+import { useCutscene } from "@/hooks/interaction/useCutscene";
+
 
 export function Settings() {
   const battleInfoCtx = useBattleInfo();
@@ -204,6 +209,12 @@ export function Settings() {
       })
     : null;
 
+    const cutscene = useCutscene({
+      dialogue: battleConfigDialogue,
+    });
+
+    const dialogue = cutscene.dialogue;
+
   return (
     <div className="containerOfNavbar">
       <div className={`${styles.battleContainer} `}>
@@ -259,6 +270,13 @@ export function Settings() {
                 {Math.round(displayedWin)}%
               </span>
             </div>
+            {dialogue && player.character === "riquelme" && (
+              <Talking 
+                name={dialogue.name}
+                message={dialogue.message}
+                src={dialogue.src}
+              />
+            )}
             <ComboList characterId={player.character} />
 
             <ElementChart />

@@ -62,6 +62,7 @@ export function createSounds() {
     shot: lucauaSoundPath("shot.mp3"),
     riquelmeRioiki: riquelmeSoundPath("rioiki.mp3"),
     kokusen: riquelmeSoundPath("kokusen.mp3"),
+    nahIdWin: riquelmeSoundPath("nah-id-win.mp3"),
     impact: sfx("impact.mp3"),
     slimitaJump: npcSoundPath("slimita/jump.mp3"),
     equip: new Audio(transitionPath("equip.mp3")),

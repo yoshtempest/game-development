@@ -125,6 +125,8 @@ declare global {
     | "happy"
     | "hungry"
     | "ops"
+    | "victory"
+    | "defeat"
     | "rascal"
     | "special"
     | "talking"

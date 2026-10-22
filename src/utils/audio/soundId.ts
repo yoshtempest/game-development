@@ -53,6 +53,7 @@ export type SoundId =
   | "srGuaxinimDefeat"
   | "prePalm"
   | "kokusen"
+  | "nahIdWin"
   | "impact"
   | "slimitaJump"
   | "equip"
