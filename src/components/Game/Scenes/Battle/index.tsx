@@ -1,5 +1,5 @@
 import { BattleHUD } from "@/components/Game/Battle/HUD";
-import { BattleClear } from "@/components/Game/Battle/Clear";
+import { BattleClear } from "@/components/Game/Battle/Modal/Clear";
 import { PetSkillButton } from "@/components/Game/Battle/Buttons/PetSkill";
 import { WeaponSwitchButton } from "@/components/Game/Battle/Buttons/WeaponSwitch";
 import { CursedEnergyButton } from "@/components/Game/Battle/Buttons/Natsuki/CursedEnergy";
@@ -38,10 +38,10 @@ import { DivergentFistAnimation } from "@/components/Game/Battle/Effects/Natsuki
 import { BlackFlashAnimation } from "@/components/Game/Battle/Effects/Natsuki/BlackFlashAnimation";
 import { VastolordTimer } from "@/components/Game/Battle/Effects/Marshadow/VastolordTimer";
 import { SpecialIntro } from "@/components/Game/Battle/Effects/SpecialIntro";
-import { DomainExpansionIntro } from "@/components/Game/Battle/Effects/DomainExpansionIntro";
-import { DomainExpansionBackground } from "@/components/Game/Battle/Effects/DomainExpansionBackground";
-import { DomainBurstOverlay } from "@/components/Game/Battle/Effects/DomainBurstOverlay";
-import { AlfaAbility } from "@/components/Game/Battle/Effects/AlfaAbility";
+import { DomainExpansionIntro } from "@/components/Game/Battle/Effects/Domain/DomainExpansionIntro";
+import { DomainExpansionBackground } from "@/components/Game/Battle/Effects/Domain/DomainExpansionBackground";
+import { DomainBurstOverlay } from "@/components/Game/Battle/Effects/Domain/DomainBurstOverlay";
+import { AlfaAbility } from "@/components/Game/Battle/Effects/Ability/AlfaAbility";
 import { JumpIndicator } from "@/components/Game/Battle/Jump/indicator";
 import { JumpDangerZone } from "@/components/Game/Battle/Jump/dangerZone";
 import { ComboAction } from "@/components/Game/Battle/Buttons/ComboAction";

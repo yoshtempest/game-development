@@ -1,6 +1,6 @@
 import type { MarceloBattleForm } from "@/utils/paths";
 import { playerAbilityBackgroundPath, playerPath } from "@/utils/paths";
-import { AbilityOverlay } from "@/components/Game/Battle/Effects/AbilityOverlay";
+import { AbilityOverlay } from "@/components/Game/Battle/Effects/Ability/AbilityOverlay";
 
 type Props = {
   active: boolean;
