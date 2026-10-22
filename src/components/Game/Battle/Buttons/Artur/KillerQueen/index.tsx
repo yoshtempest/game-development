@@ -1,11 +1,10 @@
-import { Bomb } from "lucide-react";
-
 import {
   KILLER_QUEEN_COOLDOWN_MS,
   TOTAL_FREEZE_MS,
 } from "@/data/characters/artur/srGuaxinim";
 
 import styles from "./styles.module.css";
+import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   ready: boolean;
@@ -19,30 +18,29 @@ type Props = {
  * projétil destrutível com uma bomba e detona todos em área. Era o special do
  * Artur; virou habilidade própria, com o mesmo cooldown de 20s.
  */
+const killerQueenClasses: CustomAbilityClasses = {
+  button: styles.button,
+  label: styles.label,
+  ready: styles.ready,
+  cooldown: styles.cooldown,
+};
+
 export function KillerQueenButton({
   ready,
   remaining,
   disabled = false,
   onClick,
 }: Props) {
-  const locked = !ready || disabled;
-
   return (
-    <button
-      className={`abilityButton ${styles.button} ${ready ? styles.ready : ""} ${
-        disabled ? "abilityDisabled" : ""
-      }`}
+    <AbilityButton
+      type="standard"
+      customClasses={killerQueenClasses}
+      label="KILLER QUEEN"
+      ready={ready}
+      remaining={remaining}
+      disabled={disabled}
       onClick={onClick}
-      disabled={locked}
       title={`Killer Queen: congela o tempo por ${TOTAL_FREEZE_MS / 1000}s e explode todos os alvos marcados. Cooldown de ${KILLER_QUEEN_COOLDOWN_MS / 1000}s.`}
-    >
-      <span className={`abilityLabel ${styles.label}`}>
-        <Bomb size={13} />
-        KILLER QUEEN
-      </span>
-      {!ready && remaining > 0 && (
-        <span className={styles.cooldown}>{remaining.toFixed(1)}s</span>
-      )}
-    </button>
+    />
   );
 }

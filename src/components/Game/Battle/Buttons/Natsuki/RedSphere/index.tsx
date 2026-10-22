@@ -1,32 +1,36 @@
-import { Flame } from "lucide-react";
-
 import { spriteMap } from "@/data/battle/projectileSprites";
+
 import styles from "./styles.module.css";
+import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   disabled?: boolean;
   onClick: () => void;
 };
 
+/**
+ * Botão da Esfera Vermelha (arremesso).
+ * type="custom" pois tem imagem de fundo.
+ */
+const redSphereClasses: CustomAbilityClasses = {
+  button: styles.button,
+  label: styles.label,
+};
+
 export function RedSphereButton({ disabled = false, onClick }: Props) {
   return (
-    <button
-      type="button"
-      className={`abilityButton ${styles.button} ${
-        disabled ? "abilityDisabled" : ""
-      }`}
+    <AbilityButton
+      type="custom"
+      customClasses={redSphereClasses}
+      label="Vermelha"
+      disabled={disabled}
+      onClick={onClick}
+      title="Invoca e arremessa a esfera vermelha (dano mágico + empurrão)."
       style={{
         backgroundImage: `url("${spriteMap.redSphere}")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
-      disabled={disabled}
-      onClick={onClick}
-      aria-label="Arremessar Esfera Vermelha"
-      title="Invoca e arremessa a esfera vermelha (dano mágico + empurrão)."
-    >
-      <Flame className="abilityLabelIcon" size={14} aria-hidden="true" />
-      <span className={styles.label}>Vermelha</span>
-    </button>
+    />
   );
 }

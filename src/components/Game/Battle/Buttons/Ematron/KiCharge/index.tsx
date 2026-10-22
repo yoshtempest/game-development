@@ -1,9 +1,10 @@
-import { Zap } from "lucide-react";
 import {
   EMANUEL_KI_CHARGE_PER_TICK,
   EMANUEL_KI_CHARGE_TICK_MS,
 } from "@/data/characters/emanuel/emanuel";
+
 import styles from "./styles.module.css";
+import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   energy: number;
@@ -19,6 +20,14 @@ type Props = {
  * agir); soltar volta ao normal. Usa pointer capture para garantir o release
  * mesmo soltando fora do botão.
  */
+const kiChargeClasses: CustomAbilityClasses = {
+  button: styles.button,
+  label: styles.label,
+  full: styles.full,
+  value: styles.value,
+  cost: styles.cost,
+};
+
 export function EmanuelKiChargeButton({
   energy,
   energyMax,
@@ -29,33 +38,17 @@ export function EmanuelKiChargeButton({
   const full = energy >= energyMax;
 
   return (
-    <button
-      className={`abilityButton ${styles.button} ${full ? styles.full : ""} ${
-        disabled ? "abilityDisabled" : ""
-      }`}
+    <AbilityButton
+      type="hold"
+      customClasses={kiChargeClasses}
+      label="CARGA DE KI"
       disabled={disabled}
+      onPress={onPress}
+      onRelease={onRelease}
+      full={full}
+      valueText={Math.round(energy).toString()}
+      costText={`+${EMANUEL_KI_CHARGE_PER_TICK}/100ms`}
       title={`Carga de Ki: segure para recarregar +${EMANUEL_KI_CHARGE_PER_TICK} de Ki a cada ${EMANUEL_KI_CHARGE_TICK_MS}ms (o personagem fica parado sem poder agir)`}
-      style={{ touchAction: "none" }}
-      onPointerDown={(e) => {
-        if (disabled) return;
-        e.preventDefault();
-        e.currentTarget.setPointerCapture(e.pointerId);
-        onPress();
-      }}
-      onPointerUp={(e) => {
-        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-          e.currentTarget.releasePointerCapture(e.pointerId);
-        }
-        onRelease();
-      }}
-      onPointerCancel={() => onRelease()}
-    >
-      <span className={styles.value}>{Math.round(energy)}</span>
-      <span className={`abilityLabel ${styles.label}`}>
-        <Zap size={14} />
-        CARGA DE KI
-      </span>
-      <span className={styles.cost}>+{EMANUEL_KI_CHARGE_PER_TICK}/100ms</span>
-    </button>
+    />
   );
 }

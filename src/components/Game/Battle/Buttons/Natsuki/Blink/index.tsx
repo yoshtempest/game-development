@@ -1,6 +1,7 @@
-import { Zap } from "lucide-react";
 import { BLINK_ENERGY_COST } from "@/gameRules/battle/cursedEnergy";
+
 import styles from "./styles.module.css";
+import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   energy: number;
@@ -8,20 +9,30 @@ type Props = {
   onClick: () => void;
 };
 
+/**
+ * Botão do Blink (teleporte curto do Riquelme).
+ * type="hold" para usar valueText/costText.
+ */
+const blinkClasses: CustomAbilityClasses = {
+  button: styles.button,
+  label: styles.label,
+  value: styles.value,
+  cost: styles.cost,
+};
+
 export function BlinkButton({ energy, disabled = false, onClick }: Props) {
   return (
-    <button
-      className={`abilityButton ${styles.button} ${disabled ? "abilityDisabled" : ""}`}
-      onClick={onClick}
+    <AbilityButton
+      type="hold"
+      customClasses={blinkClasses}
+      label="BLINK"
       disabled={disabled}
+      onPress={onClick}
+      onRelease={() => {}}
+      full={false}
+      valueText={Math.round(energy).toString()}
+      costText={`-{BLINK_ENERGY_COST}`}
       title={`Blink: teleporte curto à frente (custa ${BLINK_ENERGY_COST} de energia amaldiçoada)`}
-    >
-      <span className={styles.value}>{Math.round(energy)}</span>
-      <span className={`abilityLabel ${styles.label}`}>
-        <Zap size={14} />
-        BLINK
-      </span>
-      <span className={styles.cost}>-{BLINK_ENERGY_COST}</span>
-    </button>
+    />
   );
 }

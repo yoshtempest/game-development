@@ -1,5 +1,5 @@
-import { Orbit } from "lucide-react";
 import styles from "./styles.module.css";
+import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   /** Portais já posicionados no mapa. */
@@ -18,6 +18,14 @@ type Props = {
  * joystick e confirma com o ataque. Com o par completo o clique vira o undo do
  * último (devolve a energia) — por isso o rótulo troca.
  */
+const portalsClasses: CustomAbilityClasses = {
+  button: styles.button,
+  label: styles.label,
+  count: styles.count,
+  full: styles.full,
+  cost: styles.cost,
+};
+
 export function LucauaPortalsButton({
   count,
   maxPortals,
@@ -28,27 +36,23 @@ export function LucauaPortalsButton({
   const full = count >= maxPortals;
 
   return (
-    <button
-      type="button"
-      className={`abilityButton ${styles.button} ${full ? styles.full : ""} ${
-        disabled ? "abilityDisabled" : ""
-      }`}
+    <AbilityButton
+      type="count"
+      customClasses={portalsClasses}
+      label="PORTAIS"
+      full={full}
+      fullLabel="DESFAZER"
+      count={count}
+      maxCount={maxPortals}
+      cost={cost}
+      costText={full ? `+${cost}` : `-${cost}`}
       disabled={disabled}
+      onClick={onClick}
       title={
         full
           ? "Portais: clique para desfazer o último e recuperar a energia"
           : `Portais: clique para escolher o tipo, posicione com o joystick e confirme para fincar (custa ${cost} de energia)`
       }
-      onClick={onClick}
-    >
-      <span className={styles.count}>
-        {count}/{maxPortals}
-      </span>
-      <span className={`abilityLabel ${styles.label}`}>
-        <Orbit size={14} />
-        {full ? "DESFAZER" : "PORTAIS"}
-      </span>
-      <span className={styles.cost}>{full ? `+${cost}` : `-${cost}`}</span>
-    </button>
+    />
   );
 }

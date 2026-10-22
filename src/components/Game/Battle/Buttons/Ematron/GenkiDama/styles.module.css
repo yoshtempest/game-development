@@ -23,11 +23,11 @@
 .value {
   font-size: var(--fs-18);
   font-weight: bold;
-  color: var(--indigo-light);
+  color: black;
 }
 
 .label {
-  color: var(--indigo-mist);
+  color: black;
 }
 
 .cost {

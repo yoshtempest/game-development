@@ -1,12 +1,5 @@
-import { Atom } from "lucide-react";
 import styles from "./styles.module.css";
-
-type Props = {
-  ready: boolean;
-  remaining: number;
-  disabled?: boolean;
-  onClick: () => void;
-};
+import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 /**
  * Botão da habilidade "I Am Atomic" do marcelo: dispara a sequência de
@@ -14,29 +7,38 @@ type Props = {
  * dano em todos os inimigos num raio de 300px (2x no alvo, 1x nos demais).
  * Cooldown de 20s (mostrado no rótulo quando recarregando).
  */
+const atomicClasses: CustomAbilityClasses = {
+  button: styles.button,
+  label: styles.label,
+  ready: styles.ready,
+  cooldown: styles.cooldown,
+};
+
 export function AtomicButton({
   ready,
   remaining,
   disabled = false,
   onClick,
-}: Props) {
-  const locked = !ready || disabled;
-
+}: {
+  ready: boolean;
+  remaining: number;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
   return (
-    <button
-      className={`abilityButton ${styles.button} ${ready ? styles.ready : ""} ${
-        disabled ? "abilityDisabled" : ""
-      }`}
+    <AbilityButton
+      type="standard"
+      customClasses={atomicClasses}
+      label="I AM ATOMIC"
+      ready={ready}
+      remaining={remaining}
+      disabled={disabled}
       onClick={onClick}
-      disabled={locked}
       title="I Am Atomic: explosão centrada no inimigo com maior vida máxima, causando dano especial em todos os inimigos num raio de 300px (2x no alvo). Cooldown de 20s."
-    >
-      <span className={`abilityLabel ${styles.label}`}>
-        <Atom size={13} />I AM ATOMIC
-      </span>
-      {!ready && remaining > 0 && (
-        <span className={styles.cooldown}>{remaining.toFixed(1)}s</span>
-      )}
-    </button>
+      style={{
+        backgroundImage:
+          'url("public/assets/player/marcelo/inFight/default/habilities/atomic/background.svg")',
+      }}
+    />
   );
 }

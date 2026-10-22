@@ -1,12 +1,25 @@
-import { HandFist } from "lucide-react";
 import { DIVERGENT_FIST_COST } from "@/gameRules/battle/cursedEnergy";
+
 import styles from "./styles.module.css";
+import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   energy: number;
   active?: boolean;
   disabled?: boolean;
   onClick: () => void;
+};
+
+/**
+ * Botão do Punho Divergente (Riquelme).
+ * type="custom" para suportar estado active.
+ */
+const divergentFistClasses: CustomAbilityClasses = {
+  button: styles.button,
+  label: styles.label,
+  value: styles.value,
+  cost: styles.cost,
+  active: styles.active,
 };
 
 export function DivergentFistButton({
@@ -16,20 +29,16 @@ export function DivergentFistButton({
   onClick,
 }: Props) {
   return (
-    <button
-      className={`abilityButton ${styles.button} ${active ? styles.active : ""} ${
-        disabled ? "abilityDisabled" : ""
-      }`}
-      onClick={onClick}
+    <AbilityButton
+      type="custom"
+      customClasses={divergentFistClasses}
+      label="punho divergente"
       disabled={disabled}
+      onClick={onClick}
+      extraProps={{ active }}
+      valueText={Math.round(energy).toString()}
+      costText={`-{DIVERGENT_FIST_COST}`}
       title={`Punho Divergente: o próximo golpe é um soco com 100% de chance de causar 2 instâncias de dano (custa ${DIVERGENT_FIST_COST} de energia amaldiçoada)`}
-    >
-      <span className={styles.value}>{Math.round(energy)}</span>
-      <span className={`abilityLabel ${styles.label}`}>
-        <HandFist size={14} />
-        PUNHO
-      </span>
-      <span className={styles.cost}>-{DIVERGENT_FIST_COST}</span>
-    </button>
+    />
   );
 }

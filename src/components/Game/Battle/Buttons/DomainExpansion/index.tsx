@@ -1,5 +1,5 @@
-import { Sparkles } from "lucide-react";
 import styles from "./styles.module.css";
+import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   /** Nome do domínio do personagem (rótulo e tooltip). */
@@ -20,6 +20,12 @@ type Props = {
  * `habilities/domainExpansion/background.svg`); os demais rodam o burst
  * universal (`kind: "burst"`), todos com nome/cor de `DOMAIN_EXPANSIONS`.
  */
+const domainClasses: CustomAbilityClasses = {
+  button: styles.button,
+  label: styles.label,
+  ready: styles.ready,
+};
+
 export function DomainExpansionButton({
   name,
   description,
@@ -29,27 +35,18 @@ export function DomainExpansionButton({
   disabled = false,
   onClick,
 }: Props) {
-  const locked = !ready || disabled;
-
   return (
-    <button
-      className={`abilityButton ${styles.button} ${ready ? styles.ready : ""} ${
-        disabled ? "abilityDisabled" : ""
-      }`}
-      style={
-        {
-          "--domain-accent": accent,
-          backgroundImage: background ? `url(${background})` : undefined,
-        } as React.CSSProperties & Record<string, string>
-      }
+    <AbilityButton
+      type="domain"
+      customClasses={domainClasses}
+      label={name}
+      name={name}
+      accent={accent}
+      background={background}
+      ready={ready}
+      disabled={disabled}
       onClick={onClick}
-      disabled={locked}
       title={`${name}: ${description}`}
-    >
-      <span className={`abilityLabel ${styles.label}`}>
-        <Sparkles size={13} />
-        {name.toUpperCase()}
-      </span>
-    </button>
+    />
   );
 }

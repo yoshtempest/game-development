@@ -1,6 +1,7 @@
-import { Zap } from "lucide-react";
 import { playerProjectilePath } from "@/utils/paths";
+
 import styles from "./styles.module.css";
+import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   disabled?: boolean;
@@ -15,6 +16,12 @@ type Props = {
  * Só é renderizado durante a forma; cada inimigo derrotado (incluindo minions)
  * concede +1 stack de Laser.
  */
+const laserClasses: CustomAbilityClasses = {
+  button: styles.button,
+  label: styles.label,
+  charges: styles.charges,
+};
+
 export function VastolordLaserButton({
   disabled = false,
   onClick,
@@ -23,22 +30,19 @@ export function VastolordLaserButton({
   const imageUrl = playerProjectilePath("vastolordLaser.svg");
 
   return (
-    <button
-      className={`abilityButton ${styles.button} ${disabled ? "abilityDisabled" : ""}`}
+    <AbilityButton
+      type="custom"
+      customClasses={laserClasses}
+      label="VASTOLORD LASER"
+      disabled={disabled}
+      onClick={onClick}
+      extraProps={{ charges }}
+      title="Laser Vastolord: feixe que cruza o mapa por 3s causando 1% do dano base a cada 20ms de contato e empurrando o inimigo. Cada inimigo derrotado na forma concede +1 stack de laser."
       style={{
         backgroundImage: `url("${imageUrl}")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
-      onClick={onClick}
-      disabled={disabled}
-      title="Laser Vastolord: feixe que cruza o mapa por 3s causando 1% do dano base a cada 20ms de contato e empurrando o inimigo. Cada inimigo derrotado na forma concede +1 stack de laser."
-    >
-      {charges > 1 && <span className={styles.charges}>{charges}x</span>}
-      <span className={`abilityLabel ${styles.label}`}>
-        <Zap size={13} />
-        VASTOLORD LASER
-      </span>
-    </button>
+    />
   );
 }

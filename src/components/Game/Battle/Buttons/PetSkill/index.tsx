@@ -1,4 +1,5 @@
 import styles from "./styles.module.css";
+import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   skillName: string;
@@ -10,41 +11,46 @@ type Props = {
   onClick: () => void;
 };
 
+/**
+ * Botão de habilidade de pet (genérico).
+ * type="standard" com customClasses para skillName.
+ */
+const petSkillClasses: CustomAbilityClasses = {
+  button: styles.button,
+  ready: styles.ready,
+  cooldown: styles.cooldown,
+  skillName: styles.skillName,
+};
+
 export function PetSkillButton({
   skillName,
   ready,
   remaining,
-  cooldownMs,
   imageUrl,
   disabled = false,
   onClick,
 }: Props) {
-  const seconds = Math.ceil(cooldownMs / 1000);
-  const locked = !ready || disabled;
-
   return (
-    <button
-      className={`abilityButton ${styles.button} ${ready ? styles.ready : ""} ${
-        disabled ? "abilityDisabled" : ""
-      }`}
+    <AbilityButton
+      type="standard"
+      customClasses={petSkillClasses}
+      label={skillName}
+      ready={ready}
+      remaining={remaining}
+      disabled={disabled}
+      onClick={onClick}
       style={{
         backgroundImage: imageUrl ? `url("${imageUrl}")` : undefined,
         backgroundSize: imageUrl ? "cover" : undefined,
         backgroundPosition: imageUrl ? "center" : undefined,
       }}
-      onClick={onClick}
-      disabled={locked}
-    >
-      <span className={styles.skillName}>
-        {ready ? skillName : remaining > 0 ? "" : ""}
-      </span>
-      <span className={styles.cooldown}>
-        {ready
-          ? ""
-          : remaining > 0
-            ? `${remaining.toFixed(1)}s`
-            : `${seconds}s`}
-      </span>
-    </button>
+      renderExtra={{
+        beforeLabel: (
+          <span className={styles.skillName}>
+            {ready ? skillName : remaining > 0 ? "" : ""}
+          </span>
+        ),
+      }}
+    />
   );
 }

@@ -96,7 +96,7 @@ export function useRandomEncounter(config: RandomEncounterConfig) {
       return;
     }
 
-    if (Math.random() < (cfg.encounterChance ?? 0.1)) {
+    if (Math.random() < (cfg.encounterChance ?? 0.02)) {
       savePosition();
       if (cfg.locationId) {
         prepareTombstoneSpawn({

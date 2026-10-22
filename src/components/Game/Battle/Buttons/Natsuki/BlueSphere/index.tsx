@@ -1,12 +1,22 @@
-import { Sparkles } from "lucide-react";
-
 import { spriteMap } from "@/data/battle/projectileSprites";
+
 import styles from "./styles.module.css";
+import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   disabled?: boolean;
   active?: boolean;
   onClick: () => void;
+};
+
+/**
+ * Botão da Esfera Azul (invocar/controlar).
+ * type="custom" pois tem imagem de fundo + estado ativo.
+ */
+const blueSphereClasses: CustomAbilityClasses = {
+  button: styles.button,
+  label: styles.label,
+  active: styles.active,
 };
 
 export function BlueSphereButton({
@@ -15,27 +25,23 @@ export function BlueSphereButton({
   onClick,
 }: Props) {
   return (
-    <button
-      type="button"
-      className={`abilityButton ${styles.button} ${
-        active ? styles.active : ""
-      } ${disabled ? "abilityDisabled" : ""}`}
-      style={{
-        backgroundImage: `url("${spriteMap.blueSphere}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+    <AbilityButton
+      type="custom"
+      customClasses={blueSphereClasses}
+      label="Azul"
       disabled={disabled}
       onClick={onClick}
-      aria-label="Invocar/Controlar Esfera Azul"
+      extraProps={{ active }}
       title={
         active
           ? "Esfera azul controlada (segure/dirija). Aperte para parar a atração."
           : "Invocar Esfera Azul (atrai inimigos, causa dano mágico contínuo)."
       }
-    >
-      <Sparkles className="abilityLabelIcon" size={14} aria-hidden="true" />
-      <span className={styles.label}>Azul</span>
-    </button>
+      style={{
+        backgroundImage: `url("${spriteMap.blueSphere}")`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    />
   );
 }

@@ -1,11 +1,22 @@
 import { LUCAS_WEAPON_LABELS } from "@/data/characters/lucas/lucasWeapons";
 import { playerPath } from "@/utils/paths";
+
 import styles from "./styles.module.css";
+import { AbilityButton, type CustomAbilityClasses } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 type Props = {
   weapon?: LucasWeapon;
   disabled?: boolean;
   onClick: () => void;
+};
+
+/**
+ * Botão de troca de arma do Lucas: alterna entre arma primária e secundária.
+ * Usa type="custom" porque tem layout próprio (imagem de fundo + nome da arma).
+ */
+const weaponSwitchClasses: CustomAbilityClasses = {
+  button: styles.button,
+  weaponName: styles.weaponName,
 };
 
 export function WeaponSwitchButton({
@@ -19,18 +30,21 @@ export function WeaponSwitchButton({
   const imageUrl = playerPath(`/lucas/${weapon}.svg`);
 
   return (
-    <button
-      className={`abilityButton ${styles.button} ${disabled ? "abilityDisabled" : ""}`}
+    <AbilityButton
+      type="custom"
+      customClasses={weaponSwitchClasses}
+      label={label}
+      disabled={disabled}
+      onClick={onClick}
+      title={label}
       style={{
         backgroundImage: `url("${imageUrl}")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
-      onClick={onClick}
-      disabled={disabled}
-      title={label}
-    >
-      <span className={styles.weaponName}>{label}</span>
-    </button>
+      renderExtra={{
+        afterLabel: <span className={styles.weaponName}>{label}</span>,
+      }}
+    />
   );
 }
