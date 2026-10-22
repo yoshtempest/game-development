@@ -15,12 +15,13 @@ export const PET_STAR_MULTIPLIER = 1.5;
 
 export const PET_CLASS: Record<string, NPCClass> = {
   pet_goat: "common",
-  pet_cat: "rare",
-  pet_dog: "epic",
+  pet_rapariga: "rare",
+  pet_lupita: "epic",
   pet_flyingCloud: "epic",
   pet_leviathan: "legendary",
   pet_hawkMother: "legendary",
   pet_crows: "legendary",
+  pet_aerosmith: "legendary",
   pet_mahoraga: "legendary",
   pet_hungryDeath: "common",
   pet_piupiu: "rare",

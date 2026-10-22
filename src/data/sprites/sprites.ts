@@ -80,6 +80,7 @@ export const NPC_CATEGORY: Record<string, NpcCategory> = {
   flyingCloud: "pets",
   mahoraga: "pets",
   crows: "pets",
+  aerosmith: "pets",
   rapariga: "pets",
   duque: "pets",
   turkey: "pets",

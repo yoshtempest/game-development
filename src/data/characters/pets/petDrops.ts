@@ -30,17 +30,22 @@ export const PET_DROPS: Record<string, PetDropInfo> = {
   pet_hawkMother: {
     npcType: "hawkMother",
     npcLabel: "Mãe do Hawk",
-    chance: 0.01,
+    chance: 0,
   },
   pet_flyingCloud: {
     npcType: "flyingCloud",
     npcLabel: "Nuvem Voadora",
-    chance: 0.01,
+    chance: 0,
   },
   pet_crows: {
     npcType: "crows",
     npcLabel: "2 Corvos",
-    chance: 0.01,
+    chance: 0,
+  },
+  pet_aerosmith: {
+    npcType: "aerosmith",
+    npcLabel: "Aerosmith",
+    chance: 0,
   },
   pet_mahoraga: {
     npcType: "mahoraga",
@@ -62,17 +67,17 @@ export const PET_DROPS: Record<string, PetDropInfo> = {
     npcLabel: "Duque",
     chance: 0.01,
   },
-  pet_dog: {
+  pet_lupita: {
     npcType: "lupita",
     npcLabel: "Lupita",
-    chance: 0.01,
+    chance: 0,
   },
   pet_vulture: {
     npcType: "zecaUrubu",
     npcLabel: "zecaUrubu",
     chance: 0.01,
   },
-  pet_cat: { npcType: "rapariga", npcLabel: "Rapariga", chance: 0.01 },
+  pet_rapariga: { npcType: "rapariga", npcLabel: "Rapariga", chance: 0.01 },
   pet_leviathan: {
     npcType: "leviathan",
     npcLabel: "Leviathan",

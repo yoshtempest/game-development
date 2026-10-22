@@ -2,20 +2,20 @@ import { PET_SKILL_COOLDOWN_MS } from "@/data/characters/pets/petSkills/constant
 import { def } from "@/data/characters/pets/petSkills/helpers";
 import type { PetSkillDefinition } from "@/data/characters/pets/petSkills/types";
 
-export const pet_cat: PetSkillDefinition = def(
-  "pet_cat",
-  "Rapariga",
-  "rapariga",
-  "suporte",
+export const pet_lupita: PetSkillDefinition = def(
+  "pet_lupita",
+  "Lupita",
+  "lupita",
+  "dano",
   {
-    name: "Ronronar",
-    description: "Ataca com arranhões rápidos.",
+    name: "Mordida Forte",
+    description: "Ataca com uma mordida poderosa.",
     cooldownMs: PET_SKILL_COOLDOWN_MS,
   },
   {
-    name: "Bola de Pelo",
-    description: "Recupera a vida do jogador.",
+    name: "Mordida Fatal",
+    description: "Causa dano triplo ao inimigo.",
     cooldownMs: PET_SKILL_COOLDOWN_MS,
   },
-  { kind: "heal", amount: 20 },
+  { kind: "damage", multiplier: 3 },
 );

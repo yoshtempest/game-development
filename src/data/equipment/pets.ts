@@ -14,13 +14,13 @@ export const PETS = createEquipmentList("pet", [
     stats: {},
   },
   {
-    id: "pet_dog",
+    id: "pet_lupita",
     name: "Lupita",
     rank: 7,
     stats: {},
   },
   {
-    id: "pet_cat",
+    id: "pet_rapariga",
     name: "Rapariga",
     rank: 5,
     stats: {},
@@ -94,6 +94,12 @@ export const PETS = createEquipmentList("pet", [
   {
     id: "pet_crows",
     name: "2 corvos",
+    rank: 0,
+    stats: {},
+  },
+  {
+    id: "pet_aerosmith",
+    name: "Aerosmith",
     rank: 0,
     stats: {},
   },

@@ -1,9 +1,9 @@
 import { getPetRoleFromSkills, isBattlePetFromSkills } from "./helpers";
 import type { PetSkillDefinition, PetRole } from "./types";
 
-import { pet_cat } from "./pets/cat";
+import { pet_rapariga } from "./pets/rapariga";
 import { pet_crocodile } from "./pets/crocodile";
-import { pet_dog } from "./pets/dog";
+import { pet_lupita } from "./pets/lupita";
 import { pet_duque } from "./pets/duque";
 import { pet_goat } from "./pets/goat";
 import { pet_hungryDeath } from "./pets/hungryDeath";
@@ -18,8 +18,8 @@ import { pet_vulture } from "./pets/vulture";
 export const PET_SKILLS: Record<string, PetSkillDefinition> = {
   [pet_turkey.petId]: pet_turkey,
   [pet_crocodile.petId]: pet_crocodile,
-  [pet_dog.petId]: pet_dog,
-  [pet_cat.petId]: pet_cat,
+  [pet_lupita.petId]: pet_lupita,
+  [pet_rapariga.petId]: pet_rapariga,
   [pet_goat.petId]: pet_goat,
   [pet_duque.petId]: pet_duque,
   [pet_leviathan.petId]: pet_leviathan,
