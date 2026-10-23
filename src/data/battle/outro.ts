@@ -13,8 +13,8 @@ export const OUTRO_LINES: Record<string, OutroLines> = {
     defeat: "Wubba lubba dub dub!",
   },
   camilly: {
-    victory: "...",
-    defeat: "...",
+    victory: "Ai sim!",
+    defeat: "PQP!!",
   },
   emanuel: {
     victory: "Você não passa de um fracassado.",
