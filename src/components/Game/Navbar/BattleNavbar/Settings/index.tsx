@@ -289,7 +289,7 @@ export function Settings() {
                 {Math.round(displayedWin)}%
               </span>
             </div>
-            {dialogue && player.character === "riquelme" && (
+            {cutscene.isOpen && dialogue && player.character === "riquelme" && (
               <Talking
                 name={dialogue.name}
                 message={dialogue.message}
