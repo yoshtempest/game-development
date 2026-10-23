@@ -58,38 +58,6 @@
   animation: floatCrit 1s ease-out forwards;
 }
 
-.crit {
-  font-size: var(--small);
-  font-weight: 900;
-  text-shadow:
-    0 0 var(--fs-10) var(--number-crit),
-    0 0 var(--low-medium) var(--number-crit),
-    var(--size-1) var(--size-1) 0 var(--overlay-80),
-    calc(-1 * var(--size-1)) calc(-1 * var(--size-1)) 0 var(--overlay-80),
-    var(--size-1) calc(-1 * var(--size-1)) 0 var(--overlay-80),
-    calc(-1 * var(--size-1)) var(--size-1) 0 var(--overlay-80);
-}
-
-.critBackground {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: floatCrit 1s ease-out forwards;
-}
-
-.critText {
-  position: relative;
-  z-index: 1;
-  aspect-ratio: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1em;
-  color: var(--red-glow-80);
-  scale: 1.4;
-  margin-bottom: var(--vh-3);
-}
-
 .miss {
   color: var(--text-secondary);
   font-size: var(--small);
@@ -235,5 +203,83 @@
   100% {
     opacity: 0;
     transform: translateY(calc(-1 * var(--size-40))) scale(0.8);
+  }
+}
+
+.crit {
+  z-index: 101;
+  font-size: var(--fs-28);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: none;
+  animation: criticalImpact 850ms ease-out forwards;
+  will-change: transform, opacity;
+}
+
+.critBackground {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-2);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.critLabel {
+  color: #fff2a6;
+  font-size: var(--small);
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  line-height: 1;
+
+  -webkit-text-stroke: 1px #6b2300;
+
+  text-shadow:
+    0 2px 0 #6b2300,
+    0 0 6px rgb(255 115 0 / 65%);
+}
+
+.critText {
+  display: block;
+  color: #fff2a6;
+  font-size: var(--fs-28);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+
+  -webkit-text-stroke: 1.5px #792900;
+
+  text-shadow:
+    0 3px 0 #792900,
+    0 0 4px #ff8c00,
+    0 0 10px rgb(255 140 0 / 65%);
+}
+
+@keyframes criticalImpact {
+  0% {
+    opacity: 0;
+    transform: translate(0, 8px) scale(0.55);
+  }
+
+  18% {
+    opacity: 1;
+    transform: translate(0, -3px) scale(1.3);
+  }
+
+  32% {
+    opacity: 1;
+    transform: translate(0, 0) scale(0.95);
+  }
+
+  45% {
+    opacity: 1;
+    transform: translate(0, -4px) scale(1.05);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(0, -45px) scale(0.95);
   }
 }
