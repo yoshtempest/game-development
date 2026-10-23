@@ -1,3 +1,5 @@
+import { motion } from "motion/react";
+
 interface BattleSpriteProps {
   src: string;
   className?: string;
@@ -5,6 +7,7 @@ interface BattleSpriteProps {
   transform: string;
   transformOrigin?: string;
   onError: () => void;
+  isIdle?: boolean;
 }
 
 export function BattleSprite({
@@ -14,16 +17,13 @@ export function BattleSprite({
   transform,
   transformOrigin,
   onError,
+  isIdle = false,
 }: BattleSpriteProps) {
   return (
-    <img
-      src={src}
-      onError={onError}
-      className={className}
+    <div
       style={{
-        animationDuration: blinkDuration,
         position: "absolute",
-        width: "auto",
+        width: "max-content",
         height: "100%",
         left: "50%",
         bottom: 0,
@@ -31,7 +31,45 @@ export function BattleSprite({
         transformOrigin,
         pointerEvents: "none",
       }}
-      alt=""
-    />
+    >
+      <motion.img
+        src={src}
+        onError={onError}
+        className={className}
+        alt=""
+        animate={
+          isIdle
+            ? {
+                y: [0, -1.5, 0],
+                rotate: [0, 0.25, 0, -0.25, 0],
+                scaleY: [1, 1.005, 1],
+              }
+            : {
+                y: 0,
+                rotate: 0,
+                scaleY: 1,
+              }
+        }
+        transition={
+          isIdle
+            ? {
+                duration: 1,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }
+            : {
+                duration: 0.2,
+                ease: "easeOut",
+              }
+        }
+        style={{
+          display: "block",
+          width: "auto",
+          height: "100%",
+          transformOrigin: "center bottom",
+          animationDuration: blinkDuration,
+        }}
+      />
+    </div>
   );
 }

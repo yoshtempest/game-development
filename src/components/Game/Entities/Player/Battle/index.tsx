@@ -107,6 +107,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
       transform={transform}
       transformOrigin={transformOrigin}
       onError={handleSpriteError}
+      isIdle={state === "idle"}
     />
   );
 

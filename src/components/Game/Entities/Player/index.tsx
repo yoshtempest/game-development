@@ -5,6 +5,7 @@ import { HEIGHT_STEP_OFFSET } from "@/gameRules/movement/levels";
 import { getEntityZIndex } from "@/utils/entityDepth";
 import { LevelUpParticles } from "@/components/Game/LevelUpParticles";
 import { ProfessionBadge } from "@/components/Game/ProfessionBadge";
+import { motion } from "motion/react";
 
 type Props = {
   character: CharacterId;
@@ -58,8 +59,34 @@ export const Player = memo(function Player({
         transition: `left ${EXPLORE_MOVE_INTERVAL}ms, top ${EXPLORE_MOVE_INTERVAL}ms`,
       }}
     >
-      <img
+      <motion.img
         src={src}
+        animate={
+          moving
+            ? {
+                y: 0,
+                rotate: 0,
+                scaleY: 1,
+              }
+            : {
+                y: [0, 1, 0],
+                x: [0, 1, 0],
+                rotate: [0, 0.5, 0, -0.5, 0],
+                scaleY: [1, 1.005, 1],
+              }
+        }
+        transition={
+          moving
+            ? {
+                duration: 0.15,
+                ease: "easeOut",
+              }
+            : {
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }
+        }
         style={{ width: "100%", height: "100%", objectFit: "contain" }}
       />
       <LevelUpParticles character={character} size={PLAYER_SIZE} />
