@@ -1,5 +1,5 @@
 import { useLocation } from "react-router";
-import { useTransitionCtx } from "@/contexts/TransitionContext";
+import { useTransitionCtx } from "@/contexts/Transition/TransitionContext";
 import { useInventory } from "@/contexts/InventoryContext";
 import { useQuests } from "@/contexts/QuestContext";
 import { useFlags } from "@/contexts/FlagContext";

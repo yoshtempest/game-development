@@ -9,6 +9,7 @@
 
   background: var(--overlay-80);
   z-index: 99999999;
+  animation: 250ms renderLeftToRight ease-in-out forwards;
 }
 
 .mapGrid {
@@ -20,17 +21,16 @@
 
   justify-items: center;
   height: var(--vh-88);
-  animation: mapOpen 0.4s ease-out forwards;
+
 }
 
-@keyframes mapOpen {
-  from {
-    transform: scaleX(0);
-    opacity: 0;
+@keyframes renderLeftToRight {
+  0% {
+    clip-path: inset(0 100% 0 0);
   }
-  to {
-    transform: scaleX(1);
-    opacity: 1;
+
+  100% {
+    clip-path: inset(0 0 0 0);
   }
 }
 

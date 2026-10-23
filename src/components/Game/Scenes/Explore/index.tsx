@@ -31,7 +31,7 @@ import { useSceneAudio } from "@/hooks/scene/useAudio";
 import { useSceneLayers } from "@/hooks/scene/useSceneLayers";
 import { useSceneTombstones } from "@/hooks/tombstone/useSceneTombstones";
 import { useLocation } from "react-router";
-import { useTransitionCtx } from "@/contexts/TransitionContext";
+import { useTransitionCtx } from "@/contexts/Transition/TransitionContext";
 import { getTileInFront } from "@/utils/getTileInFront";
 import { isNpcInFront } from "@/utils/isNpcInFront";
 import { saveGame } from "@/services/save/saveService";

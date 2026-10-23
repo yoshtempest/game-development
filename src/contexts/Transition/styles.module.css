@@ -1,0 +1,50 @@
+.blinds {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: grid;
+  grid-template-columns: repeat(40, minmax(0, 1fr));
+  pointer-events: auto;
+}
+
+.blind {
+  width: 110%;
+  height: 100%;
+  background-color: #000;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* Fechamento: cobre a tela */
+.cover .blind {
+  animation: blindsCover 350ms ease-in-out both;
+  animation-delay: calc(var(--index) * 25ms);
+}
+
+/* Abertura: revela a nova página */
+.reveal .blind {
+  transform: scaleX(1);
+  transform-origin: right;
+  animation: blindsReveal 350ms ease-in-out both;
+  animation-delay: calc(var(--reverse-index) * 25ms);
+}
+
+@keyframes blindsCover {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes blindsReveal {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}

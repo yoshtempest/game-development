@@ -5,7 +5,7 @@ import {
   type Location,
 } from "react-router";
 import { usePlayer } from "@/contexts/PlayerContext";
-import { useTransitionCtx } from "@/contexts/TransitionContext";
+import { useTransitionCtx } from "@/contexts/Transition/TransitionContext";
 import { useFlags } from "@/contexts/FlagContext";
 import { useInventory } from "@/contexts/InventoryContext";
 import { useNavbar } from "@/contexts/NavbarContext";

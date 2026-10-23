@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { TransitionProvider } from "@/contexts/TransitionContext";
+import { TransitionProvider } from "@/contexts/Transition/TransitionContext";
 import { PWAProvider } from "@/contexts/PWAContext";
 import { UpdateProvider } from "@/contexts/UpdateContext";
 import { AuthProvider } from "@/contexts/AuthContext";

@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router";
-import { useTransitionCtx } from "@/contexts/TransitionContext";
+import { useTransitionCtx } from "@/contexts/Transition/TransitionContext";
 import { useTombstones } from "@/contexts/TombstoneContext";
 import { useCompressedStorage } from "@/hooks/useCompressedStorage";
 import { FOOTBALLCOURT_DOGS_KEY } from "@/data/storageKeys";

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useTransitionCtx } from "@/contexts/TransitionContext";
+import { useTransitionCtx } from "@/contexts/Transition/TransitionContext";
 import { saveCompressed, loadCompressed } from "@/services/save/storageService";
 import { slotKey } from "@/services/save/slotManager";
 
