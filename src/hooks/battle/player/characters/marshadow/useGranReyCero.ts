@@ -427,20 +427,14 @@ export function useGranReyCero({
       return;
     }
 
-    // A trava de ação é reempurrada a cada quadro porque a duração total é
-    // variável (2s de corrida + até 2s de rastejo) e não cabe num único
-    // `freezeActionsUntil` calculado no disparo.
-    freezeActionsUntilRef.current = Math.max(
-      freezeActionsUntilRef.current,
-      now + GRAN_REY_CERO_LOCK_WINDOW_MS,
-    );
-
+    // Após o disparo inicial, o jogador pode se mover livremente.
+    // A trava inicial do `fire` (GRAN_REY_CERO_LOCK_WINDOW_MS) já cobriu o
+    // começo da animação; não estendemos mais a trava a cada quadro.
     rafRef.current = requestAnimationFrame(frameRef.current);
   }, [
     applyTickRef,
     beginFadeRef,
     finishRef,
-    freezeActionsUntilRef,
     frameRef,
     hasTargetRef,
     isMenuOpenRef,
