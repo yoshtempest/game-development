@@ -74,22 +74,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  clip-path: polygon(
-    50% 0%,
-    61% 20%,
-    100% 8%,
-    80% 44%,
-    100% 80%,
-    61% 68%,
-    50% 100%,
-    39% 68%,
-    0% 80%,
-    20% 44%,
-    0% 8%,
-    39% 20%
-  );
   animation: floatCrit 1s ease-out forwards;
-  background-color: var(--accent-color);
 }
 
 .critText {
@@ -100,7 +85,8 @@
   align-items: center;
   justify-content: center;
   padding: 1em;
-  color: var(--background-color);
+  color: var(--red-glow-80);
+  scale: 1.4;
   margin-bottom: var(--vh-3);
 }
 
