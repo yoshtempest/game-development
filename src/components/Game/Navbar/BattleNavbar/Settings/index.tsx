@@ -6,7 +6,8 @@ import { getCharacterElementTypes } from "@/data/types/characterElementTypes";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
 import { BattleCard } from "./BattleCard";
 import { ElementChart } from "@/components/Game/Navbar/shared/ElementChart";
-import { battleConfigDialogue } from "@/data/dialogues/battleConfig/configs";
+import { defineDialogue } from "@/data/dialogues/defineDialogue";
+import { soundEffectPath } from "@/utils/paths";
 
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -209,11 +210,29 @@ export function Settings() {
       })
     : null;
 
-    const cutscene = useCutscene({
-      dialogue: battleConfigDialogue,
-    });
+  // Diálogo dinâmico para o Riquelme com a chance de vitória atual
+  const riquelmeDialogue = useMemo(() => {
+    if (winProbability === null) return null;
+    return defineDialogue([
+      [
+        "janelaSistema",
+        `As chances são de ${Math.round(winProbability)}% e aí, você perderia?`,
+      ],
+      {
+        who: "protagonista",
+        message: "Nah i'd win.",
+        expression: "victory",
+        soundSrc: soundEffectPath("player/characters/riquelme/nah-id-win.mp3"),
+      },
+    ]);
+  }, [winProbability]);
 
-    const dialogue = cutscene.dialogue;
+  const cutscene = useCutscene({
+    dialogue: riquelmeDialogue ?? [],
+    playOnce: false,
+  });
+
+  const dialogue = cutscene.dialogue;
 
   return (
     <div className="containerOfNavbar">
@@ -271,10 +290,12 @@ export function Settings() {
               </span>
             </div>
             {dialogue && player.character === "riquelme" && (
-              <Talking 
+              <Talking
                 name={dialogue.name}
                 message={dialogue.message}
                 src={dialogue.src}
+                soundSrc={dialogue.soundSrc}
+                autoAdvanceOnSound={dialogue.autoAdvanceOnSound}
               />
             )}
             <ComboList characterId={player.character} />
