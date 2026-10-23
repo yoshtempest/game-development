@@ -176,7 +176,8 @@ export function useKeyboardMovement() {
         if (isGrabbed()) return;
         if (isUpHeldRef.current) {
           if (isBattleRef.current) moveUpBattleRef.current();
-          else moveUpRef.current();
+          // Explore: não move imediatamente no repeat do keydown — o intervalo
+          // (300ms) já cuida dos passos subsequentes para não andar rápido demais.
           return;
         }
         isUpHeldRef.current = true;
@@ -196,7 +197,7 @@ export function useKeyboardMovement() {
         if (isGrabbed()) return;
         if (isDownHeldRef.current) {
           if (isBattleRef.current) toggleCrouchRef.current();
-          else moveDownRef.current();
+          // Explore: não move imediatamente no repeat do keydown.
           return;
         }
         isDownHeldRef.current = true;
@@ -216,7 +217,7 @@ export function useKeyboardMovement() {
         if (isGrabbed()) return;
         if (isLeftHeldRef.current) {
           if (isBattleRef.current) startMoveLeftRef.current();
-          else moveLeftRef.current();
+          // Explore: não move imediatamente no repeat do keydown.
           return;
         }
         isLeftHeldRef.current = true;
@@ -238,7 +239,7 @@ export function useKeyboardMovement() {
         if (isGrabbed()) return;
         if (isRightHeldRef.current) {
           if (isBattleRef.current) startMoveRightRef.current();
-          else moveRightRef.current();
+          // Explore: não move imediatamente no repeat do keydown.
           return;
         }
         isRightHeldRef.current = true;
