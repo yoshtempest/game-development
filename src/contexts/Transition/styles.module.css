@@ -2,31 +2,51 @@
   position: fixed;
   inset: 0;
   z-index: 999999;
+
   display: grid;
   grid-template-columns: repeat(40, minmax(0, 1fr));
+
+  overflow: hidden;
   pointer-events: auto;
+  isolation: isolate;
 }
 
 .blind {
   width: 110%;
   height: 100%;
-  background-color: #000;
+
+  background-color: var(--black);
+
   transform: scaleX(0);
   transform-origin: left;
 }
 
-/* Fechamento: cobre a tela */
+/* Fechamento: as faixas avançam da esquerda para a direita */
 .cover .blind {
-  animation: blindsCover 350ms ease-in-out both;
-  animation-delay: calc(var(--index) * 25ms);
+  animation: blindsCover 220ms ease-in-out both;
 }
 
-/* Abertura: revela a nova página */
+/* Abertura: as faixas desaparecem da direita para a esquerda */
 .reveal .blind {
-  transform: scaleX(1);
-  transform-origin: right;
-  animation: blindsReveal 350ms ease-in-out both;
-  animation-delay: calc(var(--reverse-index) * 25ms);
+  animation: blindsReveal 220ms ease-in-out both;
+}
+
+/* Logo: uma única imagem atravessa a tela */
+.logo {
+  position: absolute;
+  z-index: 2;
+  align-self: center;
+  justify-self: center;
+
+  height: auto;
+  width: 25vw;
+  max-height: 40vh;
+
+  object-fit: contain;
+  object-position: center;
+
+  pointer-events: none;
+  animation: 1s logoPass linear forwards;
 }
 
 @keyframes blindsCover {
@@ -46,5 +66,36 @@
 
   to {
     transform: scaleX(0);
+  }
+}
+
+/* A logo atravessa a tela sem ser dividida em faixas */
+@keyframes logoPass {
+  0% {
+    transform: scale(0);
+  }
+
+  30% {
+    transform: scale(1);
+  }
+
+  70% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover .blind,
+  .reveal .blind {
+    animation-duration: 1ms;
+    animation-delay: 0ms !important;
+  }
+
+  .logo {
+    animation-duration: 1ms !important;
   }
 }

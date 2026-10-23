@@ -1,5 +1,6 @@
 import { useLatestRef } from "@/hooks/useLatestRef";
 import styles from "./styles.module.css";
+import { rootAssetPath } from "@/utils/paths";
 
 import {
   createContext,
@@ -30,12 +31,20 @@ type TransitionContextType = {
   ) => void;
 };
 
-const BLIND_COUNT = 40;
 const BLIND_DURATION = 220;
 const BLIND_STAGGER = 8;
+const DEFAULT_BLIND_COUNT = 40;
+const BATTLE_BLIND_COUNT = 160;
 
-const TRANSITION_DURATION =
-  BLIND_DURATION + (BLIND_COUNT - 1) * BLIND_STAGGER;
+function isBattleRoute(to: To): boolean {
+  if (typeof to === "number") return false;
+  if (typeof to === "string") return to.includes("/battle/");
+  return to.pathname?.includes("/battle/") ?? false;
+}
+
+function getTransitionDuration(blindCount: number): number {
+  return BLIND_DURATION + (blindCount - 1) * BLIND_STAGGER;
+}
 
 const TransitionContext =
   createContext<TransitionContextType | null>(null);
@@ -49,6 +58,7 @@ export function TransitionProvider({
   const location = useLocation();
 
   const [phase, setPhase] = useState<TransitionPhase>("idle");
+  const [blindCount, setBlindCount] = useState(DEFAULT_BLIND_COUNT);
 
   const pendingRef = useRef<{
     to: To;
@@ -62,6 +72,8 @@ export function TransitionProvider({
 
   const prevPathRef = useRef(currentPath);
 
+  const transitionDuration = getTransitionDuration(blindCount);
+
   const navigateWithFade = useCallback(
     (to: To | number, options?: NavigateOptions) => {
       if (typeof to === "number") {
@@ -70,6 +82,9 @@ export function TransitionProvider({
       }
 
       if (isFadingRef.current) return;
+
+      // Define o número de persianas baseado na rota de destino
+      setBlindCount(isBattleRoute(to) ? BATTLE_BLIND_COUNT : DEFAULT_BLIND_COUNT);
 
       pendingRef.current = { to, options };
       setPhase("cover");
@@ -90,10 +105,10 @@ export function TransitionProvider({
 
       pendingRef.current = null;
       void navigate(pending.to, pending.options);
-    }, TRANSITION_DURATION);
+    }, transitionDuration);
 
     return () => window.clearTimeout(id);
-  }, [phase, navigate]);
+  }, [phase, navigate, transitionDuration]);
 
   // Quando a rota muda, começa a revelar a nova página.
   useEffect(() => {
@@ -120,10 +135,12 @@ export function TransitionProvider({
 
     const id = window.setTimeout(() => {
       setPhase("idle");
-    }, TRANSITION_DURATION);
+      // Reseta para o valor padrão após a transição
+      setBlindCount(DEFAULT_BLIND_COUNT);
+    }, transitionDuration);
 
     return () => window.clearTimeout(id);
-  }, [phase]);
+  }, [phase, transitionDuration]);
 
   const value = useMemo(
     () => ({
@@ -142,10 +159,13 @@ export function TransitionProvider({
           className={`${styles.blinds} ${
             phase === "cover" ? styles.cover : styles.reveal
           }`}
+          style={{
+            gridTemplateColumns: `repeat(${blindCount}, minmax(0, 1fr))`,
+          }}
           aria-hidden="true"
         >
-          {Array.from({ length: BLIND_COUNT }, (_, index) => {
-            const reverseIndex = BLIND_COUNT - 1 - index;
+          {Array.from({ length: blindCount }, (_, index) => {
+            const reverseIndex = blindCount - 1 - index;
 
             const animationIndex =
               phase === "cover" ? index : reverseIndex;
@@ -162,6 +182,15 @@ export function TransitionProvider({
               />
             );
           })}
+
+          <img
+            src={rootAssetPath("logo.svg")}
+            alt=""
+            className={styles.logo}
+            style={{
+              animationDuration: `${transitionDuration}ms`,
+            }}
+          />
         </div>
       )}
     </TransitionContext.Provider>
