@@ -469,7 +469,6 @@ export function useGranReyCero({
     setPlayer((pp) =>
       pp.mode !== "battle" ? pp : { ...pp, state: "granReyCero" },
     );
-    playSound("getsugaTenshou");
 
     freezeActionsUntilRef.current = Math.max(
       freezeActionsUntilRef.current,
@@ -482,7 +481,6 @@ export function useGranReyCero({
     clearTimers,
     frameRef,
     freezeActionsUntilRef,
-    playSound,
     playerRef,
     setPlayer,
     shouldCancelRef,
@@ -504,6 +502,11 @@ export function useGranReyCero({
     );
     readyAtRef.current = Date.now() + cooldownMs;
     setRemaining(cooldownMs / 1000);
+
+    // Toca o som do Getsuga Tenshou junto com o specialIntro, antes mesmo do
+    // personagem trocar para o sprite granReyCero.
+    playSound("getsugaTenshou");
+
     // O lock do intro segura o personagem antes da lâmina (senão ele andaria
     // ou viraria de lado durante o slow-motion e o corte sairia na direção
     // errada). Com o intro desligado na config não há nada para segurar: a
@@ -526,6 +529,7 @@ export function useGranReyCero({
     cooldownReductionRef,
     freezeActionsUntilRef,
     onUsedRef,
+    playSound,
     showAbilityIntro,
     startSpecialIntro,
     usableRef,
