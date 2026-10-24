@@ -37,6 +37,7 @@ import { KokusenAnimation } from "@/components/Game/Battle/Effects/Natsuki/Kokus
 import { DivergentFistAnimation } from "@/components/Game/Battle/Effects/Natsuki/DivergentFistAnimation";
 import { BlackFlashAnimation } from "@/components/Game/Battle/Effects/Natsuki/BlackFlashAnimation";
 import { VastolordTimer } from "@/components/Game/Battle/Effects/Marshadow/VastolordTimer";
+import { SkipAnimationButton } from "@/components/Game/Battle/SkipAnimationButton";
 import { SpecialIntro } from "@/components/Game/Battle/Effects/SpecialIntro";
 import { DomainExpansionIntro } from "@/components/Game/Battle/Effects/Domain/DomainExpansionIntro";
 import { DomainExpansionBackground } from "@/components/Game/Battle/Effects/Domain/DomainExpansionBackground";
@@ -161,6 +162,9 @@ export function BattleScene(props: Props) {
     activateDivergentFist,
     divergentFistFrame,
     honoredOneActive,
+    honoredSequence,
+    skipHonoredOne,
+    skipVastolordTransform,
     kokusenActive,
     kokusenFrame,
     blackFlashActive,
@@ -168,7 +172,7 @@ export function BattleScene(props: Props) {
     cameraFocus,
     vastolordActive,
     vastolordRemainingMs,
-    vastolordTransformationFrame,
+    vastolordTransformationFrame: transformationFrame,
     specialIntroActive,
     specialIntroCharacter,
     lootBags,
@@ -368,8 +372,8 @@ export function BattleScene(props: Props) {
   // Tremor leve enquanto o Vastolord está num quadro de grito da transformação
   // (screamOne/Two/Three) — acompanha o empurrão contínuo dos inimigos.
   const screamShakeActive =
-    vastolordTransformationFrame != null &&
-    vastolordTransformationFrame < VASTOLORD_ROAR_SCREAM_FRAMES;
+    transformationFrame != null &&
+    transformationFrame < VASTOLORD_ROAR_SCREAM_FRAMES;
 
   const shake = useCameraShake(
     battle.damageNumbers,
@@ -632,7 +636,7 @@ export function BattleScene(props: Props) {
             extraPunchSprite={extraPunchSprite}
             weapon={lucasWeapon}
             playerForm={vastolordActive ? "vastolordForm" : undefined}
-            transformationFrame={vastolordTransformationFrame}
+            transformationFrame={transformationFrame}
             blinkVisual={blinkVisual}
             lootBags={lootBags}
             npcClass={npcClass}
@@ -717,7 +721,21 @@ export function BattleScene(props: Props) {
           />
 
           {vastolordActive && (
-            <VastolordTimer remainingMs={vastolordRemainingMs} />
+            <>
+              <VastolordTimer remainingMs={vastolordRemainingMs} />
+              {transformationFrame != null && (
+                <SkipAnimationButton
+                  onSkip={skipVastolordTransform}
+                  label="transformação Vastolord"
+                />
+              )}
+            </>
+          )}
+          {honoredSequence && (
+            <SkipAnimationButton
+              onSkip={skipHonoredOne}
+              label="O mais honrado"
+            />
           )}
         </GameMap>
       </div>

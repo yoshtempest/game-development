@@ -193,6 +193,7 @@ export function useBattleScene({
     honoredFleeRef,
     surviveLethalHitRef,
     resetHonoredOne,
+    skipHonoredOne,
   } = useHonoredOne({
     enabled: honoredOneEnabled,
     player,
@@ -205,6 +206,9 @@ export function useBattleScene({
     honoredRiseStartRef,
     honoredRiseStartYRef,
     honoredFallRef,
+    onSkip: () => {
+      // O skip do honored-one é chamado via UI; nada extra aqui.
+    },
   });
 
   const isPausedRef = useRef(false);
@@ -238,6 +242,7 @@ export function useBattleScene({
     triggerVastolord,
     resetVastolord,
     extendVastolord,
+    skipVastolordTransform,
     vastolordUsedRef,
     vastolordActiveRef,
     vastolordMultiplierRef,
@@ -826,6 +831,9 @@ export function useBattleScene({
     activateDivergentFist: handleActivateDivergentFist,
     divergentFistFrame,
     honoredOneActive,
+    honoredSequence,
+    skipHonoredOne,
+    skipVastolordTransform,
     kokusenActive,
     kokusenFrame,
     blackFlashActive,

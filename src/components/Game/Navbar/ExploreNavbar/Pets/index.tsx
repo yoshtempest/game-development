@@ -155,7 +155,7 @@ export function Pets() {
                   ))}
                 </div>
                 {!entry.owned && entry.riddle && (
-                  <p className={styles.riddle}>{entry.riddle}</p>
+                  <p className={styles.riddle}>Enigma: {entry.riddle}</p>
                 )}
                 {entry.owned && stats && (
                   <>
@@ -184,22 +184,20 @@ export function Pets() {
                   <span className={styles.equippedBadge}>Equipado</span>
                 )}
 
-                <span className={styles.roleBadge}>
-                  {PET_ROLE_LABELS[entry.role]}
-                </span>
-
                 <div className={styles.flexRow}>
+                  <span className={styles.roleBadge}>
+                    {PET_ROLE_LABELS[entry.role]}
+                  </span>
                   <p
                     className={styles.rankLabel}
                     style={{ color: RANK_COLORS[entry.rank] }}
                   >
-                    {RANK_LABELS[entry.rank]}
+                    Rank: {RANK_LABELS[entry.rank]}
                   </p>
                   <p className={styles.dropLine}>Drop: {formatDrop(entry)}</p>
                 </div>
 
-                <p className={styles.skillLine}>Passiva: {entry.passiveName}</p>
-                <p className={styles.skillLine}>Skill: {entry.skillName}</p>
+                <p className={styles.skillLine}>Passiva: {entry.passiveName} | Skill: {entry.skillName}</p>
               </div>
             </div>
           );

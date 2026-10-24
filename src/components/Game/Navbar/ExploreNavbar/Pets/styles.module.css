@@ -14,7 +14,7 @@
   width: 99.2%;
   height: var(--vh-34);
   border: var(--size-2) solid var(--primary-color);
-  border-radius: var(--fs-16);
+
   background: var(--surface-primary);
 }
 

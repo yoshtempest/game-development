@@ -85,12 +85,16 @@ export function useBattlePresentation({
     triggerVastolord,
     resetVastolord,
     extendVastolord,
+    skipVastolordTransform,
   } = useVastolordForm({
     enabled: player.character === "marcelo" && !training,
     durationMs: vastolordDurationMs,
     isPausedRef,
     isEndingRef: vastolordEndingRef,
     onExpire: () => runDefeatRef.current(),
+    onSkip: () => {
+      // O skip da transformação é chamado via UI; nada extra aqui.
+    },
   });
   vastolordActiveRef.current = vastolordActive;
   vastolordMultiplierRef.current = () =>
@@ -120,6 +124,7 @@ export function useBattlePresentation({
     triggerVastolord,
     resetVastolord,
     extendVastolord,
+    skipVastolordTransform,
     vastolordUsedRef,
     vastolordActiveRef,
     vastolordMultiplierRef,

@@ -36,6 +36,8 @@ type Props = {
   honoredRiseStartRef: RefObject<number>;
   honoredRiseStartYRef: RefObject<number>;
   honoredFallRef: RefObject<boolean>;
+  /** Callback opcional chamado quando o jogador pula a animação. */
+  onSkip?: () => void;
 };
 
 export function useHonoredOne({
@@ -50,6 +52,7 @@ export function useHonoredOne({
   honoredRiseStartRef,
   honoredRiseStartYRef,
   honoredFallRef,
+  onSkip,
 }: Props) {
   const honoredOneUsedRef = useRef(false);
   const honoredOneActiveRef = useRef(false);
@@ -61,6 +64,8 @@ export function useHonoredOne({
   const honoredOneTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** Durante a sequência, os inimigos recuam até ficarem a >=300px em x. */
   const honoredFleeRef = useRef(false);
+
+  const onSkipRef = useLatestRef(onSkip);
 
   const activateHonoredOne = useCallback(() => {
     honoredOneActiveRef.current = true;
@@ -81,6 +86,32 @@ export function useHonoredOne({
       honoredOneTimerRef.current = null;
     }
   }, [honoredRiseStartRef, honoredFleeRef, honoredFallRef, honoredOneTimerRef]);
+
+  /** Pula a animação do "O Abençoado": termina a sequência imediatamente. */
+  const skipHonoredOne = useCallback(() => {
+    if (!honoredSequence) return;
+    if (honoredOneTimerRef.current) {
+      clearTimeout(honoredOneTimerRef.current);
+      honoredOneTimerRef.current = null;
+    }
+    honoredFallRef.current = false;
+    honoredFleeRef.current = false;
+    setHonoredSequence(false);
+    setHonoredRegenActive(false);
+    honoredRiseStartRef.current = 0;
+    refs.timeRef.current = clearTime(refs.timeRef.current, HONORED_ONE_TIME_ID);
+    freezeActionsUntilRef.current = Date.now();
+    setPlayer((p) => ({ ...p, state: "idle" }));
+    onSkipRef.current?.();
+  }, [
+    honoredSequence,
+    refs,
+    freezeActionsUntilRef,
+    setPlayer,
+    honoredFallRef,
+    honoredRiseStartRef,
+    onSkipRef,
+  ]);
 
   /**
    * Passiva O Abençoado do riquelme: o primeiro golpe letal em uma batalha não
@@ -204,5 +235,6 @@ export function useHonoredOne({
     activateHonoredOne,
     resetHonoredOne,
     surviveLethalHitRef,
+    skipHonoredOne,
   };
 }

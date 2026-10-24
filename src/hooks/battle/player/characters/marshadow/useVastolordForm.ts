@@ -27,6 +27,8 @@ type Props = {
   /** Aponta para o `isEnding` da batalha; para de contar quando ela acaba. */
   isEndingRef?: React.RefObject<{ current: boolean }>;
   onExpire: () => void;
+  /** Callback opcional chamado quando o jogador pula a animação de transformação. */
+  onSkip?: () => void;
 };
 
 export type VastolordFormApi = {
@@ -38,6 +40,8 @@ export type VastolordFormApi = {
   resetVastolord: () => void;
   /** Aumenta a duração restante da forma em `ms` (sem efeito fora dela). */
   extendVastolord: (ms: number) => void;
+  /** Pula a animação de transformação indo direto ao último quadro. */
+  skipVastolordTransform: () => void;
 };
 
 /**
@@ -56,6 +60,7 @@ export function useVastolordForm({
   isPausedRef,
   isEndingRef,
   onExpire,
+  onSkip,
 }: Props): VastolordFormApi {
   const [vastolordActive, setVastolordActive] = useState(false);
   const [vastolordRemainingMs, setVastolordRemainingMs] = useState(0);
@@ -67,6 +72,7 @@ export function useVastolordForm({
     null,
   );
   const onExpireRef = useLatestRef(onExpire);
+  const onSkipRef = useLatestRef(onSkip);
 
   const triggerVastolord = useCallback(() => {
     if (!enabled) return;
@@ -107,6 +113,17 @@ export function useVastolordForm({
     }
     setTransformationFrame(null);
   }, []);
+
+  /** Pula a animação de transformação Vastolord: vai direto ao último quadro. */
+  const skipVastolordTransform = useCallback(() => {
+    if (transformationFrame === null) return;
+    if (transformFrameTimerRef.current) {
+      clearInterval(transformFrameTimerRef.current);
+      transformFrameTimerRef.current = null;
+    }
+    setTransformationFrame(null);
+    onSkipRef.current?.();
+  }, [transformationFrame, onSkipRef]);
 
   const extendVastolord = useCallback(
     (ms: number) => {
@@ -151,5 +168,6 @@ export function useVastolordForm({
     triggerVastolord,
     resetVastolord,
     extendVastolord,
+    skipVastolordTransform,
   };
 }
