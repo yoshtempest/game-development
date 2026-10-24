@@ -80,8 +80,18 @@ export function useContainer({
 
     const { intervalMs, slot, item } = respawnRef.current;
 
+    // Inicializa lastPickupTimeRef na primeira execução:
+    // - Se o slot estiver vazio, considera que o item já foi pego "agora"
+    //   para que o contador comece a contar imediatamente.
+    // - Se o slot tiver item, mantém null (ainda não foi pego).
+    if (lastPickupTimeRef.current === null) {
+      if (!slotsRef.current[slot]) {
+        lastPickupTimeRef.current = Date.now();
+      }
+    }
+
     const checkAndRespawn = () => {
-      // Se não houve pickup ainda, não faz nada (item já está lá no início)
+      // Se não houve pickup ainda (e slot tem item), não faz nada
       if (lastPickupTimeRef.current === null) return;
 
       const now = Date.now();
@@ -100,7 +110,9 @@ export function useContainer({
       }
     };
 
-    const interval = setInterval(checkAndRespawn, 1000); // Verifica a cada 1s
+    // Usa intervalo dinâmico: mínimo 100ms, máximo intervalMs, para testes rápidos
+    const checkInterval = Math.min(Math.max(intervalMs, 100), 1000);
+    const interval = setInterval(checkAndRespawn, checkInterval);
     return () => clearInterval(interval);
   }, [setSlots, slotsRef, respawnRef]);
 
