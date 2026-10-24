@@ -29,6 +29,7 @@ export type PetEntry = {
   dropNpc: string | null;
   dropLabel: string | null;
   dropChance: number | null;
+  riddle: string | null;
 };
 
 function parseCollectionKey(key: string): { id: string; enhance: number } {
@@ -80,6 +81,11 @@ export function usePetsMenu(
     }
     const owned =
       qtyByStar.some((qty) => qty > 0) || equippedInfo?.id === pet.id;
+    // Após desbloqueado, chance de drop passa de 0% para 0.1%
+    let finalDropChance = dropInfo?.chance ?? null;
+    if (owned && dropInfo?.chance === 0) {
+      finalDropChance = 0.001; // 0.1%
+    }
     return {
       id: pet.id,
       name: pet.name,
@@ -91,7 +97,8 @@ export function usePetsMenu(
       qtyByStar,
       dropNpc: dropInfo?.npcType ?? null,
       dropLabel: dropInfo?.npcLabel ?? null,
-      dropChance: dropInfo?.chance ?? null,
+      dropChance: finalDropChance,
+      riddle: dropInfo?.riddle ?? null,
     };
   });
 

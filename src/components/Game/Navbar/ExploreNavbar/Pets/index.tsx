@@ -154,6 +154,9 @@ export function Pets() {
                     />
                   ))}
                 </div>
+                {!entry.owned && entry.riddle && (
+                  <p className={styles.riddle}>{entry.riddle}</p>
+                )}
                 {entry.owned && stats && (
                   <>
                     <div className={styles.flexRow}>
