@@ -5,6 +5,7 @@ import { useTitles } from "@/contexts/TitleContext";
 import { useTombstones } from "@/contexts/TombstoneContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { slotKey } from "@/services/save/slotManager";
+import { useTransitionCtx } from "@/contexts/Transition/TransitionContext";
 import type { RandomEncounterConfig } from "@/utils/types/battle/randomEncounter";
 import { pickEncounter } from "./pickEncounter";
 import { rollNpcLevel } from "./rollNpcLevel";
@@ -16,6 +17,7 @@ export function useRandomEncounter(config: RandomEncounterConfig) {
   const { getAlfaSpawnBonus } = useTitles();
   const { prepareTombstoneSpawn } = useTombstones();
   const navigate = useNavigate();
+  const { navigateWithFade } = useTransitionCtx();
 
   const lastPositionRef = useRef({ x: player.gridX, y: player.gridY });
   const setPositionRef = useLatestRef(setPosition);
@@ -44,6 +46,7 @@ export function useRandomEncounter(config: RandomEncounterConfig) {
   }, [configRef, setPositionRef]);
 
   const playerRef = useLatestRef(player);
+  const navigateWithFadeRef = useLatestRef(navigateWithFade);
 
   useEffect(() => {
     const currentPlayer = playerRef.current;
@@ -90,7 +93,7 @@ export function useRandomEncounter(config: RandomEncounterConfig) {
           locationId: cfg.locationId,
         });
       }
-      void navigate(route, {
+      void navigateWithFadeRef.current(route, {
         state: { alfa: true, npcLevel: rollNpcLevel(cfg.npcLevelRange) },
       });
       return;
@@ -107,7 +110,7 @@ export function useRandomEncounter(config: RandomEncounterConfig) {
         });
       }
       const route = pickEncounter(cfg.encounters);
-      void navigate(route, {
+      void navigateWithFadeRef.current(route, {
         state: { npcLevel: rollNpcLevel(cfg.npcLevelRange) },
       });
     }
@@ -117,6 +120,7 @@ export function useRandomEncounter(config: RandomEncounterConfig) {
     navigate,
     configRef,
     playerRef,
+    navigateWithFadeRef,
     getAlfaSpawnBonus,
     prepareTombstoneSpawn,
   ]);
