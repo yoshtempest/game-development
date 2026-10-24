@@ -3,11 +3,12 @@
   border: var(--size-2) solid var(--gold-deep);
   border-radius: var(--smaller);
   padding: var(--size-32);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-self: center;
-  gap: var(--low-medium);
+  display: grid;
+  grid-template-columns: 30% 30%;
+  flex-direction: row;
+  place-content: center;
+  width: 60vw;
+  gap: 10vw;
 
   max-height: var(--vh-80);
   overflow-y: auto;
@@ -22,6 +23,7 @@
 
 .slotsGrid {
   display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--smaller);
   width: 100%;
 }
@@ -31,7 +33,7 @@
   align-items: center;
   justify-content: center;
   min-height: var(--size-72);
-  padding: var(--smaller);
+  width: var(--size-72);
   background: var(--surface-modal);
   border: var(--size-2) solid var(--border-default);
   border-radius: var(--fs-8);
@@ -66,8 +68,7 @@
 
 .inventoryTitle {
   width: 100%;
-  padding-top: var(--small);
-  border-top: var(--size-1) solid var(--border-default);
+  border-left: var(--size-1) solid var(--border-default);
   font-size: var(--fs-14);
   font-weight: bold;
   color: var(--text-secondary);
@@ -82,6 +83,7 @@
 }
 
 .hint {
+  margin-top: 2vh;
   font-size: var(--fs-11);
   color: var(--text-muted);
   text-align: center;

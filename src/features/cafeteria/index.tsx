@@ -4,7 +4,7 @@ import { SceneBase } from "@/components/Game/Scenes/Base";
 import { CAFETERIA_SCENES } from "@/scenes/cafeteria";
 import { createCafeteria } from "@/interactions/cafeteria";
 import { CAFETERIA_RETURN_KEY } from "@/data/storageKeys";
-import { CAFETERIA_FRIDGE } from "@/data/containers";
+import { CAFETERIA_FRIDGE, CAFETERIA_STOVE } from "@/data/containers";
 
 import { useInventory } from "@/contexts/InventoryContext";
 import { useQuestActions } from "@/hooks/quest/useQuestActions";
@@ -44,6 +44,20 @@ export function CafeteriaScene({ sceneId }: Props) {
     },
   });
 
+  const stove = useContainer({
+    storageKey: CAFETERIA_STOVE.storageKey,
+    defaultSlots: CAFETERIA_STOVE.defaultSlots,
+    size: CAFETERIA_STOVE.size,
+    cols: CAFETERIA_STOVE.cols,
+    onPickup: (_index, slot) => {
+      // showToast: true para exibir toast de item coletado da geladeira
+      addItem(slot, { showToast: true });
+      setFlag("picked_sausage");
+      progressQuest("go_cafeteria", 1);
+      return true;
+    },
+  });
+
   const interactions = useMemo(
     () =>
       createCafeteria({
@@ -54,9 +68,26 @@ export function CafeteriaScene({ sceneId }: Props) {
         npcGiveItem,
         setPopup,
         progressQuest,
-        openContainer: fridge.open,
+        openContainer: (container: "fridge" | "stove") => {
+        if (container === "fridge") {
+          fridge.open();
+          return;
+        }
+
+        stove.open();
+      },
       }),
-    [addItem, hasItem, removeItem, giveItem, npcGiveItem, setPopup, progressQuest, fridge.open],
+    [
+      addItem,
+      hasItem,
+      removeItem,
+      giveItem,
+      npcGiveItem,
+      setPopup,
+      progressQuest,
+      fridge.open,
+      stove.open
+    ],
   );
 
   useRandomEncounter({

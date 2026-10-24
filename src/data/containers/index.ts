@@ -13,7 +13,7 @@ export function containerStorageKey(id: string): SlotScopedKey {
 export const CAFETERIA_FRIDGE: ContainerDef = {
   id: "cafeteria_fridge",
   label: "Geladeira",
-  size: 10,
+  size: 9,
   cols: 3,
   defaultSlots: [
     { id: "sausage" },
@@ -28,4 +28,24 @@ export const CAFETERIA_FRIDGE: ContainerDef = {
     null,
   ],
   storageKey: containerStorageKey("cafeteria_fridge"),
+};
+
+export const CAFETERIA_STOVE: ContainerDef = {
+  id: "cafeteria_stove",
+  label: "Fogão",
+  size: 1,
+  cols: 1,
+  defaultSlots: [
+    { id: "foodPlate" },
+    { id: "foodPlate" },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ],
+  storageKey: containerStorageKey("cafeteria_stove"),
 };

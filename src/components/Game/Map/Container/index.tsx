@@ -56,34 +56,38 @@ export function Container({
   return (
     <div className={`overlay ${styles.overlay}`}>
       <div className={styles.modal}>
-        <div className={styles.title}>{label}</div>
+        <div>
+          <div className={styles.title}>{label}</div>
 
-        <div className={styles.slotsGrid} style={gridStyle}>
-          {renderedSlots.map((slot, i) => (
-            <div
-              key={i}
-              className={`${styles.slot} ${i === selectedIndex ? styles.slotSelected : ""}`}
-            >
-              <SlotContent slot={slot} />
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.inventoryTitle}>Seu inventário</div>
-
-        <div className={styles.slotsGrid} style={gridStyle}>
-          {items.length === 0 ? (
-            <div className={styles.emptyInventory}>Vazio</div>
-          ) : (
-            items.map((item) => (
-              <div key={item.id} className={styles.slot}>
-                <SlotContent slot={item} />
+          <div className={styles.slotsGrid} style={gridStyle}>
+            {renderedSlots.map((slot, i) => (
+              <div
+                key={i}
+                className={`${styles.slot} ${i === selectedIndex ? styles.slotSelected : ""}`}
+              >
+                <SlotContent slot={slot} />
               </div>
-            ))
-          )}
+            ))}
+          </div>
         </div>
 
-        <div className={styles.hint}>[L] Pegar · [B] Fechar</div>
+        <div>
+          <div className={styles.title}>Seu inventário</div>
+
+          <div className={styles.slotsGrid} style={gridStyle}>
+            {items.length === 0 ? (
+              <div className={styles.emptyInventory}>Vazio</div>
+            ) : (
+              items.map((item) => (
+                <div key={item.id} className={styles.slot}>
+                  <SlotContent slot={item} />
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className={styles.hint}>[L] Pegar · [B] Fechar</div>
+        </div>
       </div>
     </div>
   );

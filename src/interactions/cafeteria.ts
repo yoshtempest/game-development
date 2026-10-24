@@ -6,10 +6,18 @@ import type {
   QuestDeps,
 } from "@/utils/types/interaction";
 
-type CafeteriaDeps = ContainerDeps & InventoryDeps & QuestDeps;
+type CafeteriaContainer = "fridge" | "stove";
+
+type CafeteriaDeps =
+  ContainerDeps &
+  InventoryDeps &
+  QuestDeps & {
+  openContainer: (container: CafeteriaContainer) => void;
+};
 
 export function createCafeteria(deps: CafeteriaDeps) {
   return createInteractionMap(cafeteriaMessages, deps, {
-    "15,4": createContainerHandler(),
+    "6,4": createContainerHandler("fridge"),
+    "15,4": createContainerHandler("stove"),
   });
 }

@@ -11,8 +11,6 @@ export const cafeteriaMessages: Record<string, string> = {
   "4,4": "e a mãe dela disse: Tu baixe a voz",
   "5,4":
     "Sr Babidi já tentou tirar x1 com todos os personagens mas com Yvel em especifico, não foi possível",
-  "6,4":
-    "Picolé... esse se tornou o apelido do avô de Sr. Guaxinim depois de amputar as pernas",
   "7,4": "Sinto... Uma fome desgraçada... - by Sr. Guaxinim",
   "8,4": "Quantos pães você comeu pela manhã? 12!",
   "9,4": "B com O, BO, D com E, DE, BODE!",

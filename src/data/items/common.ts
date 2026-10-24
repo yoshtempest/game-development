@@ -35,6 +35,18 @@ export const COMMON = createItems({
     description: "Uma linguiça enorme e suculenta. Dá até água na boca.",
     type: "none",
   },
+  foodPlate: {
+    image: itemPath("foodPlate.svg"),
+    name: "Prato de comida",
+    description: "Um prato com arroz e bode, tudo que precisa.",
+    type: "none",
+  },
+  spoiledFoodPlate: {
+    image: itemPath("spoiledFoodPlate.svg"),
+    name: "Prato de comida estragada",
+    description: "A comida aparenta estar estragada, que pena em.",
+    type: "none",
+  },
   suspect_milk: {
     image: itemPath("suspect_milk.svg"),
     name: "Leite Bovino",
