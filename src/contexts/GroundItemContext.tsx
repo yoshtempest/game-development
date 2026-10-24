@@ -49,6 +49,40 @@ export function GroundItemProvider({ children }: { children: ReactNode }) {
   const dataRef = useRef(data);
   dataRef.current = data;
 
+  useEffect(() => {
+    setData((prev) => {
+      let changed = false;
+      const next = { ...prev };
+
+      for (const key of Object.keys(next)) {
+        const loot = next[key];
+        if (!loot) continue;
+
+        let itemsChanged = false;
+
+        const items = loot.items.map((item) => {
+          if (item.id !== "foodPlate" || item.droppedAt != null) {
+            return item;
+          }
+
+          changed = true;
+          itemsChanged = true;
+
+          return {
+            ...item,
+            droppedAt: Date.now(),
+          };
+        });
+
+        if (itemsChanged) {
+          next[key] = { ...loot, items };
+        }
+      }
+
+      return changed ? next : prev;
+    });
+  }, [setData]);
+
   const [currentLocationId, setCurrentLocationId] = useState<string | null>(
     null,
   );
@@ -90,25 +124,61 @@ export function GroundItemProvider({ children }: { children: ReactNode }) {
   }, [setData]);
 
   const addLoot = useCallback(
-    (locationId: string, x: number, y: number, items: GroundItem[]) => {
+    (
+      locationId: string,
+      x: number,
+      y: number,
+      items: GroundItem[],
+    ) => {
       const key = lootKey(locationId, x, y);
+
+      const itemsWithTimestamp = items.map((item) =>
+        item.id === "foodPlate"
+          ? {
+              ...item,
+              droppedAt: item.droppedAt ?? Date.now(),
+            }
+          : { ...item },
+      );
+
       setData((prev) => {
         const existing = prev[key];
+
         if (existing) {
           const merged = existing.items.map((item) => ({ ...item }));
-          for (const item of items) {
-            const found = merged.find((m) => m.id === item.id);
+
+          for (const item of itemsWithTimestamp) {
+            const found = merged.find((current) => current.id === item.id);
+
             if (found) {
               found.qty += item.qty;
+
+              // Corrige pratos antigos que ainda não têm timestamp.
+              if (
+                found.id === "foodPlate" &&
+                found.droppedAt == null
+              ) {
+                found.droppedAt = item.droppedAt ?? Date.now();
+              }
             } else {
               merged.push({ ...item });
             }
           }
-          return { ...prev, [key]: { locationId, x, y, items: merged } };
+
+          return {
+            ...prev,
+            [key]: { locationId, x, y, items: merged },
+          };
         }
+
         return {
           ...prev,
-          [key]: { locationId, x, y, items: items.map((i) => ({ ...i })) },
+          [key]: {
+            locationId,
+            x,
+            y,
+            items: itemsWithTimestamp,
+          },
         };
       });
     },

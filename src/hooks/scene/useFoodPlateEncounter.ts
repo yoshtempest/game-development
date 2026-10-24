@@ -7,9 +7,10 @@ import { useEquipment } from "@/contexts/EquipmentContext";
 import { npcPath } from "@/utils/paths";
 import { useToast } from "@/contexts/ToastContext";
 import { useGameControls } from "@/contexts/GameControlsContext";
+import { useLocation } from "react-router-dom";
 
 const FOOD_PLATE_SPOIL_MS = 60_000; // 1 minuto
-const RAPARIGA_CHECK_INTERVAL_MS = 5_000; // 5 segundos
+const RAPARIGA_CHECK_INTERVAL_MS = 2_000; // 5 segundos
 const RAPARIGA_SPAWN_CHANCE = 0.05; // 100%
 const RAPARIGA_EAT_DURATION_MS = 60_000; // 1 minuto
 const STEP_MS = 300; // Igual ao Janderson
@@ -48,6 +49,7 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
   const { addDrop } = useEquipment();
   const { showToast } = useToast();
   const { pushControls } = useGameControls();
+  const location = useLocation();
 
   const [raparigaState, setRaparigaState] = useState<RaparigaState>("idle");
   const [raparigaPos, setRaparigaPos] = useState({ gridX: 0, gridY: 0 });
@@ -76,34 +78,7 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
   const raparigaPosRef = useRef({ gridX: 0, gridY: 0 });
   raparigaPosRef.current = raparigaPos;
 
-  // Verifica se tem foodPlate no chão (não estragado) a cada 5s
-  useEffect(() => {
-    const checkForFoodPlate = () => {
-      if (raparigaStateRef.current !== "idle" || isProcessingRef.current) return;
-
-      const currentLocation =
-        (player as { locationId?: string }).locationId ??
-        (player as { sceneId?: string }).sceneId ??
-        window.location.pathname;
-      if (!currentLocation) return;
-
-      const loots = getLootAt(currentLocation);
-      const foodPlateLoot = loots.find(
-        (loot) =>
-          loot.items.some(
-            (item) => item.id === "foodPlate" && item.droppedAt && Date.now() - item.droppedAt < FOOD_PLATE_SPOIL_MS
-          )
-      );
-
-      if (foodPlateLoot && Math.random() < RAPARIGA_SPAWN_CHANCE) {
-        isProcessingRef.current = true;
-        startRaparigaEncounter(foodPlateLoot);
-      }
-    };
-
-    const interval = setInterval(checkForFoodPlate, RAPARIGA_CHECK_INTERVAL_MS);
-    return () => clearInterval(interval);
-  }, [getLootAt]);
+  const walkRouteRef = useRef<() => void>(() => {});
 
   const startRaparigaEncounter = useCallback(
     (loot: { locationId: string; x: number; y: number; items: Array<{ id: string; droppedAt?: number }> }) => {
@@ -205,8 +180,64 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
       // Começa a andar
       walkRoute();
     },
-    [getLootAt]
+    [getLootAt, location.pathname]
   );
+
+  // Verifica se tem foodPlate no chão (não estragado) a cada 5s
+  useEffect(() => {
+    const checkForFoodPlate = () => {
+      if (raparigaStateRef.current !== "idle" || isProcessingRef.current) return;
+
+      const currentLocation =
+        (player as { locationId?: string }).locationId ??
+        (player as { sceneId?: string }).sceneId ??
+        location.pathname;
+      if (!currentLocation) return;
+
+      const loots = getLootAt(currentLocation);
+
+      const foodPlateLoot = loots.find((loot) =>
+        loot.items.some(
+          (item) =>
+            item.id === "foodPlate" &&
+            item.droppedAt != null &&
+            Date.now() - item.droppedAt < FOOD_PLATE_SPOIL_MS,
+        ),
+      );
+
+      if (foodPlateLoot && Math.random() < RAPARIGA_SPAWN_CHANCE) {
+        isProcessingRef.current = true;
+        startRaparigaEncounter(foodPlateLoot);
+      }
+    };
+
+    const interval = setInterval(checkForFoodPlate, RAPARIGA_CHECK_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [getLootAt, location.pathname, startRaparigaEncounter]);
+
+  const onReachedPlate = useCallback(() => {
+    // Troca para good.svg
+    setRaparigaSprite(npcPath("/rapariga/good.svg"));
+    setRaparigaFlipX(false);
+    setRaparigaState("eating");
+    setCameraTarget(null);
+    setBlockMovement(false);
+    if (removeControlsRef.current) {
+      removeControlsRef.current();
+      removeControlsRef.current = null;
+    }
+
+    // Remove o prato do chão
+    const plate = plateLocationRef.current;
+    if (plate) {
+      removeGroundItem(plate.locationId, plate.x, plate.y, "foodPlate");
+    }
+
+    // Timer de comer (1 minuto) - se não interagir, vai embora
+    stateTimerRef.current = setTimeout(() => {
+      leaveRapariga();
+    }, RAPARIGA_EAT_DURATION_MS);
+  }, [removeGroundItem]);
 
   const walkRoute = useCallback(() => {
     if (stepIndexRef.current >= routeRef.current.length) {
@@ -241,31 +272,9 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
     moveTimerRef.current = setTimeout(() => {
       walkRoute();
     }, step.ms);
-  }, []);
+  }, [onReachedPlate]);
 
-  const onReachedPlate = useCallback(() => {
-    // Troca para good.svg
-    setRaparigaSprite(npcPath("/rapariga/good.svg"));
-    setRaparigaFlipX(false);
-    setRaparigaState("eating");
-    setCameraTarget(null);
-    setBlockMovement(false);
-    if (removeControlsRef.current) {
-      removeControlsRef.current();
-      removeControlsRef.current = null;
-    }
-
-    // Remove o prato do chão
-    const plate = plateLocationRef.current;
-    if (plate) {
-      removeGroundItem(plate.locationId, plate.x, plate.y, "foodPlate");
-    }
-
-    // Timer de comer (1 minuto) - se não interagir, vai embora
-    stateTimerRef.current = setTimeout(() => {
-      leaveRapariga();
-    }, RAPARIGA_EAT_DURATION_MS);
-  }, [removeGroundItem]);
+  walkRouteRef.current = walkRoute;
 
   // showChoiceBoxUI removido - ChoiceBox aberta via interactRapariga
 
