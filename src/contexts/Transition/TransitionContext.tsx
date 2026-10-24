@@ -38,8 +38,8 @@ const BATTLE_BLIND_COUNT = 160;
 
 function isBattleRoute(to: To): boolean {
   if (typeof to === "number") return false;
-  if (typeof to === "string") return to.includes("/battle/");
-  return to.pathname?.includes("/battle/") ?? false;
+  if (typeof to === "string") return to.includes("battle");
+  return to.pathname?.includes("battle") ?? false;
 }
 
 function getTransitionDuration(blindCount: number): number {
@@ -72,7 +72,13 @@ export function TransitionProvider({
 
   const prevPathRef = useRef(currentPath);
 
-  const transitionDuration = getTransitionDuration(blindCount);
+  const isBattleTransition = blindCount === BATTLE_BLIND_COUNT;
+
+  const transitionSteps = isBattleTransition
+    ? DEFAULT_BLIND_COUNT
+    : blindCount;
+
+  const transitionDuration = getTransitionDuration(transitionSteps);
 
   const navigateWithFade = useCallback(
     (to: To | number, options?: NavigateOptions) => {
@@ -160,18 +166,31 @@ export function TransitionProvider({
             phase === "cover" ? styles.cover : styles.reveal
           }`}
           style={{
-            gridTemplateColumns: `repeat(${blindCount}, minmax(0, 1fr))`,
+            gridTemplateColumns: `repeat(${DEFAULT_BLIND_COUNT}, minmax(0, 1fr))`,
+            gridTemplateRows: `repeat(${isBattleTransition ? 4 : 1}, minmax(0, 1fr))`,
           }}
           aria-hidden="true"
         >
           {Array.from({ length: blindCount }, (_, index) => {
-            const reverseIndex = blindCount - 1 - index;
+            const row = Math.floor(index / DEFAULT_BLIND_COUNT);
+            const column = index % DEFAULT_BLIND_COUNT;
 
-            const animationIndex =
-              phase === "cover" ? index : reverseIndex;
+            const isReverseRow = row % 2 !== 0;
+
+            // Na abertura, invertemos o sentido do fechamento.
+            const reverseDirection = phase === "reveal";
+
+            const originFromRight = isReverseRow !== reverseDirection;
+
+            const animationIndex = reverseDirection
+              ? DEFAULT_BLIND_COUNT - 1 - column
+              : column;
 
             const style: CSSProperties = {
-              animationDelay: `${animationIndex * BLIND_STAGGER}ms`,
+              animationDelay: isBattleTransition
+                ? `${(isReverseRow ? DEFAULT_BLIND_COUNT - 1 - animationIndex : animationIndex) * BLIND_STAGGER}ms`
+                : `${animationIndex * BLIND_STAGGER}ms`,
+              transformOrigin: originFromRight ? "right" : "left",
             };
 
             return (

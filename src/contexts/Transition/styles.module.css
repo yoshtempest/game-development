@@ -18,7 +18,6 @@
   background-color: var(--black);
 
   transform: scaleX(0);
-  transform-origin: left;
 }
 
 /* Fechamento: as faixas avançam da esquerda para a direita */

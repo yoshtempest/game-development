@@ -196,8 +196,14 @@ export class SceneEventService {
         state: { from: this.ctx.location.pathname },
       });
 
-    if (event.delay) {
-      const timer = setTimeout(() => void doNav(), event.delay);
+    // Para rotas de batalha, adiciona um delay extra para garantir que a
+    // transição (160 blinds = ~1.5s) seja totalmente visível antes do
+    // redirecionamento.
+    const isBattle = typeof event.to === "string" && event.to.includes("battle");
+    const delay = event.delay ?? (isBattle ? 200 : 0);
+
+    if (delay > 0) {
+      const timer = setTimeout(() => void doNav(), delay);
       this.timers.push(timer);
     } else {
       void doNav();
