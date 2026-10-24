@@ -2,8 +2,8 @@ import type {
   EquipmentRank,
   EquipmentStats,
 } from "@/utils/types/player/equipment";
-import type { ArmorFlavor, ArmorSlot } from "../types";
-import { ARMOR_CURVE, PIECES } from "../constants";
+import type { ArmorFlavor, ArmorSlot } from "@/data/equipment/curves/types";
+import { ARMOR_CURVE, PIECES } from "@/data/equipment/curves/constants";
 
 /**
  * Estatísticas de uma peça de armadura.

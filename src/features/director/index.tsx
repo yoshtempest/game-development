@@ -31,7 +31,8 @@ export function DirectorScene({ sceneId }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { addItem, hasItem, removeItem, giveItem, npcGiveItem } = useInventory();
+  const { addItem, hasItem, removeItem, giveItem, npcGiveItem } =
+    useInventory();
   const { progressQuest } = useQuestActions();
   const { hasFlag, setFlag } = useFlags();
 

@@ -197,7 +197,9 @@ export function Pets() {
                   <p className={styles.dropLine}>Drop: {formatDrop(entry)}</p>
                 </div>
 
-                <p className={styles.skillLine}>Passiva: {entry.passiveName} | Skill: {entry.skillName}</p>
+                <p className={styles.skillLine}>
+                  Passiva: {entry.passiveName} | Skill: {entry.skillName}
+                </p>
               </div>
             </div>
           );

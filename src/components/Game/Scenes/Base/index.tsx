@@ -99,7 +99,8 @@ export function SceneBase({
   const { player, setMode, setPosition } = usePlayer();
   const { quests } = useQuests();
   const { hasFlag } = useFlags();
-  const { hasItem, addItem, removeItem, giveItem, npcGiveItem } = useInventory();
+  const { hasItem, addItem, removeItem, giveItem, npcGiveItem } =
+    useInventory();
   const { closeNavbar } = useNavbar();
   const { giveQuest, progressQuest } = useQuestActions();
   const { prepareTombstoneSpawn } = useTombstones();

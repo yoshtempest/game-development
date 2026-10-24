@@ -739,9 +739,7 @@ export function BattleScene(props: Props) {
           )}
         </GameMap>
       </div>
-      {showClear && !isTraining && (
-        <BattleClear />
-      )}
+      {showClear && !isTraining && <BattleClear />}
       {showOutro && !isTraining && (
         <BattleOutro
           character={player.character}

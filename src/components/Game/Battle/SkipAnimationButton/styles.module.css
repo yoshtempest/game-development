@@ -29,7 +29,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 var(--size-4) var(--size-8) var(--shadow-50);
   }
   50% {

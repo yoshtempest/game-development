@@ -30,11 +30,5 @@ export function SpecialIntro({
     ? playerAbilityBackgroundPath(character, ability, form ?? undefined)
     : playerPath(`/${character}/specialBackground.svg`);
 
-  return (
-    <AbilityOverlay
-      active={active}
-      src={backgroundSrc}
-      paused={paused} 
-      />
-  );
+  return <AbilityOverlay active={active} src={backgroundSrc} paused={paused} />;
 }

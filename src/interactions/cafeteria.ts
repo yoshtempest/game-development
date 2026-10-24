@@ -8,13 +8,12 @@ import type {
 
 type CafeteriaContainer = "fridge" | "stove";
 
-type CafeteriaDeps =
-  ContainerDeps &
+type CafeteriaDeps = ContainerDeps &
   InventoryDeps &
   QuestDeps & {
-  openContainer: (container: CafeteriaContainer) => void;
-  dropFoodPlate: () => void;
-};
+    openContainer: (container: CafeteriaContainer) => void;
+    dropFoodPlate: () => void;
+  };
 
 export function createCafeteria(deps: CafeteriaDeps) {
   return createInteractionMap(cafeteriaMessages, deps, {

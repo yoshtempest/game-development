@@ -1,4 +1,8 @@
-import { resolveBattleSprite, playerPath, playerPathEmanuelHabilities } from "@/utils/paths";
+import {
+  resolveBattleSprite,
+  playerPath,
+  playerPathEmanuelHabilities,
+} from "@/utils/paths";
 import { resolveSpriteState } from "@/gameRules/battle/playerStates";
 
 import { TRANSFORMATION_FRAMES } from "@/components/Game/Entities/Player/Battle/constants";

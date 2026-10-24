@@ -347,13 +347,7 @@ export function useDomainExpansion({
     );
     setShattering(true);
     timers.schedule(() => finishRef.current(), DOMAIN_SHATTER_MS);
-  }, [
-    finishRef,
-    freezeActionsUntilRef,
-    hasSurvivor,
-    setPlayer,
-    timers,
-  ]);
+  }, [finishRef, freezeActionsUntilRef, hasSurvivor, setPlayer, timers]);
 
   const endDomainRef = useLatestRef(endDomain);
 

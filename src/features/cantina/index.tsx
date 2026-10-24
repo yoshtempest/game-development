@@ -7,6 +7,7 @@ import { npcPath, itemPath } from "@/utils/paths";
 import type { MessageCardConfig } from "@/utils/types/interaction";
 
 import { useInventory } from "@/contexts/InventoryContext";
+import type { DialogueSystem } from "@/utils/types/sceneHooks";
 import { useFlags } from "@/contexts/FlagContext";
 
 import { cantinaBrothersDialogue } from "@/data/dialogues/cantina/brothers";
@@ -59,16 +60,16 @@ export function CantinaScene({ sceneId }: Props) {
         sceneId === "two"
           ? {
               ...npc,
-              interaction: (startDialogue: (d: Dialogue[]) => void) => {
+              interaction: (dialogueSystem: DialogueSystem) => {
                 if (isReady) {
                   const foods = giveFood();
                   for (const id of foods) {
                     // NPC Jeso entrega comida: usa npcGiveItem para mostrar toast com imagem do Jeso
                     npcGiveItem(id as ItemId, "Jeso", "npc/jeso/right.svg");
                   }
-                  startDialogue(cantinaJesoDialogue);
+                  dialogueSystem.start(cantinaJesoDialogue);
                 } else {
-                  startDialogue(cantinaJesoTwoDialogue);
+                  dialogueSystem.start(cantinaJesoTwoDialogue);
                 }
               },
             }

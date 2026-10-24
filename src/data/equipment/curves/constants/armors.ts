@@ -1,4 +1,4 @@
-import type { ArmorSlot } from "../types";
+import type { ArmorSlot } from "@/data/equipment/curves/types";
 
 /** Armadura-base por slot de armadura (perfil "guardião" = valor cheio). */
 export const ARMOR_CURVE: Record<ArmorSlot, ByRank> = {

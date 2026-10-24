@@ -63,9 +63,7 @@ export function DamageNumbers({ numbers, scaleX, scaleY, targets }: Props) {
           >
             {n.type === "crit" ? (
               <div className={styles.critBackground}>
-                <span className={styles.critLabel}>
-                  CRITICAL!
-                </span>
+                <span className={styles.critLabel}>CRITICAL!</span>
 
                 <span className={styles.critText}>
                   {value > 0 ? `-${value}` : "0"}

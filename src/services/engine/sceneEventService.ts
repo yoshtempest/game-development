@@ -199,7 +199,8 @@ export class SceneEventService {
     // Para rotas de batalha, adiciona um delay extra para garantir que a
     // transição (160 blinds = ~1.5s) seja totalmente visível antes do
     // redirecionamento.
-    const isBattle = typeof event.to === "string" && event.to.includes("battle");
+    const isBattle =
+      typeof event.to === "string" && event.to.includes("battle");
     const delay = event.delay ?? (isBattle ? 200 : 0);
 
     if (delay > 0) {

@@ -129,5 +129,8 @@ export function usePausableTimers(isPaused: boolean): PausableTimers {
 
   // Identidade estável: os consumidores colocam `schedule`/`clear` em dep
   // arrays de useCallback/useEffect sem re-render em cascata.
-  return useMemo(() => ({ schedule, cancel, clear }), [schedule, cancel, clear]);
+  return useMemo(
+    () => ({ schedule, cancel, clear }),
+    [schedule, cancel, clear],
+  );
 }

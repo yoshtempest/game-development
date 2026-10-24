@@ -35,9 +35,7 @@ export const CAFETERIA_STOVE: ContainerDef = {
   label: "Fogão",
   size: 3,
   cols: 3,
-  defaultSlots: [
-    { id: "foodPlate" },
-  ],
+  defaultSlots: [{ id: "foodPlate" }],
   storageKey: containerStorageKey("cafeteria_stove"),
   /** Respawn: o prato de comida reaparece a cada 5 minutos (300.000 ms). */
   respawn: {

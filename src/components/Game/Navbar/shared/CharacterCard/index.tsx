@@ -40,8 +40,9 @@ export function CharacterCard({
 
       <img
         src={
-          isEquipped ? playerPath(`/${character.image}/expressions/victory.svg`)
-          : playerPath(`/${character.image}/expressions/default.svg`)
+          isEquipped
+            ? playerPath(`/${character.image}/expressions/victory.svg`)
+            : playerPath(`/${character.image}/expressions/default.svg`)
         }
         className={styles.characterImage}
         alt={character.name}

@@ -1,3 +1,5 @@
+import type { DialogueSystem } from "@/utils/types/sceneHooks";
+
 export type NpcSizeResolver = (src: string) => number | undefined;
 
 export type SceneNPCData = {
@@ -5,9 +7,7 @@ export type SceneNPCData = {
   gridX: number;
   gridY: number;
   size?: number | NpcSizeResolver;
-  interaction?: (
-    startDialogue: (d: Dialogue[], onFinish?: () => void) => void,
-  ) => void;
+  interaction?: (dialogueSystem: DialogueSystem) => void;
   /**
    * Classe extra do sprite. Efeitos de cena que precisam de CSS próprio (o
    * teleport do Sistema, por exemplo) entram por aqui em vez de remountar o

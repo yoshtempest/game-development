@@ -65,7 +65,11 @@ export function resolveBattleSprite(
       return playerPathEmanuelHabilities(`/genkiDama/throwGenkiDama.svg`);
     }
     // Teleporte (clone): sprite do teleporte.
-    if (state === "ability" || state === "preAbility" || state === "preAbility2") {
+    if (
+      state === "ability" ||
+      state === "preAbility" ||
+      state === "preAbility2"
+    ) {
       // O teleporte usa o sprite dedicado; os outros estados de habilidade
       // caem no ataque básico via o fallback no final da função.
       return playerPathEmanuelHabilities(`/teleport/teleport.svg`);

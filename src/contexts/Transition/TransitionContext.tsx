@@ -25,10 +25,7 @@ type TransitionPhase = "idle" | "cover" | "reveal";
 
 type TransitionContextType = {
   isFading: boolean;
-  navigateWithFade: (
-    to: To | number,
-    options?: NavigateOptions,
-  ) => void;
+  navigateWithFade: (to: To | number, options?: NavigateOptions) => void;
 };
 
 const BLIND_DURATION = 220;
@@ -46,14 +43,9 @@ function getTransitionDuration(blindCount: number): number {
   return BLIND_DURATION + (blindCount - 1) * BLIND_STAGGER;
 }
 
-const TransitionContext =
-  createContext<TransitionContextType | null>(null);
+const TransitionContext = createContext<TransitionContextType | null>(null);
 
-export function TransitionProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function TransitionProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -67,16 +59,13 @@ export function TransitionProvider({
 
   const isFadingRef = useLatestRef(phase !== "idle");
 
-  const currentPath =
-    location.pathname + location.search + location.hash;
+  const currentPath = location.pathname + location.search + location.hash;
 
   const prevPathRef = useRef(currentPath);
 
   const isBattleTransition = blindCount === BATTLE_BLIND_COUNT;
 
-  const transitionSteps = isBattleTransition
-    ? DEFAULT_BLIND_COUNT
-    : blindCount;
+  const transitionSteps = isBattleTransition ? DEFAULT_BLIND_COUNT : blindCount;
 
   const transitionDuration = getTransitionDuration(transitionSteps);
 
@@ -90,7 +79,9 @@ export function TransitionProvider({
       if (isFadingRef.current) return;
 
       // Define o número de persianas baseado na rota de destino
-      setBlindCount(isBattleRoute(to) ? BATTLE_BLIND_COUNT : DEFAULT_BLIND_COUNT);
+      setBlindCount(
+        isBattleRoute(to) ? BATTLE_BLIND_COUNT : DEFAULT_BLIND_COUNT,
+      );
 
       pendingRef.current = { to, options };
       setPhase("cover");
@@ -193,13 +184,7 @@ export function TransitionProvider({
               transformOrigin: originFromRight ? "right" : "left",
             };
 
-            return (
-              <div
-                key={index}
-                className={styles.blind}
-                style={style}
-              />
-            );
+            return <div key={index} className={styles.blind} style={style} />;
           })}
 
           <img
@@ -221,9 +206,7 @@ export function useTransitionCtx() {
   const ctx = useContext(TransitionContext);
 
   if (!ctx) {
-    throw new Error(
-      "useTransitionCtx precisa do TransitionProvider",
-    );
+    throw new Error("useTransitionCtx precisa do TransitionProvider");
   }
 
   return ctx;

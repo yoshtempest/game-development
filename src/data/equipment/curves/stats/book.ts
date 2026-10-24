@@ -2,8 +2,8 @@ import type {
   EquipmentRank,
   EquipmentStats,
 } from "@/utils/types/player/equipment";
-import type { BookFlavor } from "../types";
-import { WEAPONS } from "../constants";
+import type { BookFlavor } from "@/data/equipment/curves/types";
+import { WEAPONS } from "@/data/equipment/curves/constants";
 
 /** Livros: `erudito` (espírito+cooldown), `selo` (espírito+escudo), `profecia` (espírito+dano verdadeiro/% vida). */
 export function bookStats(

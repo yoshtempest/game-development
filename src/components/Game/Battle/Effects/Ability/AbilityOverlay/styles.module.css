@@ -25,7 +25,6 @@
    PERSONAGEM
 ========================= */
 
-
 .characterContainer {
   position: absolute;
   inset: 0;
@@ -44,8 +43,7 @@
 }
 
 .characterWrapperEnter {
-  animation: characterEnter 1000ms
-    cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: characterEnter 1000ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 .characterWrapperSweep {
@@ -88,7 +86,6 @@
   z-index: 25;
 }
 
-
 /* =========================
    FAIXA SUPERIOR
 ========================= */
@@ -100,11 +97,10 @@
   width: 1000%;
   background-color: red;
 
-
   z-index: 3;
 
   pointer-events: none;
-    background: repeating-linear-gradient(
+  background: repeating-linear-gradient(
     -12deg,
     transparent var(--size-12),
     transparent var(--size-12),
@@ -208,8 +204,6 @@
 /* =========================
    ANIMAÇÕES
 ========================= */
-
-
 
 @keyframes overlayAppear {
   0% {

@@ -20,6 +20,7 @@ import { Container } from "@/components/Game/Map/Container";
 import Talking from "@/components/Game/Interactions/Talking";
 import { INTERACTION_LABELS } from "@/data/messages";
 import { useFoodPlateEncounter } from "@/hooks/scene/useFoodPlateEncounter";
+import type { DialogueSystem } from "@/utils/types/sceneHooks";
 import { RaparigaEncounter } from "@/components/Game/SceneObjects/RaparigaEncounter";
 
 type Props = {
@@ -46,20 +47,19 @@ export function CafeteriaScene({ sceneId }: Props) {
           gridY: foodPlateEncounter.raparigaPos.gridY,
           flipX: foodPlateEncounter.raparigaFlipX,
           size: 1.7,
-          interaction: () => {
+          interaction: (dialogueSystem: DialogueSystem) => {
             if (foodPlateEncounter.raparigaState === "eating") {
-              foodPlateEncounter.interactRapariga();
+              // Dispara o diálogo da Rapariga; a ChoiceBox aparece após a 3ª fala
+              foodPlateEncounter.startRaparigaDialogue(dialogueSystem);
             }
           },
         },
       ],
     };
-  }, [
-    scene,
-    foodPlateEncounter,
-  ]);
+  }, [scene, foodPlateEncounter]);
 
-  const { addItem, hasItem, removeItem, giveItem, npcGiveItem } = useInventory();
+  const { addItem, hasItem, removeItem, giveItem, npcGiveItem } =
+    useInventory();
   const { progressQuest } = useQuestActions();
   const { setFlag } = useFlags();
   const { addLoot } = useGroundItems();
@@ -104,10 +104,19 @@ export function CafeteriaScene({ sceneId }: Props) {
     removeItem("foodPlate", 1);
     const locationId = location.pathname ?? "cafeteria";
     addLoot(locationId, Math.floor(player.gridX), Math.floor(player.gridY), [
-      { id: "foodPlate", qty: 1, droppedAt: Date.now() }
+      { id: "foodPlate", qty: 1, droppedAt: Date.now() },
     ]);
-    setPopup("Você deixou o prato de comida no chão. Cuidado para não estragar!");
-  }, [hasItem, removeItem, addLoot, player.gridX, player.gridY, location.pathname]);
+    setPopup(
+      "Você deixou o prato de comida no chão. Cuidado para não estragar!",
+    );
+  }, [
+    hasItem,
+    removeItem,
+    addLoot,
+    player.gridX,
+    player.gridY,
+    location.pathname,
+  ]);
 
   const interactions = useMemo(
     () =>
@@ -190,8 +199,6 @@ export function CafeteriaScene({ sceneId }: Props) {
       <RaparigaEncounter
         raparigaState={foodPlateEncounter.raparigaState}
         showChoiceBox={foodPlateEncounter.showChoiceBox}
-        showTalking={foodPlateEncounter.showTalking}
-        talkingMessage={foodPlateEncounter.talkingMessage}
         handleChoice={foodPlateEncounter.handleChoice}
       />
 

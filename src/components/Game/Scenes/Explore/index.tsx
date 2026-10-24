@@ -326,7 +326,7 @@ export function ExploreScene({
       const npc = resolvedNpcs.find((n) => isNpcInFront(player, n));
 
       if (npc?.interaction) {
-        npc.interaction(dialogueSystem.start);
+        npc.interaction(dialogueSystem);
         return true;
       }
 

@@ -221,7 +221,12 @@ declare global {
     /** Entrega item a NPC com toast: remove do inventário e exibe notificação. */
     | { type: "giveItem"; itemId: ItemId; npcName?: string }
     /** NPC entrega item ao jogador com toast: adiciona ao inventário e exibe notificação com imagem do NPC. */
-    | { type: "npcGiveItem"; itemId: ItemId; npcName: string; npcImage?: string }
+    | {
+        type: "npcGiveItem";
+        itemId: ItemId;
+        npcName: string;
+        npcImage?: string;
+      }
     | { type: "prepareTombstone"; locationId: string }
     | {
         type: "conditional";
@@ -672,7 +677,7 @@ declare global {
     y: number;
     phase: "bomb" | "explosion";
   };
-  
+
   /** Classes CSS customizadas que cada botão pode sobrescrever. */
   type CustomAbilityClasses = {
     button?: string;

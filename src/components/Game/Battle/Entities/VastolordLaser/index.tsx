@@ -38,11 +38,12 @@ export function VastolordLaser({
   const left = beam.fromX * battleScaleX;
   const top = vastolordLaserTop(beam.y, PLAYER_SIZE) * battleScaleY;
 
-  const phaseClass = beam.phase === "starting"
-    ? styles.starting
-    : beam.phase === "ending"
-    ? styles.ending
-    : styles.active;
+  const phaseClass =
+    beam.phase === "starting"
+      ? styles.starting
+      : beam.phase === "ending"
+        ? styles.ending
+        : styles.active;
 
   return (
     <div

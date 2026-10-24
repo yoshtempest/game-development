@@ -2,8 +2,8 @@ import type {
   EquipmentRank,
   EquipmentStats,
 } from "@/utils/types/player/equipment";
-import type { BowFlavor } from "../types";
-import { WEAPONS } from "../constants";
+import type { BowFlavor } from "@/data/equipment/curves/types";
+import { WEAPONS } from "@/data/equipment/curves/constants";
 
 /** Arcos: `longo` (técnica+força), `pontaria` (téc+força+dano verdadeiro), `perfurante` (téc+força+% vida máxima). */
 export function bowStats(

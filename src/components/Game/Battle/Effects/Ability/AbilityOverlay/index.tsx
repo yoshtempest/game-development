@@ -39,7 +39,6 @@ export function AbilityOverlay({
   if (!active || !src) return null;
 
   return (
-
     <div
       className={`${styles.overlay} ${paused ? styles.paused : ""}`}
       role="presentation"
@@ -53,18 +52,15 @@ export function AbilityOverlay({
       </div>
       {!imageFailed && (
         <div className={styles.characterContainer}>
-          <div  
+          <div
             className={`${styles.characterWrapper} ${
               motion === "sweep"
                 ? styles.characterWrapperSweep
                 : styles.characterWrapperEnter
-            }`}>
+            }`}
+          >
             {abilityName && (
-              <div
-                className={styles.abilityName}
-              >
-                {abilityName}
-              </div>
+              <div className={styles.abilityName}>{abilityName}</div>
             )}
 
             <img

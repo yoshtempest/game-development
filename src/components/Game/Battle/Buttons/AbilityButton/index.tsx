@@ -4,12 +4,12 @@ import styles from "./styles.module.css";
 
 /** Tipos de comportamento do botão de habilidade. */
 type AbilityButtonType =
-  | "standard"          // Habilidade padrão com cooldown (Atomic, GranReyCero, etc.)
-  | "hold"              // Habilidade de hold (KiCharge) - onPress/onRelease
-  | "count"             // Habilidade com contador (Portals) - count/max
-  | "domain"            // Expansão de Domínio - accent/background
-  | "combo"             // Ação de combo - sem cooldown, apenas visual
-  | "custom";           // Totalmente customizado (usa classes do próprio botão)
+  | "standard" // Habilidade padrão com cooldown (Atomic, GranReyCero, etc.)
+  | "hold" // Habilidade de hold (KiCharge) - onPress/onRelease
+  | "count" // Habilidade com contador (Portals) - count/max
+  | "domain" // Expansão de Domínio - accent/background
+  | "combo" // Ação de combo - sem cooldown, apenas visual
+  | "custom"; // Totalmente customizado (usa classes do próprio botão)
 
 type AbilityButtonProps = {
   /** Tipo da habilidade - define o comportamento e layout. */
@@ -112,7 +112,8 @@ export function AbilityButton({
   const locked = disabled || (type === "standard" && !ready);
 
   // Helper para pegar classe customizada ou padrão
-  const c = (key: keyof CustomAbilityClasses) => customClasses?.[key] ?? styles[key];
+  const c = (key: keyof CustomAbilityClasses) =>
+    customClasses?.[key] ?? styles[key];
 
   // Conteúdo do label
   const renderLabel = () => (
@@ -132,9 +133,12 @@ export function AbilityButton({
 
   // Cost/value badge
   const renderCost = () => {
-    if (type === "count" && costText) return <span className={c("cost")}>{costText}</span>;
-    if (type === "hold" && valueText) return <span className={c("value")}>{valueText}</span>;
-    if (type === "hold" && costText) return <span className={c("cost")}>{costText}</span>;
+    if (type === "count" && costText)
+      return <span className={c("cost")}>{costText}</span>;
+    if (type === "hold" && valueText)
+      return <span className={c("value")}>{valueText}</span>;
+    if (type === "hold" && costText)
+      return <span className={c("cost")}>{costText}</span>;
     return null;
   };
 
@@ -142,7 +146,8 @@ export function AbilityButton({
   const charges = extraProps?.charges as number | undefined;
 
   // Dynamic label for count type
-  const displayLabel = type === "count" && full && fullLabel ? fullLabel : label;
+  const displayLabel =
+    type === "count" && full && fullLabel ? fullLabel : label;
 
   const baseClasses = [
     c("button"),
@@ -159,10 +164,11 @@ export function AbilityButton({
 
   const inlineStyle: CSSProperties = {
     ...style,
-    ...(type === "domain" && {
-      "--domain-accent": accent,
-      backgroundImage: background ? `url(${background})` : undefined,
-    } as CSSProperties & Record<string, string>),
+    ...(type === "domain" &&
+      ({
+        "--domain-accent": accent,
+        backgroundImage: background ? `url(${background})` : undefined,
+      } as CSSProperties & Record<string, string>)),
   };
 
   // Hold behavior (pointer capture)
@@ -199,10 +205,7 @@ export function AbilityButton({
   if (type === "combo") {
     return (
       <div className={`$c("container") ${className ?? ""}`}>
-        <button
-          className={c("button")}
-          onPointerDown={onClick}
-        >
+        <button className={c("button")} onPointerDown={onClick}>
           {icon}
         </button>
       </div>
@@ -224,9 +227,7 @@ export function AbilityButton({
           {count}/{maxCount}
         </span>
       )}
-      {charges && (
-        <span className={c("charges")}>{charges}x</span>
-      )}
+      {charges && <span className={c("charges")}>{charges}x</span>}
       <span className={`${c("label")} ${c("abilityLabel")}`}>
         {displayLabel?.toUpperCase() ?? fullLabel}
       </span>

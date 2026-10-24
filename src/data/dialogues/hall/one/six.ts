@@ -8,7 +8,11 @@ export const AfterPcRoomSixDialogue = defineDialogue([
   ],
   ["remedinha", "Quem"],
   ["protagonista", "Quem o que?", "why"],
-  ["remedinha", "Te perguntou kkkkkkk", "happy"],
+  {
+    who: "remedinha",
+    pose: "happy",
+    message: "Te perguntou kkkkkkk",
+  },
   ["protagonista", "...", "crossArms"],
   ["remedinha", "Tá, chega de brincadeirinhas"],
   [

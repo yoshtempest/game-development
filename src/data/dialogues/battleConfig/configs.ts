@@ -8,6 +8,6 @@ export const battleConfigDialogue = defineDialogue([
     who: "protagonista",
     message: "Nah i'd win.",
     expression: "victory",
-    soundSrc: soundEffectPath("player/characters/riquelme/nahIdWin.mp3")
+    soundSrc: soundEffectPath("player/characters/riquelme/nahIdWin.mp3"),
   },
 ]);

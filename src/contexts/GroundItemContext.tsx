@@ -99,7 +99,10 @@ export function GroundItemProvider({ children }: { children: ReactNode }) {
           if (!loot) continue;
 
           const hasSpoiledFood = loot.items.some(
-            (item) => item.id === "foodPlate" && item.droppedAt && Date.now() - item.droppedAt >= FOOD_PLATE_SPOIL_MS
+            (item) =>
+              item.id === "foodPlate" &&
+              item.droppedAt &&
+              Date.now() - item.droppedAt >= FOOD_PLATE_SPOIL_MS,
           );
 
           if (hasSpoiledFood) {
@@ -107,9 +110,11 @@ export function GroundItemProvider({ children }: { children: ReactNode }) {
             next[key] = {
               ...loot,
               items: loot.items.map((item) =>
-                item.id === "foodPlate" && item.droppedAt && Date.now() - item.droppedAt >= FOOD_PLATE_SPOIL_MS
+                item.id === "foodPlate" &&
+                item.droppedAt &&
+                Date.now() - item.droppedAt >= FOOD_PLATE_SPOIL_MS
                   ? { ...item, id: "spoiledFoodPlate" }
-                  : item
+                  : item,
               ),
             };
           }
@@ -124,12 +129,7 @@ export function GroundItemProvider({ children }: { children: ReactNode }) {
   }, [setData]);
 
   const addLoot = useCallback(
-    (
-      locationId: string,
-      x: number,
-      y: number,
-      items: GroundItem[],
-    ) => {
+    (locationId: string, x: number, y: number, items: GroundItem[]) => {
       const key = lootKey(locationId, x, y);
 
       const itemsWithTimestamp = items.map((item) =>
@@ -154,10 +154,7 @@ export function GroundItemProvider({ children }: { children: ReactNode }) {
               found.qty += item.qty;
 
               // Corrige pratos antigos que ainda não têm timestamp.
-              if (
-                found.id === "foodPlate" &&
-                found.droppedAt == null
-              ) {
+              if (found.id === "foodPlate" && found.droppedAt == null) {
                 found.droppedAt = item.droppedAt ?? Date.now();
               }
             } else {

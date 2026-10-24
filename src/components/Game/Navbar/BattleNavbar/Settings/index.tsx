@@ -38,7 +38,6 @@ import {
 import Talking from "@/components/Game/Interactions/Talking";
 import { useCutscene } from "@/hooks/interaction/useCutscene";
 
-
 export function Settings() {
   const battleInfoCtx = useBattleInfo();
   const { player } = usePlayer();

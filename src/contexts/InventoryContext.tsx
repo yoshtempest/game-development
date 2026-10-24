@@ -152,7 +152,9 @@ export function InventoryProvider({ children }: { children: ReactNode }) {
   const npcGiveItem = useCallback(
     (itemId: ItemId, npcName: string, npcImage?: string) => {
       const itemData = ITEMS[itemId];
-      const result = inventoryService.addItem(latestItemsRef.current, { id: itemId });
+      const result = inventoryService.addItem(latestItemsRef.current, {
+        id: itemId,
+      });
       commit(result.items, result.sound);
       if (result.added && itemData) {
         showToast({

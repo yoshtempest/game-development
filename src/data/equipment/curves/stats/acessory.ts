@@ -2,8 +2,8 @@ import type {
   EquipmentRank,
   EquipmentStats,
 } from "@/utils/types/player/equipment";
-import type { AccessoryFlavor } from "../types";
-import { PIECES, ACCESSORIES } from "../constants";
+import type { AccessoryFlavor } from "@/data/equipment/curves/types";
+import { PIECES, ACCESSORIES } from "@/data/equipment/curves/constants";
 
 /**
  * Acessórios — três perfis:

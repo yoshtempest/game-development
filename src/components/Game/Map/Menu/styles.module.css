@@ -21,7 +21,6 @@
 
   justify-items: center;
   height: var(--vh-88);
-
 }
 
 @keyframes renderLeftToRight {
