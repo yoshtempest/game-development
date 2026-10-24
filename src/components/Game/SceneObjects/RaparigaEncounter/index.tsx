@@ -1,18 +1,23 @@
-import { useFoodPlateEncounter } from "@/hooks/scene/useFoodPlateEncounter";
 import { npcPath } from "@/utils/paths";
 import { ChoiceBox } from "@/components/Game/Interactions/ChoiceBox";
 import Talking from "@/components/Game/Interactions/Talking";
 
-export function RaparigaEncounter() {
+type Props = {
+  raparigaState: "idle" | "walking" | "eating" | "waitingChoice" | "leaving";
+  showChoiceBox: boolean;
+  showTalking: boolean;
+  talkingMessage: string;
+  handleChoice: (choice: "dar denovo" | "não quero dar") => void;
+};
+
+export function RaparigaEncounter(props: Props) {
   const {
     raparigaState,
-    raparigaPos,
-    raparigaSprite,
     showChoiceBox,
     showTalking,
     talkingMessage,
     handleChoice,
-  } = useFoodPlateEncounter();
+  } = props;
 
   if (raparigaState === "idle") return null;
 
@@ -36,25 +41,7 @@ export function RaparigaEncounter() {
         />
       )}
 
-      <div
-        style={{
-          position: "absolute",
-          left: `${raparigaPos.gridX * 48}px`,
-          top: `${raparigaPos.gridY * 48}px`,
-          zIndex: 50,
-          pointerEvents: "none",
-        }}
-      >
-        <img
-          src={raparigaSprite}
-          alt="Rapariga"
-          style={{
-            width: "76px",
-            height: "76px",
-            imageRendering: "pixelated",
-          }}
-        />
-      </div>
+      {/* Rapariga agora é renderizada como NPC na cena (sceneWithRapariga) */}
     </>
   );
 }

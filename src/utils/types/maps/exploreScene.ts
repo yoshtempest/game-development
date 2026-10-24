@@ -5,7 +5,9 @@ export type SceneNPCData = {
   gridX: number;
   gridY: number;
   size?: number | NpcSizeResolver;
-  interaction?: (startDialogue: (d: Dialogue[]) => void) => void;
+  interaction?: (
+    startDialogue: (d: Dialogue[], onFinish?: () => void) => void,
+  ) => void;
   /**
    * Classe extra do sprite. Efeitos de cena que precisam de CSS próprio (o
    * teleport do Sistema, por exemplo) entram por aqui em vez de remountar o
@@ -28,6 +30,7 @@ export type SceneNPCData = {
    * Duração em ms do deslize entre tiles. Sem ela a posição troca de uma vez,
    * que é o comportamento de todo NPC parado.
    */
+  flipX?: boolean;
   moveMs?: number;
 };
 

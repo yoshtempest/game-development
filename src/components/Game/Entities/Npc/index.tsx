@@ -11,6 +11,8 @@ type Props = {
   fading?: boolean;
   className?: string;
   hidden?: boolean;
+  /** Espelha o sprite horizontalmente (para andar para a direita). */
+  flipX?: boolean;
   /** Duração do deslize entre tiles; sem ela a posição troca de uma vez. */
   moveMs?: number;
 };
@@ -29,6 +31,7 @@ export const NPC = memo(function NPC({
   fading,
   className,
   hidden,
+  flipX,
   moveMs,
 }: Props) {
   return (
@@ -47,6 +50,7 @@ export const NPC = memo(function NPC({
         // animação em CSS vence a opacidade inline enquanto roda, então o fim
         // de um `teleportOut`/`teleportIn` não conflita com nada aqui.
         opacity: hidden || fading ? 0 : 1,
+        transform: flipX ? "scaleX(-1)" : undefined,
         // O mesmo deslize do jogador (`Entities/Player`): quem anda só troca o
         // tile no estado e deixa o CSS andar os pixels. NPC parado não muda de
         // posição, então a transition só entra quando `moveMs` vem preenchido.

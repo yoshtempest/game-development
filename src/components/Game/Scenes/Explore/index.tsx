@@ -81,6 +81,7 @@ export function ExploreScene({
   interactionLabels,
   tileDialogues,
   npcOverlays,
+  cameraTargetOverride,
   cutscene,
   background,
   backgroundSize,
@@ -93,6 +94,7 @@ export function ExploreScene({
   events?: SceneEvent[];
   setPopup?: (msg: string | null) => void;
   popup?: string | null;
+  cameraTargetOverride?: { x: number; y: number } | null;
   questHighlightTiles?: QuestHighlightTile[];
   questNpcPositions?: QuestNpcPosition[];
   questDirection?: Direction | null;
@@ -454,8 +456,37 @@ export function ExploreScene({
     groundLoots: interactionLoot,
   });
 
-  const { TILE_SIZE, cameraX, cameraY, PLAYER_SIZE, MAP_COLS, MAP_ROWS } =
-    useGameLayout(map, scaleFix);
+  const {
+    TILE_SIZE,
+    cameraX,
+    cameraY,
+    PLAYER_SIZE,
+    MAP_COLS,
+    MAP_ROWS,
+    MAP_WIDTH,
+    MAP_HEIGHT,
+    containerWidth,
+    containerHeight,
+  } = useGameLayout(map, scaleFix);
+
+  const finalCameraX = cameraTargetOverride
+    ? Math.max(
+        0,
+        Math.min(
+          cameraTargetOverride.x * TILE_SIZE - containerWidth / 2,
+          MAP_WIDTH - containerWidth,
+        ),
+      )
+    : cameraX;
+  const finalCameraY = cameraTargetOverride
+    ? Math.max(
+        0,
+        Math.min(
+          cameraTargetOverride.y * TILE_SIZE - containerHeight / 2,
+          MAP_HEIGHT - containerHeight,
+        ),
+      )
+    : cameraY;
 
   if (!isReady) return null;
 
@@ -465,8 +496,8 @@ export function ExploreScene({
         TILE_SIZE={TILE_SIZE}
         cols={MAP_COLS}
         rows={MAP_ROWS}
-        targetX={cameraX}
-        targetY={cameraY}
+        targetX={finalCameraX}
+        targetY={finalCameraY}
         backgroundUrl={background}
         backgroundSize={backgroundSize}
       >
@@ -605,6 +636,7 @@ export function ExploreScene({
             gridX={loot.x}
             gridY={loot.y}
             tileSize={TILE_SIZE}
+            items={loot.items}
           />
         ))}
 

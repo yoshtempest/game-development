@@ -29,6 +29,36 @@ type Props = {
 export function CafeteriaScene({ sceneId }: Props) {
   const scene = CAFETERIA_SCENES[sceneId];
 
+  // Food plate encounter system
+  const foodPlateEncounter = useFoodPlateEncounter();
+
+  const sceneWithRapariga = useMemo(() => {
+    if (!scene) return null;
+    if (foodPlateEncounter.raparigaState === "idle") return scene;
+    return {
+      ...scene,
+      npcs: [
+        ...(scene.npcs ?? []),
+        {
+          id: "rapariga-encounter",
+          src: foodPlateEncounter.raparigaSprite,
+          gridX: foodPlateEncounter.raparigaPos.gridX,
+          gridY: foodPlateEncounter.raparigaPos.gridY,
+          flipX: foodPlateEncounter.raparigaFlipX,
+          size: 1.7,
+          interaction: () => {
+            if (foodPlateEncounter.raparigaState === "eating") {
+              foodPlateEncounter.interactRapariga();
+            }
+          },
+        },
+      ],
+    };
+  }, [
+    scene,
+    foodPlateEncounter,
+  ]);
+
   const { addItem, hasItem, removeItem, giveItem, npcGiveItem } = useInventory();
   const { progressQuest } = useQuestActions();
   const { setFlag } = useFlags();
@@ -65,9 +95,6 @@ export function CafeteriaScene({ sceneId }: Props) {
     },
   });
 
-  // Food plate encounter system
-  useFoodPlateEncounter();
-
   // Interação para dropar foodPlate no chão
   const dropFoodPlate = useCallback(() => {
     if (!hasItem("foodPlate")) {
@@ -75,12 +102,12 @@ export function CafeteriaScene({ sceneId }: Props) {
       return;
     }
     removeItem("foodPlate", 1);
-    const locationId = (player as any).locationId ?? location.pathname ?? "cafeteria";
-    addLoot(locationId, Math.floor((player as any).gridX ?? 0), Math.floor((player as any).gridY ?? 0), [
+    const locationId = location.pathname ?? "cafeteria";
+    addLoot(locationId, Math.floor(player.gridX), Math.floor(player.gridY), [
       { id: "foodPlate", qty: 1, droppedAt: Date.now() }
     ]);
     setPopup("Você deixou o prato de comida no chão. Cuidado para não estragar!");
-  }, [hasItem, removeItem, addLoot, (player as any).locationId, (player as any).gridX, (player as any).gridY]);
+  }, [hasItem, removeItem, addLoot, player.gridX, player.gridY, location.pathname]);
 
   const interactions = useMemo(
     () =>
@@ -146,7 +173,7 @@ export function CafeteriaScene({ sceneId }: Props) {
   return (
     <>
       <SceneBase
-        scene={scene}
+        scene={sceneWithRapariga ?? scene}
         background={scene.background}
         interactions={interactions}
         interactionLabels={{
@@ -155,11 +182,18 @@ export function CafeteriaScene({ sceneId }: Props) {
         }}
         popup={popup}
         setPopup={setPopup}
+        cameraTargetOverride={foodPlateEncounter.cameraTarget}
       />
 
       {popup && <Talking name="Sistema" message={popup} />}
 
-      <RaparigaEncounter />
+      <RaparigaEncounter
+        raparigaState={foodPlateEncounter.raparigaState}
+        showChoiceBox={foodPlateEncounter.showChoiceBox}
+        showTalking={foodPlateEncounter.showTalking}
+        talkingMessage={foodPlateEncounter.talkingMessage}
+        handleChoice={foodPlateEncounter.handleChoice}
+      />
 
       <Container
         isOpen={fridge.isOpen}

@@ -73,6 +73,7 @@ type SceneBaseProps = {
   }) => Record<string, unknown> | void;
   tileDialogues?: Record<string, Dialogue[]>;
   npcOverlays?: { gridX: number; gridY: number; element: React.ReactNode }[];
+  cameraTargetOverride?: { x: number; y: number } | null;
   children?: React.ReactNode;
 };
 
@@ -90,6 +91,7 @@ export function SceneBase({
   onFinishExtra,
   tileDialogues,
   npcOverlays,
+  cameraTargetOverride,
   children,
 }: SceneBaseProps) {
   const { navigateWithFade } = useTransitionCtx();
@@ -166,6 +168,7 @@ export function SceneBase({
           interactionLabels={interactionLabels}
           tileDialogues={tileDialogues}
           npcOverlays={npcOverlays}
+          cameraTargetOverride={cameraTargetOverride}
           cutscene={scene.cutscene}
           onFinish={() => {
             const extra = onFinishExtra?.({

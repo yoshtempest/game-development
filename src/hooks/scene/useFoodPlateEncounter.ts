@@ -3,13 +3,14 @@ import { useGroundItems } from "@/contexts/GroundItemContext";
 import { useInventory } from "@/contexts/InventoryContext";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useFlags } from "@/contexts/FlagContext";
-import { usePetProgress } from "@/contexts/PetProgressContext";
+import { useEquipment } from "@/contexts/EquipmentContext";
 import { npcPath } from "@/utils/paths";
 import { useToast } from "@/contexts/ToastContext";
+import { useGameControls } from "@/contexts/GameControlsContext";
 
 const FOOD_PLATE_SPOIL_MS = 60_000; // 1 minuto
 const RAPARIGA_CHECK_INTERVAL_MS = 5_000; // 5 segundos
-const RAPARIGA_SPAWN_CHANCE = 0.05; // 5%
+const RAPARIGA_SPAWN_CHANCE = 0.05; // 100%
 const RAPARIGA_EAT_DURATION_MS = 60_000; // 1 minuto
 const STEP_MS = 300; // Igual ao Janderson
 const TURN_MS = 300;
@@ -21,6 +22,7 @@ type RouteStep = {
   gridY: number;
   ms: number;
   facing: "left" | "right" | "up" | "down";
+  flipX: boolean;
 };
 
 type FoodPlateEncounterReturn = {
@@ -28,10 +30,14 @@ type FoodPlateEncounterReturn = {
   raparigaPos: { gridX: number; gridY: number };
   raparigaSprite: string;
   raparigaFacing: "left" | "right" | "up" | "down";
+  raparigaFlipX: boolean;
   showChoiceBox: boolean;
   showTalking: boolean;
   talkingMessage: string;
   handleChoice: (choice: "dar denovo" | "não quero dar") => void;
+  interactRapariga: () => void;
+  cameraTarget?: { x: number; y: number } | null;
+  blockMovement: boolean;
 };
 
 export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
@@ -39,17 +45,21 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
   const { hasItem, removeItem } = useInventory();
   const { setFlag } = useFlags();
   const { getLootAt, removeItem: removeGroundItem } = useGroundItems();
-  const petProgress = usePetProgress() as any;
-  const addPet = petProgress.addPet ?? petProgress.unlockPet ?? petProgress.addCollection;
+  const { addDrop } = useEquipment();
   const { showToast } = useToast();
+  const { pushControls } = useGameControls();
 
   const [raparigaState, setRaparigaState] = useState<RaparigaState>("idle");
   const [raparigaPos, setRaparigaPos] = useState({ gridX: 0, gridY: 0 });
   const [raparigaSprite, setRaparigaSprite] = useState("");
   const [raparigaFacing, setRaparigaFacing] = useState<"left" | "right" | "up" | "down">("down");
+  const [raparigaFlipX, setRaparigaFlipX] = useState(false);
   const [showChoiceBox, setShowChoiceBox] = useState(false);
   const [showTalking, setShowTalking] = useState(false);
   const [talkingMessage, setTalkingMessage] = useState("");
+  const [cameraTarget, setCameraTarget] = useState<{ x: number; y: number } | null>(null);
+  const [blockMovement, setBlockMovement] = useState(false);
+  const removeControlsRef = useRef<(() => void) | null>(null);
 
   const routeRef = useRef<RouteStep[]>([]);
   const stepIndexRef = useRef(0);
@@ -71,7 +81,10 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
     const checkForFoodPlate = () => {
       if (raparigaStateRef.current !== "idle" || isProcessingRef.current) return;
 
-      const currentLocation = (player as any)?.locationId ?? (player as any)?.sceneId;
+      const currentLocation =
+        (player as { locationId?: string }).locationId ??
+        (player as { sceneId?: string }).sceneId ??
+        window.location.pathname;
       if (!currentLocation) return;
 
       const loots = getLootAt(currentLocation);
@@ -90,7 +103,7 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
 
     const interval = setInterval(checkForFoodPlate, RAPARIGA_CHECK_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [(player as any)?.locationId, (player as any)?.sceneId, getLootAt]);
+  }, [getLootAt]);
 
   const startRaparigaEncounter = useCallback(
     (loot: { locationId: string; x: number; y: number; items: Array<{ id: string; droppedAt?: number }> }) => {
@@ -108,6 +121,17 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
       setRaparigaSprite(npcPath("/rapariga/default.svg"));
       setRaparigaFacing("down");
       setRaparigaState("walking");
+      setCameraTarget({ x: startX, y: startY });
+      setBlockMovement(true);
+      const removeControls = pushControls({
+        onUp: () => true,
+        onDown: () => true,
+        onLeft: () => true,
+        onRight: () => true,
+        onConfirm: () => true,
+        onCancel: () => true,
+      });
+      removeControlsRef.current = removeControls;
 
       // Calcula rota até o prato (estilo Janderson)
       const route: RouteStep[] = [];
@@ -118,59 +142,59 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
       if (Math.abs(dx) > Math.abs(dy)) {
         // Movimento horizontal primeiro
         if (dx > 0) {
-          route.push({ gridX: startX, gridY: startY, ms: TURN_MS, facing: "right" });
+          route.push({ gridX: startX, gridY: startY, ms: TURN_MS, facing: "right", flipX: true });
           const steps = Math.floor(plateX - startX);
           for (let i = 1; i <= steps; i++) {
-            route.push({ gridX: startX + i, gridY: startY, ms: STEP_MS, facing: "right" });
+            route.push({ gridX: startX + i, gridY: startY, ms: STEP_MS, facing: "right", flipX: true });
           }
         } else {
-          route.push({ gridX: startX, gridY: startY, ms: TURN_MS, facing: "left" });
+          route.push({ gridX: startX, gridY: startY, ms: TURN_MS, facing: "left", flipX: false });
           const steps = Math.floor(startX - plateX);
           for (let i = 1; i <= steps; i++) {
-            route.push({ gridX: startX - i, gridY: startY, ms: STEP_MS, facing: "left" });
+            route.push({ gridX: startX - i, gridY: startY, ms: STEP_MS, facing: "left", flipX: false });
           }
         }
         // Depois vertical
         if (dy > 0) {
-          route.push({ gridX: plateX, gridY: startY, ms: TURN_MS, facing: "down" });
+          route.push({ gridX: plateX, gridY: startY, ms: TURN_MS, facing: "down", flipX: false });
           const steps = Math.floor(plateY - startY);
           for (let i = 1; i <= steps; i++) {
-            route.push({ gridX: plateX, gridY: startY + i, ms: STEP_MS, facing: "down" });
+            route.push({ gridX: plateX, gridY: startY + i, ms: STEP_MS, facing: "down", flipX: false });
           }
         } else if (dy < 0) {
-          route.push({ gridX: plateX, gridY: startY, ms: TURN_MS, facing: "up" });
+          route.push({ gridX: plateX, gridY: startY, ms: TURN_MS, facing: "up", flipX: false });
           const steps = Math.floor(startY - plateY);
           for (let i = 1; i <= steps; i++) {
-            route.push({ gridX: plateX, gridY: startY - i, ms: STEP_MS, facing: "up" });
+            route.push({ gridX: plateX, gridY: startY - i, ms: STEP_MS, facing: "up", flipX: false });
           }
         }
       } else {
         // Movimento vertical primeiro
         if (dy > 0) {
-          route.push({ gridX: startX, gridY: startY, ms: TURN_MS, facing: "down" });
+          route.push({ gridX: startX, gridY: startY, ms: TURN_MS, facing: "down", flipX: false });
           const steps = Math.floor(plateY - startY);
           for (let i = 1; i <= steps; i++) {
-            route.push({ gridX: startX, gridY: startY + i, ms: STEP_MS, facing: "down" });
+            route.push({ gridX: startX, gridY: startY + i, ms: STEP_MS, facing: "down", flipX: false });
           }
         } else if (dy < 0) {
-          route.push({ gridX: startX, gridY: startY, ms: TURN_MS, facing: "up" });
+          route.push({ gridX: startX, gridY: startY, ms: TURN_MS, facing: "up", flipX: false });
           const steps = Math.floor(startY - plateY);
           for (let i = 1; i <= steps; i++) {
-            route.push({ gridX: startX, gridY: startY - i, ms: STEP_MS, facing: "up" });
+            route.push({ gridX: startX, gridY: startY - i, ms: STEP_MS, facing: "up", flipX: false });
           }
         }
         // Depois horizontal
         if (dx > 0) {
-          route.push({ gridX: startX, gridY: plateY, ms: TURN_MS, facing: "right" });
+          route.push({ gridX: startX, gridY: plateY, ms: TURN_MS, facing: "right", flipX: true });
           const steps = Math.floor(plateX - startX);
           for (let i = 1; i <= steps; i++) {
-            route.push({ gridX: startX + i, gridY: plateY, ms: STEP_MS, facing: "right" });
+            route.push({ gridX: startX + i, gridY: plateY, ms: STEP_MS, facing: "right", flipX: true });
           }
         } else if (dx < 0) {
-          route.push({ gridX: startX, gridY: plateY, ms: TURN_MS, facing: "left" });
+          route.push({ gridX: startX, gridY: plateY, ms: TURN_MS, facing: "left", flipX: false });
           const steps = Math.floor(startX - plateX);
           for (let i = 1; i <= steps; i++) {
-            route.push({ gridX: startX - i, gridY: plateY, ms: STEP_MS, facing: "left" });
+            route.push({ gridX: startX - i, gridY: plateY, ms: STEP_MS, facing: "left", flipX: false });
           }
         }
       }
@@ -196,11 +220,21 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
     
     setRaparigaPos({ gridX: step.gridX, gridY: step.gridY });
     setRaparigaFacing(step.facing);
+    setRaparigaFlipX(step.flipX);
+    setCameraTarget({ x: step.gridX, y: step.gridY });
 
     // Atualiza sprite baseado na direção e se está movendo
+    // (Rapariga só tem movingLeft e movingUp; flipX cuida de espelhar)
     const isMoving = step.ms === STEP_MS;
-    const baseSprite = isMoving ? `moving${step.facing.charAt(0).toUpperCase() + step.facing.slice(1)}` : step.facing;
-    setRaparigaSprite(npcPath(`/rapariga/${baseSprite}.svg`));
+    const spriteBase =
+      step.facing === "right" || step.facing === "left"
+        ? isMoving
+          ? "movingLeft"
+          : "left"
+        : isMoving
+          ? "movingUp"
+          : "up";
+    setRaparigaSprite(npcPath(`/rapariga/${spriteBase}.svg`));
 
     stepIndexRef.current++;
 
@@ -212,7 +246,14 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
   const onReachedPlate = useCallback(() => {
     // Troca para good.svg
     setRaparigaSprite(npcPath("/rapariga/good.svg"));
+    setRaparigaFlipX(false);
     setRaparigaState("eating");
+    setCameraTarget(null);
+    setBlockMovement(false);
+    if (removeControlsRef.current) {
+      removeControlsRef.current();
+      removeControlsRef.current = null;
+    }
 
     // Remove o prato do chão
     const plate = plateLocationRef.current;
@@ -220,20 +261,31 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
       removeGroundItem(plate.locationId, plate.x, plate.y, "foodPlate");
     }
 
-    // Timer de comer (1 minuto)
+    // Timer de comer (1 minuto) - se não interagir, vai embora
     stateTimerRef.current = setTimeout(() => {
-      setRaparigaState("waitingChoice");
-      showChoiceBoxUI();
+      leaveRapariga();
     }, RAPARIGA_EAT_DURATION_MS);
   }, [removeGroundItem]);
 
-  const showChoiceBoxUI = useCallback(() => {
+  // showChoiceBoxUI removido - ChoiceBox aberta via interactRapariga
+
+  const interactRapariga = useCallback(() => {
+    if (raparigaState !== "eating") return;
+    if (stateTimerRef.current) {
+      clearTimeout(stateTimerRef.current);
+      stateTimerRef.current = null;
+    }
+    setRaparigaState("waitingChoice");
     setShowChoiceBox(true);
-  }, []);
+  }, [raparigaState]);
 
   const handleChoice = useCallback(
     (choice: "dar denovo" | "não quero dar") => {
       setShowChoiceBox(false);
+      if (stateTimerRef.current) {
+        clearTimeout(stateTimerRef.current);
+        stateTimerRef.current = null;
+      }
 
       if (choice === "dar denovo") {
         if (hasItem("foodPlate")) {
@@ -260,6 +312,12 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
   );
 
   const leaveRapariga = useCallback(() => {
+    if (removeControlsRef.current) {
+      removeControlsRef.current();
+      removeControlsRef.current = null;
+    }
+    setCameraTarget(null);
+    setBlockMovement(false);
     setRaparigaState("leaving");
     // Anda de volta para fora da tela
     const leaveRoute: RouteStep[] = [];
@@ -268,7 +326,7 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
 
     // Anda para a esquerda até sair da tela
     for (let x = Math.floor(currentX); x >= -2; x--) {
-      leaveRoute.push({ gridX: x, gridY: currentY, ms: STEP_MS, facing: "left" });
+      leaveRoute.push({ gridX: x, gridY: currentY, ms: STEP_MS, facing: "left", flipX: false });
     }
 
     routeRef.current = leaveRoute;
@@ -299,7 +357,7 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
   const unlockRaparigaPet = useCallback(() => {
     // Desbloqueia pet
     try {
-      addPet?.("pet_rapariga");
+      addDrop(player.character, "pet_rapariga");
     } catch {}
     try {
       setFlag("rapariga_unlocked" as FlagId);
@@ -314,7 +372,7 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
       setRaparigaState("idle");
       isProcessingRef.current = false;
     }, 3000);
-  }, [addPet, setFlag]);
+  }, [addDrop, player.character, setFlag]);
 
   // Cleanup
   useEffect(() => {
@@ -330,9 +388,13 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
     raparigaPos,
     raparigaSprite,
     raparigaFacing,
+    raparigaFlipX,
     showChoiceBox,
     showTalking,
     talkingMessage,
     handleChoice,
+    interactRapariga,
+    cameraTarget,
+    blockMovement,
   };
 }
