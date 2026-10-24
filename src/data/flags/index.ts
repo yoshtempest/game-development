@@ -33,6 +33,7 @@ export const FLAGS = {
   picked_desired_gear: { id: "picked_desired_gear" },
   picked_goat_meat: { id: "picked_goat_meat" },
   picked_sausage: { id: "picked_sausage" },
+  picked_food_plate: { id: "picked_food_plate" },
   picked_orange_juice: { id: "picked_orange_juice" },
   picked_director_key: { id: "picked_director_key" },
   picked_package_01: { id: "picked_package_01" },

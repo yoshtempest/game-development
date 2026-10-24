@@ -49,10 +49,11 @@ export function CafeteriaScene({ sceneId }: Props) {
     defaultSlots: CAFETERIA_STOVE.defaultSlots,
     size: CAFETERIA_STOVE.size,
     cols: CAFETERIA_STOVE.cols,
+    respawn: CAFETERIA_STOVE.respawn,
     onPickup: (_index, slot) => {
-      // showToast: true para exibir toast de item coletado da geladeira
+      // showToast: true para exibir toast de item coletado do fogão
       addItem(slot, { showToast: true });
-      setFlag("picked_sausage");
+      setFlag("picked_food_plate");
       progressQuest("go_cafeteria", 1);
       return true;
     },
@@ -68,14 +69,16 @@ export function CafeteriaScene({ sceneId }: Props) {
         npcGiveItem,
         setPopup,
         progressQuest,
-        openContainer: (container: "fridge" | "stove") => {
-        if (container === "fridge") {
-          fridge.open();
-          return;
-        }
-
-        stove.open();
-      },
+        openContainer: (container?: string) => {
+          if (container === "fridge") {
+            fridge.open();
+            return;
+          }
+          if (container === "stove") {
+            stove.open();
+            return;
+          }
+        },
       }),
     [
       addItem,
@@ -85,8 +88,8 @@ export function CafeteriaScene({ sceneId }: Props) {
       npcGiveItem,
       setPopup,
       progressQuest,
-      fridge.open,
-      stove.open
+      fridge,
+      stove
     ],
   );
 
@@ -121,7 +124,10 @@ export function CafeteriaScene({ sceneId }: Props) {
         scene={scene}
         background={scene.background}
         interactions={interactions}
-        interactionLabels={{ "15,4": INTERACTION_LABELS.OPEN }}
+        interactionLabels={{
+          "6,4": INTERACTION_LABELS.OPEN,
+          "15,4": INTERACTION_LABELS.OPEN,
+        }}
         popup={popup}
         setPopup={setPopup}
       />
@@ -135,6 +141,15 @@ export function CafeteriaScene({ sceneId }: Props) {
         size={CAFETERIA_FRIDGE.size}
         slots={fridge.slots}
         selectedIndex={fridge.selectedIndex}
+      />
+
+      <Container
+        isOpen={stove.isOpen}
+        label={CAFETERIA_STOVE.label}
+        cols={CAFETERIA_STOVE.cols}
+        size={CAFETERIA_STOVE.size}
+        slots={stove.slots}
+        selectedIndex={stove.selectedIndex}
       />
     </>
   );

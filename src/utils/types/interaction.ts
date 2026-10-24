@@ -29,7 +29,7 @@ export type QuestDeps = {
 };
 
 export type ContainerDeps = BaseDeps & {
-  openContainer: () => void;
+  openContainer: (container?: string) => void;
 };
 
 export type ToolDeps = BaseDeps & {

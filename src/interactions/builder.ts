@@ -67,9 +67,9 @@ export function createExchangeHandler(config: ExchangeHandlerConfig) {
   };
 }
 
-export function createContainerHandler() {
+export function createContainerHandler(container?: string) {
   return (deps: ContainerDeps) => {
-    deps.openContainer();
+    deps.openContainer(container);
   };
 }
 

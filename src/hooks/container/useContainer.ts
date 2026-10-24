@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useGameControls } from "@/contexts/GameControlsContext";
 import { gridMove } from "@/gameRules/menu/navigation";
@@ -10,6 +10,15 @@ import type { SlotScopedKey } from "@/services/save/slotManager";
 import type { ContainerSlots } from "@/utils/types/container";
 import type { InventoryItem } from "@/utils/types/player/inventory";
 
+type RespawnConfig = {
+  /** Intervalo em milissegundos para o item reaparecer. */
+  intervalMs: number;
+  /** Índice do slot que deve ter o item respawnado. */
+  slot: number;
+  /** Item que será colocado no slot quando fizer respawn. */
+  item: InventoryItem;
+};
+
 type Params = {
   storageKey: SlotScopedKey;
   defaultSlots: ContainerSlots;
@@ -17,6 +26,8 @@ type Params = {
   cols?: number;
   onPickup?: (index: number, slot: InventoryItem) => boolean;
   onClose?: () => void;
+  /** Configuração opcional de respawn do item. */
+  respawn?: RespawnConfig;
 };
 
 export function useContainer({
@@ -26,6 +37,7 @@ export function useContainer({
   cols = 3,
   onPickup,
   onClose,
+  respawn,
 }: Params) {
   const { pushControls } = useGameControls();
   const { playMove, playSelect, playClose } = useMenuSFX();
@@ -47,6 +59,10 @@ export function useContainer({
   const playCloseRef = useLatestRef(playClose);
   const onPickupRef = useLatestRef(onPickup);
   const onCloseRef = useLatestRef(onClose);
+  const respawnRef = useLatestRef(respawn);
+
+  // Ref para rastrear quando o item foi pego pela última vez (timestamp)
+  const lastPickupTimeRef = useRef<number | null>(null);
 
   const open = useCallback(() => {
     setSelectedIndex(0);
@@ -57,6 +73,36 @@ export function useContainer({
     setIsOpen(false);
     onCloseRef.current?.();
   }, [onCloseRef]);
+
+  // Respawn logic: se configurado, verifica periodicamente se o item deve reaparecer
+  useEffect(() => {
+    if (!respawnRef.current) return;
+
+    const { intervalMs, slot, item } = respawnRef.current;
+
+    const checkAndRespawn = () => {
+      // Se não houve pickup ainda, não faz nada (item já está lá no início)
+      if (lastPickupTimeRef.current === null) return;
+
+      const now = Date.now();
+      const elapsed = now - lastPickupTimeRef.current;
+
+      if (elapsed >= intervalMs) {
+        // Verifica se o slot está vazio
+        if (!slotsRef.current[slot]) {
+          setSlots((prev) => {
+            const next = [...prev];
+            next[slot] = item;
+            return next;
+          });
+          lastPickupTimeRef.current = null; // Reseta para não spammar
+        }
+      }
+    };
+
+    const interval = setInterval(checkAndRespawn, 1000); // Verifica a cada 1s
+    return () => clearInterval(interval);
+  }, [setSlots, slotsRef, respawnRef]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -103,6 +149,11 @@ export function useContainer({
         if (handled) {
           setSlots((prev) => prev.map((s, i) => (i === index ? null : s)));
           playSelectRef.current();
+
+          // Se este é o slot de respawn, registra o tempo do pickup
+          if (respawnRef.current && index === respawnRef.current.slot) {
+            lastPickupTimeRef.current = Date.now();
+          }
         }
         return true;
       },
@@ -131,6 +182,7 @@ export function useContainer({
     selectedIndexRef,
     sizeRef,
     slotsRef,
+    respawnRef,
   ]);
 
   return {

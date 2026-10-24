@@ -17,7 +17,7 @@ type CafeteriaDeps =
 
 export function createCafeteria(deps: CafeteriaDeps) {
   return createInteractionMap(cafeteriaMessages, deps, {
-    "6,4": createContainerHandler("fridge"),
-    "15,4": createContainerHandler("stove"),
+    "6,4": createContainerHandler("stove"),
+    "15,4": createContainerHandler("fridge"),
   });
 }
