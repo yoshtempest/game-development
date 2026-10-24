@@ -13,11 +13,13 @@ type CafeteriaDeps =
   InventoryDeps &
   QuestDeps & {
   openContainer: (container: CafeteriaContainer) => void;
+  dropFoodPlate: () => void;
 };
 
 export function createCafeteria(deps: CafeteriaDeps) {
   return createInteractionMap(cafeteriaMessages, deps, {
     "6,4": createContainerHandler("stove"),
     "15,4": createContainerHandler("fridge"),
+    "7,4": () => deps.dropFoodPlate(), // Tile para dropar foodPlate
   });
 }

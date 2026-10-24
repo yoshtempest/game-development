@@ -653,6 +653,8 @@ declare global {
   type GroundItem = {
     id: ItemId;
     qty: number;
+    /** Timestamp quando o item foi dropado (para spoilage). */
+    droppedAt?: number;
   };
 
   type GroundLoot = {

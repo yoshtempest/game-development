@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -36,6 +37,9 @@ function lootKey(locationId: string, x: number, y: number): string {
 
 const GroundItemContext = createContext<ContextType | null>(null);
 
+const FOOD_PLATE_SPOIL_MS = 60_000; // 1 minuto
+const SPOIL_CHECK_INTERVAL_MS = 5_000; // Verifica a cada 10s
+
 export function GroundItemProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useCompressedStorage<GroundItemsSaveData>(
     GROUND_ITEMS_KEY,
@@ -48,6 +52,42 @@ export function GroundItemProvider({ children }: { children: ReactNode }) {
   const [currentLocationId, setCurrentLocationId] = useState<string | null>(
     null,
   );
+
+  // Spoilage check: converte foodPlate para spoiledFoodPlate após 1 minuto no chão
+  useEffect(() => {
+    const checkSpoilage = () => {
+      setData((prev) => {
+        let changed = false;
+        const next = { ...prev };
+
+        for (const key of Object.keys(next)) {
+          const loot = next[key];
+          if (!loot) continue;
+
+          const hasSpoiledFood = loot.items.some(
+            (item) => item.id === "foodPlate" && item.droppedAt && Date.now() - item.droppedAt >= FOOD_PLATE_SPOIL_MS
+          );
+
+          if (hasSpoiledFood) {
+            changed = true;
+            next[key] = {
+              ...loot,
+              items: loot.items.map((item) =>
+                item.id === "foodPlate" && item.droppedAt && Date.now() - item.droppedAt >= FOOD_PLATE_SPOIL_MS
+                  ? { ...item, id: "spoiledFoodPlate" }
+                  : item
+              ),
+            };
+          }
+        }
+
+        return changed ? next : prev;
+      });
+    };
+
+    const interval = setInterval(checkSpoilage, SPOIL_CHECK_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [setData]);
 
   const addLoot = useCallback(
     (locationId: string, x: number, y: number, items: GroundItem[]) => {

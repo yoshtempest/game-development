@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
+import { useLocation } from "react-router";
 
 import { SceneBase } from "@/components/Game/Scenes/Base";
 import { CAFETERIA_SCENES } from "@/scenes/cafeteria";
@@ -9,6 +10,8 @@ import { CAFETERIA_FRIDGE, CAFETERIA_STOVE } from "@/data/containers";
 import { useInventory } from "@/contexts/InventoryContext";
 import { useQuestActions } from "@/hooks/quest/useQuestActions";
 import { useFlags } from "@/contexts/FlagContext";
+import { useGroundItems } from "@/contexts/GroundItemContext";
+import { usePlayer } from "@/contexts/PlayerContext";
 
 import { useRandomEncounter } from "@/hooks/scene/randomEncounter/useRandomEncounter";
 import { useContainer } from "@/hooks/container/useContainer";
@@ -16,6 +19,8 @@ import { useContainer } from "@/hooks/container/useContainer";
 import { Container } from "@/components/Game/Map/Container";
 import Talking from "@/components/Game/Interactions/Talking";
 import { INTERACTION_LABELS } from "@/data/messages";
+import { useFoodPlateEncounter } from "@/hooks/scene/useFoodPlateEncounter";
+import { RaparigaEncounter } from "@/components/Game/SceneObjects/RaparigaEncounter";
 
 type Props = {
   sceneId: SceneId;
@@ -27,6 +32,9 @@ export function CafeteriaScene({ sceneId }: Props) {
   const { addItem, hasItem, removeItem, giveItem, npcGiveItem } = useInventory();
   const { progressQuest } = useQuestActions();
   const { setFlag } = useFlags();
+  const { addLoot } = useGroundItems();
+  const { player } = usePlayer();
+  const location = useLocation();
 
   const [popup, setPopup] = useState<string | null>(null);
 
@@ -36,7 +44,6 @@ export function CafeteriaScene({ sceneId }: Props) {
     size: CAFETERIA_FRIDGE.size,
     cols: CAFETERIA_FRIDGE.cols,
     onPickup: (_index, slot) => {
-      // showToast: true para exibir toast de item coletado da geladeira
       addItem(slot, { showToast: true });
       setFlag("picked_sausage");
       progressQuest("go_cafeteria", 1);
@@ -51,13 +58,29 @@ export function CafeteriaScene({ sceneId }: Props) {
     cols: CAFETERIA_STOVE.cols,
     respawn: CAFETERIA_STOVE.respawn,
     onPickup: (_index, slot) => {
-      // showToast: true para exibir toast de item coletado do fogão
       addItem(slot, { showToast: true });
       setFlag("picked_food_plate");
       progressQuest("go_cafeteria", 1);
       return true;
     },
   });
+
+  // Food plate encounter system
+  useFoodPlateEncounter();
+
+  // Interação para dropar foodPlate no chão
+  const dropFoodPlate = useCallback(() => {
+    if (!hasItem("foodPlate")) {
+      setPopup("Você não tem prato de comida para deixar no chão.");
+      return;
+    }
+    removeItem("foodPlate", 1);
+    const locationId = (player as any).locationId ?? location.pathname ?? "cafeteria";
+    addLoot(locationId, Math.floor((player as any).gridX ?? 0), Math.floor((player as any).gridY ?? 0), [
+      { id: "foodPlate", qty: 1, droppedAt: Date.now() }
+    ]);
+    setPopup("Você deixou o prato de comida no chão. Cuidado para não estragar!");
+  }, [hasItem, removeItem, addLoot, (player as any).locationId, (player as any).gridX, (player as any).gridY]);
 
   const interactions = useMemo(
     () =>
@@ -79,6 +102,7 @@ export function CafeteriaScene({ sceneId }: Props) {
             return;
           }
         },
+        dropFoodPlate,
       }),
     [
       addItem,
@@ -89,7 +113,8 @@ export function CafeteriaScene({ sceneId }: Props) {
       setPopup,
       progressQuest,
       fridge,
-      stove
+      stove,
+      dropFoodPlate,
     ],
   );
 
@@ -133,6 +158,8 @@ export function CafeteriaScene({ sceneId }: Props) {
       />
 
       {popup && <Talking name="Sistema" message={popup} />}
+
+      <RaparigaEncounter />
 
       <Container
         isOpen={fridge.isOpen}
