@@ -13,6 +13,8 @@ export type BestiaryEntryData = {
   description: string;
   location: NpcLocation;
   attacks: string[];
+  isAlfa?: boolean;
+  baseNpcType?: string;
 };
 
 export type BestiarySaveEntry = {

@@ -100,6 +100,8 @@ export function DeliciaDex() {
             <BestiaryCard
               key={npcType}
               npcType={npcType}
+              isAlfa={entry.isAlfa}
+              baseNpcType={entry.baseNpcType}
               name={entry.name}
               encountered={encountered}
               kills={kills}

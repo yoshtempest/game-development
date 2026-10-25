@@ -53,6 +53,7 @@ export const NPC_CLASSES = {
   /* Lagoa do Canto */
   hungryPig: "common",
   technoblade: "legendary",
+  ouroboros: "supreme",
 
   /* Training */
   dummy: "common",

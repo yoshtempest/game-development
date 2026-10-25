@@ -69,6 +69,7 @@ export const NPC_TYPINGS = {
   /* Lagoa do Canto */
   hungryPig: ["Normalis", "Subterra"],
   technoblade: ["Normalis", "Metallum"],
+  ouroboros: ["Natura", "Psychicus"],
 
   /* Training */
   dummy: ["Normalis"],

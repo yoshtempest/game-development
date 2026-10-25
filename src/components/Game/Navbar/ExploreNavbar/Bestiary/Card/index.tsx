@@ -20,6 +20,8 @@ type Props = {
   dropItems: DropItem[];
   linkedTitles: string[];
   isSelected: boolean;
+  baseNpcType?: string;
+  isAlfa?: boolean;
 };
 
 export function BestiaryCard({
@@ -34,7 +36,22 @@ export function BestiaryCard({
   dropItems,
   linkedTitles,
   isSelected,
+  baseNpcType,
+  isAlfa = false,
 }: Props) {
+  const spritePath = isAlfa
+    ? `/${baseNpcType}/alfa`
+    : `/${npcType}`;
+
+  const spriteSrc = (sprite: string) =>
+    npcPath(`${spritePath}/${sprite}.svg`);
+
+  console.log({
+    npcType,
+    isAlfa,
+    baseNpcType,
+    spriteSrc,
+  });
   return (
     <div
       className={`${styles.card} ${
@@ -43,7 +60,7 @@ export function BestiaryCard({
     >
       <div className={styles.spriteBox}>
         <img
-          src={npcPath(`/${npcType.replace(/_alfa$/, "")}/default.svg`)}
+          src={spriteSrc("default")}
           alt={name}
           className={`${styles.sprite} ${encountered ? "" : styles.silhouette}`}
           onError={(e) => {
@@ -51,10 +68,10 @@ export function BestiaryCard({
 
             if (img.dataset.fallback === "default") {
               img.dataset.fallback = "walk";
-              img.src = npcPath(`/${npcType}/walk.svg`);
+              img.src = spriteSrc("walk");
             } else if (img.dataset.fallback === "walk") {
               img.dataset.fallback = "right";
-              img.src = npcPath(`/${npcType}/right.svg`);
+              img.src = spriteSrc("right");
             }
           }}
           data-fallback="default"
