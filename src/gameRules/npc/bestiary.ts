@@ -10,7 +10,8 @@ import {
 import { ITEMS } from "@/data/items";
 
 export function getNpcClass(npcType: string): NPCClass | null {
-  return isNpcType(npcType) ? NPCS[npcType].class : null;
+  const base = npcType.endsWith("_alfa") ? npcType.slice(0, -5) : npcType;
+  return isNpcType(base) ? NPCS[base].class : null;
 }
 
 export function getLinkedTitles(npcType: string, npcClass: NPCClass): string[] {
@@ -36,6 +37,7 @@ export function getLinkedTitles(npcType: string, npcClass: NPCClass): string[] {
 }
 
 export function getDropItems(npcClass: NPCClass, npcType: string) {
+  const baseNpcType = npcType.endsWith("_alfa") ? npcType.slice(0, -5) : npcType;
   const drops: { name: string; chance: string }[] = [];
 
   const coinAmount = COIN_REWARDS[npcClass];
@@ -55,7 +57,7 @@ export function getDropItems(npcClass: NPCClass, npcType: string) {
       }
     }
     if (craftTable.perNpcType) {
-      const typeDrops = craftTable.perNpcType[npcType];
+      const typeDrops = craftTable.perNpcType[baseNpcType];
       if (typeDrops) {
         for (const entry of typeDrops) {
           const item = ITEMS[entry.id as keyof typeof ITEMS];

@@ -1,6 +1,6 @@
 import { createBestiary } from "@/utils/bestiary/createBestiary";
 
-export const BESTIARY_DATA = createBestiary({
+const _baseBestiaryData = createBestiary({
   /* ── Jomasio ── */
   jhowsimar: {
     name: "Jhowsimar",
@@ -319,4 +319,21 @@ export const BESTIARY_DATA = createBestiary({
   },
 });
 
+const _baseBestiary = _baseBestiaryData;
+
+// ── Variantes alfa ──────────────────────────────────────────
+const _alfaEntries: Record<string, (typeof _baseBestiary)[string]> = {};
+for (const [key, value] of Object.entries(_baseBestiary)) {
+  _alfaEntries[`${key}_alfa`] = {
+    ...value,
+    npcType: `${key}_alfa`,
+    name: `ALFA ${value.name}`,
+    description: `Versão alfa de ${value.name}. Uma variante mais poderosa e rara, encontrada em encontros aleatórios.`,
+  };
+}
+
+export const BESTIARY_DATA: Record<string, (typeof _baseBestiary)[string]> = {
+  ..._baseBestiary,
+  ..._alfaEntries,
+};
 export const BESTIARY_NPC_ORDER: string[] = Object.keys(BESTIARY_DATA);

@@ -20,7 +20,7 @@ export function useBattleKillCounter() {
   ) {
     incrementKillCounter(npcType, npcClass);
     if (isAlfa) incrementAlfaKillCounter();
-    registerDefeat(npcType);
+    registerDefeat(isAlfa ? `${npcType}_alfa` : npcType);
     incrementKills(player.character);
     incrementClassKill(npcClass);
   }

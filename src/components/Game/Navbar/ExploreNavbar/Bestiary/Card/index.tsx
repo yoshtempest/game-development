@@ -43,7 +43,7 @@ export function BestiaryCard({
     >
       <div className={styles.spriteBox}>
         <img
-          src={npcPath(`/${npcType}/default.svg`)}
+          src={npcPath(`/${npcType.replace(/_alfa$/, "")}/default.svg`)}
           alt={name}
           className={`${styles.sprite} ${encountered ? "" : styles.silhouette}`}
           onError={(e) => {

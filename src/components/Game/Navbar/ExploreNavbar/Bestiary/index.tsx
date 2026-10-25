@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import styles from "./styles.module.css";
 import { useBestiaryMenu } from "@/hooks/menu/useBestiary";
 import { useBestiary } from "@/contexts/BestiaryContext";
@@ -8,14 +8,41 @@ import {
   getLinkedTitles,
   getDropItems,
 } from "@/gameRules/npc/bestiary";
+import { getNpcElementTypes } from "@/data/types/npcElementTypes";
 import { BestiaryCard } from "./Card";
+import { CLASS_DATA } from "@/data/npc";
+import type { ElementType } from "@/utils/types/battle/element";
+import type { NPCClass } from "@/data/npc";
+
+const ELEMENTS: ElementType[] = [
+  "Aquos", "Pyrus", "Subterra", "Ventus", "Darkus",
+  "Electricus", "Haos", "Metallum", "Natura", "Psychicus",
+  "Nympha", "Cryo", "Draco", "Umbra", "Normalis",
+];
 
 export function DeliciaDex() {
   const { hasEncountered, getKills, bestiary } = useBestiary();
   const listRef = useRef<HTMLDivElement | null>(null);
   const { selectedIndex, npcIds } = useBestiaryMenu(true, listRef);
 
-  const encounteredCount = npcIds.filter(
+  const [elementFilter, setElementFilter] = useState<ElementType | "all">("all");
+  const [classFilter, setClassFilter] = useState<NPCClass | "all">("all");
+
+  const filteredIds = npcIds.filter((id) => {
+    const entry = BESTIARY_DATA[id];
+    if (!entry) return false;
+    if (elementFilter !== "all") {
+      const elements = getNpcElementTypes(id);
+      if (!elements.includes(elementFilter)) return false;
+    }
+    if (classFilter !== "all") {
+      const npcClass = getNpcClass(id);
+      if (npcClass !== classFilter) return false;
+    }
+    return true;
+  });
+
+  const encounteredCount = filteredIds.filter(
     (id) => bestiary[id]?.encountered,
   ).length;
 
@@ -25,12 +52,38 @@ export function DeliciaDex() {
         <h2>DelíciaDex</h2>
 
         <div className={styles.counter}>
-          {encounteredCount}/{npcIds.length} encontrados
+          {encounteredCount}/{filteredIds.length} encontrados
         </div>
       </div>
 
+      <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+        <select
+          value={elementFilter}
+          onChange={(e) => setElementFilter(e.target.value as ElementType | "all")}
+        >
+          <option value="all">Todas tipagens</option>
+          {ELEMENTS.map((el) => (
+            <option key={el} value={el}>
+              {el}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={classFilter}
+          onChange={(e) => setClassFilter(e.target.value as NPCClass | "all")}
+        >
+          <option value="all">Todas classes</option>
+          {Object.keys(CLASS_DATA).map((cls) => (
+            <option key={cls} value={cls}>
+              {CLASS_DATA[cls as NPCClass].label}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className={styles.container} ref={listRef}>
-        {npcIds.map((npcType, index) => {
+        {filteredIds.map((npcType, index) => {
           const entry = BESTIARY_DATA[npcType];
           if (!entry) return null;
 

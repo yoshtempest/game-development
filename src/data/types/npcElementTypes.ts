@@ -92,5 +92,6 @@ export const NPC_TYPINGS = {
 >;
 
 export function getNpcElementTypes(npcType: string): readonly ElementType[] {
-  return NPC_TYPINGS[npcType as keyof typeof NPC_TYPINGS] ?? ["Normalis"];
+  const base = npcType.endsWith("_alfa") ? npcType.slice(0, -5) : npcType;
+  return NPC_TYPINGS[base as keyof typeof NPC_TYPINGS] ?? ["Normalis"];
 }
