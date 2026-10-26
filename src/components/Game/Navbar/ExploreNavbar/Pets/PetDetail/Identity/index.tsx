@@ -1,12 +1,9 @@
-import {
-  RANK_COLORS,
-  RANK_LABELS,
-} from "@/data/equipment/definitions";
+import { RANK_COLORS, RANK_LABELS } from "@/data/equipment/definitions";
 import { RANKS } from "@/gameRules/rank";
 import { rankBadgePath } from "@/utils/paths";
 import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
 import styles from "./styles.module.css";
-import shared from "../styles.module.css";
+import shared from "@/components/Game/Navbar/ExploreNavbar/Pets/PetDetail/styles.module.css";
 
 type Props = {
   entry: PetEntry;
@@ -17,14 +14,9 @@ export function PetIdentity({ entry }: Props) {
 
   return (
     <div className={styles.nameBlock}>
-      <span className={shared.sectionEyebrow}>
-        FICHA DA CRIATURA
-      </span>
+      <span className={shared.sectionEyebrow}>FICHA DA CRIATURA</span>
 
-      <h2
-        className={styles.petName}
-        style={{ color: RANK_COLORS[entry.rank] }}
-      >
+      <h2 className={styles.petName} style={{ color: RANK_COLORS[entry.rank] }}>
         {entry.name}
       </h2>
 

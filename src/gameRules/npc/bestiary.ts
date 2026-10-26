@@ -37,7 +37,9 @@ export function getLinkedTitles(npcType: string, npcClass: NPCClass): string[] {
 }
 
 export function getDropItems(npcClass: NPCClass, npcType: string) {
-  const baseNpcType = npcType.endsWith("_alfa") ? npcType.slice(0, -5) : npcType;
+  const baseNpcType = npcType.endsWith("_alfa")
+    ? npcType.slice(0, -5)
+    : npcType;
   const drops: { name: string; chance: string }[] = [];
 
   const coinAmount = COIN_REWARDS[npcClass];

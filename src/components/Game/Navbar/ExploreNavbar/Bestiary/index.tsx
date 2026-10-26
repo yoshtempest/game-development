@@ -15,9 +15,21 @@ import type { ElementType } from "@/utils/types/battle/element";
 import type { NPCClass } from "@/data/npc";
 
 const ELEMENTS: ElementType[] = [
-  "Aquos", "Pyrus", "Subterra", "Ventus", "Darkus",
-  "Electricus", "Haos", "Metallum", "Natura", "Psychicus",
-  "Nympha", "Cryo", "Draco", "Umbra", "Normalis",
+  "Aquos",
+  "Pyrus",
+  "Subterra",
+  "Ventus",
+  "Darkus",
+  "Electricus",
+  "Haos",
+  "Metallum",
+  "Natura",
+  "Psychicus",
+  "Nympha",
+  "Cryo",
+  "Draco",
+  "Umbra",
+  "Normalis",
 ];
 
 export function DeliciaDex() {
@@ -25,7 +37,9 @@ export function DeliciaDex() {
   const listRef = useRef<HTMLDivElement | null>(null);
   const { selectedIndex, npcIds } = useBestiaryMenu(true, listRef);
 
-  const [elementFilter, setElementFilter] = useState<ElementType | "all">("all");
+  const [elementFilter, setElementFilter] = useState<ElementType | "all">(
+    "all",
+  );
   const [classFilter, setClassFilter] = useState<NPCClass | "all">("all");
 
   const filteredIds = npcIds.filter((id) => {
@@ -59,7 +73,9 @@ export function DeliciaDex() {
       <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
         <select
           value={elementFilter}
-          onChange={(e) => setElementFilter(e.target.value as ElementType | "all")}
+          onChange={(e) =>
+            setElementFilter(e.target.value as ElementType | "all")
+          }
         >
           <option value="all">Todas tipagens</option>
           {ELEMENTS.map((el) => (

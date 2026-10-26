@@ -120,10 +120,7 @@ export function Pets() {
   }
 
   return (
-    <div
-      ref={listRef}
-      className={`containerOfNavbar ${styles.petsContainer}`}
-    >
+    <div ref={listRef} className={`containerOfNavbar ${styles.petsContainer}`}>
       {pets.map((entry, index) => {
         const isSelected = index === selectedIndex;
         const isEquipped = equippedId === entry.id;
@@ -138,31 +135,31 @@ export function Pets() {
               isEquipped ? styles.equipped : ""
             } ${isSelected ? styles.selected : ""}`}
           >
-            {isSelected && (
-              <span className={`cursor ${styles.cursor}`}>▼</span>
+            {isSelected && <span className={`cursor ${styles.cursor}`}>▼</span>}
+            {entry.owned && stats && (
+              <>
+                <div className={styles.progressBar}>
+                  <ProgressBar
+                    value={stats.xp}
+                    max={getPetXPToNextLevel(
+                      stats.level,
+                      getPetClass(entry.id),
+                    )}
+                    animationId={`pet-xp-${entry.id}`}
+                    level={stats.level}
+                  />
+                </div>
+              </>
             )}
-              {entry.owned && stats && (
-                <>
-                  <div className={styles.progressBar}>
-                    <ProgressBar
-                      value={stats.xp}
-                      max={getPetXPToNextLevel(
-                        stats.level,
-                        getPetClass(entry.id),
-                      )}
-                      animationId={`pet-xp-${entry.id}`}
-                      level={stats.level}
-                    />
-                  </div>
-                </>
-              )}
 
             <div className={styles.imageBox}>
               <img
                 src={petImagePath(petNpc, stats?.stars ?? 1)}
                 alt={entry.name}
                 className={styles.petImage}
-                style={entry.owned ? petStarStyle(stats?.stars ?? 1) : undefined}
+                style={
+                  entry.owned ? petStarStyle(stats?.stars ?? 1) : undefined
+                }
                 data-fallback={petFallbackImagePath(petNpc)}
                 onError={(e) => {
                   const img = e.currentTarget;
@@ -192,7 +189,6 @@ export function Pets() {
                               qty > 0 ? styles.starFilled : styles.starEmpty
                             }
                           />
-
                         </div>
                       );
                     })}
@@ -201,36 +197,39 @@ export function Pets() {
               )}
             </div>
 
-              <div className={styles.flexRow}>
-                <h2
-                  className={styles.name}
-                  style={{ color: RANK_COLORS[entry.rank] }}
-                >
-                  {entry.name}
-                </h2>
-                <div className={styles.elementList}>
-                  {getNpcElementTypes(petNpc).map((element) => (
-                    <img
-                      key={element}
-                      src={elementBadgePath(`${element.toLowerCase()}.svg`)}
-                      alt={element}
-                      title={element}
-                      className={styles.elementBadge}
-                    />
-                  ))}
-                </div>
+            <div className={styles.flexRow}>
+              <h2
+                className={styles.name}
+                style={{ color: RANK_COLORS[entry.rank] }}
+              >
+                {entry.name}
+              </h2>
+              <div className={styles.elementList}>
+                {getNpcElementTypes(petNpc).map((element) => (
+                  <img
+                    key={element}
+                    src={elementBadgePath(`${element.toLowerCase()}.svg`)}
+                    alt={element}
+                    title={element}
+                    className={styles.elementBadge}
+                  />
+                ))}
+              </div>
 
-             <img
+              <img
                 className={styles.rankIcon}
                 src={rankBadgePath(
-                  RANKS.find((rank) => rank.id === entry.rank)?.src ?? "wandering.svg"
+                  RANKS.find((rank) => rank.id === entry.rank)?.src ??
+                    "wandering.svg",
                 )}
               />
 
               {isEquipped && (
                 <span className={styles.equippedBadge}>Equipado</span>
               )}
-              {entry.owned && stats && ( <p className={styles.statsLine}>Nv.{stats.level}</p> )}
+              {entry.owned && stats && (
+                <p className={styles.statsLine}>Nv.{stats.level}</p>
+              )}
             </div>
           </div>
         );

@@ -1,7 +1,7 @@
 import { Star } from "lucide-react";
 import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
 import styles from "./styles.module.css";
-import shared from "../styles.module.css";
+import shared from "@/components/Game/Navbar/ExploreNavbar/Pets/PetDetail/styles.module.css";
 
 interface PetStarSelectorProps {
   selectedStar: number;
@@ -47,9 +47,7 @@ export function PetStarSelector({
             >
               <Star
                 size={18}
-                className={
-                  isOwned ? styles.starFilled : styles.starEmpty
-                }
+                className={isOwned ? styles.starFilled : styles.starEmpty}
               />
 
               <span>Estágio {star}</span>

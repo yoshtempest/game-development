@@ -9,21 +9,15 @@ import styles from "./styles.module.css";
 export type PetStats = {
   level: number;
   xp: number;
-}
+};
 
 interface PetExperienceProps {
   entry: PetEntry;
   stats: PetStats;
 }
 
-export function PetExperience({
-  entry,
-  stats,
-}: PetExperienceProps) {
-  const maxXp = getPetXPToNextLevel(
-    stats.level,
-    getPetClass(entry.id),
-  );
+export function PetExperience({ entry, stats }: PetExperienceProps) {
+  const maxXp = getPetXPToNextLevel(stats.level, getPetClass(entry.id));
 
   return (
     <div className={styles.xpSection}>

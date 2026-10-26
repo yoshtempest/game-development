@@ -39,12 +39,9 @@ export function BestiaryCard({
   baseNpcType,
   isAlfa = false,
 }: Props) {
-  const spritePath = isAlfa
-    ? `/${baseNpcType}/alfa`
-    : `/${npcType}`;
+  const spritePath = isAlfa ? `/${baseNpcType}/alfa` : `/${npcType}`;
 
-  const spriteSrc = (sprite: string) =>
-    npcPath(`${spritePath}/${sprite}.svg`);
+  const spriteSrc = (sprite: string) => npcPath(`${spritePath}/${sprite}.svg`);
 
   console.log({
     npcType,

@@ -68,8 +68,7 @@ export function usePetsMenu(
     if (equippedInfo?.id === pet.id) {
       const equippedStar = equippedInfo.enhance + 1;
       if (equippedStar >= 1 && equippedStar <= PET_STAR_MAX) {
-        qtyByStar[equippedStar - 1] =
-          (qtyByStar[equippedStar - 1] ?? 0) + 1;
+        qtyByStar[equippedStar - 1] = (qtyByStar[equippedStar - 1] ?? 0) + 1;
       }
     }
     const owned =
@@ -129,8 +128,7 @@ export function usePetsMenu(
     if (selectedIndex === prev) return;
     const container = listRef.current;
     const selectedElement = container.children[selectedIndex] as
-      | HTMLElement
-      | undefined;
+      HTMLElement | undefined;
     if (!selectedElement) return;
     selectedElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [isOpen, selectedIndex, pets, listRef]);

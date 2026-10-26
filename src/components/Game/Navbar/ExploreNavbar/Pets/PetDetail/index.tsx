@@ -1,10 +1,10 @@
 import { useRef, useEffect } from "react";
 import { usePetDetail } from "@/hooks/menu/pets/usePetDetail";
 import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
-import { FusionOverlay } from "../FusionOverlay";
+import { FusionOverlay } from "@/components/Game/Navbar/ExploreNavbar/Pets/FusionOverlay";
 import styles from "./styles.module.css";
 import { PetDetailHeader } from "./Header";
-import { PetArtwork } from "./ArtWork"
+import { PetArtwork } from "./ArtWork";
 import { PetIdentity } from "./Identity";
 import { PetAbilities } from "./Abilities";
 import { PetAttributes } from "./Attributes";
@@ -38,25 +38,23 @@ export function PetDetail({ entry, onClose }: Props) {
   useEffect(() => {
     if (!listRef.current) return;
     const el = listRef.current.children[selectedStar - 1] as
-      | HTMLElement
-      | undefined;
+      HTMLElement | undefined;
     el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [selectedStar]);
 
   const petNpc = entry.dropNpc ?? entry.id.replace("pet_", "");
   const eligible = highestEligibleStar();
-  const stats = ownedQtyByStar(selectedStar) > 0
-    ? getPetStats(selectedStar)
-    : null;
+  const stats =
+    ownedQtyByStar(selectedStar) > 0 ? getPetStats(selectedStar) : null;
 
   return (
     <>
       <div className={`containerOfNavbar ${styles.pokedex}`}>
-        <PetDetailHeader name={entry.name} onClose={handleClose}/>
+        <PetDetailHeader name={entry.name} onClose={handleClose} />
         <main className={styles.pokedexContent}>
           {/* Ficha principal */}
           <section className={styles.identitySection}>
-            <PetArtwork 
+            <PetArtwork
               name={entry.name}
               message={message}
               petNpc={petNpc}
@@ -75,16 +73,11 @@ export function PetDetail({ entry, onClose }: Props) {
             <div className={styles.identityInfo}>
               <PetIdentity entry={entry} />
 
-              <PetAttributes
-                entry={entry}
-                petNpc={petNpc}
-                stats={stats}
-              />
+              <PetAttributes entry={entry} petNpc={petNpc} stats={stats} />
             </div>
-            
           </section>
 
-          <PetAbilities entry={entry}/>
+          <PetAbilities entry={entry} />
 
           <PetStarSelector
             selectedStar={selectedStar}

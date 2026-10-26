@@ -3,8 +3,8 @@ import { PET_ROLE_LABELS } from "@/data/characters/pets/petSkills";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
 import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
 import styles from "./styles.module.css";
-import { PetExperience } from "../Experience";
-import type { PetStats } from "../Experience";
+import { PetExperience } from "@/components/Game/Navbar/ExploreNavbar/Pets/PetDetail/Experience";
+import type { PetStats } from "@/components/Game/Navbar/ExploreNavbar/Pets/PetDetail/Experience";
 
 interface PetAttributesProps {
   entry: PetEntry;
@@ -12,7 +12,7 @@ interface PetAttributesProps {
   stats: PetStats | null;
 }
 
-export function formatDrop(entry: PetEntry): string {
+function formatDrop(entry: PetEntry): string {
   if (entry.dropChance === null) return "Baú";
 
   const percentage = (entry.dropChance * 100).toLocaleString("pt-BR", {
@@ -22,11 +22,7 @@ export function formatDrop(entry: PetEntry): string {
   return `${percentage}%`;
 }
 
-export function PetAttributes({
-  entry,
-  petNpc,
-  stats,
-}: PetAttributesProps) {
+export function PetAttributes({ entry, petNpc, stats }: PetAttributesProps) {
   const elements = getNpcElementTypes(petNpc);
 
   return (
@@ -73,9 +69,7 @@ export function PetAttributes({
 
       <div className={styles.riddleCard}>
         {!entry.owned && (
-          <span className={styles.statusLocked}>
-            AINDA NÃO DESBLOQUEADO
-          </span>
+          <span className={styles.statusLocked}>AINDA NÃO DESBLOQUEADO</span>
         )}
 
         {stats && <PetExperience entry={entry} stats={stats} />}

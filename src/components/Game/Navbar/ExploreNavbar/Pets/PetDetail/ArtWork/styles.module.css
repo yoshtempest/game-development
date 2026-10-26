@@ -28,12 +28,11 @@
   min-height: 180px;
   padding: var(--size-4);
   overflow: hidden;
-  background:
-    radial-gradient(
-      ellipse at center,
-      var(--surface-panel),
-      var(--surface-secondary) 75%
-    );
+  background: radial-gradient(
+    ellipse at center,
+    var(--surface-panel),
+    var(--surface-secondary) 75%
+  );
 }
 
 .petImage {

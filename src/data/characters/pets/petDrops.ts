@@ -9,14 +9,24 @@ export type PetDropInfo = {
 };
 
 export const PET_DROPS: Record<string, PetDropInfo> = {
-  pet_goat: { npcType: "goat", npcLabel: "Bode", chance: 0.01, location: "Jomasio" },
+  pet_goat: {
+    npcType: "goat",
+    npcLabel: "Bode",
+    chance: 0.01,
+    location: "Jomasio",
+  },
   pet_hungryDeath: {
     npcType: "hungryDeath",
     npcLabel: "Morto de Fome",
     chance: 0.05,
     location: "Jomasio",
   },
-  pet_piupiu: { npcType: "piupiu", npcLabel: "Piupiu", chance: 0.03, location: "Jomasio" },
+  pet_piupiu: {
+    npcType: "piupiu",
+    npcLabel: "Piupiu",
+    chance: 0.03,
+    location: "Jomasio",
+  },
   pet_hungryKing: {
     npcType: "hungryKing",
     npcLabel: "Rei dos Mortos de Fome",
@@ -72,14 +82,14 @@ export const PET_DROPS: Record<string, PetDropInfo> = {
     chance: 0,
     riddle:
       "A roda gira, imune a tudo que já foi visto. Adaptar-se é a única lei. Quem gira a roda?",
-    location: "Jomasio"
+    location: "Jomasio",
   },
   pet_turkey: {
     npcType: "turkey",
     npcLabel: "Peru",
     chance: 0,
     riddle: "Tu gosta?",
-    location: "Jomasio"
+    location: "Jomasio",
   },
   pet_crocodile: {
     npcType: "crocodile",

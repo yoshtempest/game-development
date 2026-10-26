@@ -20,12 +20,7 @@ type Props = {
 export function usePetDetail({ entry, onClose }: Props) {
   const { player } = usePlayer();
   const character = player.character;
-  const {
-    equip,
-    unequip,
-    fusePets,
-    getEquippedInfo,
-  } = useEquipment();
+  const { equip, unequip, fusePets, getEquippedInfo } = useEquipment();
   const { getPetProgress, resetPetProgress } = usePetProgress();
   const { playMove, playSelect, playClose } = useMenuSFX();
   const { pushControls } = useGameControls();
@@ -88,7 +83,11 @@ export function usePetDetail({ entry, onClose }: Props) {
     }
     // Equipa esta estrela, consumindo uma unidade.
     // Se já houvesse um pet equipado neste slot, ele volta para a coleção.
-    equipRef.current(character, entryRef.current.id, enhanceFromPetStars(stars));
+    equipRef.current(
+      character,
+      entryRef.current.id,
+      enhanceFromPetStars(stars),
+    );
     playSelectRef.current();
     setMessage(`equipado (★${stars})`);
   }
@@ -119,9 +118,7 @@ export function usePetDetail({ entry, onClose }: Props) {
     resetPetProgressRef.current(entryRef.current.id, stars + 1);
     setFusing(null);
     playSelectRef.current();
-    setMessage(
-      `Fusão concluída! ★${stars} → ★${stars + 1}`,
-    );
+    setMessage(`Fusão concluída! ★${stars} → ★${stars + 1}`);
   }
 
   const equipPetRef = useLatestRef(equipPet);
@@ -142,7 +139,9 @@ export function usePetDetail({ entry, onClose }: Props) {
     const remove = pushControlsRef.current({
       onUp: () => {
         playMoveRef.current();
-        setSelectedStar((prev) => (prev - 2 + PET_STAR_MAX) % PET_STAR_MAX + 1);
+        setSelectedStar(
+          (prev) => ((prev - 2 + PET_STAR_MAX) % PET_STAR_MAX) + 1,
+        );
         return true;
       },
       onDown: () => {
@@ -152,7 +151,9 @@ export function usePetDetail({ entry, onClose }: Props) {
       },
       onLeft: () => {
         playMoveRef.current();
-        setSelectedStar((prev) => (prev - 2 + PET_STAR_MAX) % PET_STAR_MAX + 1);
+        setSelectedStar(
+          (prev) => ((prev - 2 + PET_STAR_MAX) % PET_STAR_MAX) + 1,
+        );
         return true;
       },
       onRight: () => {

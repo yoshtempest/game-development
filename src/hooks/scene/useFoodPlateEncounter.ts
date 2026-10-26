@@ -89,7 +89,113 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
   const raparigaPosRef = useRef({ gridX: 0, gridY: 0 });
   raparigaPosRef.current = raparigaPos;
 
-  const walkRouteRef = useRef<() => void>(() => {});
+    const walkRouteRef = useRef<() => void>(() => {});
+
+  const walkLeaveRoute = useCallback(() => {
+    if (stepIndexRef.current >= routeRef.current.length) {
+      // Saiu da tela
+      setRaparigaState("idle");
+      isProcessingRef.current = false;
+      return;
+    }
+
+    const step = routeRef.current[stepIndexRef.current];
+    if (!step) return;
+
+    setRaparigaPos({ gridX: step.gridX, gridY: step.gridY });
+    setRaparigaSprite(npcPath("/rapariga/movingLeft.svg"));
+    setRaparigaFacing("left");
+
+    stepIndexRef.current++;
+    moveTimerRef.current = setTimeout(walkLeaveRoute, step.ms);
+  }, []);
+
+  const leaveRapariga = useCallback(() => {
+    if (removeControlsRef.current) {
+      removeControlsRef.current();
+      removeControlsRef.current = null;
+    }
+    setCameraTarget(null);
+    setBlockMovement(false);
+    // Anda de volta para fora da tela
+    const leaveRoute: RouteStep[] = [];
+    const currentX = raparigaPosRef.current.gridX;
+    const currentY = raparigaPosRef.current.gridY;
+
+    for (let x = Math.floor(currentX); x >= -2; x--) {
+      leaveRoute.push({
+        gridX: x,
+        gridY: currentY,
+        ms: STEP_MS,
+        facing: "left",
+        flipX: false,
+      });
+    }
+
+    routeRef.current = leaveRoute;
+    stepIndexRef.current = 0;
+    setRaparigaState("leaving");
+    walkLeaveRoute();
+  }, [walkLeaveRoute]);
+
+  const onReachedPlate = useCallback(() => {
+    // Troca para good.svg
+    setRaparigaSprite(npcPath("/rapariga/good.svg"));
+    setRaparigaFlipX(false);
+    setRaparigaState("eating");
+    setCameraTarget(null);
+    setBlockMovement(false);
+    if (removeControlsRef.current) {
+      removeControlsRef.current();
+      removeControlsRef.current = null;
+    }
+
+    // Remove o prato do chão
+    const plate = plateLocationRef.current;
+    if (plate) {
+      removeGroundItem(plate.locationId, plate.x, plate.y, "foodPlate");
+    }
+
+    // Timer de comer (1 minuto) - se não interagir, vai embora
+    stateTimerRef.current = setTimeout(() => {
+      leaveRapariga();
+    }, RAPARIGA_EAT_DURATION_MS);
+  }, [removeGroundItem, leaveRapariga]);
+
+  const walkRoute = useCallback(() => {
+    if (stepIndexRef.current >= routeRef.current.length) {
+      // Chegou no prato
+      onReachedPlate();
+      return;
+    }
+
+    const step = routeRef.current[stepIndexRef.current];
+    if (!step) return;
+
+    setRaparigaPos({ gridX: step.gridX, gridY: step.gridY });
+    setRaparigaFacing(step.facing);
+    setRaparigaFlipX(step.flipX);
+    setCameraTarget({ x: step.gridX, y: step.gridY });
+
+    // Atualiza sprite baseado na direção e se está movendo
+    // (Rapariga só tem movingLeft e movingUp; flipX cuida de espelhar)
+    const isMoving = step.ms === STEP_MS;
+    const spriteBase =
+      step.facing === "right" || step.facing === "left"
+        ? isMoving
+          ? "movingLeft"
+          : "left"
+        : isMoving
+          ? "movingUp"
+          : "up";
+    setRaparigaSprite(npcPath(`/rapariga/${spriteBase}.svg`));
+
+    stepIndexRef.current++;
+
+    moveTimerRef.current = setTimeout(() => {
+      walkRoute();
+    }, step.ms);
+  }, [onReachedPlate]);
 
   const startRaparigaEncounter = useCallback(
     (loot: {
@@ -292,7 +398,10 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
       // Começa a andar
       walkRoute();
     },
-    [getLootAt, location.pathname],
+    [
+      pushControls,
+      walkRoute,
+    ],
   );
 
   // Verifica se tem foodPlate no chão (não estragado) a cada 5s
@@ -326,66 +435,12 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
 
     const interval = setInterval(checkForFoodPlate, RAPARIGA_CHECK_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [getLootAt, location.pathname, startRaparigaEncounter]);
-
-  const onReachedPlate = useCallback(() => {
-    // Troca para good.svg
-    setRaparigaSprite(npcPath("/rapariga/good.svg"));
-    setRaparigaFlipX(false);
-    setRaparigaState("eating");
-    setCameraTarget(null);
-    setBlockMovement(false);
-    if (removeControlsRef.current) {
-      removeControlsRef.current();
-      removeControlsRef.current = null;
-    }
-
-    // Remove o prato do chão
-    const plate = plateLocationRef.current;
-    if (plate) {
-      removeGroundItem(plate.locationId, plate.x, plate.y, "foodPlate");
-    }
-
-    // Timer de comer (1 minuto) - se não interagir, vai embora
-    stateTimerRef.current = setTimeout(() => {
-      leaveRapariga();
-    }, RAPARIGA_EAT_DURATION_MS);
-  }, [removeGroundItem]);
-
-  const walkRoute = useCallback(() => {
-    if (stepIndexRef.current >= routeRef.current.length) {
-      // Chegou no prato
-      onReachedPlate();
-      return;
-    }
-
-    const step = routeRef.current[stepIndexRef.current];
-    if (!step) return;
-
-    setRaparigaPos({ gridX: step.gridX, gridY: step.gridY });
-    setRaparigaFacing(step.facing);
-    setRaparigaFlipX(step.flipX);
-    setCameraTarget({ x: step.gridX, y: step.gridY });
-
-    // Atualiza sprite baseado na direção e se está movendo
-    // (Rapariga só tem movingLeft e movingUp; flipX cuida de espelhar)
-    const isMoving = step.ms === STEP_MS;
-    const spriteBase =
-      step.facing === "right" || step.facing === "left"
-        ? isMoving
-          ? "movingLeft"
-          : "left"
-        : isMoving
-          ? "movingUp"
-          : "up";
-    setRaparigaSprite(npcPath(`/rapariga/${spriteBase}.svg`));
-
-    stepIndexRef.current++;
-
-    moveTimerRef.current = setTimeout(() => {
-      walkRoute();
-    }, step.ms);
-  }, [onReachedPlate]);
+  }, [
+    getLootAt,
+    location.pathname,
+    startRaparigaEncounter,
+    player
+  ]);
 
   walkRouteRef.current = walkRoute;
 
@@ -455,64 +510,21 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
     [hasItem, removeItem, showToast],
   );
 
-  const leaveRapariga = useCallback(() => {
-    if (removeControlsRef.current) {
-      removeControlsRef.current();
-      removeControlsRef.current = null;
-    }
-    setCameraTarget(null);
-    setBlockMovement(false);
-    // Anda de volta para fora da tela
-    const leaveRoute: RouteStep[] = [];
-    const currentX = raparigaPosRef.current.gridX;
-    const currentY = raparigaPosRef.current.gridY;
-
-    for (let x = Math.floor(currentX); x >= -2; x--) {
-      leaveRoute.push({
-        gridX: x,
-        gridY: currentY,
-        ms: STEP_MS,
-        facing: "left",
-        flipX: false,
-      });
-    }
-
-    routeRef.current = leaveRoute;
-    stepIndexRef.current = 0;
-    setRaparigaState("leaving");
-    walkLeaveRoute();
-  }, []);
-
   // keep ref in sync
   useEffect(() => {
     leaveRaparigaRef.current = leaveRapariga;
   }, [leaveRapariga]);
 
-  const walkLeaveRoute = useCallback(() => {
-    if (stepIndexRef.current >= routeRef.current.length) {
-      // Saiu da tela
-      setRaparigaState("idle");
-      isProcessingRef.current = false;
-      return;
-    }
-
-    const step = routeRef.current[stepIndexRef.current];
-    if (!step) return;
-
-    setRaparigaPos({ gridX: step.gridX, gridY: step.gridY });
-    setRaparigaSprite(npcPath("/rapariga/movingLeft.svg"));
-    setRaparigaFacing("left");
-
-    stepIndexRef.current++;
-    moveTimerRef.current = setTimeout(walkLeaveRoute, step.ms);
-  }, []);
-
   // Cleanup
   useEffect(() => {
+    const checkTimer = checkTimerRef.current;
+    const stateTimer = stateTimerRef.current;
+    const moveTimer = moveTimerRef.current;
+
     return () => {
-      if (checkTimerRef.current) clearInterval(checkTimerRef.current);
-      if (stateTimerRef.current) clearTimeout(stateTimerRef.current);
-      if (moveTimerRef.current) clearTimeout(moveTimerRef.current);
+      if (checkTimer) clearInterval(checkTimer);
+      if (stateTimer) clearTimeout(stateTimer);
+      if (moveTimer) clearTimeout(moveTimer);
     };
   }, []);
 

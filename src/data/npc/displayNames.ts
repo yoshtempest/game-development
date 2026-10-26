@@ -50,6 +50,7 @@ const NPC_DISPLAY_NAMES: Record<NpcType, string> = {
   theChaosCreator: "O criador do caos",
   theFirstNightmare: "O primeiro pesadelo",
   theDevourerOfWorlds: "O devorador de mundos",
+  ouroboros: "Ouroboros",
 };
 
 /**

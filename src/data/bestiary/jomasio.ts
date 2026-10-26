@@ -23,7 +23,7 @@ function createNpcData(
 }
 
 export const jomasioData = createBestiary({
-    /* ── Jomasio ── */
+  /* ── Jomasio ── */
   jhowsimar: {
     name: "Jhowsimar",
     description:
@@ -68,8 +68,7 @@ export const jomasioData = createBestiary({
   },
   wandinha: createNpcData("wandinha", {
     name: "Vandinha Dark Era",
-    description:
-      "Uma versão do que já foi Vandinha em seus tempos góticos",
+    description: "Uma versão do que já foi Vandinha em seus tempos góticos",
     location: "Jomasio",
     attacks: ["Tiro de Guarda Chuva", "Escuridão", "Voar"],
   }),
@@ -201,4 +200,4 @@ export const jomasioData = createBestiary({
     location: "Jomasio",
     attacks: ["Dança das Sombras", "Grito Penetrante", "Noite Eterna"],
   },
-})
+});
