@@ -81,6 +81,10 @@
   transition: border-color 0.1s, background 0.1s;
 }
 
+.rankIcon {
+  width: 3vw;
+}
+
 .starItem:hover {
   border-color: var(--accent-color);
 }

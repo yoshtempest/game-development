@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Star } from "lucide-react";
-import { elementBadgePath } from "@/utils/paths";
-import { RANK_COLORS, RANK_LABELS } from "@/data/equipment/definitions";
+import { elementBadgePath, rankBadgePath } from "@/utils/paths";
+import { RANK_COLORS } from "@/data/equipment/definitions";
 import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
 import { PET_ROLE_LABELS } from "@/data/characters/pets/petSkills";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
@@ -22,6 +22,7 @@ import {
 } from "@/utils/character/petVisuals";
 import { PetDetail } from "./PetDetail";
 import styles from "./styles.module.css";
+import { RANKS } from "@/gameRules/rank";
 
 function formatDrop(entry: PetEntry): string {
   if (entry.dropChance === null) return "Baú";
@@ -185,9 +186,7 @@ export function Pets() {
                               qty > 0 ? styles.starFilled : styles.starEmpty
                             }
                           />
-                          {qty > 0 && (
-                            <span className={styles.starQty}>x{qty}</span>
-                          )}
+
                         </div>
                       );
                     })}
@@ -253,18 +252,14 @@ export function Pets() {
                 <span className={styles.roleBadge}>
                   {PET_ROLE_LABELS[entry.role]}
                 </span>
-                <p
-                  className={styles.rankLabel}
-                  style={{ color: RANK_COLORS[entry.rank] }}
-                >
-                  Rank: {RANK_LABELS[entry.rank]}
-                </p>
+                <img
+                  className={styles.rankIcon}
+                  src={rankBadgePath(
+                    RANKS.find((rank) => rank.id === entry.rank)?.src ?? "wandering.svg"
+                  )}
+                />
                 <p className={styles.dropLine}>Drop: {formatDrop(entry)}</p>
               </div>
-
-              <p className={styles.skillLine}>
-                Passiva: {entry.passiveName} | Skill: {entry.skillName}
-              </p>
             </div>
           </div>
         );

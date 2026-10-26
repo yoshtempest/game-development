@@ -2,6 +2,8 @@ import { useRef, useEffect } from "react";
 import { Star } from "lucide-react";
 import { elementBadgePath } from "@/utils/paths";
 import { RANK_COLORS, RANK_LABELS } from "@/data/equipment/definitions";
+import { RANKS } from "@/gameRules/rank";
+import { rankBadgePath } from "@/utils/paths";
 import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
 import { PET_ROLE_LABELS } from "@/data/characters/pets/petSkills";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
@@ -124,6 +126,12 @@ export function PetDetail({ entry, onClose }: Props) {
               >
                 {RANK_LABELS[entry.rank]}
               </span>
+              <img
+                className={styles.rankIcon}
+                src={rankBadgePath(
+                  RANKS.find((rank) => rank.id === entry.rank)?.src ?? "wandering.svg"
+                )}
+              />
             </div>
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>Função:</span>
@@ -131,21 +139,25 @@ export function PetDetail({ entry, onClose }: Props) {
                 {PET_ROLE_LABELS[entry.role]}
               </span>
             </div>
-            {getNpcElementTypes(petNpc).map((element) => (
-              <div key={element} className={styles.infoRow}>
-                <span className={styles.infoLabel}>Elemento:</span>
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Elemento:</span>
+              
+              {getNpcElementTypes(petNpc).map((element) => (
                 <img
                   src={elementBadgePath(`${element.toLowerCase()}.svg`)}
                   alt={element}
                   title={element}
                   className={styles.elementBadge}
                 />
-              </div>
-            ))}
+              ))}
+            </div>
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>Drop:</span>
               <span className={styles.infoValue}>{formatDrop(entry)}</span>
             </div>
+            {entry.riddle && (
+              <p className={styles.riddle}>Enigma: {entry.riddle}</p>
+            )}
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>Passiva:</span>
               <span className={styles.infoValue}>{entry.passiveName}</span>

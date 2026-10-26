@@ -18,6 +18,10 @@
   background: var(--surface-primary);
 }
 
+.rankIcon {
+  width: 3vw;
+}
+
 .pet h2,
 .pet p {
   margin-top: 0;
