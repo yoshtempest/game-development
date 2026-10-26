@@ -1,0 +1,93 @@
+
+.progressionSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
+  padding: var(--size-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--size-3);
+  background: var(--surface-secondary);
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-3);
+}
+
+.sectionHeading > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+}
+
+.sectionHeading h4 {
+  margin: 0;
+  font-size: var(--fs-12);
+}
+
+.stageCount {
+  flex-shrink: 0;
+  font-size: var(--fs-12);
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.starList {
+  display: flex;
+  gap: var(--size-2);
+  overflow-x: auto;
+  padding: var(--size-1) 0 var(--size-2);
+}
+
+.starItem {
+  display: flex;
+  flex: 1 0 75px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-2);
+  min-width: 0;
+  padding: var(--size-3) var(--size-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--size-2);
+  background: var(--surface-card);
+  color: var(--text-color);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    opacity 0.15s;
+}
+
+.starItem span,
+.starItem strong {
+  font-size: var(--fs-10);
+  text-align: center;
+}
+
+.starItem:hover:not(:disabled) {
+  border-color: var(--accent-color);
+}
+
+.starSelected {
+  border-color: var(--accent-color);
+  background: var(--surface-panel);
+  box-shadow: inset 0 0 0 1px var(--accent-color);
+}
+
+
+.starLocked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.starFilled {
+  color: var(--accent-color);
+  fill: var(--accent-color);
+}
+
+.starEmpty {
+  color: var(--text-muted);
+}

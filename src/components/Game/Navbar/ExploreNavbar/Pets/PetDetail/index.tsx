@@ -1,6 +1,4 @@
 import { useRef, useEffect } from "react";
-import { Star } from "lucide-react";
-import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
 import { usePetDetail } from "@/hooks/menu/pets/usePetDetail";
 import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
 import { FusionOverlay } from "../FusionOverlay";
@@ -10,6 +8,7 @@ import { PetArtwork } from "./ArtWork"
 import { PetIdentity } from "./Identity";
 import { PetAbilities } from "./Abilities";
 import { PetAttributes } from "./Attributes";
+import { PetStarSelector } from "./StarSelector";
 
 type Props = {
   entry: PetEntry;
@@ -76,59 +75,22 @@ export function PetDetail({ entry, onClose }: Props) {
             <div className={styles.identityInfo}>
               <PetIdentity entry={entry} />
 
-              <PetAttributes entry={entry} petNpc={petNpc} stats={stats} />
+              <PetAttributes
+                entry={entry}
+                petNpc={petNpc}
+                stats={stats}
+              />
             </div>
             
           </section>
 
           <PetAbilities entry={entry}/>
 
-          {/* Seleção de estrelas */}
-          <section className={styles.progressionSection}>
-            <div className={styles.sectionHeading}>
-              <div>
-                <span className={styles.sectionEyebrow}>PROGRESSÃO</span>
-                <h4>Estágios de evolução</h4>
-              </div>
-
-              <span className={styles.stageCount}>
-                ★ {selectedStar}/{PET_STAR_MAX}
-              </span>
-            </div>
-
-            <div className={styles.starList} ref={listRef}>
-              {Array.from({ length: PET_STAR_MAX }, (_, i) => {
-                const star = i + 1;
-                const qty = ownedQtyByStar(star);
-                const isSelected = selectedStar === star;
-                const isOwned = qty > 0;
-
-                return (
-                  <button
-                    key={star}
-                    type="button"
-                    className={`${styles.starItem} ${
-                      isSelected ? styles.starSelected : ""
-                    } ${!isOwned ? styles.starLocked : ""}`}
-                    disabled={!isOwned}
-                    aria-pressed={isSelected}
-                    onClick={() => setSelectedStar(star)}
-                  >
-                    <Star
-                      size={18}
-                      className={
-                        isOwned ? styles.starFilled : styles.starEmpty
-                      }
-                    />
-
-                    <span>Estágio {star}</span>
-
-                    <strong>{isOwned ? `x${qty}` : "—"}</strong>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
+          <PetStarSelector
+            selectedStar={selectedStar}
+            setSelectedStar={setSelectedStar}
+            ownedQtyByStar={ownedQtyByStar}
+          />
         </main>
       </div>
 
