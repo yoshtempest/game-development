@@ -42,7 +42,6 @@ export function PetDetail({ entry, onClose }: Props) {
     message,
     fusing,
     isEquipped,
-    equippedStar,
     canFuse,
     highestEligibleStar,
     ownedQtyByStar,
@@ -75,7 +74,7 @@ export function PetDetail({ entry, onClose }: Props) {
       <div className={`containerOfNavbar ${styles.pokedex}`}>
         <header className={styles.header}>
           <div className={styles.headerTitle}>
-            <span className={styles.headerLabel}>DELÍCIADEX</span>
+            <span className={styles.headerLabel}>DelíciaDex - PetEdition</span>
             <h3>{entry.name}</h3>
           </div>
 
@@ -92,7 +91,15 @@ export function PetDetail({ entry, onClose }: Props) {
           {/* Ficha principal */}
           <section className={styles.identitySection}>
             <div className={styles.artPanel}>
-              <span className={styles.artLabel}>REGISTRO DA CRIATURA - {entry.name.toUpperCase()}</span>
+              <span className={styles.artLabel}>
+                <span>REGISTRO DA CRIATURA - {entry.name.toUpperCase()}</span>
+                {message && (
+                  <span className={styles.message} role="status">
+                    {message}
+                  </span>
+                )}
+            </span>
+
 
               <div className={styles.petArtwork}>
                 <img
@@ -114,7 +121,25 @@ export function PetDetail({ entry, onClose }: Props) {
                     }
                   }}
                 />
+                {entry.owned && (
+                  <button
+                    type="button"
+                    disabled={!entry.owned}
+                    className={`${styles.equipButton} ${
+                      isEquipped ? styles.unequipBtn : styles.equipBtn
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+
+                      if (isEquipped) unequipPet();
+                      else equipPet();
+                    }}
+                  >
+                    {isEquipped ? "DESEQUIPAR" : "EQUIPAR"}
+                  </button>
+                )}
               </div>
+              
 
               <div className={styles.artFooter}>
                 <span>ESTÁGIO</span>
@@ -202,7 +227,42 @@ export function PetDetail({ entry, onClose }: Props) {
                   {entry.location ?? "Não descoberto"}
                 </p>
               </div>
+              
+              <div className={styles.riddleCard}>
+                {!entry.owned && (
+                  <span className={styles.statusLocked}>
+                    AINDA NÃO DESBLOQUEADO
+                  </span>
+                )}
+                {stats && (
+                  <div className={styles.xpSection}>
+                    <div className={styles.xpHeader}>
+                      <span>NÍVEL {stats.level}</span>
+                      <span>
+                        {stats.xp} /{" "}
+                        {getPetXPToNextLevel(
+                          stats.level,
+                          getPetClass(entry.id)
+                        )}{" "}
+                        EXP
+                      </span>
+                    </div>
+
+                    <ProgressBar
+                      value={stats.xp}
+                      max={getPetXPToNextLevel(
+                        stats.level,
+                        getPetClass(entry.id)
+                      )}
+                      animationId={`pet-detail-xp-${entry.id}`}
+                      level={stats.level}
+                    />
+                  </div>
+                )}
+              </div>
+              
             </div>
+            
           </section>
 
           {/* Habilidades */}
@@ -264,77 +324,9 @@ export function PetDetail({ entry, onClose }: Props) {
               })}
             </div>
 
-            {stats && (
-              <div className={styles.xpSection}>
-                <div className={styles.xpHeader}>
-                  <span>NÍVEL {stats.level}</span>
-                  <span>
-                    {stats.xp} /{" "}
-                    {getPetXPToNextLevel(
-                      stats.level,
-                      getPetClass(entry.id)
-                    )}{" "}
-                    EXP
-                  </span>
-                </div>
-
-                <ProgressBar
-                  value={stats.xp}
-                  max={getPetXPToNextLevel(
-                    stats.level,
-                    getPetClass(entry.id)
-                  )}
-                  animationId={`pet-detail-xp-${entry.id}`}
-                  level={stats.level}
-                />
-              </div>
-            )}
-
-            <div className={styles.equipmentStatus}>
-              <span
-                className={
-                  isEquipped
-                    ? styles.statusEquipped
-                    : styles.statusNotEquipped
-                }
-              >
-                {isEquipped
-                  ? `EQUIPADO · ★${equippedStar}`
-                  : "NÃO EQUIPADO"}
-              </span>
-            </div>
-
-            {message && (
-              <div className={styles.message} role="status">
-                {message}
-              </div>
-            )}
-
             <div className={styles.actionRow}>
-              {!entry.owned && (
-                <span className={styles.statusLocked}>
-                  AINDA NÃO DESBLOQUEADO
-                </span>
-              )}
-
               {!fusing ? (
                 <>
-                  <button
-                    type="button"
-                    disabled={!entry.owned}
-                    className={`${styles.actionBtn} ${
-                      isEquipped ? styles.unequipBtn : styles.equipBtn
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-
-                      if (isEquipped) unequipPet();
-                      else equipPet();
-                    }}
-                  >
-                    {isEquipped ? "DESEQUIPAR" : "EQUIPAR"}
-                  </button>
-
                   {canFuse() && (
                     <button
                       type="button"

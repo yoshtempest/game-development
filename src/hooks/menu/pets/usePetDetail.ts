@@ -36,7 +36,6 @@ export function usePetDetail({ entry, onClose }: Props) {
     "pet",
   );
   const isEquipped = equippedInfo?.id === entry.id;
-  const equippedStar = isEquipped ? equippedInfo.enhance + 1 : 0;
 
   const [selectedStar, setSelectedStar] = useState(1);
   const [message, setMessage] = useState<string | null>(null);
@@ -91,13 +90,13 @@ export function usePetDetail({ entry, onClose }: Props) {
     // Se já houvesse um pet equipado neste slot, ele volta para a coleção.
     equipRef.current(character, entryRef.current.id, enhanceFromPetStars(stars));
     playSelectRef.current();
-    setMessage(`${entryRef.current.name} equipado (★${stars})`);
+    setMessage(`equipado (★${stars})`);
   }
 
   function unequipPet() {
     unequipRef.current(character, "pet");
     playSelectRef.current();
-    setMessage(`${entryRef.current.name} desequipado`);
+    setMessage(`desequipado`);
   }
 
   function startFuse(stars: number) {
@@ -121,7 +120,7 @@ export function usePetDetail({ entry, onClose }: Props) {
     setFusing(null);
     playSelectRef.current();
     setMessage(
-      `Fusão concluída! ${entryRef.current.name} ★${stars} → ★${stars + 1}`,
+      `Fusão concluída! ★${stars} → ★${stars + 1}`,
     );
   }
 
@@ -201,7 +200,6 @@ export function usePetDetail({ entry, onClose }: Props) {
     message,
     fusing,
     isEquipped,
-    equippedStar,
     canFuse,
     highestEligibleStar,
     ownedQtyByStar,

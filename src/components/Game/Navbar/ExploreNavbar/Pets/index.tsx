@@ -17,6 +17,11 @@ import {
 import { PetDetail } from "./PetDetail";
 import styles from "./styles.module.css";
 import { RANKS } from "@/gameRules/rank";
+import { ProgressBar } from "@/components/Game/ProgressBar";
+import {
+  getPetXPToNextLevel,
+  getPetClass,
+} from "@/utils/character/petProgress";
 
 export function Pets() {
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -136,6 +141,21 @@ export function Pets() {
             {isSelected && (
               <span className={`cursor ${styles.cursor}`}>▼</span>
             )}
+              {entry.owned && stats && (
+                <>
+                  <div className={styles.progressBar}>
+                    <ProgressBar
+                      value={stats.xp}
+                      max={getPetXPToNextLevel(
+                        stats.level,
+                        getPetClass(entry.id),
+                      )}
+                      animationId={`pet-xp-${entry.id}`}
+                      level={stats.level}
+                    />
+                  </div>
+                </>
+              )}
 
             <div className={styles.imageBox}>
               <img
@@ -188,20 +208,17 @@ export function Pets() {
                 >
                   {entry.name}
                 </h2>
-                {entry.owned && stats && (
-                  <>
-                    <p className={styles.statsLine}>Nv.{stats.level}</p>
-                  </>
-                )}
-                {getNpcElementTypes(petNpc).map((element) => (
-                  <img
-                    key={element}
-                    src={elementBadgePath(`${element.toLowerCase()}.svg`)}
-                    alt={element}
-                    title={element}
-                    className={styles.elementBadge}
-                  />
-                ))}
+                <div className={styles.elementList}>
+                  {getNpcElementTypes(petNpc).map((element) => (
+                    <img
+                      key={element}
+                      src={elementBadgePath(`${element.toLowerCase()}.svg`)}
+                      alt={element}
+                      title={element}
+                      className={styles.elementBadge}
+                    />
+                  ))}
+                </div>
 
              <img
                 className={styles.rankIcon}
@@ -213,6 +230,7 @@ export function Pets() {
               {isEquipped && (
                 <span className={styles.equippedBadge}>Equipado</span>
               )}
+              {entry.owned && stats && ( <p className={styles.statsLine}>Nv.{stats.level}</p> )}
             </div>
           </div>
         );

@@ -60,17 +60,25 @@
   filter: brightness(0.15);
 }
 
-.flexColumn {
-
-  display: flex;
-  flex-direction: column;
-  gap: var(--fs-6);
-}
-
 .flexRow {
   display: flex;
   flex-direction: row;
   gap: var(--small);
+}
+
+.elementList {
+  display: flex;
+  gap: var(--fs-8);
+}
+
+.progressBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 70%;
+  height: fit-content;
+  bottom: 3%;
+  position: absolute;
 }
 
 .name {
@@ -157,7 +165,6 @@
 .statsLine {
   font-size: var(--fs-11);
   color: var(--text-secondary);
-  width: 100%;
   text-align: flex-start;
 }
 
