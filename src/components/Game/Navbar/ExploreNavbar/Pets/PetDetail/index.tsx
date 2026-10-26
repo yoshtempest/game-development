@@ -1,9 +1,6 @@
 import { useRef, useEffect } from "react";
 import { Star } from "lucide-react";
 import { elementBadgePath } from "@/utils/paths";
-import { RANK_COLORS, RANK_LABELS } from "@/data/equipment/definitions";
-import { RANKS } from "@/gameRules/rank";
-import { rankBadgePath } from "@/utils/paths";
 import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
 import { PET_ROLE_LABELS } from "@/data/characters/pets/petSkills";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
@@ -16,11 +13,10 @@ import {
   getPetClass,
 } from "@/utils/character/petProgress";
 import styles from "./styles.module.css";
-import {
-  petImagePath,
-  petFallbackImagePath,
-  petStarStyle,
-} from "@/utils/character/petVisuals";
+import { PetDetailHeader } from "./Header";
+import { PetArtwork } from "./ArtWork"
+import { PetIdentity } from "./Identity";
+import { PetAbilities } from "./Abilities";
 
 type Props = {
   entry: PetEntry;
@@ -72,142 +68,28 @@ export function PetDetail({ entry, onClose }: Props) {
   return (
     <>
       <div className={`containerOfNavbar ${styles.pokedex}`}>
-        <header className={styles.header}>
-          <div className={styles.headerTitle}>
-            <span className={styles.headerLabel}>DelíciaDex - PetEdition</span>
-            <h3>{entry.name}</h3>
-          </div>
-
-          <button
-            className={styles.backBtn}
-            onClick={handleClose}
-            type="button"
-          >
-            ← VOLTAR
-          </button>
-        </header>
-
+        <PetDetailHeader name={entry.name} onClose={handleClose}/>
         <main className={styles.pokedexContent}>
           {/* Ficha principal */}
           <section className={styles.identitySection}>
-            <div className={styles.artPanel}>
-              <span className={styles.artLabel}>
-                <span>REGISTRO DA CRIATURA - {entry.name.toUpperCase()}</span>
-                {message && (
-                  <span className={styles.message} role="status">
-                    {message}
-                  </span>
-                )}
-            </span>
-
-
-              <div className={styles.petArtwork}>
-                <img
-                  src={petImagePath(petNpc, selectedStar)}
-                  alt={entry.name}
-                  className={styles.petImage}
-                  style={petStarStyle(selectedStar)}
-                  data-fallback={petFallbackImagePath(petNpc)}
-                  onError={(e) => {
-                    const img = e.currentTarget;
-
-                    if (img.dataset.fallbackUsed) {
-                      img.src = petFallbackImagePath("goat");
-                    } else {
-                      img.dataset.fallbackUsed = "1";
-                      img.src =
-                        img.dataset.fallback ??
-                        petFallbackImagePath("goat");
-                    }
-                  }}
-                />
-                {!fusing ? (
-                  <>
-                    {canFuse() && (
-                      <button
-                        type="button"
-                        disabled={!entry.owned}
-                        className={`${styles.actionBtn} ${styles.fuseBtn}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          startFuse(eligible);
-                        }}
-                      >
-                        FUNDIR · 2× ★{eligible}
-                      </button>
-                    )}
-                  </>
-                ) : (
-                  <button
-                    type="button"
-                    className={`${styles.actionBtn} ${styles.confirmFuseBtn}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      executeFuse();
-                    }}
-                  >
-                    CONFIRMAR FUSÃO?
-                  </button>
-                )}
-                {entry.owned && (
-                  <button
-                    type="button"
-                    disabled={!entry.owned}
-                    className={`${styles.equipButton} ${
-                      isEquipped ? styles.unequipBtn : styles.equipBtn
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-
-                      if (isEquipped) unequipPet();
-                      else equipPet();
-                    }}
-                  >
-                    {isEquipped ? "DESEQUIPAR" : "EQUIPAR"}
-                  </button>
-                )}
-              </div>
-              
-
-              <div className={styles.artFooter}>
-                <span>ESTÁGIO</span>
-                <strong>
-                  {selectedStar} / {PET_STAR_MAX}
-                </strong>
-              </div>
-            </div>
+            <PetArtwork 
+              name={entry.name}
+              message={message}
+              petNpc={petNpc}
+              entry={entry}
+              selectedStar={selectedStar}
+              eligible={eligible}
+              isEquipped={isEquipped}
+              fusing={!!fusing}
+              canFuse={canFuse}
+              startFuse={startFuse}
+              executeFuse={executeFuse}
+              equipPet={equipPet}
+              unequipPet={unequipPet}
+            />
 
             <div className={styles.identityInfo}>
-              <div className={styles.nameBlock}>
-                <span className={styles.sectionEyebrow}>
-                  FICHA DA CRIATURA
-                </span>
-
-                <h2
-                  className={styles.petName}
-                  style={{ color: RANK_COLORS[entry.rank] }}
-                >
-                  {entry.name}
-                </h2>
-
-                <div className={styles.rankRow}>
-                  <img
-                    className={styles.rankIcon}
-                    src={rankBadgePath(
-                      RANKS.find((rank) => rank.id === entry.rank)?.src ??
-                        "wandering.svg"
-                    )}
-                    alt={`Rank ${RANK_LABELS[entry.rank]}`}
-                  />
-
-                  <span
-                    className={styles.rankName}
-                    style={{ color: RANK_COLORS[entry.rank] }}
-                  >
-                    Rank: {RANK_LABELS[entry.rank]}
-                  </span>
-                </div>
-              </div>
+              <PetIdentity entry={entry} />
 
               <div className={styles.attributeGrid}>
                 <div className={styles.attributeCard}>
@@ -293,18 +175,7 @@ export function PetDetail({ entry, onClose }: Props) {
             
           </section>
 
-          {/* Habilidades */}
-          <section className={styles.abilitiesSection}>
-            <div className={styles.abilityCard}>
-              <span className={styles.sectionEyebrow}>HABILIDADE PASSIVA</span>
-              <h4>{entry.passiveName}</h4>
-            </div>
-
-            <div className={styles.abilityCard}>
-              <span className={styles.sectionEyebrow}>HABILIDADE ATIVA</span>
-              <h4>{entry.skillName}</h4>
-            </div>
-          </section>
+          <PetAbilities entry={entry}/>
 
           {/* Seleção de estrelas */}
           <section className={styles.progressionSection}>

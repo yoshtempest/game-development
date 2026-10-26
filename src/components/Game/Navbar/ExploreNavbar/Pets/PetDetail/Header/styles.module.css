@@ -1,0 +1,39 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-4);
+  width: 98%;
+  padding-bottom: var(--size-3);
+  border-bottom: 2px solid var(--border-default);
+}
+
+.headerTitle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+  min-width: 0;
+}
+
+.headerTitle h3 {
+  margin: 0;
+  font-size: var(--fs-14);
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.backBtn {
+  flex-shrink: 0;
+  padding: var(--size-2) var(--size-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--size-2);
+  background: var(--surface-card);
+  color: var(--text-color);
+  font-size: var(--fs-10);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.backBtn:hover {
+  background: var(--surface-primary);
+}

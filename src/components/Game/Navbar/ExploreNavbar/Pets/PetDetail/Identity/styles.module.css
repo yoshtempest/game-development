@@ -1,0 +1,35 @@
+.nameBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--size-2);
+  padding: var(--size-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--size-3);
+  background: var(--surface-card);
+}
+
+.petName {
+  margin: 0;
+  font-size: var(--fs-16);
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+.rankRow {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+}
+
+.rankIcon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.rankName {
+  font-size: var(--fs-10);
+  font-weight: bold;
+}

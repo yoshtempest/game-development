@@ -1,0 +1,140 @@
+.artPanel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--size-3);
+  background: var(--surface-secondary);
+}
+
+.artLabel {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--size-3);
+  font-size: var(--fs-10);
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.petArtwork {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 180px;
+  padding: var(--size-4);
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at center,
+      var(--surface-panel),
+      var(--surface-secondary) 75%
+    );
+}
+
+.petImage {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  max-height: 260px;
+  aspect-ratio: 1;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 6px 8px rgb(0 0 0 / 25%));
+}
+
+.artFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-3);
+  padding: var(--size-3);
+  border-top: 1px solid var(--border-default);
+  font-size: var(--fs-10);
+}
+
+.artFooter span {
+  color: var(--text-secondary);
+}
+
+.artFooter strong {
+  color: var(--accent-color);
+}
+
+.message {
+  border-radius: var(--size-2);
+  background: var(--surface-card);
+  color: var(--success);
+  font-size: var(--fs-10);
+  font-weight: bold;
+  text-align: center;
+}
+
+.actionRow {
+  display: flex;
+  gap: var(--size-3);
+  width: 100%;
+  margin-top: var(--size-1);
+}
+
+.equipButton,
+.actionBtn {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: var(--size-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--size-2);
+  background: var(--surface-card);
+  color: var(--text-color);
+  font-size: var(--fs-10);
+  font-weight: bold;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition:
+    opacity 0.15s,
+    transform 0.1s;
+}
+
+.equipButton,
+.actionBtn:active {
+  transform: scale(0.97);
+}
+
+.equipButton {
+  width: 20%;
+  position: absolute;
+  right: 2%;
+  bottom: 2%;
+}
+
+.equipBtn {
+  background: var(--secondary-color);
+  color: var(--black);
+  border-color: var(--secondary-color);
+}
+
+.unequipBtn {
+  background: var(--background-color);
+  color: var(--text-color);
+  border-color: var(--primary-color);
+}
+
+.fuseBtn {
+  background: var(--success);
+  color: var(--black);
+  border-color: var(--success);
+  position: absolute;
+  bottom: 3%;
+  left: 3%;
+}
+
+.confirmFuseBtn {
+  width: 100%;
+  background: var(--secondary-color);
+  color: var(--black);
+  border-color: var(--secondary-color);
+}
