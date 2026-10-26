@@ -6,7 +6,7 @@ import { RANKS } from "@/gameRules/rank";
 import { rankBadgePath } from "@/utils/paths";
 import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
 import styles from "./styles.module.css";
-import shared from "./styles.module.css";
+import shared from "../styles.module.css";
 
 type Props = {
   entry: PetEntry;

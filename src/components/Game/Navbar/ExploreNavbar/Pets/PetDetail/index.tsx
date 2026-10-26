@@ -1,35 +1,20 @@
 import { useRef, useEffect } from "react";
 import { Star } from "lucide-react";
-import { elementBadgePath } from "@/utils/paths";
 import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
-import { PET_ROLE_LABELS } from "@/data/characters/pets/petSkills";
-import { getNpcElementTypes } from "@/data/types/npcElementTypes";
 import { usePetDetail } from "@/hooks/menu/pets/usePetDetail";
 import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
 import { FusionOverlay } from "../FusionOverlay";
-import { ProgressBar } from "@/components/Game/ProgressBar";
-import {
-  getPetXPToNextLevel,
-  getPetClass,
-} from "@/utils/character/petProgress";
 import styles from "./styles.module.css";
 import { PetDetailHeader } from "./Header";
 import { PetArtwork } from "./ArtWork"
 import { PetIdentity } from "./Identity";
 import { PetAbilities } from "./Abilities";
+import { PetAttributes } from "./Attributes";
 
 type Props = {
   entry: PetEntry;
   onClose: () => void;
 };
-
-function formatDrop(entry: PetEntry): string {
-  if (entry.dropChance === null) return "Baú";
-  const pct = (entry.dropChance * 100).toLocaleString("pt-BR", {
-    maximumFractionDigits: 1,
-  });
-  return `${pct}%`;
-}
 
 export function PetDetail({ entry, onClose }: Props) {
   const {
@@ -91,86 +76,7 @@ export function PetDetail({ entry, onClose }: Props) {
             <div className={styles.identityInfo}>
               <PetIdentity entry={entry} />
 
-              <div className={styles.attributeGrid}>
-                <div className={styles.attributeCard}>
-                  <span className={styles.attributeLabel}>FUNÇÃO</span>
-                  <strong>{PET_ROLE_LABELS[entry.role]}</strong>
-                </div>
-
-                <div className={styles.attributeCard}>
-                  <span className={styles.attributeLabel}>ELEMENTO</span>
-
-                  <div className={styles.elementList}>
-                    {getNpcElementTypes(petNpc).map((element) => (
-                      <img
-                        key={element}
-                        src={elementBadgePath(
-                          `${element.toLowerCase()}.svg`
-                        )}
-                        alt={element}
-                        title={element}
-                        className={styles.elementBadge}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className={styles.attributeCard}>
-                  <span className={styles.attributeLabel}>CHANCE DE DROP</span>
-                  <strong>{formatDrop(entry)}</strong>
-                </div>
-              </div>
-
-              {entry.riddle && (
-                <div className={styles.riddleCard}>
-                  <span className={styles.attributeLabel}>
-                    COMO ENCONTRAR
-                  </span>
-                  <p>{entry.riddle}</p>
-                </div>
-              )}
-              <div className={styles.riddleCard}>
-                <span className={styles.attributeLabel}>
-                  LOCALIZAÇÃO
-                </span>
-                <p>
-                  {entry.location ?? "Não descoberto"}
-                </p>
-              </div>
-              
-              <div className={styles.riddleCard}>
-                {!entry.owned && (
-                  <span className={styles.statusLocked}>
-                    AINDA NÃO DESBLOQUEADO
-                  </span>
-                )}
-                {stats && (
-                  <div className={styles.xpSection}>
-                    <div className={styles.xpHeader}>
-                      <span>NÍVEL {stats.level}</span>
-                      <span>
-                        {stats.xp} /{" "}
-                        {getPetXPToNextLevel(
-                          stats.level,
-                          getPetClass(entry.id)
-                        )}{" "}
-                        EXP
-                      </span>
-                    </div>
-
-                    <ProgressBar
-                      value={stats.xp}
-                      max={getPetXPToNextLevel(
-                        stats.level,
-                        getPetClass(entry.id)
-                      )}
-                      animationId={`pet-detail-xp-${entry.id}`}
-                      level={stats.level}
-                    />
-                  </div>
-                )}
-              </div>
-              
+              <PetAttributes entry={entry} petNpc={petNpc} stats={stats} />
             </div>
             
           </section>

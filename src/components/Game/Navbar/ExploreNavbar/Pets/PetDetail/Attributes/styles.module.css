@@ -1,0 +1,73 @@
+.attributeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--size-2);
+}
+
+.attributeCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--size-2);
+  min-width: 0;
+  padding: var(--size-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--size-2);
+  background: var(--surface-card);
+}
+
+.attributeCard:last-child {
+  grid-column: 1 / -1;
+}
+
+.attributeLabel {
+  font-size: var(--fs-10);
+  font-weight: bold;
+  color: var(--text-secondary);
+}
+
+.attributeCard strong {
+  font-size: var(--fs-12);
+  color: var(--text-color);
+  overflow-wrap: anywhere;
+}
+
+.elementList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--size-2);
+}
+
+.elementBadge {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.riddleCard {
+  padding: var(--size-3);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--size-2);
+  background: var(--surface-card);
+}
+
+.riddleCard p {
+  margin: var(--size-2) 0 0;
+  font-size: var(--fs-10);
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.statusLocked {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--size-2) var(--size-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--size-2);
+  font-size: var(--fs-10);
+  font-weight: bold;
+  background: var(--surface-deep);
+  color: var(--text-muted);
+}
