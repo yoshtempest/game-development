@@ -3,9 +3,8 @@ import { Star } from "lucide-react";
 import { elementBadgePath, rankBadgePath } from "@/utils/paths";
 import { RANK_COLORS } from "@/data/equipment/definitions";
 import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
-import { PET_ROLE_LABELS } from "@/data/characters/pets/petSkills";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
-import { usePetsMenu, type PetEntry } from "@/hooks/menu/pets/usePetsMenu";
+import { usePetsMenu } from "@/hooks/menu/pets/usePetsMenu";
 import { useGameControls } from "@/contexts/GameControlsContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useMenuSFX } from "@/hooks/menu/useMenuSFX";
@@ -23,14 +22,6 @@ import {
 import { PetDetail } from "./PetDetail";
 import styles from "./styles.module.css";
 import { RANKS } from "@/gameRules/rank";
-
-function formatDrop(entry: PetEntry): string {
-  if (entry.dropChance === null) return "Baú";
-  const pct = (entry.dropChance * 100).toLocaleString("pt-BR", {
-    maximumFractionDigits: 1,
-  });
-  return `${pct}%`;
-}
 
 export function Pets() {
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -249,16 +240,12 @@ export function Pets() {
               )}
 
               <div className={styles.flexRow}>
-                <span className={styles.roleBadge}>
-                  {PET_ROLE_LABELS[entry.role]}
-                </span>
                 <img
                   className={styles.rankIcon}
                   src={rankBadgePath(
                     RANKS.find((rank) => rank.id === entry.rank)?.src ?? "wandering.svg"
                   )}
                 />
-                <p className={styles.dropLine}>Drop: {formatDrop(entry)}</p>
               </div>
             </div>
           </div>

@@ -16,6 +16,11 @@ import {
   getPetClass,
 } from "@/utils/character/petProgress";
 import styles from "./styles.module.css";
+import {
+  petImagePath,
+  petFallbackImagePath,
+  petStarStyle,
+} from "@/utils/character/petVisuals";
 
 type Props = {
   entry: PetEntry;
@@ -67,137 +72,241 @@ export function PetDetail({ entry, onClose }: Props) {
 
   return (
     <>
-      <div className="containerOfNavbar">
-        <h3 className={styles.header}>
-          <span>{entry.name}</span>
-          <button className={styles.backBtn} onClick={handleClose}>
-            ← Voltar
-          </button>
-        </h3>
+      <div className={`containerOfNavbar ${styles.pokedex}`}>
+        <header className={styles.header}>
+          <div className={styles.headerTitle}>
+            <span className={styles.headerLabel}>DELÍCIADEX</span>
+            <h3>{entry.name}</h3>
+          </div>
 
-        <div className={styles.panels}>
-          <div className={styles.leftPanel}>
-            <h4 className={styles.starSectionTitle}>Estrelas</h4>
+          <button
+            className={styles.backBtn}
+            onClick={handleClose}
+            type="button"
+          >
+            ← VOLTAR
+          </button>
+        </header>
+
+        <main className={styles.pokedexContent}>
+          {/* Ficha principal */}
+          <section className={styles.identitySection}>
+            <div className={styles.artPanel}>
+              <span className={styles.artLabel}>REGISTRO DA CRIATURA - {entry.name.toUpperCase()}</span>
+
+              <div className={styles.petArtwork}>
+                <img
+                  src={petImagePath(petNpc, selectedStar)}
+                  alt={entry.name}
+                  className={styles.petImage}
+                  style={petStarStyle(selectedStar)}
+                  data-fallback={petFallbackImagePath(petNpc)}
+                  onError={(e) => {
+                    const img = e.currentTarget;
+
+                    if (img.dataset.fallbackUsed) {
+                      img.src = petFallbackImagePath("goat");
+                    } else {
+                      img.dataset.fallbackUsed = "1";
+                      img.src =
+                        img.dataset.fallback ??
+                        petFallbackImagePath("goat");
+                    }
+                  }}
+                />
+              </div>
+
+              <div className={styles.artFooter}>
+                <span>ESTÁGIO</span>
+                <strong>
+                  {selectedStar} / {PET_STAR_MAX}
+                </strong>
+              </div>
+            </div>
+
+            <div className={styles.identityInfo}>
+              <div className={styles.nameBlock}>
+                <span className={styles.sectionEyebrow}>
+                  FICHA DA CRIATURA
+                </span>
+
+                <h2
+                  className={styles.petName}
+                  style={{ color: RANK_COLORS[entry.rank] }}
+                >
+                  {entry.name}
+                </h2>
+
+                <div className={styles.rankRow}>
+                  <img
+                    className={styles.rankIcon}
+                    src={rankBadgePath(
+                      RANKS.find((rank) => rank.id === entry.rank)?.src ??
+                        "wandering.svg"
+                    )}
+                    alt={`Rank ${RANK_LABELS[entry.rank]}`}
+                  />
+
+                  <span
+                    className={styles.rankName}
+                    style={{ color: RANK_COLORS[entry.rank] }}
+                  >
+                    {RANK_LABELS[entry.rank]}
+                  </span>
+                </div>
+              </div>
+
+              <div className={styles.attributeGrid}>
+                <div className={styles.attributeCard}>
+                  <span className={styles.attributeLabel}>FUNÇÃO</span>
+                  <strong>{PET_ROLE_LABELS[entry.role]}</strong>
+                </div>
+
+                <div className={styles.attributeCard}>
+                  <span className={styles.attributeLabel}>ELEMENTO</span>
+
+                  <div className={styles.elementList}>
+                    {getNpcElementTypes(petNpc).map((element) => (
+                      <img
+                        key={element}
+                        src={elementBadgePath(
+                          `${element.toLowerCase()}.svg`
+                        )}
+                        alt={element}
+                        title={element}
+                        className={styles.elementBadge}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles.attributeCard}>
+                  <span className={styles.attributeLabel}>CHANCE DE DROP</span>
+                  <strong>{formatDrop(entry)}</strong>
+                </div>
+              </div>
+
+              {entry.riddle && (
+                <div className={styles.riddleCard}>
+                  <span className={styles.attributeLabel}>
+                    COMO ENCONTRAR
+                  </span>
+                  <p>{entry.riddle}</p>
+                </div>
+              )}
+              <div className={styles.riddleCard}>
+                <span className={styles.attributeLabel}>
+                  LOCALIZAÇÃO
+                </span>
+                <p>{entry.location}</p>
+              </div>
+            </div>
+          </section>
+
+          {/* Habilidades */}
+          <section className={styles.abilitiesSection}>
+            <div className={styles.abilityCard}>
+              <span className={styles.sectionEyebrow}>HABILIDADE PASSIVA</span>
+              <h4>{entry.passiveName}</h4>
+            </div>
+
+            <div className={styles.abilityCard}>
+              <span className={styles.sectionEyebrow}>HABILIDADE ATIVA</span>
+              <h4>{entry.skillName}</h4>
+            </div>
+          </section>
+
+          {/* Seleção de estrelas */}
+          <section className={styles.progressionSection}>
+            <div className={styles.sectionHeading}>
+              <div>
+                <span className={styles.sectionEyebrow}>PROGRESSÃO</span>
+                <h4>Estágios de evolução</h4>
+              </div>
+
+              <span className={styles.stageCount}>
+                ★ {selectedStar}/{PET_STAR_MAX}
+              </span>
+            </div>
+
             <div className={styles.starList} ref={listRef}>
               {Array.from({ length: PET_STAR_MAX }, (_, i) => {
                 const star = i + 1;
                 const qty = ownedQtyByStar(star);
                 const isSelected = selectedStar === star;
                 const isOwned = qty > 0;
+
                 return (
-                  <div
+                  <button
                     key={star}
+                    type="button"
                     className={`${styles.starItem} ${
                       isSelected ? styles.starSelected : ""
                     } ${!isOwned ? styles.starLocked : ""}`}
-                    onClick={() => {
-                      if (isOwned) setSelectedStar(star);
-                    }}
+                    disabled={!isOwned}
+                    aria-pressed={isSelected}
+                    onClick={() => setSelectedStar(star)}
                   >
-                    <div className={styles.starHeader}>
-                      <span className={styles.starLabel}>★{star}</span>
-                      {isOwned && <span className={styles.starQty}>x{qty}</span>}
-                    </div>
-                    <div className={styles.starBody}>
-                      {isOwned ? (
-                        <>
-                          <Star
-                            size={14}
-                            style={{ color: "var(--accent-color)" }}
-                          />
-                          <span className={styles.starOwned}>Disponível</span>
-                        </>
-                      ) : (
-                        <span className={styles.starLockedText}>Bloqueado</span>
-                      )}
-                    </div>
-                  </div>
+                    <Star
+                      size={18}
+                      className={
+                        isOwned ? styles.starFilled : styles.starEmpty
+                      }
+                    />
+
+                    <span>Estágio {star}</span>
+
+                    <strong>{isOwned ? `x${qty}` : "—"}</strong>
+                  </button>
                 );
               })}
             </div>
-          </div>
-
-          <div className={styles.rightPanel}>
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Rank:</span>
-              <span
-                className={styles.infoValue}
-                style={{ color: RANK_COLORS[entry.rank] }}
-              >
-                {RANK_LABELS[entry.rank]}
-              </span>
-              <img
-                className={styles.rankIcon}
-                src={rankBadgePath(
-                  RANKS.find((rank) => rank.id === entry.rank)?.src ?? "wandering.svg"
-                )}
-              />
-            </div>
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Função:</span>
-              <span className={styles.infoValue}>
-                {PET_ROLE_LABELS[entry.role]}
-              </span>
-            </div>
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Elemento:</span>
-              
-              {getNpcElementTypes(petNpc).map((element) => (
-                <img
-                  src={elementBadgePath(`${element.toLowerCase()}.svg`)}
-                  alt={element}
-                  title={element}
-                  className={styles.elementBadge}
-                />
-              ))}
-            </div>
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Drop:</span>
-              <span className={styles.infoValue}>{formatDrop(entry)}</span>
-            </div>
-            {entry.riddle && (
-              <p className={styles.riddle}>Enigma: {entry.riddle}</p>
-            )}
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Passiva:</span>
-              <span className={styles.infoValue}>{entry.passiveName}</span>
-            </div>
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Skill:</span>
-              <span className={styles.infoValue}>{entry.skillName}</span>
-            </div>
 
             {stats && (
-              <>
-                <div className={styles.xpSection}>
-                  <ProgressBar
-                    value={stats.xp}
-                    max={getPetXPToNextLevel(
+              <div className={styles.xpSection}>
+                <div className={styles.xpHeader}>
+                  <span>NÍVEL {stats.level}</span>
+                  <span>
+                    {stats.xp} /{" "}
+                    {getPetXPToNextLevel(
                       stats.level,
-                      getPetClass(entry.id),
-                    )}
-                    animationId={`pet-detail-xp-${entry.id}`}
-                    level={stats.level}
-                  />
-                  <div className={styles.xpText}>
-                    Nv.{stats.level} &nbsp; {stats.xp} /{" "}
-                    {getPetXPToNextLevel(stats.level, getPetClass(entry.id))}
-                  </div>
+                      getPetClass(entry.id)
+                    )}{" "}
+                    EXP
+                  </span>
                 </div>
-              </>
+
+                <ProgressBar
+                  value={stats.xp}
+                  max={getPetXPToNextLevel(
+                    stats.level,
+                    getPetClass(entry.id)
+                  )}
+                  animationId={`pet-detail-xp-${entry.id}`}
+                  level={stats.level}
+                />
+              </div>
             )}
 
-            <div className={styles.equipStatus}>
-              {isEquipped ? (
-                <span className={styles.statusEquipped}>
-                  Equipado (★{equippedStar})
-                </span>
-              ) : (
-                <span className={styles.statusNotEquipped}>Não equipado</span>
-              )}
+            <div className={styles.equipmentStatus}>
+              <span
+                className={
+                  isEquipped
+                    ? styles.statusEquipped
+                    : styles.statusNotEquipped
+                }
+              >
+                {isEquipped
+                  ? `EQUIPADO · ★${equippedStar}`
+                  : "NÃO EQUIPADO"}
+              </span>
             </div>
 
-            {message && <div className={styles.message}>{message}</div>}
+            {message && (
+              <div className={styles.message} role="status">
+                {message}
+              </div>
+            )}
 
             <div className={styles.actionRow}>
               {!fusing ? (
@@ -209,12 +318,14 @@ export function PetDetail({ entry, onClose }: Props) {
                     }`}
                     onClick={(e) => {
                       e.stopPropagation();
+
                       if (isEquipped) unequipPet();
                       else equipPet();
                     }}
                   >
                     {isEquipped ? "DESEQUIPAR" : "EQUIPAR"}
                   </button>
+
                   {canFuse() && (
                     <button
                       type="button"
@@ -224,7 +335,7 @@ export function PetDetail({ entry, onClose }: Props) {
                         startFuse(eligible);
                       }}
                     >
-                      FUNDIR (2x ★{eligible})
+                      FUNDIR · 2× ★{eligible}
                     </button>
                   )}
                 </>
@@ -241,8 +352,8 @@ export function PetDetail({ entry, onClose }: Props) {
                 </button>
               )}
             </div>
-          </div>
-        </div>
+          </section>
+        </main>
       </div>
 
       {fusing && (
