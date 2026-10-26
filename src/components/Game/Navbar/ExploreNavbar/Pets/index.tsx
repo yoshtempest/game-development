@@ -40,11 +40,20 @@ export function Pets() {
     fusing,
     finishFusion,
     newlyUnlockedPetIds,
+    equipPet,
+    unequipPet,
+    advanceFuse,
   } = usePetsMenu(true, listRef);
 
   const fusingEntry = fusing
     ? (pets.find((p) => p.id === fusing.petId) ?? null)
     : null;
+
+  function handlePetClick(entry: PetEntry) {
+    if (!entry.owned || pendingStar !== 0 || fusing) return;
+    if (equippedId === entry.id) unequipPet();
+    else equipPet(entry);
+  }
 
   return (
     <>
@@ -58,7 +67,6 @@ export function Pets() {
           const stats = statsFor(entry);
           const eligible = highestEligibleStar(entry);
           const canFuse = eligible > 0;
-          const isFusing = isSelected && pendingStar !== 0;
           const petNpc = entry.dropNpc ?? entry.id.replace("pet_", "");
           const imageStars = stats?.stars ?? 1;
           const isNewUnlocked =
@@ -70,6 +78,7 @@ export function Pets() {
               className={`${styles.pet} ${!entry.owned ? styles.petLocked : ""} ${
                 isEquipped ? styles.equipped : ""
               } ${isSelected ? styles.selected : ""}`}
+              onClick={() => handlePetClick(entry)}
             >
               {isSelected && (
                 <span className={`cursor ${styles.cursor}`}>▼</span>
@@ -120,15 +129,6 @@ export function Pets() {
                   </>
                 )}
 
-                {isSelected && canFuse && (
-                  <span
-                    className={`${styles.fuseBadge} ${
-                      isFusing ? styles.fuseConfirm : ""
-                    }`}
-                  >
-                    {isFusing ? "CONFIRMAR FUSÃO?" : `FUNDIR (2x ★${eligible})`}
-                  </span>
-                )}
               </div>
 
               <div className={styles.flexColumn}>
@@ -200,6 +200,53 @@ export function Pets() {
                 <p className={styles.skillLine}>
                   Passiva: {entry.passiveName} | Skill: {entry.skillName}
                 </p>
+
+                {isSelected && entry.owned && !fusing && (
+                  <div className={styles.actionRow}>
+                    {pendingStar !== 0 ? (
+                      <button
+                        type="button"
+                        className={`${styles.actionBtn} ${styles.confirmFuseBtn}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          advanceFuse();
+                        }}
+                      >
+                        CONFIRMAR FUSÃO?
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          className={`${styles.actionBtn} ${
+                            isEquipped
+                              ? styles.unequipBtn
+                              : styles.equipBtn
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (isEquipped) unequipPet();
+                            else equipPet(entry);
+                          }}
+                        >
+                          {isEquipped ? "DESEQUIPAR" : "EQUIPAR"}
+                        </button>
+                        {canFuse && (
+                          <button
+                            type="button"
+                            className={`${styles.actionBtn} ${styles.fuseBtn}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              advanceFuse();
+                            }}
+                          >
+                            FUNDIR (2x ★{eligible})
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           );

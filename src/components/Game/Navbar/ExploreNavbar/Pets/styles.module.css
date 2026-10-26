@@ -223,6 +223,58 @@
   position: absolute;
 }
 
+.actionRow {
+  display: flex;
+  flex-direction: row;
+  gap: var(--size-4);
+  margin-top: var(--size-6);
+  width: 100%;
+  justify-content: center;
+}
+
+.actionBtn {
+  flex: 1 1 0;
+  font-size: var(--fs-10);
+  font-weight: bold;
+  padding: var(--size-2) var(--size-6);
+  border-radius: var(--size-3);
+  border: var(--size-1) solid var(--border-default);
+  background: var(--surface-card);
+  color: var(--text-color);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: opacity 0.1s, transform 0.05s;
+}
+
+.actionBtn:active {
+  transform: scale(0.97);
+}
+
+.equipBtn {
+  background: var(--secondary-color);
+  color: var(--black);
+  border-color: var(--secondary-color);
+}
+
+.unequipBtn {
+  background: var(--primary-color);
+  color: var(--text-color);
+  border-color: var(--primary-color);
+}
+
+.fuseBtn {
+  background: var(--success);
+  color: var(--black);
+  border-color: var(--success);
+}
+
+.confirmFuseBtn {
+  background: var(--secondary-color);
+  color: var(--black);
+  border-color: var(--secondary-color);
+  width: 100%;
+}
+
 @media (orientation: portrait) {
   .name {
     font-weight: 400;

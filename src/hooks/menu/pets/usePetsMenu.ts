@@ -14,7 +14,7 @@ import {
   type PetRole,
 } from "@/data/characters/pets/petSkills";
 import type { EquipmentRank } from "@/utils/types/player/equipment";
-import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
+import { PET_STAR_MAX, enhanceFromPetStars } from "@/data/characters/pets/petProgress";
 import { gridMove } from "@/gameRules/menu/navigation";
 
 export type PetEntry = {
@@ -51,6 +51,8 @@ export function usePetsMenu(
   const {
     getCollection,
     getEquippedInfo,
+    equip,
+    unequip,
     fusePets,
     newlyUnlockedPetIds,
     acknowledgePets,
@@ -179,6 +181,8 @@ export function usePetsMenu(
   const pendingStarRef = useLatestRef(pendingStar);
   const fusingRef = useLatestRef(fusing);
   const highestEligibleStarRef = useLatestRef(highestEligibleStar);
+  const equipRef = useLatestRef(equip);
+  const unequipRef = useLatestRef(unequip);
 
   function executeFuse(entry: PetEntry, stars: number) {
     const ok = fusePetsRef.current(characterRef.current, entry.id, stars);
@@ -222,6 +226,22 @@ export function usePetsMenu(
     }
     return false;
   };
+
+  function equipPet(entry: PetEntry) {
+    const stars = maxOwnedStar(entry);
+    if (stars < 1) return;
+    // Equipa a melhor estrela disponível na coleção, consumindo uma unidade.
+    // Se já houvesse um pet equipado neste slot, ele volta para a coleção.
+    equipRef.current(characterRef.current, entry.id, enhanceFromPetStars(stars));
+  }
+
+  function unequipPet() {
+    unequipRef.current(characterRef.current, "pet");
+  }
+
+  function advanceFuse() {
+    return confirmRef.current();
+  }
 
   const finishFusion = () => {
     const current = fusingRef.current;
@@ -281,6 +301,9 @@ export function usePetsMenu(
     finishFusion,
     newlyUnlockedPetIds,
     acknowledgePets,
+    equipPet,
+    unequipPet,
+    advanceFuse,
     maxOwnedStar,
     highestEligibleStar,
     statsFor: (entry: PetEntry) => {
