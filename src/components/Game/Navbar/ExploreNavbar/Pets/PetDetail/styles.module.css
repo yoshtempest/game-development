@@ -1,0 +1,260 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-6);
+  height: 100%;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-4);
+  font-size: var(--fs-14);
+  font-weight: bold;
+  margin-bottom: var(--size-4);
+}
+
+.header span {
+  color: var(--text-color);
+}
+
+.backBtn {
+  font-size: var(--fs-12);
+  font-weight: bold;
+  padding: var(--size-1) var(--size-4);
+  border-radius: var(--size-3);
+  border: var(--size-1) solid var(--border-default);
+  background: var(--surface-card);
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.backBtn:hover {
+  background: var(--surface-primary);
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--size-8);
+  width: 100%;
+}
+
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+}
+
+.rightPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-6);
+}
+
+.starSectionTitle {
+  font-size: var(--fs-10);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: var(--size-1);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.starList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
+}
+
+.starItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  padding: var(--size-3) var(--size-4);
+  border-radius: var(--size-3);
+  border: var(--size-1) solid var(--border-default);
+  background: var(--surface-secondary);
+  cursor: pointer;
+  transition: border-color 0.1s, background 0.1s;
+}
+
+.starItem:hover {
+  border-color: var(--accent-color);
+}
+
+.starItem.starSelected {
+  border-color: var(--accent-color);
+  background: var(--surface-panel);
+}
+
+.starItem.starLocked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.starHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-4);
+}
+
+.starLabel {
+  font-size: var(--fs-12);
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.starQty {
+  font-size: var(--fs-10);
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.starBody {
+  display: flex;
+  align-items: center;
+  gap: var(--size-3);
+  font-size: var(--fs-10);
+}
+
+.starIcon {
+  width: var(--fs-10);
+  height: var(--fs-10);
+}
+
+.starOwned {
+  color: var(--text-secondary);
+}
+
+.starLockedText {
+  color: var(--text-muted);
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--size-4);
+  font-size: var(--fs-10);
+}
+
+.infoLabel {
+  color: var(--text-secondary);
+}
+
+.infoValue {
+  color: var(--text-color);
+  text-align: right;
+  min-width: 80px;
+}
+
+.elementBadge {
+  width: var(--fs-14);
+  height: var(--fs-14);
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.xpSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+
+.xpText {
+  font-size: var(--fs-10);
+  color: var(--text-secondary);
+  justify-content: space-between;
+  display: flex;
+}
+
+.equipStatus {
+  font-size: var(--fs-10);
+  font-weight: bold;
+  padding: var(--size-2) var(--size-4);
+  border-radius: var(--size-3);
+  width: fit-content;
+}
+
+.statusEquipped {
+  background: var(--secondary-color);
+  color: var(--black);
+  border: var(--size-1) solid var(--secondary-color);
+}
+
+.statusNotEquipped {
+  background: var(--surface-deep);
+  color: var(--text-secondary);
+  border: var(--size-1) solid var(--border-default);
+}
+
+.message {
+  font-size: var(--fs-10);
+  color: var(--success);
+  font-weight: bold;
+  text-align: center;
+}
+
+.actionRow {
+  display: flex;
+  flex-direction: row;
+  gap: var(--size-4);
+  width: 100%;
+  margin-top: var(--size-2);
+}
+
+.actionBtn {
+  flex: 1 1 0;
+  font-size: var(--fs-10);
+  font-weight: bold;
+  padding: var(--size-2) var(--size-6);
+  border-radius: var(--size-3);
+  border: var(--size-1) solid var(--border-default);
+  background: var(--surface-card);
+  color: var(--text-color);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: opacity 0.1s, transform 0.05s;
+}
+
+.actionBtn:active {
+  transform: scale(0.97);
+}
+
+.equipBtn {
+  background: var(--secondary-color);
+  color: var(--black);
+  border-color: var(--secondary-color);
+}
+
+.unequipBtn {
+  background: var(--primary-color);
+  color: var(--text-color);
+  border-color: var(--primary-color);
+}
+
+.fuseBtn {
+  background: var(--success);
+  color: var(--black);
+  border-color: var(--success);
+}
+
+.confirmFuseBtn {
+  background: var(--secondary-color);
+  color: var(--black);
+  border-color: var(--secondary-color);
+  width: 100%;
+}
+
+@media (orientation: portrait) {
+  .panels {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    font-size: var(--fs-10);
+  }
+}

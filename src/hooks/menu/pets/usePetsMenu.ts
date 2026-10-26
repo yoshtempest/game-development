@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { useGameControls } from "@/contexts/GameControlsContext";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useEquipment } from "@/contexts/EquipmentContext";
 import { usePetProgress } from "@/contexts/PetProgressContext";
-import { useLatestRef } from "@/hooks/useLatestRef";
-import { useMenuSFX } from "@/hooks/menu/useMenuSFX";
-import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { PETS } from "@/data/equipment/pets";
 import { PET_DROPS } from "@/data/characters/pets/petDrops";
 import {
@@ -14,8 +10,7 @@ import {
   type PetRole,
 } from "@/data/characters/pets/petSkills";
 import type { EquipmentRank } from "@/utils/types/player/equipment";
-import { PET_STAR_MAX, enhanceFromPetStars } from "@/data/characters/pets/petProgress";
-import { gridMove } from "@/gameRules/menu/navigation";
+import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
 
 export type PetEntry = {
   id: EquipmentId;
@@ -47,19 +42,13 @@ export function usePetsMenu(
 ) {
   const { player } = usePlayer();
   const character = player.character;
-  const { pushControls } = useGameControls();
   const {
     getCollection,
     getEquippedInfo,
-    equip,
-    unequip,
-    fusePets,
     newlyUnlockedPetIds,
     acknowledgePets,
   } = useEquipment();
-  const { getPetProgress, resetPetProgress } = usePetProgress();
-  const { playMove, playSelect, playClose } = useMenuSFX();
-  const { playSound } = useSoundEffects();
+  const { getPetProgress } = usePetProgress();
 
   const collection = getCollection(character);
   const equippedInfo = getEquippedInfo(character, "pet");
@@ -78,7 +67,8 @@ export function usePetsMenu(
     if (equippedInfo?.id === pet.id) {
       const equippedStar = equippedInfo.enhance + 1;
       if (equippedStar >= 1 && equippedStar <= PET_STAR_MAX) {
-        qtyByStar[equippedStar - 1] = (qtyByStar[equippedStar - 1] ?? 0) + 1;
+        qtyByStar[equippedStar - 1] =
+          (qtyByStar[equippedStar - 1] ?? 0) + 1;
       }
     }
     const owned =
@@ -108,18 +98,9 @@ export function usePetsMenu(
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const selectedIndexRef = useRef(selectedIndex);
-  const [pendingStar, setPendingStar] = useState(0);
-  const [fusing, setFusing] = useState<{
-    petId: string;
-    stars: number;
-  } | null>(null);
 
   useEffect(() => {
     selectedIndexRef.current = selectedIndex;
-  }, [selectedIndex]);
-
-  useEffect(() => {
-    setPendingStar(0);
   }, [selectedIndex]);
 
   useEffect(() => {
@@ -128,10 +109,6 @@ export function usePetsMenu(
       return Math.min(prev, pets.length - 1);
     });
   }, [pets.length]);
-
-  useEffect(() => {
-    if (fusing) setPendingStar(0);
-  }, [fusing]);
 
   const prevOpenRef = useRef(isOpen);
   useEffect(() => {
@@ -150,7 +127,8 @@ export function usePetsMenu(
     if (selectedIndex === prev) return;
     const container = listRef.current;
     const selectedElement = container.children[selectedIndex] as
-      HTMLElement | undefined;
+      | HTMLElement
+      | undefined;
     if (!selectedElement) return;
     selectedElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [isOpen, selectedIndex, pets, listRef]);
@@ -169,141 +147,14 @@ export function usePetsMenu(
     return 0;
   }
 
-  const playMoveRef = useLatestRef(playMove);
-  const playSelectRef = useLatestRef(playSelect);
-  const playCloseRef = useLatestRef(playClose);
-  const playSoundRef = useLatestRef(playSound);
-  const pushControlsRef = useLatestRef(pushControls);
-  const fusePetsRef = useLatestRef(fusePets);
-  const resetPetProgressRef = useLatestRef(resetPetProgress);
-  const characterRef = useLatestRef(character);
-  const petsRef = useLatestRef(pets);
-  const pendingStarRef = useLatestRef(pendingStar);
-  const fusingRef = useLatestRef(fusing);
-  const highestEligibleStarRef = useLatestRef(highestEligibleStar);
-  const equipRef = useLatestRef(equip);
-  const unequipRef = useLatestRef(unequip);
-
-  function executeFuse(entry: PetEntry, stars: number) {
-    const ok = fusePetsRef.current(characterRef.current, entry.id, stars);
-    if (!ok) {
-      playCloseRef.current();
-      return;
-    }
-    resetPetProgressRef.current(entry.id, stars + 1);
-    playSoundRef.current("receivedItem");
-    playSelectRef.current();
-  }
-
-  const confirmRef = useRef<() => boolean>(() => false);
-  confirmRef.current = () => {
-    if (fusingRef.current) return true;
-    const entry = petsRef.current[selectedIndexRef.current];
-    if (!entry || !entry.owned) return true;
-    const stars = highestEligibleStarRef.current(entry);
-    if (stars < 1) return true;
-
-    if (pendingStarRef.current !== 0) {
-      const fusingEntry = entry;
-      setPendingStar(0);
-      setFusing({ petId: fusingEntry.id, stars });
-      playSoundRef.current("receivedItem");
-      return true;
-    }
-
-    setPendingStar(stars);
-    playSelectRef.current();
-    return true;
-  };
-
-  const cancelRef = useRef<() => boolean>(() => false);
-  cancelRef.current = () => {
-    if (fusingRef.current) return true;
-    if (pendingStarRef.current !== 0) {
-      setPendingStar(0);
-      playCloseRef.current();
-      return true;
-    }
-    return false;
-  };
-
-  function equipPet(entry: PetEntry) {
-    const stars = maxOwnedStar(entry);
-    if (stars < 1) return;
-    // Equipa a melhor estrela disponível na coleção, consumindo uma unidade.
-    // Se já houvesse um pet equipado neste slot, ele volta para a coleção.
-    equipRef.current(characterRef.current, entry.id, enhanceFromPetStars(stars));
-  }
-
-  function unequipPet() {
-    unequipRef.current(characterRef.current, "pet");
-  }
-
-  function advanceFuse() {
-    return confirmRef.current();
-  }
-
-  const finishFusion = () => {
-    const current = fusingRef.current;
-    if (!current) return;
-
-    const entry = petsRef.current.find((p) => p.id === current.petId);
-    setFusing(null);
-    if (!entry) return;
-
-    executeFuse(entry, current.stars);
-  };
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const controls = {
-      onRight: () => {
-        playMoveRef.current();
-        setSelectedIndex((prev) =>
-          gridMove(prev, 2, "right", petsRef.current.length),
-        );
-      },
-      onLeft: () => {
-        playMoveRef.current();
-        setSelectedIndex((prev) =>
-          gridMove(prev, 2, "left", petsRef.current.length),
-        );
-      },
-      onDown: () => {
-        playMoveRef.current();
-        setSelectedIndex((prev) =>
-          gridMove(prev, 2, "down", petsRef.current.length),
-        );
-      },
-      onUp: () => {
-        playMoveRef.current();
-        setSelectedIndex((prev) =>
-          gridMove(prev, 2, "up", petsRef.current.length),
-        );
-      },
-      onConfirm: () => confirmRef.current(),
-      onCancel: () => cancelRef.current(),
-      blockGlobalOpen: true,
-    };
-
-    const remove = pushControlsRef.current(controls);
-    return () => remove();
-  }, [isOpen, petsRef, playMoveRef, pushControlsRef]);
-
   return {
     pets,
     ownedPets,
     equippedId: equippedInfo?.id ?? null,
     selectedIndex,
-    pendingStar,
-    fusing,
-    finishFusion,
+    setSelectedIndex,
     newlyUnlockedPetIds,
     acknowledgePets,
-    equipPet,
-    unequipPet,
-    advanceFuse,
     maxOwnedStar,
     highestEligibleStar,
     statsFor: (entry: PetEntry) => {
