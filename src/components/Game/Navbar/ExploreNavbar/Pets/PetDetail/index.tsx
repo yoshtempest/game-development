@@ -151,7 +151,7 @@ export function PetDetail({ entry, onClose }: Props) {
                     className={styles.rankName}
                     style={{ color: RANK_COLORS[entry.rank] }}
                   >
-                    {RANK_LABELS[entry.rank]}
+                    Rank: {RANK_LABELS[entry.rank]}
                   </span>
                 </div>
               </div>
@@ -198,7 +198,9 @@ export function PetDetail({ entry, onClose }: Props) {
                 <span className={styles.attributeLabel}>
                   LOCALIZAÇÃO
                 </span>
-                <p>{entry.location}</p>
+                <p>
+                  {entry.location ?? "Não descoberto"}
+                </p>
               </div>
             </div>
           </section>
@@ -309,10 +311,17 @@ export function PetDetail({ entry, onClose }: Props) {
             )}
 
             <div className={styles.actionRow}>
+              {!entry.owned && (
+                <span className={styles.statusLocked}>
+                  AINDA NÃO DESBLOQUEADO
+                </span>
+              )}
+
               {!fusing ? (
                 <>
                   <button
                     type="button"
+                    disabled={!entry.owned}
                     className={`${styles.actionBtn} ${
                       isEquipped ? styles.unequipBtn : styles.equipBtn
                     }`}
@@ -329,6 +338,7 @@ export function PetDetail({ entry, onClose }: Props) {
                   {canFuse() && (
                     <button
                       type="button"
+                      disabled={!entry.owned}
                       className={`${styles.actionBtn} ${styles.fuseBtn}`}
                       onClick={(e) => {
                         e.stopPropagation();

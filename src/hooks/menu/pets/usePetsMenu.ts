@@ -25,6 +25,7 @@ export type PetEntry = {
   dropLabel: string | null;
   dropChance: number | null;
   riddle: string | null;
+  location: string | null;
 };
 
 function parseCollectionKey(key: string): { id: string; enhance: number } {
@@ -91,6 +92,7 @@ export function usePetsMenu(
       dropLabel: dropInfo?.npcLabel ?? null,
       dropChance: finalDropChance,
       riddle: dropInfo?.riddle ?? null,
+      location: dropInfo?.location ?? null,
     };
   });
 

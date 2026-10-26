@@ -416,6 +416,18 @@
   color: var(--text-secondary);
 }
 
+.statusLocked {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--size-2) var(--size-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--size-2);
+  font-size: var(--fs-10);
+  font-weight: bold;
+  background: var(--surface-deep);
+  color: var(--text-muted);
+}
+
 /* Mensagens e ações */
 
 .message {

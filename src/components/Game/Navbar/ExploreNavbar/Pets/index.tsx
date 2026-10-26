@@ -9,11 +9,6 @@ import { useGameControls } from "@/contexts/GameControlsContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useMenuSFX } from "@/hooks/menu/useMenuSFX";
 import { gridMove } from "@/gameRules/menu/navigation";
-import { ProgressBar } from "@/components/Game/ProgressBar";
-import {
-  getPetXPToNextLevel,
-  getPetClass,
-} from "@/utils/character/petProgress";
 import {
   petImagePath,
   petFallbackImagePath,
@@ -56,34 +51,34 @@ export function Pets() {
       onUp: () => {
         playMoveRef.current();
         setSelectedIndex((prev) =>
-          gridMove(prev, 2, "up", petsRef.current.length),
+          gridMove(prev, 4, "up", petsRef.current.length),
         );
         return true;
       },
       onDown: () => {
         playMoveRef.current();
         setSelectedIndex((prev) =>
-          gridMove(prev, 2, "down", petsRef.current.length),
+          gridMove(prev, 4, "down", petsRef.current.length),
         );
         return true;
       },
       onLeft: () => {
         playMoveRef.current();
         setSelectedIndex((prev) =>
-          gridMove(prev, 2, "left", petsRef.current.length),
+          gridMove(prev, 4, "left", petsRef.current.length),
         );
         return true;
       },
       onRight: () => {
         playMoveRef.current();
         setSelectedIndex((prev) =>
-          gridMove(prev, 2, "right", petsRef.current.length),
+          gridMove(prev, 4, "right", petsRef.current.length),
         );
         return true;
       },
       onConfirm: () => {
         const entry = petsRef.current[selectedIndexRef.current];
-        if (!entry || !entry.owned) return true;
+        if (!entry) return true;
         setOpenPet(selectedIndexRef.current);
         playSelectRef.current();
         return true;
@@ -186,7 +181,6 @@ export function Pets() {
               )}
             </div>
 
-            <div className={styles.flexColumn}>
               <div className={styles.flexRow}>
                 <h2
                   className={styles.name}
@@ -208,45 +202,17 @@ export function Pets() {
                     className={styles.elementBadge}
                   />
                 ))}
-              </div>
-              {!entry.owned && entry.riddle && (
-                <p className={styles.riddle}>Enigma: {entry.riddle}</p>
-              )}
-              {entry.owned && stats && (
-                <>
-                  <div className={styles.flexRow}>
-                    <ProgressBar
-                      value={stats.xp}
-                      max={getPetXPToNextLevel(
-                        stats.level,
-                        getPetClass(entry.id),
-                      )}
-                      animationId={`pet-xp-${entry.id}`}
-                      level={stats.level}
-                    />
-                    <p className={styles.statsLine}>
-                      {stats.xp} /{" "}
-                      {getPetXPToNextLevel(
-                        stats.level,
-                        getPetClass(entry.id),
-                      )}
-                    </p>
-                  </div>
-                </>
-              )}
+
+             <img
+                className={styles.rankIcon}
+                src={rankBadgePath(
+                  RANKS.find((rank) => rank.id === entry.rank)?.src ?? "wandering.svg"
+                )}
+              />
 
               {isEquipped && (
                 <span className={styles.equippedBadge}>Equipado</span>
               )}
-
-              <div className={styles.flexRow}>
-                <img
-                  className={styles.rankIcon}
-                  src={rankBadgePath(
-                    RANKS.find((rank) => rank.id === entry.rank)?.src ?? "wandering.svg"
-                  )}
-                />
-              </div>
             </div>
           </div>
         );
@@ -254,5 +220,3 @@ export function Pets() {
     </div>
   );
 }
-
-

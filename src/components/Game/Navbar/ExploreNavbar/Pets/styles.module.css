@@ -1,13 +1,12 @@
 .petsContainer {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   overflow-y: auto;
 }
 
 .pet {
   display: flex;
-  flex-direction: row;
-  gap: var(--size-26);
+  flex-direction: column;
   position: relative;
   align-items: center;
   justify-content: center;
@@ -16,10 +15,6 @@
   border: var(--size-2) solid var(--primary-color);
 
   background: var(--surface-primary);
-}
-
-.rankIcon {
-  width: 3vw;
 }
 
 .pet h2,
@@ -42,7 +37,7 @@
 
 .imageBox {
   height: 80%;
-  width: 30%;
+  width: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -51,8 +46,8 @@
 }
 
 .petImage {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 80%;
+  max-height: 80%;
   object-fit: contain;
 }
 
@@ -66,7 +61,7 @@
 }
 
 .flexColumn {
-  margin-top: 2%;
+
   display: flex;
   flex-direction: column;
   gap: var(--fs-6);
@@ -124,7 +119,13 @@
 
 .starsRow {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  left: 3%;
+  bottom: 20%;
   flex-wrap: wrap;
+  position: absolute;
   gap: var(--size-4);
 }
 
@@ -200,6 +201,14 @@
   }
 }
 
+.rankIcon {
+  height: 3vw;
+  width: 3vw;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
 .equippedBadge {
   align-self: flex-start;
   font-size: var(--fs-10);
@@ -208,7 +217,7 @@
   background: var(--secondary-color);
   color: var(--black);
   font-weight: bold;
-  bottom: 0;
+  top: 0;
   right: 0;
   position: absolute;
 }
