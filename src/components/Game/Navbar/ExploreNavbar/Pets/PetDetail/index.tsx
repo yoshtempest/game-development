@@ -121,6 +121,34 @@ export function PetDetail({ entry, onClose }: Props) {
                     }
                   }}
                 />
+                {!fusing ? (
+                  <>
+                    {canFuse() && (
+                      <button
+                        type="button"
+                        disabled={!entry.owned}
+                        className={`${styles.actionBtn} ${styles.fuseBtn}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startFuse(eligible);
+                        }}
+                      >
+                        FUNDIR · 2× ★{eligible}
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    className={`${styles.actionBtn} ${styles.confirmFuseBtn}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      executeFuse();
+                    }}
+                  >
+                    CONFIRMAR FUSÃO?
+                  </button>
+                )}
                 {entry.owned && (
                   <button
                     type="button"
@@ -322,37 +350,6 @@ export function PetDetail({ entry, onClose }: Props) {
                   </button>
                 );
               })}
-            </div>
-
-            <div className={styles.actionRow}>
-              {!fusing ? (
-                <>
-                  {canFuse() && (
-                    <button
-                      type="button"
-                      disabled={!entry.owned}
-                      className={`${styles.actionBtn} ${styles.fuseBtn}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        startFuse(eligible);
-                      }}
-                    >
-                      FUNDIR · 2× ★{eligible}
-                    </button>
-                  )}
-                </>
-              ) : (
-                <button
-                  type="button"
-                  className={`${styles.actionBtn} ${styles.confirmFuseBtn}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    executeFuse();
-                  }}
-                >
-                  CONFIRMAR FUSÃO?
-                </button>
-              )}
             </div>
           </section>
         </main>

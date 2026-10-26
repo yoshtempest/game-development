@@ -94,38 +94,7 @@
   image-rendering: pixelated;
 }
 
-.rankLabel {
-  font-size: var(--fs-10);
-  font-weight: bold;
-}
-
-.dropLine {
-  font-size: var(--fs-11);
-  color: var(--text-secondary);
-}
-
-.skillLine {
-  font-size: var(--fs-10);
-  color: var(--text-secondary);
-  text-wrap: nowrap;
-  overflow: hidden;
-  text-align: flex-start;
-  text-overflow: ellipsis;
-  width: 100%;
-}
-
-.riddle {
-  font-size: var(--fs-10);
-  color: var(--accent-color);
-  font-style: italic;
-  line-height: 1.4;
-  margin-top: var(--size-4);
-  border-left: var(--size-2) solid var(--accent-color);
-  padding-left: var(--size-8);
-  opacity: 0.85;
-}
-
-.starsRow {
+.starsColumn {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -149,6 +118,7 @@
 
 .starFilled {
   color: var(--accent-color);
+  fill: var(--accent-color);
 }
 
 .starEmpty {
@@ -166,20 +136,6 @@
   font-size: var(--fs-11);
   color: var(--text-secondary);
   text-align: flex-start;
-}
-
-.fuseBadge {
-  align-self: flex-start;
-  font-size: var(--fs-10);
-  padding: var(--size-2) var(--size-6);
-  border-radius: var(--size-3);
-  background: var(--success);
-  color: var(--black);
-  font-weight: bold;
-}
-
-.fuseConfirm {
-  background: var(--secondary-color);
 }
 
 .unlockBadge {
@@ -229,66 +185,12 @@
   position: absolute;
 }
 
-.actionRow {
-  display: flex;
-  flex-direction: row;
-  gap: var(--size-4);
-  margin-top: var(--size-6);
-  width: 100%;
-  justify-content: center;
-}
-
-.actionBtn {
-  flex: 1 1 0;
-  font-size: var(--fs-10);
-  font-weight: bold;
-  padding: var(--size-2) var(--size-6);
-  border-radius: var(--size-3);
-  border: var(--size-1) solid var(--border-default);
-  background: var(--surface-card);
-  color: var(--text-color);
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: opacity 0.1s, transform 0.05s;
-}
-
-.actionBtn:active {
-  transform: scale(0.97);
-}
-
-.equipBtn {
-  background: var(--secondary-color);
-  color: var(--black);
-  border-color: var(--secondary-color);
-}
-
-.unequipBtn {
-  background: var(--primary-color);
-  color: var(--text-color);
-  border-color: var(--primary-color);
-}
-
-.fuseBtn {
-  background: var(--success);
-  color: var(--black);
-  border-color: var(--success);
-}
-
-.confirmFuseBtn {
-  background: var(--secondary-color);
-  color: var(--black);
-  border-color: var(--secondary-color);
-  width: 100%;
-}
-
 @media (orientation: portrait) {
   .name {
     font-weight: 400;
     font-size: var(--fs-8);
   }
 
-  .rankLabel,
-  .dropLine,
   .statsLine {
     font-size: var(--fs-8);
   }

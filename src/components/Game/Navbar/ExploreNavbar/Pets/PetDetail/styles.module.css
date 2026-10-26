@@ -494,6 +494,9 @@
   background: var(--success);
   color: var(--black);
   border-color: var(--success);
+  position: absolute;
+  bottom: 3%;
+  left: 3%;
 }
 
 .confirmFuseBtn {

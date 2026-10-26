@@ -180,7 +180,7 @@ export function Pets() {
               )}
               {entry.owned && stats && (
                 <>
-                  <div className={styles.starsRow}>
+                  <div className={styles.starsColumn}>
                     {Array.from({ length: PET_STAR_MAX }, (_, i) => {
                       const star = i + 1;
                       const qty = entry.qtyByStar[i] ?? 0;
