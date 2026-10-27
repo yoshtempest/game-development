@@ -91,6 +91,16 @@ export function muryokushoAbility(characterId: CharacterId): ActiveAbility {
   });
 }
 
+export function hakaiAbility(characterId: CharacterId): ActiveAbility {
+  const def = DOMAIN_EXPANSIONS[characterId];
+  return createActiveAbility({
+    id: "hakai",
+    name: def.name,
+    description: def.description,
+    damageType: "true",
+  });
+}
+
 /** Troca de arma do Lucas: cada arma tem alcance e sprite próprios. */
 export function weaponSwitchAbility(): ActiveAbility {
   return createActiveAbility({

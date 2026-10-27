@@ -13,7 +13,6 @@ type Props = {
   /** Pausa da batalha (menu aberto): congela a animação CSS no lugar. */
   paused?: boolean;
   /** Nome da habilidade exibido acima da imagem (opcional). */
-  abilityName?: string;
 };
 
 /**
@@ -28,7 +27,6 @@ export function AbilityOverlay({
   src,
   motion = "enter",
   paused = false,
-  abilityName,
 }: Props) {
   const [imageFailed, setImageFailed] = useState(false);
 
@@ -59,10 +57,6 @@ export function AbilityOverlay({
                 : styles.characterWrapperEnter
             }`}
           >
-            {abilityName && (
-              <div className={styles.abilityName}>{abilityName}</div>
-            )}
-
             <img
               src={src}
               alt=""

@@ -23,7 +23,7 @@ export type DomainExpansionDefinition = {
   description: string;
   /** Cor do efeito (borda, rótulo e brilho do botão). */
   accent: string;
-  kind: "mugetsu" | "muryokusho" | "burst";
+  kind: "mugetsu" | "muryokusho" | "hakai" | "burst";
   /**
    * Tem a arte do domínio em `abilities/domainExpansion/`: a intro
    * (`background.svg`) no `SpecialIntro` e o preenchimento (`expansion.svg`)
@@ -77,6 +77,7 @@ export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
         "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
       accent: "#ef4444",
       kind: "burst",
+      hasBackgroundArt: true,
     },
     mayra: {
       name: "Maré Abissal",
@@ -91,6 +92,7 @@ export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
         "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
       accent: "#d946ef",
       kind: "burst",
+      hasBackgroundArt: true,
     },
     riquelme: {
       name: "Muryōkūsho",
@@ -119,7 +121,8 @@ export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
       description:
         "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
       accent: "#14b8a6",
-      kind: "burst",
+      kind: "hakai",
+      hasBackgroundArt: true,
     },
     levi: {
       name: "Fauce do Draco",

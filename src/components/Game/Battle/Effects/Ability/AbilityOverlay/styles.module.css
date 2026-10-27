@@ -62,30 +62,6 @@
   z-index: 20;
 }
 
-.abilityName {
-  position: absolute;
-  left: 50%;
-  bottom: var(--size-16);
-  transform: translateX(-50%);
-
-  padding: var(--size-12) var(--size-16);
-
-  white-space: nowrap;
-  text-align: center;
-
-  font-family: "Press Start 2P", monospace;
-  font-size: var(--size-32);
-  font-weight: bold;
-  color: var(--white);
-
-  text-shadow:
-    0 0 var(--size-4) var(--black),
-    0 0 var(--size-8) var(--red-vivid),
-    0 0 var(--size-12) var(--red-vivid);
-
-  z-index: 25;
-}
-
 /* =========================
    FAIXA SUPERIOR
 ========================= */

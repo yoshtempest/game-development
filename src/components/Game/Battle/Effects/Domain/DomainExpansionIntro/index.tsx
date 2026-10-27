@@ -7,7 +7,6 @@ type Props = {
   /** Pausa da batalha (menu aberto): congela a varredura no lugar. */
   paused?: boolean;
   /** Nome da habilidade exibido acima da imagem (opcional). */
-  abilityName?: string;
 };
 
 /**
@@ -21,7 +20,6 @@ export function DomainExpansionIntro({
   active,
   character,
   paused = false,
-  abilityName,
 }: Props) {
   if (!active || !character) return null;
 
@@ -31,7 +29,6 @@ export function DomainExpansionIntro({
       src={playerAbilityBackgroundPath(character, "domainExpansion")}
       motion="sweep"
       paused={paused}
-      abilityName={abilityName}
     />
   );
 }

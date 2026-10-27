@@ -1,5 +1,5 @@
 import type { ActiveAbility } from "@/utils/types/player/abilities";
-import { createActiveAbility, domainBurstAbility } from "../abilityFactories";
+import { createActiveAbility, hakaiAbility } from "../abilityFactories";
 import {
   EMANUEL_CLONE_MAX_COST,
   EMANUEL_KI_CHARGE_PER_TICK,
@@ -32,5 +32,5 @@ export const EMANUEL_ACTIVE_ABILITIES: ActiveAbility[] = [
     description: `Carregue por ${EMANUEL_KAMEHAMEHA_CHARGING_MS / 1000}s no sprite de carga e o feixe dispara: o efeito causa dano mágico contínuo e empurra o inimigo por 2s. O personagem fica travado durante a carga e o disparo.`,
     damageType: "magical",
   }),
-  domainBurstAbility("emanuel"),
+  hakaiAbility("emanuel"),
 ];
