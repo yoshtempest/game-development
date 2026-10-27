@@ -75,6 +75,22 @@ export const GRAN_REY_CERO_SPRITES: Partial<
   granReyCero: "granReyCero",
 };
 
+export const EMANUEL_HABILITIES_SPRITES = {
+  chargingKi: "chargingKi/chargingKi",
+  preparingGenkiDama: "genkiDama/preparingGenkiDama",
+  throwGenkiDama: "genkiDama/throwGenkiDama",
+  chargingKamehameha: "kamehameha/chargingKamehameha",
+  kamehameha: "kamehameha/kamehameha",
+  ability: "teleport/teleport",
+  preAbility: "teleport/teleport",
+  preAbility2: "teleport/teleport",
+} as const;
+
+export const EMANUEL_ATTACK_SPRITES = {
+  blockAttack: "lowKick",
+  fallingAttack: "lowKick",
+} as const;
+
 /**
  * Sequência de Setup das esferas do riquelme (blue/red), em `habilities/Setup/`:
  * `one.svg` é o surgimento com blink, `two.svg` o deslocamento/controle e

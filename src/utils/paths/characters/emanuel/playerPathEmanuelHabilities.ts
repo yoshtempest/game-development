@@ -7,5 +7,8 @@ import { asset } from "@/utils/paths/asset";
  * `inFight/habilities/`, não em `inFight/attacks/` nem em `inFight/default/`.
  */
 export function playerPathEmanuelHabilities(path: string) {
-  return asset(`/assets/player/emanuel/inFight/habilities/${path}`);
+  // O caller pode passar o caminho com ou sem barra inicial (`/kamehameha/x.svg`);
+  // normalizar aqui evita o caminho duplicado (`habilities//kamehameha/...`).
+  const cleanPath = path.replace(/^\/+/, "");
+  return asset(`/assets/player/emanuel/inFight/habilities/${cleanPath}`);
 }

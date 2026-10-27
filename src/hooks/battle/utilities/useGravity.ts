@@ -116,7 +116,7 @@ export function useBattleGravity(
           }
           return settle(p, { ...p, velY: 0 });
         }
-        if (ALL_PREDICATES.isGenkiDamaHold(p.state)) {
+        if (ALL_PREDICATES.isGenkiDama(p.state)) {
           const topY = Math.max(
             0,
             genkiDamaRiseStartYInternalRef.current - GENKI_DAMA_RISE_Y,

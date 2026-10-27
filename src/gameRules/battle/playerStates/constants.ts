@@ -94,11 +94,6 @@ export const GENKI_DAMA_STATES = stateSet<PlayerGenkiDamaState>(
   "preparingGenkiDama",
   "throwGenkiDama",
 );
-/** Genki Dama já no topo: o personagem fica preso lá até o release. */
-export const GENKI_DAMA_HOLD_STATES = stateSet<PlayerGenkiDamaState>(
-  "preparingGenkiDama",
-  "throwGenkiDama",
-);
 /** "I Am Atomic" (marcelo). */
 export const ATOMIC_STATES = stateSet<PlayerAtomicState>(
   "preparingAtomic",
@@ -117,11 +112,14 @@ export const LASER_STATES = stateSet<PlayerLaserState>("laser");
 /** "Gran Rey Cero" (marcelo). */
 export const GRAN_REY_CERO_STATES =
   stateSet<PlayerGranReyCeroState>("granReyCero");
-/** Kamehameha de carga do emanuel (sprite `chargingKamehameha.svg`). */
-export const KAMEHAMEHA_CHARGING_STATES =
-  stateSet<PlayerKamehamehaChargingState>("chargingKamehameha");
-/** Kamehameha de disparo do emanuel (sprite `kamehameha.svg` + efeito). */
-export const KAMEHAMEHA_STATES = stateSet<PlayerKamehamehaState>("kamehameha");
+
+/**
+ * Kamehameha do emanuel: fase de carga (`chargingKamehameha`, sprite
+ * `chargingKamehameha.svg`) e fase de disparo (`kamehameha`, sprite
+ * `kamehameha.svg` + efeito `kamehamehaEffect`).
+ */
+export const KAMEHAMEHA_STATES =
+  stateSet<PlayerKamehamehaState>("chargingKamehameha", "kamehameha");
 /**
  * Esferas do riquelme (blue/red) e a fusão delas na purple: a sequência é
  * conduzida pelo hook `useRiquelmeSpheres`; `purpleJunction` é a fusão (blue +
@@ -236,14 +234,12 @@ export const ALL_STATES = {
 
   // Habilidades
   GENKI_DAMA_STATES,
-  GENKI_DAMA_HOLD_STATES,
   ATOMIC_STATES,
   DOMAIN_EXPANSION_STATES,
   LASER_STATES,
   GRAN_REY_CERO_STATES,
   SPHERE_STATES,
   RIQUELME_DOMAIN_STATES,
-  KAMEHAMEHA_CHARGING_STATES,
   KAMEHAMEHA_STATES,
 
   // Defesa e reação

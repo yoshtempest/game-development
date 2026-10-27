@@ -432,7 +432,7 @@ declare global {
   type PlayerBasicAttackState =
     "preAttack" | "attack" | "crit" | "preKick" | "kick";
   /** Golpes de solo do combo do emanuel. */
-  type PlayerComboState = "punch" | "hook" | "lowKick";
+  type PlayerComboState = "punch" | "hook" | "lowKick" | "airGrab" | "airKick";
   /** Habilidade ativa de solo: windup (`preAbility*`) → execução (`ability`). */
   type PlayerAbilityState = "preAbility" | "preAbility2" | "ability";
   /** Genki Dama do emanuel — o personagem sobe e fica flutuando. */
@@ -453,15 +453,11 @@ declare global {
   /** "Gran Rey Cero" do marcelo. */
   type PlayerGranReyCeroState = "granReyCero";
   /**
-   * Kamehameha do emanuel: fase de carregamento (sprite `chargingKamehameha.svg`)
-   * que segura o personagem e congela as ações por 2.8s antes do disparo.
+   * Kamehameha do emanuel: fase de carga (`chargingKamehameha` — sprite
+   * `chargingKamehameha.svg`) e fase de disparo (`kamehameha` — sprite
+   * `kamehameha.svg` + o efeito `kamehamehaEffect`, que dura 2s).
    */
-  type PlayerKamehamehaChargingState = "chargingKamehameha";
-  /**
-   * Kamehameha do emanuel: fase de disparo (sprite `kamehameha.svg` + efeito
-   * `kamehamehaEffect`, que dura 2s e empurra/danos como o vastolordLaser).
-   */
-  type PlayerKamehamehaState = "kamehameha";
+  type PlayerKamehamehaState = "chargingKamehameha" | "kamehameha";
   /**
    * Esferas do riquelme (habilidades "blue"/"red") e a fusão delas na purple:
    * a sequência é conduzida pelo hook `useRiquelmeSpheres`, não pelo
@@ -487,8 +483,9 @@ declare global {
   /**
    * Estados que seguram o personagem e travam novas ações: qualquer
    * `PlayerChargeState`, o O Abençoado, as habilidades de cast longas (Genki
-   * Dama, o Laser da Forma Vastolord, o Gran Rey Cero, as esferas do riquelme)
-   * e a Expansão de Domínio do riquelme.
+   * Dama, o Laser da Forma Vastolord, o Gran Rey Cero, as esferas do riquelme),
+   * a Expansão de Domínio do riquelme e o Kamehameha do emanuel (fase de carga
+   * e fase de disparo).
    */
   type PlayerActionLockState =
     | PlayerChargeState
@@ -498,7 +495,6 @@ declare global {
     | PlayerGranReyCeroState
     | PlayerSphereState
     | PlayerRiquelmeDomainState
-    | PlayerKamehamehaChargingState
     | PlayerKamehamehaState;
 
   /** O jogador não age: trava de ação, defesa ou reação a dano. */

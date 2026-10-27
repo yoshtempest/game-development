@@ -19,12 +19,10 @@ export const isAttackWindup = isOf(ALL_STATES.ATTACK_WINDUP_STATES);
 export const isAttackPose = isOf(ALL_STATES.ATTACK_POSE_STATES);
 export const isAbilityTrigger = isOf(ALL_STATES.ABILITY_TRIGGER_STATES);
 export const isGenkiDama = isOf(ALL_STATES.GENKI_DAMA_STATES);
-export const isGenkiDamaHold = isOf(ALL_STATES.GENKI_DAMA_HOLD_STATES);
 export const isAtomic = isOf(ALL_STATES.ATOMIC_STATES);
 export const isDomainExpansion = isOf(ALL_STATES.DOMAIN_EXPANSION_STATES);
 export const isLaser = isOf(ALL_STATES.LASER_STATES);
 export const isGranReyCero = isOf(ALL_STATES.GRAN_REY_CERO_STATES);
-export const isKamehamehaCharging = isOf(ALL_STATES.KAMEHAMEHA_CHARGING_STATES);
 export const isKamehameha = isOf(ALL_STATES.KAMEHAMEHA_STATES);
 export const isSphere = isOf(ALL_STATES.SPHERE_STATES);
 export const isRiquelmeDomain = isOf(ALL_STATES.RIQUELME_DOMAIN_STATES);
@@ -68,12 +66,10 @@ export const ALL_PREDICATES = {
 
   // Habilidades
   isGenkiDama,
-  isGenkiDamaHold,
   isAtomic,
   isDomainExpansion,
   isLaser,
   isGranReyCero,
-  isKamehamehaCharging,
   isKamehameha,
   isSphere,
   isRiquelmeDomain,

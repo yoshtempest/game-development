@@ -5,6 +5,10 @@ import { ATTACK_FOLDER_ALT } from "@/utils/paths/player/constants";
 import { CHARACTER_STATE_FOLDER_ALT } from "@/utils/paths/player/constants";
 import { DOMAIN_EXPANSION_SPRITES } from "@/utils/paths/player/constants";
 import { GRAN_REY_CERO_SPRITES } from "@/utils/paths/player/constants";
+import {
+  EMANUEL_HABILITIES_SPRITES,
+  EMANUEL_ATTACK_SPRITES,
+} from "@/utils/paths/player/constants";
 import { MARCELO_VASTOLORD_SPRITES } from "@/utils/paths/player/constants";
 import { RIQUELME_SPHERE_SETUP_SPRITES } from "@/utils/paths/player/constants";
 import { playerPath } from "@/utils/paths/player/playerPath";
@@ -53,42 +57,16 @@ export function resolveBattleSprite(
   }
   // Habilidades do emanuel: os sprites ficam em `inFight/habilities/<ability>/`.
   if (character === "emanuel") {
-    // Carga de Ki: sprite base e effect.
-    if (state === "chargingKi") {
-      return playerPathEmanuelHabilities(`/chargingKi/chargingKi.svg`);
+    const abilitySprite = stateData(EMANUEL_HABILITIES_SPRITES, state);
+
+    if (abilitySprite) {
+      return playerPathEmanuelHabilities(`/${abilitySprite}.svg`);
     }
-    // Genki Dama: preparando e arremesso.
-    if (state === "preparingGenkiDama") {
-      return playerPathEmanuelHabilities(`/genkiDama/preparingGenkiDama.svg`);
-    }
-    if (state === "throwGenkiDama") {
-      return playerPathEmanuelHabilities(`/genkiDama/throwGenkiDama.svg`);
-    }
-    // Kamehameha: fase de carregamento (sprite `chargingKamehameha.svg`) e fase
-    // de disparo (sprite `kamehameha.svg` + efeito `kamehamehaEffect.svg`).
-    if (state === "chargingKamehameha") {
-      return playerPathEmanuelHabilities(
-        `/kamehameha/chargingKamehameha.svg`,
-      );
-    }
-    if (state === "kamehameha") {
-      return playerPathEmanuelHabilities(`/kamehameha/kamehameha.svg`);
-    }
-    // Teleporte (clone): sprite do teleporte.
-    if (
-      state === "ability" ||
-      state === "preAbility" ||
-      state === "preAbility2"
-    ) {
-      // O teleporte usa o sprite dedicado; os outros estados de habilidade
-      // caem no ataque básico via o fallback no final da função.
-      return playerPathEmanuelHabilities(`/teleport/teleport.svg`);
-    }
-    // blockAttack, fallingAttack e lowKick usam o mesmo sprite (lowKick.svg).
-    // Os arquivos blockAttack.svg e fallingAttack.svg foram removidos por serem
-    // duplicatas exatas — economiza ~3.8 MB no bundle.
-    if (state === "blockAttack" || state === "fallingAttack") {
-      return playerPath(`/emanuel/inFight/attacks/lowKick.svg`);
+
+    const attackSprite = stateData(EMANUEL_ATTACK_SPRITES, state);
+
+    if (attackSprite) {
+      return playerPath(`/emanuel/inFight/attacks/${attackSprite}.svg`);
     }
   }
   // Lucaua não tem `blocked.svg`: o bloqueio dele é o overlay `shield.svg`
@@ -102,21 +80,27 @@ export function resolveBattleSprite(
   // `habilities/granReyCero/`) — não existe `default/preparingAtomic.svg` nem
   // `default/preMugetsu.svg`.
   if (character === "marcelo") {
-    const atomicSprite = stateData(ATOMIC_SPRITES, state);
-    if (atomicSprite) {
-      return playerPathMarshadowHabilities(`/atomic/${atomicSprite}.svg`);
-    }
-    const domainSprite = stateData(DOMAIN_EXPANSION_SPRITES, state);
-    if (domainSprite) {
-      return playerPathMarshadowHabilities(
-        `/domainExpansion/${domainSprite}.svg`,
-      );
-    }
-    const granReyCeroSprite = stateData(GRAN_REY_CERO_SPRITES, state);
-    if (granReyCeroSprite) {
-      return playerPathMarshadowHabilities(
-        `/granReyCero/${granReyCeroSprite}.svg`,
-      );
+    const spriteMappings = [
+      {
+        sprites: ATOMIC_SPRITES,
+        folder: "atomic",
+      },
+      {
+        sprites: DOMAIN_EXPANSION_SPRITES,
+        folder: "domainExpansion",
+      },
+      {
+        sprites: GRAN_REY_CERO_SPRITES,
+        folder: "granReyCero",
+      },
+    ] as const;
+
+    for (const { sprites, folder } of spriteMappings) {
+      const sprite = stateData(sprites, state);
+
+      if (sprite) {
+        return playerPathMarshadowHabilities(`/${folder}/${sprite}.svg`);
+      }
     }
   }
   // Forma Vastolord do marcelo: a partir da transformação, TODOS os sprites

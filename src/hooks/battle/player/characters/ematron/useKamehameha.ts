@@ -373,8 +373,8 @@ export function useKamehameha({
       freezeActionsUntilRef.current,
       Date.now() + EMANUEL_KAMEHAMEHA_DURATION_MS,
     );
-    // O som do feixe fica em loop enquanto o kamehameha estiver ativo.
-    
+    // O som do feixe fica em loop enquanto o kamehameha estiver ativo (começa
+    // no press, para no finish).
 
     // Transição de 'starting' para 'active' após a animação de entrada.
     startupTimerRef.current = setTimeout(() => {
@@ -383,8 +383,19 @@ export function useKamehameha({
     }, EMANUEL_KAMEHAMEHA_STARTUP_MS);
 
     clearTimers();
-    tickTimerRef.current = setInterval(tickRef.current, EMANUEL_KAMEHAMEHA_TICK_MS);
-  }, [clearTimers, freezeActionsUntilRef, playerRef, setPlayerRef, shouldCancelRef, tickRef]);
+    tickTimerRef.current = setInterval(
+      tickRef.current,
+      EMANUEL_KAMEHAMEHA_TICK_MS,
+    );
+  }, [
+    clearTimers,
+    finishRef,
+    freezeActionsUntilRef,
+    playerRef,
+    setPlayerRef,
+    shouldCancelRef,
+    tickRef,
+  ]);
 
   const fireRef = useLatestRef(fire);
 
@@ -408,19 +419,23 @@ export function useKamehameha({
       timerRef.current = null;
       fireRef.current();
     }, EMANUEL_KAMEHAMEHA_CHARGING_MS);
-  }, [clearTimers, fireRef, freezeActionsUntilRef, onUsedRef, setPlayerRef, usableRef, playSoundRef]);
+  }, [
+    fireRef,
+    freezeActionsUntilRef,
+    onUsedRef,
+    playSoundRef,
+    setPlayerRef,
+    usableRef,
+  ]);
 
   useEffect(() => {
     const stopSound = stopSoundRef.current;
     return () => {
-      if (timerRef.current != null) clearTimeout(timerRef.current);
-      if (startupTimerRef.current != null) clearTimeout(startupTimerRef.current);
-      if (fadeTimerRef.current != null) clearTimeout(fadeTimerRef.current);
-      if (tickTimerRef.current != null) clearInterval(tickTimerRef.current);
+      clearTimers();
       stopSound("kamehameha");
       activeRef.current = false;
     };
-  }, [stopSoundRef]);
+  }, [clearTimers, stopSoundRef]);
 
   const [effect, setEffect] = useState<KamehamehaEffect | null>(null);
 
