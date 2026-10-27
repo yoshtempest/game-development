@@ -1,8 +1,8 @@
 import { itemPath } from "@/utils/paths";
 
-import { createItems } from "@/utils/items/createItem";
+import { createMaps } from "@/utils/items/createItem";
 
-export const MAPS = createItems({
+export const MAPS = createMaps({
   jorjao_map: {
     image: itemPath("jorjao_map.svg"),
     name: "Mapa Escolar",

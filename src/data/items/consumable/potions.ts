@@ -1,8 +1,8 @@
 import { manaPotionPath, xpPotionPath } from "@/utils/paths";
 
-import { createItems } from "@/utils/items/createItem";
+import { createPotions } from "@/utils/items/createItem";
 
-export const POTIONS = createItems({
+export const POTIONS = createPotions({
   xp_potion_common: {
     image: xpPotionPath("common.svg"),
     name: "Danonão Comum",

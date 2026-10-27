@@ -1,8 +1,8 @@
 import { keyPath } from "@/utils/paths";
 
-import { createItems } from "@/utils/items/createItem";
+import { createKeys } from "@/utils/items/createItem";
 
-export const KEYS = createItems({
+export const KEYS = createKeys({
   director_key: {
     image: keyPath("director.svg"),
     name: "Chave enferrujada",

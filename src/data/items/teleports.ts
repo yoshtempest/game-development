@@ -1,8 +1,8 @@
 import { itemPath } from "@/utils/paths";
 
-import { createItems } from "@/utils/items/createItem";
+import { createMaps } from "@/utils/items/createItem";
 
-export const TELEPORTS = createItems({
+export const TELEPORTS = createMaps({
   good_powder: {
     image: itemPath("good_powder.svg"),
     name: "Pó do bom",

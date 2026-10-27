@@ -1,8 +1,8 @@
 import { coinPath } from "@/utils/paths";
 
-import { createItems } from "@/utils/items/createItem";
+import { createCoins } from "@/utils/items/createItem";
 
-export const COINS = createItems({
+export const COINS = createCoins({
   kwanzas: {
     image: coinPath("kwanzas.svg"),
     name: "Kwanzas",

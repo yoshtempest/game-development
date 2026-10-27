@@ -1,8 +1,8 @@
 import { itemPath } from "@/utils/paths";
 
-import { createItems } from "@/utils/items/createItem";
+import { createFoods } from "@/utils/items/createItem";
 
-export const FOODS = createItems({
+export const FOODS = createFoods({
   queijo_cabra: {
     image: itemPath("goat_cheese.svg"),
     name: "Queijo de Cabra",

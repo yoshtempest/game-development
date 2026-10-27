@@ -1,4 +1,4 @@
-import { createItems } from "@/utils/items/createItem";
+import { createCards } from "@/utils/items/createItem";
 import { NPC_CARDS, CLASS_DATA } from "@/data/npc";
 import { npcPath } from "@/utils/paths";
 
@@ -60,4 +60,4 @@ const CARD_ITEMS = Object.fromEntries(
   ]),
 );
 
-export const CARDS = createItems(CARD_ITEMS);
+export const CARDS = createCards(CARD_ITEMS);
