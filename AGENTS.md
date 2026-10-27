@@ -109,8 +109,10 @@ rota /battle/...  →  pages/BattlePage  →  ROUTE_TO_BATTLE_KEY[pathname]
   `hooks/battle/**` (charge, damage, death, effects, npc, player, player/characters/*,
   projectile, recording, rewind, summon, time, victory, loot, highlight).
 - Habilidade de personagem = 4 lugares: registro em
-  `data/characters/abilities.ts` (`CHARACTER_ACTIVE_ABILITIES` — o que battle e
-  menu de Status concordam), hook em
+  `data/characters/<char>/abilities.ts` (agregado por
+  `data/characters/abilities.ts` em `CHARACTER_ACTIVE_ABILITIES` — o que battle
+  e menu de Status concordam; `createActiveAbility` de `abilityFactories`
+  preenche `kind`), hook em
   `hooks/battle/player/characters/<char>/use<Ability>.ts`, botão em
   `components/Game/Battle/Buttons/<Char>/<Ability>/`, e fluxo (custo/charge/
   special) em `useSystem`/`useVastolordForm`. Números em
