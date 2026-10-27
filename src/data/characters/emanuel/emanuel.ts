@@ -2,6 +2,9 @@ import {
   ONE_HUNDRED_MS,
   ONE_HUNDRED_FIFTY_MS,
   THREE_HUNDRED_MS,
+  FIVE_HUNDRED_MS,
+  TWO_THOUSAND_MS,
+  TWO_THOUSAND_EIGHT_HUNDRED_MS,
 } from "@/data/ms";
 import { ALL_STATES } from "@/gameRules/battle/playerStates";
 
@@ -35,6 +38,24 @@ export const EMANUEL_KI_CHARGE_PER_TICK = 1;
 export const EMANUEL_KI_CHARGE_EFFECT_SIZE_MULTIPLIER = 1.2;
 /** Proporção altura/largura do sprite `chargingKiEffect.svg` (600x508). */
 export const EMANUEL_KI_CHARGE_EFFECT_ASPECT = 508 / 600;
+
+// ── Habilidade Kamehameha ───────────────────────────────────────────────────
+/** Duração total do efeito `kamehamehaEffect.svg` (2s) — o Emanuel fica no sprite `kamehameha.svg`. */
+export const EMANUEL_KAMEHAMEHA_DURATION_MS = TWO_THOUSAND_MS;
+/** Duração da carga no sprite `chargingKamehameha.svg` antes do disparo (2.8s). */
+export const EMANUEL_KAMEHAMEHA_CHARGING_MS = TWO_THOUSAND_EIGHT_HUNDRED_MS;
+/** Duração da animação de entrada do efeito (cresce do centro). */
+export const EMANUEL_KAMEHAMEHA_STARTUP_MS = FIVE_HUNDRED_MS;
+/** Duração da animação de saída do efeito (encolhe + fade). */
+export const EMANUEL_KAMEHAMEHA_FADE_MS = FIVE_HUNDRED_MS;
+/** Intervalo de dano/empurrão: 1% do dano base por tick (mesmo ratio do feixe do Vastolord). */
+export const EMANUEL_KAMEHAMEHA_TICK_MS = 20;
+/** Fração do dano base aplicada por tick (1%). */
+export const EMANUEL_KAMEHAMEHA_DAMAGE_RATIO = 0.01;
+/** Distância (px no plano lógico) que o Kamehameha empurra o inimigo por tick. */
+export const EMANUEL_KAMEHAMEHA_PUSH_PX = 10;
+/** Altura renderizada do sprite do efeito `kamehamehaEffect.svg` (500x178) em px lógicos. */
+export const EMANUEL_KAMEHAMEHA_BEAM_HEIGHT = 178;
 
 // ── Habilidade Genki Dama ────────────────────────────────────────────────────
 /** Custo inicial (Ki) para iniciar a habilidade. */

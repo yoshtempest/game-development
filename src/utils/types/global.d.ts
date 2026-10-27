@@ -453,6 +453,16 @@ declare global {
   /** "Gran Rey Cero" do marcelo. */
   type PlayerGranReyCeroState = "granReyCero";
   /**
+   * Kamehameha do emanuel: fase de carregamento (sprite `chargingKamehameha.svg`)
+   * que segura o personagem e congela as ações por 2.8s antes do disparo.
+   */
+  type PlayerKamehamehaChargingState = "chargingKamehameha";
+  /**
+   * Kamehameha do emanuel: fase de disparo (sprite `kamehameha.svg` + efeito
+   * `kamehamehaEffect`, que dura 2s e empurra/danos como o vastolordLaser).
+   */
+  type PlayerKamehamehaState = "kamehameha";
+  /**
    * Esferas do riquelme (habilidades "blue"/"red") e a fusão delas na purple:
    * a sequência é conduzida pelo hook `useRiquelmeSpheres`, não pelo
    * `animationFlow`. `purpleJunction` é o sprite `purple/junction.svg`, o
@@ -487,7 +497,9 @@ declare global {
     | PlayerLaserState
     | PlayerGranReyCeroState
     | PlayerSphereState
-    | PlayerRiquelmeDomainState;
+    | PlayerRiquelmeDomainState
+    | PlayerKamehamehaChargingState
+    | PlayerKamehamehaState;
 
   /** O jogador não age: trava de ação, defesa ou reação a dano. */
   type PlayerCantActState =

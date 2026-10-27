@@ -24,6 +24,7 @@ import type { useNpcSetup } from "@/hooks/battle/npc/useSetup";
 import type { useEmanuelClone } from "@/hooks/battle/player/characters/ematron/useEmanuelClone";
 import type { useEmanuelGenkiDama } from "@/hooks/battle/player/characters/ematron/useEmanuelGenkiDama";
 import type { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
+import type { useKamehameha } from "@/hooks/battle/player/characters/ematron/useKamehameha";
 import type { useAtomic } from "@/hooks/battle/player/characters/marshadow/useAtomic";
 import type { useDomainExpansion } from "@/hooks/battle/player/characters/marshadow/useDomainExpansion";
 import type { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
@@ -151,6 +152,10 @@ export type BattleSceneApi = {
   vastolordLaser: ReturnType<typeof useVastolordLaser>["beam"];
   vastolordLaserPress: () => void;
   vastolordLaserUsable: boolean;
+  /** Feixe de Kamehameha do emanuel (efeito em curso, ou null). */
+  kamehameha: ReturnType<typeof useKamehameha>["effect"];
+  kamehamehaPress: () => void;
+  kamehamehaUsable: boolean;
   specialIntroAbility: ReturnType<
     typeof useSpecialIntro
   >["specialIntroAbility"];

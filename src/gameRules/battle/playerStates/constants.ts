@@ -117,6 +117,11 @@ export const LASER_STATES = stateSet<PlayerLaserState>("laser");
 /** "Gran Rey Cero" (marcelo). */
 export const GRAN_REY_CERO_STATES =
   stateSet<PlayerGranReyCeroState>("granReyCero");
+/** Kamehameha de carga do emanuel (sprite `chargingKamehameha.svg`). */
+export const KAMEHAMEHA_CHARGING_STATES =
+  stateSet<PlayerKamehamehaChargingState>("chargingKamehameha");
+/** Kamehameha de disparo do emanuel (sprite `kamehameha.svg` + efeito). */
+export const KAMEHAMEHA_STATES = stateSet<PlayerKamehamehaState>("kamehameha");
 /**
  * Esferas do riquelme (blue/red) e a fusão delas na purple: a sequência é
  * conduzida pelo hook `useRiquelmeSpheres`; `purpleJunction` é a fusão (blue +
@@ -154,6 +159,8 @@ export const ACTION_LOCK_STATES = unionOf(
     "throwGenkiDama",
     "laser",
     "granReyCero",
+    "chargingKamehameha",
+    "kamehameha",
   ),
   SPHERE_STATES,
   RIQUELME_DOMAIN_STATES,
@@ -236,6 +243,8 @@ export const ALL_STATES = {
   GRAN_REY_CERO_STATES,
   SPHERE_STATES,
   RIQUELME_DOMAIN_STATES,
+  KAMEHAMEHA_CHARGING_STATES,
+  KAMEHAMEHA_STATES,
 
   // Defesa e reação
   BLOCK_STATES,

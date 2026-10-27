@@ -1,0 +1,23 @@
+.button {
+  border: var(--size-2) solid var(--ability-ematron-charge-50);
+  background: var(--ability-ematron-charge-15);
+  animation: kamehamehaGlow 1.5s ease-in-out infinite;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--ability-ematron-charge-35);
+}
+
+.label {
+  color: var(--yellow-pale);
+}
+
+@keyframes kamehamehaGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 var(--size-4) var(--ability-ematron-charge-25);
+  }
+  50% {
+    box-shadow: 0 0 var(--size-16) var(--ability-ematron-charge-60);
+  }
+}

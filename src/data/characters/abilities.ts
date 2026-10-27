@@ -4,6 +4,7 @@ import {
   EMANUEL_CLONE_MAX_COST,
   EMANUEL_KI_CHARGE_PER_TICK,
   EMANUEL_KI_CHARGE_TICK_MS,
+  EMANUEL_KAMEHAMEHA_CHARGING_MS,
   GENKI_DAMA_INITIAL_COST,
   GENKI_DAMA_MAX_DAMAGE_MULTIPLIER,
 } from "@/data/characters/emanuel/emanuel";
@@ -191,6 +192,13 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
       id: "genkiDama",
       name: "Genki Dama",
       description: `Segure para flutuar e reunir energia na esfera (cresce a cada segundo); solte para arremessar. Custa ${GENKI_DAMA_INITIAL_COST} de Ki na largada mais dreno contínuo. Dano máximo: ${GENKI_DAMA_MAX_DAMAGE_MULTIPLIER}x o ataque básico.`,
+      damageType: "magical",
+    },
+    {
+      kind: "active",
+      id: "kamehameha",
+      name: "Kamehameha",
+      description: `Carregue por ${EMANUEL_KAMEHAMEHA_CHARGING_MS / 1000}s no sprite de carga e o feixe dispara: o efeito causa dano mágico contínuo e empurra o inimigo por 2s. O personagem fica travado durante a carga e o disparo.`,
       damageType: "magical",
     },
     domainBurstAbility("emanuel"),

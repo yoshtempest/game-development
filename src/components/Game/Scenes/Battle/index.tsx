@@ -9,6 +9,7 @@ import { SphereJunction } from "@/components/Game/Battle/Buttons/Natsuki/SphereJ
 import { EmanuelCloneButton } from "@/components/Game/Battle/Buttons/Ematron/Clone";
 import { EmanuelKiChargeButton } from "@/components/Game/Battle/Buttons/Ematron/KiCharge";
 import { EmanuelGenkiDamaButton } from "@/components/Game/Battle/Buttons/Ematron/GenkiDama";
+import { EmanuelKamehamehaButton } from "@/components/Game/Battle/Buttons/Ematron/Kamehameha";
 import { VastolordLaserButton } from "@/components/Game/Battle/Buttons/Marshadow/VastolordLaser";
 import { AtomicButton } from "@/components/Game/Battle/Buttons/Marshadow/Atomic";
 import { KillerQueenButton } from "@/components/Game/Battle/Buttons/Artur/KillerQueen";
@@ -193,6 +194,9 @@ export function BattleScene(props: Props) {
     vastolordLaserPress,
     vastolordLaserUsable,
     vastolordLaserStacks,
+    kamehameha,
+    kamehamehaPress,
+    kamehamehaUsable,
     specialIntroAbility,
     specialIntroForm,
     atomicHalo,
@@ -643,6 +647,7 @@ export function BattleScene(props: Props) {
             emanuelClone={emanuelClone}
             genkiDamaVisual={genkiDamaVisual}
             vastolordLaser={vastolordLaser}
+            kamehameha={kamehameha}
             granReyCeroEffect={granReyCeroEffect}
             cutInEnemie={battle.cutInEnemie}
             npcBleeding={battle.npcBleeding}
@@ -891,6 +896,13 @@ export function BattleScene(props: Props) {
             disabled={controlsDisabled || !genkiDamaUsable}
             onPress={genkiDamaPress}
             onRelease={genkiDamaRelease}
+          />
+        )}
+
+        {player.character === "emanuel" && (
+          <EmanuelKamehamehaButton
+            disabled={controlsDisabled || !kamehamehaUsable}
+            onClick={kamehamehaPress}
           />
         )}
 

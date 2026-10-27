@@ -31,6 +31,8 @@ export const ONE_THOUSAND_MS = 1000;
 export const ONE_THOUSAND_TWO_HUNDRED_MS = 1200;
 export const ONE_THOUSAND_FIVE_HUNDRED_MS = 1500;
 export const TWO_THOUSAND_MS = 2000;
+/** Carga do Kamehameha do emanuel: 2.8s no sprite `chargingKamehameha.svg`. */
+export const TWO_THOUSAND_EIGHT_HUNDRED_MS = 2800;
 export const THREE_THOUSAND_MS = 3000;
 export const FOUR_THOUSAND_MS = 4000;
 export const FIVE_THOUSAND_MS = 5000;

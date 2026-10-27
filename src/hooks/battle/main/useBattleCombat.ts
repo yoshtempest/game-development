@@ -37,6 +37,7 @@ import { useEmanuelClone } from "@/hooks/battle/player/characters/ematron/useEma
 import { useEmanuelKiCharge } from "@/hooks/battle/player/characters/ematron/useEmanuelKiCharge";
 import { useEmanuelGenkiDama } from "@/hooks/battle/player/characters/ematron/useEmanuelGenkiDama";
 import { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
+import { useKamehameha } from "@/hooks/battle/player/characters/ematron/useKamehameha";
 import { useVastolordRoar } from "@/hooks/battle/player/characters/marshadow/useVastolordRoar";
 import { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
 import { useRiquelmeSpheres } from "@/hooks/battle/player/characters/natsuki/spheres/useRiquelmeSpheres";
@@ -1312,6 +1313,33 @@ export function useBattleCombat({
 
   addVastolordLaserChargeRef.current = addVastolordLaserCharge;
 
+  const { effect: kamehameha, press: kamehamehaPress, usable: kamehamehaUsable } =
+    useKamehameha({
+      player,
+      setPlayer,
+      PLAYER_SIZE,
+      char: battle.char,
+      playerClass,
+      npc,
+      summons,
+      setSummons,
+      setNpcHP: battle.setNpcHP,
+      npcArmor: battle.npcArmor,
+      vampirism: battle.vampirism,
+      playerMaxHp: battle.playerMaxHp,
+      setPlayerHP: battle.setPlayerHP,
+      giveSummonRewards,
+      spawnDamageNumber: battle.spawnDamageNumber,
+      registerHitRef: refs.registerHitRef,
+      freezeActionsUntilRef,
+      isPausedRef,
+      isMenuOpenRef,
+      battleEndedRef: battle.isEnding,
+      disabledRef: cloneDisabledRef,
+      playSound,
+      onUsed: onAbilityUsed,
+    });
+
   // Grito da transformação: empurra os inimigos próximos para longe enquanto o
   // Vastolord está nos quadros de grito (screamOne/Two/Three).
   useVastolordRoar({
@@ -1755,6 +1783,9 @@ export function useBattleCombat({
     vastolordLaserPress,
     vastolordLaserUsable,
     vastolordLaserStacks,
+    kamehameha,
+    kamehamehaPress,
+    kamehamehaUsable,
     atomicHalo,
     atomicExplosion,
     atomicCuts,

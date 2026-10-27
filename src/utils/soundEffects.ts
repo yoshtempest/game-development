@@ -86,6 +86,7 @@ export function createSounds() {
     chapterSuspense: sfx("chapterSuspense.mp3"),
     slap: npcSoundPath("maugrelo/slap.mp3"),
     laser: npcSoundPath("maugrelo/laser.mp3"),
+    kamehameha: emanuelSoundPath("kamehameha.mp3"),
     throwPaper: npcSoundPath("maugrelo/throwPaper.mp3"),
     shieldStack: npcSoundPath("maugrelo/shieldStack.mp3"),
     breakDish: npcSoundPath("vandinhaFragment/breakDish.mp3"),

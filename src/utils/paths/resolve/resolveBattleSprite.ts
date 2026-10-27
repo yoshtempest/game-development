@@ -64,6 +64,16 @@ export function resolveBattleSprite(
     if (state === "throwGenkiDama") {
       return playerPathEmanuelHabilities(`/genkiDama/throwGenkiDama.svg`);
     }
+    // Kamehameha: fase de carregamento (sprite `chargingKamehameha.svg`) e fase
+    // de disparo (sprite `kamehameha.svg` + efeito `kamehamehaEffect.svg`).
+    if (state === "chargingKamehameha") {
+      return playerPathEmanuelHabilities(
+        `/kamehameha/chargingKamehameha.svg`,
+      );
+    }
+    if (state === "kamehameha") {
+      return playerPathEmanuelHabilities(`/kamehameha/kamehameha.svg`);
+    }
     // Teleporte (clone): sprite do teleporte.
     if (
       state === "ability" ||

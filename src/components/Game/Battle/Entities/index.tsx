@@ -15,6 +15,7 @@ import { Player } from "./Player";
 import { EmanuelClone } from "./Ematron/EmanuelClone";
 import { GenkiDama } from "./Ematron/GenkiDama";
 import { VastolordLaser } from "./VastolordLaser";
+import { Kamehameha } from "./Kamehameha";
 import { GranReyCero } from "./GranReyCero";
 import { KillerQueen } from "./srGuaxinim/KillerQueen";
 import { Bomb } from "./Bomb";
@@ -40,6 +41,7 @@ import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/useBl
 import type { EmanuelCloneVisual } from "@/utils/types/character/emanuel";
 import type { GenkiDamaVisual } from "@/utils/types/character/emanuel";
 import type { VastolordLaserBeam } from "@/gameRules/battle/characters/marcelo/vastolordLaser";
+import type { KamehamehaEffect } from "@/gameRules/battle/characters/emanuel/kamehameha";
 import type { GranReyCeroEffect } from "@/gameRules/battle/characters/marcelo/granReyCero";
 import type { CutInEnemieOverlay } from "@/utils/types/battle/cutInEnemie";
 import type { AtomicExplosion, AtomicCut } from "@/utils/types/battle/atomic";
@@ -93,6 +95,8 @@ type Props = {
   genkiDamaVisual?: GenkiDamaVisual | null;
   /** Feixe do Laser da Forma Vastolord do marcelo. */
   vastolordLaser?: VastolordLaserBeam | null;
+  /** Feixe de Kamehameha do emanuel (em curso, ou null). */
+  kamehameha?: KamehamehaEffect | null;
   granReyCeroEffect?: GranReyCeroEffect | null;
   /** CutInEnemie do marcelo sobrepondo o NPC atingido. */
   cutInEnemie?: CutInEnemieOverlay | null;
@@ -164,6 +168,7 @@ export function BattleEntities({
   emanuelClone = null,
   genkiDamaVisual = null,
   vastolordLaser = null,
+  kamehameha = null,
   granReyCeroEffect = null,
   cutInEnemie = null,
   npcBleeding = false,
@@ -365,6 +370,15 @@ export function BattleEntities({
       {vastolordLaser && player.character === "marcelo" && (
         <VastolordLaser
           beam={vastolordLaser}
+          PLAYER_SIZE={PLAYER_SIZE}
+          battleScaleX={battleScaleX}
+          battleScaleY={battleScaleY}
+        />
+      )}
+
+      {kamehameha && player.character === "emanuel" && (
+        <Kamehameha
+          effect={kamehameha}
           PLAYER_SIZE={PLAYER_SIZE}
           battleScaleX={battleScaleX}
           battleScaleY={battleScaleY}

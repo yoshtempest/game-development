@@ -35,6 +35,7 @@ export type SoundId =
   | "groundPaperPreExplode"
   | "chapterSuspense"
   | "laser"
+  | "kamehameha"
   | "throwPaper"
   | "slap"
   | "shieldStack"

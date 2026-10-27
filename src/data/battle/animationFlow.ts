@@ -85,6 +85,15 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
   // (useVastolordLaser), que restaura o idle quando o feixe termina.
   laser: null,
 
+  // Kamehameha do emanuel: fase de disparo (efeito) mantida pelo hook
+  // `useKamehameha`, que restaura o idle quando o efeito (2s) termina.
+  kamehameha: null,
+
+  // Kamehameha do emanuel: fase de carregamento (sprite `chargingKamehameha.svg`)
+  // controlada pelo hook `useKamehameha` (2.8s), que troca para o disparo
+  // (`kamehameha`) quando o carregamento termina.
+  chargingKamehameha: null,
+
   // "Gran Rey Cero" do marcelo: estado mantido pelo hook enquanto a lâmina
   // corre/rasteja (useGranReyCero), que restaura o idle no fade-out.
   granReyCero: null,
