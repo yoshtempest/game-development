@@ -872,55 +872,56 @@ export function BattleScene(props: Props) {
           ))}
 
         {player.character === "emanuel" && (
-          <EmanuelCloneButton
-            energy={battleMana?.playerMana ?? 0}
-            disabled={controlsDisabled || !cloneUsable}
-            onPress={clonePress}
-            onRelease={cloneRelease}
-          />
+          <>
+            <EmanuelCloneButton
+              energy={battleMana?.playerMana ?? 0}
+              disabled={controlsDisabled || !cloneUsable}
+              onPress={clonePress}
+              onRelease={cloneRelease}
+            />
+            <EmanuelKiChargeButton
+              energy={battleMana?.playerMana ?? 0}
+              energyMax={battleMana?.playerMaxMana ?? 100}
+              disabled={controlsDisabled || !kiChargeUsable}
+              onPress={kiChargePress}
+              onRelease={kiChargeRelease}
+            />
+            <EmanuelGenkiDamaButton
+              energy={battleMana?.playerMana ?? 0}
+              disabled={controlsDisabled || !genkiDamaUsable}
+              onPress={genkiDamaPress}
+              onRelease={genkiDamaRelease}
+            />
+            <EmanuelKamehamehaButton
+              disabled={controlsDisabled || !kamehamehaUsable}
+              onClick={kamehamehaPress}
+            />
+          </>
         )}
-
-        {player.character === "emanuel" && (
-          <EmanuelKiChargeButton
-            energy={battleMana?.playerMana ?? 0}
-            energyMax={battleMana?.playerMaxMana ?? 100}
-            disabled={controlsDisabled || !kiChargeUsable}
-            onPress={kiChargePress}
-            onRelease={kiChargeRelease}
-          />
-        )}
-
-        {player.character === "emanuel" && (
-          <EmanuelGenkiDamaButton
-            energy={battleMana?.playerMana ?? 0}
-            disabled={controlsDisabled || !genkiDamaUsable}
-            onPress={genkiDamaPress}
-            onRelease={genkiDamaRelease}
-          />
-        )}
-
-        {player.character === "emanuel" && (
-          <EmanuelKamehamehaButton
-            disabled={controlsDisabled || !kamehamehaUsable}
-            onClick={kamehamehaPress}
-          />
-        )}
-
-        {player.character === "marcelo" && vastolordActive && (
-          <VastolordLaserButton
-            charges={vastolordLaserStacks}
-            disabled={!vastolordLaserUsable}
-            onClick={vastolordLaserPress}
-          />
-        )}
-
-        {!vastolordActive && player.character === "marcelo" && (
-          <AtomicButton
-            ready={atomicUsable}
-            remaining={atomicRemaining}
-            disabled={controlsDisabled}
-            onClick={atomicPress}
-          />
+          
+        {player.character === "marcelo" && (
+          !vastolordActive ? (
+          <>
+            <AtomicButton
+              ready={atomicUsable}
+              remaining={atomicRemaining}
+              disabled={controlsDisabled}
+              onClick={atomicPress}
+            />
+            <GranReyCeroButton
+              ready={granReyCeroUsable}
+              remaining={granReyCeroRemaining}
+              disabled={controlsDisabled}
+              onClick={granReyCeroPress}
+            />
+          </>
+          ) : (
+            <VastolordLaserButton
+              charges={vastolordLaserStacks}
+              disabled={!vastolordLaserUsable}
+              onClick={vastolordLaserPress}
+            />
+          )
         )}
 
         {player.character === "artur" && (
@@ -960,15 +961,6 @@ export function BattleScene(props: Props) {
             ready={domainExpansionUsable}
             disabled={controlsDisabled}
             onClick={domainExpansionPress}
-          />
-        )}
-
-        {!vastolordActive && player.character === "marcelo" && (
-          <GranReyCeroButton
-            ready={granReyCeroUsable}
-            remaining={granReyCeroRemaining}
-            disabled={controlsDisabled}
-            onClick={granReyCeroPress}
           />
         )}
       </div>
