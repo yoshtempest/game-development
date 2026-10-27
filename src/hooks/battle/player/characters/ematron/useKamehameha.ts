@@ -103,7 +103,6 @@ type KamehamehaApi = {
 export function useKamehameha({
   player,
   setPlayer,
-  PLAYER_SIZE,
   char,
   playerClass,
   npc,
@@ -228,7 +227,7 @@ export function useKamehameha({
         rawAccRef.current + baseDamageRef.current * EMANUEL_KAMEHAMEHA_DAMAGE_RATIO;
       rawAccRef.current = 0;
 
-      const top = kamehamehaTop(effectData.y, PLAYER_SIZE);
+      const top = kamehamehaTop(effectData.y);
       const bottom = top + EMANUEL_KAMEHAMEHA_BEAM_HEIGHT;
 
       const reportTick = (
@@ -330,7 +329,6 @@ export function useKamehameha({
       }
     },
     [
-      PLAYER_SIZE,
       baseDamageRef,
       effectRef,
       finishRef,
@@ -359,20 +357,22 @@ export function useKamehameha({
     }
     const p = playerRef.current;
     const isFacingLeft = p.battleDirection === "left";
+    // O feixe sempre surge do personagem na direção que ele olha.
+    // - facing right: do player para a direita (MAP_WIDTH)
+    // - facing left: do player para a esquerda (0)
+    // Garante-se que o feixe emerge do personagem, não da borda da tela.
     shotStartRef.current = Date.now();
     setEffect({
-      fromX: isFacingLeft ? 0 : p.x,
-      toX: isFacingLeft ? p.x : ProjectileConstants.MAP_WIDTH,
+      fromX: p.x,
+      toX: isFacingLeft ? 0 : ProjectileConstants.MAP_WIDTH,
       y: p.y,
       phase: "starting",
     });
     setPlayerRef.current((pp) =>
       pp.mode !== "battle" ? pp : { ...pp, state: "kamehameha" },
     );
-    freezeActionsUntilRef.current = Math.max(
-      freezeActionsUntilRef.current,
-      Date.now() + EMANUEL_KAMEHAMEHA_DURATION_MS,
-    );
+    // Define o freeze para a fase de efeito (2s), substituindo o freeze da carga
+    freezeActionsUntilRef.current = Date.now() + EMANUEL_KAMEHAMEHA_DURATION_MS;
     // O som do feixe fica em loop enquanto o kamehameha estiver ativo (começa
     // no press, para no finish).
 

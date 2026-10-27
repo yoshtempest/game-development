@@ -379,7 +379,6 @@ export function BattleEntities({
       {kamehameha && player.character === "emanuel" && (
         <Kamehameha
           effect={kamehameha}
-          PLAYER_SIZE={PLAYER_SIZE}
           battleScaleX={battleScaleX}
           battleScaleY={battleScaleY}
         />

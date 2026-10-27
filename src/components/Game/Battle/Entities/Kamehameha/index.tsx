@@ -9,8 +9,6 @@ import styles from "./styles.module.css";
 
 type Props = BattleEntityPositioning & {
   effect: KamehamehaEffect | null;
-  /** PLAYER_SIZE do layout — o feixe acompanha a imagem renderizada do personagem. */
-  PLAYER_SIZE: number;
 };
 
 /**
@@ -28,14 +26,13 @@ export function Kamehameha({
   effect,
   battleScaleX,
   battleScaleY,
-  PLAYER_SIZE,
 }: Props) {
   if (!effect) return null;
 
-  const width = (effect.toX - effect.fromX) * battleScaleX;
+  const width = Math.abs(effect.toX - effect.fromX) * battleScaleX;
   const height = EMANUEL_KAMEHAMEHA_BEAM_HEIGHT * battleScaleY;
-  const left = effect.fromX * battleScaleX;
-  const top = kamehamehaTop(effect.y, PLAYER_SIZE) * battleScaleY;
+  const left = Math.min(effect.fromX, effect.toX) * battleScaleX;
+  const top = kamehamehaTop(effect.y) * battleScaleY;
 
   const phaseClass =
     effect.phase === "starting"

@@ -24,10 +24,11 @@ export function emanuelPlayerSpriteHeight(playerSize: number): number {
  *
  * `beamY` é o y do player (o chão/pe), então o centro do sprite fica
  * `spriteHeight / 2` acima dele e o centro do feixe coincide com esse centro.
+ * O feixe tem 178px de altura, centrado no y do player (de -89 a +89px em
+ * torno do chão do player), para atingir inimigos no mesmo nível.
  */
-export function kamehamehaTop(beamY: number, playerSize: number): number {
-  const spriteHeight = emanuelPlayerSpriteHeight(playerSize);
-  return beamY - spriteHeight / 2 - EMANUEL_KAMEHAMEHA_BEAM_HEIGHT;
+export function kamehamehaTop(beamY: number): number {
+  return beamY - EMANUEL_KAMEHAMEHA_BEAM_HEIGHT / 2;
 }
 
 export type KamehamehaEffect = {

@@ -51,9 +51,10 @@ export function resolveBattleSprite(
     }
   }
   // Genki Dama do emanuel: a fase de subida usa o sprite `falling.svg` (não
-  // existe `genkiDamaRising.svg`) — o custo fica na pasta de movimento/jump.
+  // existe `genkiDamaRising.svg`). O sprite está em `inFight/jump/`, não
+  // em `inFight/movement/jump/`.
   if (state === "genkiDamaRising" && character === "emanuel") {
-    return playerPath(`/emanuel/inFight/movement/jump/falling.svg`);
+    return playerPath(`/emanuel/inFight/jump/falling.svg`);
   }
   // Habilidades do emanuel: os sprites ficam em `inFight/habilities/<ability>/`.
   if (character === "emanuel") {
