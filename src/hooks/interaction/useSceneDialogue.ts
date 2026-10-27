@@ -38,14 +38,8 @@ import { useInventory } from "@/contexts/InventoryContext";
  */
 export function useSceneDialogue(
   dialogueData:
-    | readonly []
-    | ((context: {
-        quests: string[];
-        items: string[];
-        flags: string[];
-        character: string;
-        lastPage?: string | undefined;
-      }) => readonly []),
+    | Dialogue[]
+    | ((context: DialogueContext) => Dialogue[]),
 ) {
   const { player } = usePlayer();
   const { quests } = useQuests();
@@ -55,11 +49,11 @@ export function useSceneDialogue(
   // Contexto estável que não muda entre renders desnecessariamente
   const npcContext = useMemo(
     () => ({
-      quests: quests.map((q) => q.id),
-      items: items.map((item) => item.id),
-      flags: flags.map((f) => f),
+      quests,
+      items: items.map((item) => ({ id: item.id })),
+      flags,
       character: player.character,
-      lastPage: undefined,
+      lastPage: undefined as LastPage | undefined,
     }),
     [quests, items, flags, player.character],
   );

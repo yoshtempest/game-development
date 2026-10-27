@@ -19,6 +19,7 @@ import {
 } from "@/components/Game/Quest/Indicator";
 import Talking from "@/components/Game/Interactions/Talking";
 import { useDialogue } from "@/hooks/interaction/useDialogue";
+import { useSceneDialogue } from "@/hooks/interaction/useSceneDialogue";
 import { useGoodPowderEncounter } from "@/hooks/interaction/useGoodPowderEncounter";
 import { useSansTalking } from "@/hooks/interaction/useSansTalking";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -197,29 +198,7 @@ export function ExploreScene({
     return remove;
   }, [cutsceneActive, pushControls]);
 
-  /**
-   * Contexto dos diálogos em `useMemo`: ele alimenta `dialogueData` e o
-   * `npc.src`, e um objeto novo por render reprocessava (e re-renderizava) o
-   * sistema de diálogo a cada tile andado.
-   */
-  const npcContext = useMemo(
-    () => ({
-      quests,
-      items,
-      flags,
-      character: player.character,
-      lastPage,
-    }),
-    [quests, items, flags, player.character, lastPage],
-  );
-
-  const resolvedDialogueData = useMemo(
-    () =>
-      typeof dialogueData === "function"
-        ? dialogueData(npcContext)
-        : dialogueData,
-    [dialogueData, npcContext],
-  );
+  const { resolvedDialogueData, npcContext } = useSceneDialogue(dialogueData);
 
   const dialogueSystem = useDialogue(resolvedDialogueData, handleFinish);
   const { play: playSansTalking } = useSansTalking(dialogueSystem.isOpen);
