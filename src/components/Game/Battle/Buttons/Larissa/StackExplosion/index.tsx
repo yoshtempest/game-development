@@ -1,7 +1,4 @@
-import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa/larissa";
-
-import styles from "./styles.module.css";
-import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
 
 type Props = {
   ready: boolean;
@@ -11,16 +8,13 @@ type Props = {
 };
 
 /**
- * Botão da "Explosão de Stacks" (Larissa): consome os stacks acumulados pelos
- * ataques básicos numa explosão (5 de dano por stack). Era o special da
- * Larissa; virou habilidade própria, com o mesmo cooldown de 20s.
+ * Botão da Explosão de Stacks (Larissa), agora delegado ao botão genérico: nome,
+ * descrição e cooldown vêm do registro (`stackExplosionAbility` em
+ * `data/characters/abilityFactories`), só o estado de cooldown fica aqui. O
+ * rótulo mantém o curto "EXPLOSÃO" (a descrição completa é a tooltip).
  */
-const stackExplosionClasses: CustomAbilityClasses = {
-  button: styles.button,
-  label: styles.label,
-  ready: styles.ready,
-  cooldown: styles.cooldown,
-};
+const STACK_EXPLOSION_ACCENT = "#f87171";
+const STACK_EXPLOSION_LABEL = "EXPLOSÃO";
 
 export function StackExplosionButton({
   ready,
@@ -29,15 +23,16 @@ export function StackExplosionButton({
   onClick,
 }: Props) {
   return (
-    <AbilityButton
-      type="standard"
-      customClasses={stackExplosionClasses}
-      label="EXPLOSÃO"
+    <GenericAbilityButton
+      characterId="larissa"
+      abilityId="stackExplosion"
+      behavior="standard"
+      label={STACK_EXPLOSION_LABEL}
+      accent={STACK_EXPLOSION_ACCENT}
       ready={ready}
       remaining={remaining}
       disabled={disabled}
       onClick={onClick}
-      title={`Explosão de Stacks: consome os stacks acumulados numa explosão. Cooldown de ${STACK_EXPLOSION_COOLDOWN_MS / 1000}s.`}
     />
   );
 }

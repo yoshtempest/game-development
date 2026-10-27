@@ -45,6 +45,22 @@ export const CHARACTER_ACTIVE_ABILITIES: Partial<
   levi: LEVI_ACTIVE_ABILITIES,
 };
 
+/**
+ * Busca uma habilidade ativa pelo par personagem + id.
+ *
+ * O par é obrigatório porque `domainBurst` existe em vários personagens com
+ * nome/descrição diferentes — um índice global por id escolheria o último e
+ * mostraria o domínio de outro personagem no botão.
+ */
+export function getActiveAbility(
+  characterId: CharacterId,
+  abilityId: string,
+): ActiveAbility | undefined {
+  return CHARACTER_ACTIVE_ABILITIES[characterId]?.find(
+    (ability) => ability.id === abilityId,
+  );
+}
+
 function toPassiveAbility(
   passive: ReturnType<typeof getCharacterPassives>[number],
 ): PassiveAbility {

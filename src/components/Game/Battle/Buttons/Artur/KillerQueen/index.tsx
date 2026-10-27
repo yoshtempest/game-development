@@ -1,10 +1,4 @@
-import {
-  KILLER_QUEEN_COOLDOWN_MS,
-  TOTAL_FREEZE_MS,
-} from "@/data/characters/artur/srGuaxinim";
-
-import styles from "./styles.module.css";
-import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
 
 type Props = {
   ready: boolean;
@@ -14,16 +8,12 @@ type Props = {
 };
 
 /**
- * Botão da "Killer Queen" (Artur): congela o tempo, marca cada inimigo e
- * projétil destrutível com uma bomba e detona todos em área. Era o special do
- * Artur; virou habilidade própria, com o mesmo cooldown de 20s.
+ * Botão da Killer Queen (Artur), agora delegado ao botão genérico: nome,
+ * descrição e cooldown vêm do registro (`killerQueenAbility` em
+ * `data/characters/abilityFactories`), só o estado de cooldown fica aqui.
+ * A cor é a identidade da habilidade (`--ability-aurora` do Artur).
  */
-const killerQueenClasses: CustomAbilityClasses = {
-  button: styles.button,
-  label: styles.label,
-  ready: styles.ready,
-  cooldown: styles.cooldown,
-};
+const KILLER_QUEEN_ACCENT = "#fde68a";
 
 export function KillerQueenButton({
   ready,
@@ -32,15 +22,15 @@ export function KillerQueenButton({
   onClick,
 }: Props) {
   return (
-    <AbilityButton
-      type="standard"
-      customClasses={killerQueenClasses}
-      label="KILLER QUEEN"
+    <GenericAbilityButton
+      characterId="artur"
+      abilityId="killerQueen"
+      behavior="standard"
+      accent={KILLER_QUEEN_ACCENT}
       ready={ready}
       remaining={remaining}
       disabled={disabled}
       onClick={onClick}
-      title={`Killer Queen: congela o tempo por ${TOTAL_FREEZE_MS / 1000}s e explode todos os alvos marcados. Cooldown de ${KILLER_QUEEN_COOLDOWN_MS / 1000}s.`}
     />
   );
 }

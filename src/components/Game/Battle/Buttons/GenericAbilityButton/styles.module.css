@@ -1,0 +1,46 @@
+/* Visual padrão do botão genérico de habilidade. A identidade de cada uma vem
+   de `--ability-accent` (inline); sem ele, cai no accent do tema. */
+.button {
+  border: var(--size-2) solid var(--ability-accent, var(--accent-60));
+  animation: abilityGlow 1.5s ease-in-out infinite;
+}
+
+.button:hover:not(:disabled) {
+  filter: brightness(1.2);
+}
+
+.ready {
+  filter: brightness(1.1);
+}
+
+.label {
+  color: var(--ability-accent, var(--white));
+}
+
+/* Cooldown e custo herdam a cor da habilidade para o botão não perder a
+   identidade quando o número aparece por cima do rótulo. */
+.cooldown {
+  font-size: var(--fs-16);
+  font-weight: bold;
+  color: var(--ability-accent, var(--warning-70));
+}
+
+.value {
+  color: var(--ability-accent, var(--info-80));
+}
+
+.cost {
+  color: var(--ability-accent, var(--info-70));
+}
+
+@keyframes abilityGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 var(--size-4)
+      color-mix(in srgb, var(--ability-accent, var(--accent-60)) 30%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 var(--size-18)
+      color-mix(in srgb, var(--ability-accent, var(--accent-60)) 80%, transparent);
+  }
+}
