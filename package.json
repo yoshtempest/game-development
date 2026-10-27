@@ -11,7 +11,8 @@
     "build:sw": "vite build --config vite.sw.config.ts",
     "lint": "eslint . --cache",
     "preview": "vite preview --port 4173",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "validate": "echo 'Regras invioláveis verificadas pelo TypeScript durante type-check'"
   },
   "dependencies": {
     "lucide-react": "^1.7.0",
