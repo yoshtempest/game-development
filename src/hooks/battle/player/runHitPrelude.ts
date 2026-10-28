@@ -66,7 +66,7 @@ export type HitPreludeResult =
  *
  * Ataque básico e special respondem exatamente nesta ordem e com os mesmos
  * efeitos; o que muda é o cálculo do dano, o cooldown e os efeitos colaterais
- * (o special zera a delícia, o básico notifica o cut-in do marcelo). Antes
+ * (o special zera a delícia, o básico notifica o cut-in do marshadow). Antes
  * cada um reescrevia os três desfechos, e a diferença entre eles era de
  * leitura, não de regra.
  */

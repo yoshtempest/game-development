@@ -14,7 +14,7 @@ const BASE_SKILLS: PassiveSkillNode[] = [
 ];
 
 const CHARACTER_SKILLS: Partial<Record<CharacterId, PassiveSkillNode[]>> = {
-  marcelo: [
+  marshadow: [
     {
       id: "doubleJump",
       name: "Pulo Duplo",
@@ -23,7 +23,7 @@ const CHARACTER_SKILLS: Partial<Record<CharacterId, PassiveSkillNode[]>> = {
       levelRequired: 20,
     },
   ],
-  samuel: [
+  samurion: [
     {
       id: "berserk",
       name: "Berserk",

@@ -95,7 +95,7 @@ export default function Tutorial() {
           prompt="Você é macho ou fêmea?"
           options={["Macho", "Fêmea"]}
           onSelect={(index) => {
-            const characterId = index === 0 ? "marcelo" : "eduarda";
+            const characterId = index === 0 ? "marshadow" : "drika";
             flow.chooseGender(characterId);
             cutscene.next();
           }}

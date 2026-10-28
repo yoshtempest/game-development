@@ -5,15 +5,15 @@ import { slotKey } from "@/services/save/slotManager";
 type UnlockDates = Record<string, string>;
 
 export const UNLOCK_FLAG_TO_CHAR = {
-  samurionUnlocked: "samuel",
-  srGuaxinimUnlocked: "artur",
-  ematronUnlocked: "emanuel",
-  laricellUnlocked: "larissa",
-  yraUnlocked: "mayra",
-  kamykazeUnlocked: "camilly",
-  yvelUnlocked: "lucas",
-  babidiUnlocked: "lucaua",
-  natsukiUnlocked: "riquelme",
+  samurionUnlocked: "samurion",
+  srGuaxinimUnlocked: "srGuaxinim",
+  ematronUnlocked: "ematron",
+  laricellUnlocked: "laricell",
+  yraUnlocked: "yra",
+  kamykazeUnlocked: "camyKaze",
+  yvelUnlocked: "yvel",
+  babidiUnlocked: "babidi",
+  natsukiUnlocked: "natsuki",
 } as const satisfies Record<string, CharacterId>;
 
 export type UnlockFlagId = keyof typeof UNLOCK_FLAG_TO_CHAR;

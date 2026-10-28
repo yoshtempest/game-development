@@ -1,5 +1,5 @@
 /**
- * Regras da energia amaldiçoada do Riquelme.
+ * Regras da energia amaldiçoada do Natsuki.
  *
  * A energia amaldiçoada substitui a mana: normalmente não regenera com o time,
  * não tem poções e é carregada ao causar dano em inimigos. A conversão em vida
@@ -41,11 +41,11 @@ export const DIVERGENT_FIST_FRAME_MS = 50;
  * Duração da sequência "O Mais Honrado" (passiva O Abençoado), em ms. Casa com
  * a duração real de honored-one.mp3 (~7.345s). É usada como janela de hitstop
  * (congela projéteis e ações) enquanto a coreografia roda; o fim efetivo da
- * sequência acontece quando o riquelme aterrissa em `idleCrounched`.
+ * sequência acontece quando o natsuki aterrissa em `idleCrounched`.
  */
 export const HONORED_ONE_DURATION_MS = 7345;
 /** Id do efeito de time de O Mais Honrado (regra `gameRules/battle/time`). */
-export const HONORED_ONE_TIME_ID = "riquelme:honoredOne";
+export const HONORED_ONE_TIME_ID = "natsuki:honoredOne";
 
 /**
  * Multiplicadores do efeito de time de O Mais Honrado: o mundo continua se
@@ -58,7 +58,7 @@ export const HONORED_ONE_TIME_COOLDOWN = 3;
 /** Duração da fase de subida/rotação do "O Mais Honrado", em ms. */
 export const HONORED_ONE_RISE_MS = 5_000;
 
-/** Altura que o riquelme sobe no ar durante a fase de subida, em px. */
+/** Altura que o natsuki sobe no ar durante a fase de subida, em px. */
 export const HONORED_ONE_RISE_Y = 400;
 
 /** Distância mínima em x que os inimigos devem manter do jogador durante a sequência. */
@@ -98,7 +98,7 @@ export const PURPLE_SPHERE_ENERGY_PERCENT = 25;
  * MÁXIMA do personagem. Percentual inteiro (10/25) em vez de fração para não
  * sofrer com o erro de ponto flutuante de `0.1 * 100` na UI. A blue não entra:
  * o custo dela é o dreno contínuo enquanto a esfera está em campo
- * (`BLUE_SPHERE_DRAIN_COST`, em `data/characters/riquelme/riquelme`).
+ * (`BLUE_SPHERE_DRAIN_COST`, em `data/characters/natsuki/natsuki`).
  */
 export function sphereEnergyCost(
   variant: "red" | "purple",

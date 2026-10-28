@@ -9,11 +9,11 @@ import { ProjectileConstants } from "@/data/projectile";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { getViewportSize } from "@/utils/viewport";
 import {
-  MARCELO_CUT_IN_ENEMIE_SRC,
+  MARSHADOW_CUT_IN_ENEMIE_SRC,
   BLOOD_ICON_SRC,
-} from "@/data/characters/marcelo/marshadowCutIn";
+} from "@/data/characters/marshadow/marshadowCutIn";
 import type { CutInEnemieOverlay } from "@/utils/types/battle/cutInEnemie";
-import type { LucauaPortalCross } from "@/utils/types/character/lucaua";
+import type { BabidiPortalCross } from "@/utils/types/character/babidi";
 
 type Props = {
   x: number;
@@ -72,7 +72,7 @@ type Props = {
   npcPhase?: number;
   isDying?: boolean;
   isAlfa?: boolean;
-  /** CutInEnemie do marcelo sobrepondo o NPC (aparece por 1s no ataque). */
+  /** CutInEnemie do marshadow sobrepondo o NPC (aparece por 1s no ataque). */
   cutInEnemie?: CutInEnemieOverlay | null;
   /** NPC em sangramento: mostra o bloodIcon acima da imagem. */
   npcBleeding?: boolean;
@@ -82,7 +82,7 @@ type Props = {
    */
   purpleHole?: boolean;
   /** Travessia em andamento por um portal terrestre (sprite dividido). */
-  lucauaPortalCross?: LucauaPortalCross | null;
+  babidiPortalCross?: BabidiPortalCross | null;
 };
 
 export function NPCBattle({
@@ -102,7 +102,7 @@ export function NPCBattle({
   cutInEnemie = null,
   npcBleeding = false,
   purpleHole = false,
-  lucauaPortalCross = null,
+  babidiPortalCross = null,
 }: Props) {
   const { playSound } = useSoundEffects();
   const prevIsExplodingRef = useRef(isExploding);
@@ -157,15 +157,15 @@ export function NPCBattle({
   // portal par. O corte respeita o `yOffset` (a fração do container que fica
   // abaixo dos pés) para a linha cair nos pés, não na borda da caixa.
   const tilePx = TILE_SIZE * sizeMultiplier;
-  const crossInside = lucauaPortalCross
-    ? Math.min(Math.max(lucauaPortalCross.depth * scaleY, 0), tilePx)
+  const crossInside = babidiPortalCross
+    ? Math.min(Math.max(babidiPortalCross.depth * scaleY, 0), tilePx)
     : 0;
   const crossBottom = crossInside + yOffset * tilePx;
-  const sourceMask = lucauaPortalCross
+  const sourceMask = babidiPortalCross
     ? `linear-gradient(to top, transparent 0 ${crossBottom}px, #000 ${crossBottom}px)`
     : undefined;
   const crossTop = Math.max(0, tilePx - yOffset * tilePx - crossInside);
-  const destMask = lucauaPortalCross
+  const destMask = babidiPortalCross
     ? `linear-gradient(to bottom, transparent 0 ${crossTop}px, #000 ${crossTop}px)`
     : undefined;
 
@@ -233,11 +233,11 @@ export function NPCBattle({
           />
         ))}
 
-        {/* ✂️ CUT-IN ENEMIE do marcelo: strike sobre o NPC (1s, ângulo aleatório) */}
+        {/* ✂️ CUT-IN ENEMIE do marshadow: strike sobre o NPC (1s, ângulo aleatório) */}
         {cutInEnemie && (
           <img
             key={cutInEnemie.key}
-            src={MARCELO_CUT_IN_ENEMIE_SRC}
+            src={MARSHADOW_CUT_IN_ENEMIE_SRC}
             style={{
               position: "absolute",
               width: TILE_SIZE * sizeMultiplier * 0.5,
@@ -271,14 +271,14 @@ export function NPCBattle({
       {/* Portal par: só o pedaço que está "dentro" da origem, saindo do
           destino. Irmão do sprite de origem (mask própria) para o corte de um
           não vazar no outro. */}
-      {lucauaPortalCross && crossInside > 0 && !isHidden && (
+      {babidiPortalCross && crossInside > 0 && !isHidden && (
         <div
           style={{
             position: "absolute",
             width: tilePx,
             height: tilePx,
-            left: lucauaPortalCross.destX * scaleX,
-            top: lucauaPortalCross.destY * scaleY,
+            left: babidiPortalCross.destX * scaleX,
+            top: babidiPortalCross.destY * scaleY,
             transform: `translate(-50%, calc(-100% + ${yOffset * 100}%))`,
             zIndex: 9,
             maskImage: destMask,

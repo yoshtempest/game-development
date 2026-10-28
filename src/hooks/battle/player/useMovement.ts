@@ -27,19 +27,19 @@ import {
   isPlayerFrozen,
   isPlayerParalyzed,
 } from "@/gameRules/battle/status/statusEffects";
-import type { EmanuelComboApi } from "@/hooks/battle/player/characters/ematron/useEmanuelCombo";
+import type { EmatronComboApi } from "@/hooks/battle/player/characters/ematron/useCombo";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 
 const PLAYER_COLLISION_W = 30;
 const PLAYER_COLLISION_H = 50;
 
 /**
- * Chave do sprite do combo do emanuel para o gate de "uma instância de dano
+ * Chave do sprite do combo do ematron para o gate de "uma instância de dano
  * por sprite": os windups (preAttack/airGrab/jump/falling) mapeiam para o golpe
  * que estão apresentando, para que presses repetidos dentro do MESMO golpe
  * sejam ignorados.
  */
-function emanuelComboSpriteKey(state: PlayerState, combo: EmanuelComboApi) {
+function ematronComboSpriteKey(state: PlayerState, combo: EmatronComboApi) {
   if (ALL_PREDICATES.isAirMelee(state)) return "airKick";
   if (ALL_PREDICATES.isAirFalling(state)) return "airKick";
   if (state === "preAttack") {
@@ -60,11 +60,11 @@ export function useBattleMovement(
   honoredRiseStartYRef?: RefObject<number>,
   honoredFallRef?: RefObject<boolean>,
   forcePunchRef?: RefObject<boolean>,
-  emanuelCombo?: EmanuelComboApi,
+  ematronCombo?: EmatronComboApi,
   playerRef?: RefObject<Player>,
   genkiDamaRiseStartRef?: RefObject<number>,
   genkiDamaRiseStartYRef?: RefObject<number>,
-  riquelmePunchRef?: RefObject<boolean>,
+  natsukiPunchRef?: RefObject<boolean>,
 ) {
   const leftIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const rightIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -259,14 +259,14 @@ export function useBattleMovement(
     let comboWindup: PlayerState | null = null;
 
     const current = playerRef?.current;
-    const isEmanuelAttack =
-      current?.character === "emanuel" && current.mode === "battle";
+    const isEmatronAttack =
+      current?.character === "ematron" && current.mode === "battle";
 
-    if (isEmanuelAttack && emanuelCombo) {
-      emanuelCombo.activeRef.current = false;
+    if (isEmatronAttack && ematronCombo) {
+      ematronCombo.activeRef.current = false;
       const state = current.state;
       const airComboActive =
-        ALL_PREDICATES.isAirFalling(state) && emanuelCombo.airActiveRef.current;
+        ALL_PREDICATES.isAirFalling(state) && ematronCombo.airActiveRef.current;
       const midComboDisplay =
         state === "preAttack" ||
         ALL_PREDICATES.isCombo(state) ||
@@ -284,44 +284,43 @@ export function useBattleMovement(
         // exibição avança/encadeia o próximo step; presses repetidos no MESMO
         // sprite (mash/hold) são ignorados — não cortam a animação nem aplicam
         // dano extra (o handlePlayerHit também barra o caminho do cooldown).
-        const spriteKey = emanuelComboSpriteKey(state, emanuelCombo);
+        const spriteKey = ematronComboSpriteKey(state, ematronCombo);
         if (
           midComboDisplay &&
-          emanuelCombo.lastSpriteKeyRef.current === spriteKey
+          ematronCombo.lastSpriteKeyRef.current === spriteKey
         ) {
           return;
         }
 
-        const step = emanuelCombo.advance(Date.now());
-        emanuelCombo.activeRef.current = true;
-        emanuelCombo.lastSpriteKeyRef.current = spriteKey;
+        const step = ematronCombo.advance(Date.now());
+        ematronCombo.activeRef.current = true;
+        ematronCombo.lastSpriteKeyRef.current = spriteKey;
         comboWindup = step.windupState;
       }
     }
 
-    // Riquelme: o básico intercala kick/attack/punch. O sorteio fica fora do
+    // Natsuki: o básico intercala kick/attack/punch. O sorteio fica fora do
     // updater de estado (nenhum side effect ali) e o `punch` deriva do windup
     // `preAttack` — o `usePlayerAnimation` resolve o `next` para `punch`
-    // quando `riquelmePunchRef` está marcado. O Punho Divergente
+    // quando `natsukiPunchRef` está marcado. O Punho Divergente
     // (`forcePunchRef`) continua forçando o soco (`preAttack` → attack).
-    const isRiquelmeAttack = current?.character === "riquelme";
-    const riquelmeRolls = isRiquelmeAttack && !forcePunchRef?.current;
-    const riquelmeRoll = riquelmeRolls ? Math.random() : 1;
-    const riquelmeKick = riquelmeRolls && riquelmeRoll < 1 / 3;
-    const riquelmePunch =
-      riquelmeRolls && !riquelmeKick && riquelmeRoll < 2 / 3;
-    if (riquelmePunchRef) riquelmePunchRef.current = riquelmePunch;
+    const isNatsukiAttack = current?.character === "natsuki";
+    const natsukiRolls = isNatsukiAttack && !forcePunchRef?.current;
+    const natsukiRoll = natsukiRolls ? Math.random() : 1;
+    const natsukiKick = natsukiRolls && natsukiRoll < 1 / 3;
+    const natsukiPunch = natsukiRolls && !natsukiKick && natsukiRoll < 2 / 3;
+    if (natsukiPunchRef) natsukiPunchRef.current = natsukiPunch;
 
     setPlayer((p) => {
       if (isPlayerFrozen(p) || isPlayerParalyzed(p)) return p;
       if (ALL_PREDICATES.isInvulnerable(p.state)) return p;
 
-      if (isEmanuelAttack && emanuelCombo) {
+      if (isEmatronAttack && ematronCombo) {
         if (p.state === "blocked") return { ...p, state: "blockAttack" };
 
         if (
           p.state === "falling" &&
-          !emanuelCombo.airActiveRef.current &&
+          !ematronCombo.airActiveRef.current &&
           !hasUsedFallingAttack.current
         ) {
           hasUsedFallingAttack.current = true;
@@ -333,13 +332,13 @@ export function useBattleMovement(
           // (punch/hook/lowKick) não corta o sprite — o próximo step aguarda o
           // fim da animação atual no usePlayerAnimation.
           if (ALL_PREDICATES.isGroundCombo(p.state)) {
-            emanuelCombo.queuedStepIndexRef.current =
-              emanuelCombo.stepIndexRef.current;
+            ematronCombo.queuedStepIndexRef.current =
+              ematronCombo.stepIndexRef.current;
             return p;
           }
 
           if (comboWindup === "jump") {
-            emanuelCombo.airActiveRef.current = true;
+            ematronCombo.airActiveRef.current = true;
             hasUsedFallingAttack.current = false;
             hasDoubleJumped.current = false;
             return { ...p, velY: jumpForce, state: "jump" };
@@ -348,8 +347,8 @@ export function useBattleMovement(
           // Transição "limpa": nenhum golpe em exibição sendo bufferizado —
           // descarta buffer obsoleto (ex.: interrompido por dash/block/jump) e
           // entra no step diretamente (preAttack ou lowKick, ambos em solo).
-          emanuelCombo.queuedStepIndexRef.current = null;
-          emanuelCombo.airActiveRef.current = false;
+          ematronCombo.queuedStepIndexRef.current = null;
+          ematronCombo.airActiveRef.current = false;
           return { ...p, state: comboWindup };
         }
 
@@ -362,13 +361,13 @@ export function useBattleMovement(
       }
       if (p.state === "blocked") return { ...p, state: "blockAttack" };
       if (p.state !== "idle") return p;
-      if (p.character === "artur") {
+      if (p.character === "srGuaxinim") {
         return { ...p, state: "attack" };
       }
-      if (p.character === "riquelme") {
+      if (p.character === "natsuki") {
         return {
           ...p,
-          state: riquelmeKick ? "preKick" : "preAttack",
+          state: natsukiKick ? "preKick" : "preAttack",
         };
       }
       return { ...p, state: "preAttack" };
@@ -376,8 +375,8 @@ export function useBattleMovement(
   }
 
   /**
-   * Entrada genérica da habilidade ativa do botão (Artur/Killer Queen,
-   * Larissa/Explosão de Stacks). Substituiu o antigo "special" universal: entra
+   * Entrada genérica da habilidade ativa do botão (SrGuaxinim/Killer Queen,
+   * Laricell/Explosão de Stacks). Substituiu o antigo "special" universal: entra
    * no windup (`preAbility`) e quem tem fluxo próprio o sobrescreve em
    * `animationFlow`. No ar, a variante `preAbilityInAir` segura o personagem.
    */

@@ -1,10 +1,9 @@
-
 /**
  * Generic function to create items from a record.
- * 
+ *
  * @param items - Record where keys are item IDs and values are item properties
  * @returns Object with item IDs as keys and items with resolved IDs
- * 
+ *
  * @example
  * ```ts
  * const POTIONS = createItems({
@@ -25,10 +24,10 @@ export function createItems<T extends Record<string, Record<string, unknown>>>(
 
 /**
  * Helper to create consumable items (potions, energetics, foods).
- * 
+ *
  * @param items - Record of consumable item properties
  * @returns Typed consumable items record
- * 
+ *
  * @example
  * ```ts
  * const POTIONS = createPotions({
@@ -36,9 +35,9 @@ export function createItems<T extends Record<string, Record<string, unknown>>>(
  * });
  * ```
  */
-export function createPotions<T extends Record<string, Record<string, unknown>>>(
-  items: T,
-) {
+export function createPotions<
+  T extends Record<string, Record<string, unknown>>,
+>(items: T) {
   return createItems(items) as {
     [K in keyof T]: T[K] & { id: K; category: "consumable" };
   };
@@ -46,10 +45,10 @@ export function createPotions<T extends Record<string, Record<string, unknown>>>
 
 /**
  * Helper to create food items.
- * 
+ *
  * @param items - Record of food item properties
  * @returns Typed food items record
- * 
+ *
  * @example
  * ```ts
  * const FOODS = createFoods({
@@ -67,10 +66,10 @@ export function createFoods<T extends Record<string, Record<string, unknown>>>(
 
 /**
  * Helper to create equipment items.
- * 
+ *
  * @param items - Record of equipment item properties
  * @returns Typed equipment items record
- * 
+ *
  * @example
  * ```ts
  * const SWORD = createEquipment({
@@ -78,9 +77,9 @@ export function createFoods<T extends Record<string, Record<string, unknown>>>(
  * });
  * ```
  */
-export function createEquipment<T extends Record<string, Record<string, unknown>>>(
-  items: T,
-) {
+export function createEquipment<
+  T extends Record<string, Record<string, unknown>>,
+>(items: T) {
   return createItems(items) as {
     [K in keyof T]: T[K] & { id: K; category: "equipable" };
   };
@@ -88,10 +87,10 @@ export function createEquipment<T extends Record<string, Record<string, unknown>
 
 /**
  * Helper to create key items (keys, cards, maps).
- * 
+ *
  * @param items - Record of key item properties
  * @returns Typed key items record
- * 
+ *
  * @example
  * ```ts
  * const KEYS = createKeys({
@@ -109,10 +108,10 @@ export function createKeys<T extends Record<string, Record<string, unknown>>>(
 
 /**
  * Helper to create currency items (coins, gems, etc.).
- * 
+ *
  * @param items - Record of currency item properties
  * @returns Typed currency items record
- * 
+ *
  * @example
  * ```ts
  * const COINS = createCoins({
@@ -130,10 +129,10 @@ export function createCoins<T extends Record<string, Record<string, unknown>>>(
 
 /**
  * Helper to create map/teleport items.
- * 
+ *
  * @param items - Record of map item properties
  * @returns Typed map items record
- * 
+ *
  * @example
  * ```ts
  * const MAPS = createMaps({
@@ -151,10 +150,10 @@ export function createMaps<T extends Record<string, Record<string, unknown>>>(
 
 /**
  * Helper to create card items.
- * 
+ *
  * @param items - Record of card item properties
  * @returns Typed card items record
- * 
+ *
  * @example
  * ```ts
  * const CARDS = createCards({

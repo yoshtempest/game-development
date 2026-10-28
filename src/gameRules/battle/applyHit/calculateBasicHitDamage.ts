@@ -8,7 +8,7 @@ export function calculateBasicHitDamage(params: DamageCalcParams): {
   type: DamageType;
 } {
   const rawDmg =
-    params.player.character === "larissa"
+    params.player.character === "laricell"
       ? 2
       : combatService.calculatePlayerDamage(
           params.char.stats.strength,

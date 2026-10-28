@@ -1,24 +1,24 @@
-import { playerAbilityBackgroundPath, lucauaPortalPath } from "@/utils/paths";
-import { LUCAUA_PORTAL_KINDS } from "@/data/characters/lucaua";
+import { playerAbilityBackgroundPath, babidiPortalPath } from "@/utils/paths";
+import { BABIDI_PORTAL_KINDS } from "@/data/characters/babidi";
 import styles from "./styles.module.css";
 
-import type { LucauaPortalKind } from "@/utils/types/character/lucaua";
+import type { BabidiPortalKind } from "@/utils/types/character/babidi";
 
 type Props = {
-  /** Índice do tipo destacado em `LUCAUA_PORTAL_KINDS`. */
+  /** Índice do tipo destacado em `BABIDI_PORTAL_KINDS`. */
   index: number;
   /** Escolhe um tipo pelo card (atalho do ←/→ + confirmar). */
   onPick: (index: number) => void;
 };
 
-const PORTAL_LABEL: Record<LucauaPortalKind, string> = {
+const PORTAL_LABEL: Record<BabidiPortalKind, string> = {
   ground: "Chão",
   default: "Frontal",
   air: "Aéreo",
 };
 
 /**
- * Seletor do tipo de portal do lucaua (o mundo fica congelado enquanto aberto).
+ * Seletor do tipo de portal do babidi (o mundo fica congelado enquanto aberto).
  * Um clique no card escolhe o tipo, ou o jogador navega com esquerda/direita e
  * confirma com o ataque; nos dois casos vai para o posicionamento com o
  * joystick.
@@ -29,7 +29,7 @@ export function PortalSelect({ index, onPick }: Props) {
       <div className={`modal ${styles.modal}`}>
         <img
           className={styles.background}
-          src={playerAbilityBackgroundPath("lucaua", "portals")}
+          src={playerAbilityBackgroundPath("babidi", "portals")}
           alt=""
         />
 
@@ -40,7 +40,7 @@ export function PortalSelect({ index, onPick }: Props) {
           </p>
 
           <div className={styles.options}>
-            {LUCAUA_PORTAL_KINDS.map((kind, i) => (
+            {BABIDI_PORTAL_KINDS.map((kind, i) => (
               <button
                 key={kind}
                 type="button"
@@ -51,7 +51,7 @@ export function PortalSelect({ index, onPick }: Props) {
               >
                 <img
                   className={styles.sprite}
-                  src={lucauaPortalPath(kind)}
+                  src={babidiPortalPath(kind)}
                   alt=""
                 />
                 <span className={styles.label}>{PORTAL_LABEL[kind]}</span>

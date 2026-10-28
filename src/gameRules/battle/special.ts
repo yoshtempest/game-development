@@ -5,7 +5,7 @@
  * ganhou cooldown próprio, e a barra agora só cresce (ataque básico +1,
  * uso de habilidade +5) até as 40 cargas, que a Expansão consome por inteiro.
  * O valor é fixo para todo mundo — o antigo getMaxSpecial variava por classe
- * (fracote 7, default 9) e personagem (artur 1.5x).
+ * (fracote 7, default 9) e personagem (srGuaxinim 1.5x).
  */
 export const DOMAIN_EXPANSION_MAX_CHARGES = 40;
 

@@ -12,7 +12,7 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { SPECIAL_INTRO_DURATION } from "@/hooks/battle/modals/useSpecialIntro";
 import { useSettings } from "@/hooks/settings/useSetting";
-import type { MarceloBattleForm } from "@/utils/paths";
+import type { MarshadowBattleForm } from "@/utils/paths";
 import { ProjectileConstants } from "@/data/projectile";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { clampX } from "@/gameRules/movement/clampX";
@@ -34,11 +34,11 @@ import {
   VASTOLORD_LASER_START_STACKS,
   VASTOLORD_LASER_STARTUP_MS,
   VASTOLORD_LASER_TICK_MS,
-} from "@/data/characters/marcelo/marshadowLaser";
+} from "@/data/characters/marshadow/marshadowLaser";
 import {
   vastolordLaserTop,
   type VastolordLaserBeam,
-} from "@/gameRules/battle/characters/marcelo/vastolordLaser";
+} from "@/gameRules/battle/characters/marshadow/vastolordLaser";
 
 type Props = {
   player: Player;
@@ -86,7 +86,7 @@ type Props = {
     character: string,
     onActivate: () => void,
     ability?: string,
-    form?: MarceloBattleForm,
+    form?: MarshadowBattleForm,
   ) => boolean;
   playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
   /** Chamado quando o press arma a habilidade (carga da Expansão de Domínio). */
@@ -110,7 +110,7 @@ type VastolordLaserApi = {
 };
 
 /**
- * Laser da Forma Vastolord do marcelo (uma vez por forma): o `press` consome o
+ * Laser da Forma Vastolord do marshadow (uma vez por forma): o `press` consome o
  * stack e abre o `SpecialIntro` (background `vastolordForm/habilities/laser/`
  * por 1s em slow-motion, com o personagem travado); ao fim do intro o
  * personagem troca para o sprite `laser.svg` e um feixe (`vastolordLaser.svg`)
@@ -182,7 +182,7 @@ export function useVastolordLaser({
 
   const { usableRef, shouldCancelRef } = useSkillGuard({
     player,
-    character: "marcelo",
+    character: "marshadow",
     freezeActionsUntilRef,
     disabledRef,
     isPausedRef,
@@ -479,7 +479,7 @@ export function useVastolordLaser({
     // roda, então o disparo acontece na hora.
     if (
       !startSpecialIntro(
-        "marcelo",
+        "marshadow",
         () => fireRef.current(),
         "laser",
         "vastolordForm",

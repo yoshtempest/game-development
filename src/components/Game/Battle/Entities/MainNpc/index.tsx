@@ -1,7 +1,7 @@
 import { NPCBattle } from "@/components/Game/Entities/Npc/Battle";
 import type { BattleEntitiesBattle } from "@/components/Game/Battle/Entities/types";
-import type { CutInEnemieOverlay } from "@/hooks/battle/player/characters/marshadow/useMarceloCutInEnemie";
-import type { LucauaPortalCross } from "@/utils/types/character/lucaua";
+import type { CutInEnemieOverlay } from "@/hooks/battle/player/characters/marshadow/useMarshadowCutInEnemie";
+import type { BabidiPortalCross } from "@/utils/types/character/babidi";
 
 type Props = {
   x: number;
@@ -18,7 +18,7 @@ type Props = {
   npcBleeding?: boolean;
   purpleHole?: boolean;
   /** Travessia em andamento por um portal terrestre (sprite dividido). */
-  lucauaPortalCross?: LucauaPortalCross | null;
+  babidiPortalCross?: BabidiPortalCross | null;
 };
 
 export function MainNpc({
@@ -35,7 +35,7 @@ export function MainNpc({
   cutInEnemie = null,
   npcBleeding = false,
   purpleHole = false,
-  lucauaPortalCross = null,
+  babidiPortalCross = null,
 }: Props) {
   return (
     <NPCBattle
@@ -55,7 +55,7 @@ export function MainNpc({
       cutInEnemie={cutInEnemie}
       npcBleeding={npcBleeding}
       purpleHole={purpleHole}
-      lucauaPortalCross={lucauaPortalCross}
+      babidiPortalCross={babidiPortalCross}
     />
   );
 }

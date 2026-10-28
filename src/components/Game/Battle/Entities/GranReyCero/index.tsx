@@ -3,8 +3,8 @@ import { playerPathMarshadowHabilities } from "@/utils/paths";
 import {
   GRAN_REY_CERO_EFFECT_HEIGHT,
   GRAN_REY_CERO_EFFECT_WIDTH,
-} from "@/data/characters/marcelo/granReyCero";
-import { granReyCeroEffectTop } from "@/gameRules/battle/characters/marcelo/granReyCero";
+} from "@/data/characters/marshadow/granReyCero";
+import { granReyCeroEffectTop } from "@/gameRules/battle/characters/marshadow/granReyCero";
 import type { BattleEntityPositioning } from "@/components/Game/Battle/Entities/types";
 
 import styles from "./styles.module.css";
@@ -24,7 +24,7 @@ type Props = BattleEntityPositioning & {
  * para a direita, a ponta fica na borda esquerda do sprite e o corpo da lâmina
  * se estende para trás, de onde ela veio; para a esquerda, tudo espelhado.
  *
- * Verticalmente fica centralizada no sprite renderizado do marcelo, como o
+ * Verticalmente fica centralizada no sprite renderizado do marshadow, como o
  * feixe do Laser Vastolord, para o corte cortar o inimigo na altura do peito.
  */
 export function GranReyCero({

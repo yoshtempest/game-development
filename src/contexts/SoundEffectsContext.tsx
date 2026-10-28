@@ -39,7 +39,7 @@ const SOUND_VOLUMES: Partial<Record<SoundId, number>> = {
   impact: 0.5,
   hollowPurple: 1.3,
   domainInitiate: 1.7,
-  riquelmeOpenedDomain: 1.3,
+  natsukiOpenedDomain: 1.3,
   atomic: 0.7,
   mugetsu: 2,
   win: 0.5,

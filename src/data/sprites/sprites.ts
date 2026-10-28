@@ -126,12 +126,12 @@ export const STATE_FOLDER: Partial<Record<PlayerState, string | null>> = {
   blocked: null,
   stun: null,
   charging: null,
-  // Carga de Ki do emanuel: resolve para `inFight/habilities/chargingKi/`
+  // Carga de Ki do ematron: resolve para `inFight/habilities/chargingKi/`
   // (sprite base `chargingKi.svg` e effect `chargingKiEffect.svg`).
   chargingKi: "attacks",
   fallen: null,
 
-  // Combo do emanuel: golpes resolvem para a pasta `attacks/` via
+  // Combo do ematron: golpes resolvem para a pasta `attacks/` via
   // ATTACK_FOLDER_ALT (mesmo mecanismo do preAttack/attack padrão).
   // blockAttack, fallingAttack e lowKick usam o mesmo arquivo (lowKick.svg) —
   // os duplicados blockAttack.svg e fallingAttack.svg foram removidos.
@@ -140,7 +140,7 @@ export const STATE_FOLDER: Partial<Record<PlayerState, string | null>> = {
   lowKick: "attack",
   airGrab: "attack",
   airKick: "attack",
-  // Genki Dama do emanuel: a fase de subida usa `falling.svg` de movement/jump;
+  // Genki Dama do ematron: a fase de subida usa `falling.svg` de movement/jump;
   // preparando e arremesso usam sprites dedicados em `habilities/genkiDama/`.
   genkiDamaRising: null, // sprite resolvido como falling (movement) em paths.ts
 };

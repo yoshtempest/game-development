@@ -11,7 +11,7 @@ const SFX_VOLUME: Record<string, number> = {
   atomic: 0.7,
   mugetsu: 2,
   hollowPurple: 1.3,
-  riquelmeOpenedDomain: 1.3,
+  natsukiOpenedDomain: 1.3,
   win: 0.5,
 };
 

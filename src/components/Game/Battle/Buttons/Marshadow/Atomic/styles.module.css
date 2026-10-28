@@ -1,6 +1,6 @@
 .button {
   border: var(--size-2) solid var(--accent-50);
-  background-image: url("public/assets/player/marcelo/inFight/default/habilities/atomic/background.svg");
+  background-image: url("public/assets/player/marshadow/inFight/default/habilities/atomic/background.svg");
   animation: atomicGlow 1.5s ease-in-out infinite;
 }
 

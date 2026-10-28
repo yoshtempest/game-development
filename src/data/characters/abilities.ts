@@ -7,17 +7,17 @@ import type {
 } from "@/utils/types/player/abilities";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 
-import { ARTUR_ACTIVE_ABILITIES } from "./artur/abilities";
-import { LARISSA_ACTIVE_ABILITIES } from "./larissa/abilities";
-import { RIQUELME_ACTIVE_ABILITIES } from "./riquelme/abilities";
-import { LUCAS_ACTIVE_ABILITIES } from "./lucas/abilities";
-import { LUCAUA_ACTIVE_ABILITIES } from "./lucaua/abilities";
-import { EMANUEL_ACTIVE_ABILITIES } from "./emanuel/abilities";
-import { MARCELO_ACTIVE_ABILITIES } from "./marcelo/abilities";
-import { EDUARDA_ACTIVE_ABILITIES } from "./eduarda/abilities";
-import { SAMUEL_ACTIVE_ABILITIES } from "./samuel/abilities";
-import { MAYRA_ACTIVE_ABILITIES } from "./mayra/abilities";
-import { CAMILLY_ACTIVE_ABILITIES } from "./camilly/abilities";
+import { SR_GUAXINIM_ACTIVE_ABILITIES } from "./srGuaxinim/abilities";
+import { LARICELL_ACTIVE_ABILITIES } from "./laricell/abilities";
+import { NATSUKI_ACTIVE_ABILITIES } from "./natsuki/abilities";
+import { YVEL_ACTIVE_ABILITIES } from "./yvel/abilities";
+import { BABIDI_ACTIVE_ABILITIES } from "./babidi/abilities";
+import { EMATRON_ACTIVE_ABILITIES } from "./ematron/abilities";
+import { MARSHADOW_ACTIVE_ABILITIES } from "./marshadow/abilities";
+import { DRIKA_ACTIVE_ABILITIES } from "./drika/abilities";
+import { SAMUEL_ACTIVE_ABILITIES } from "./samurion/abilities";
+import { YRA_ACTIVE_ABILITIES } from "./yra/abilities";
+import { CAMYKAZE_ACTIVE_ABILITIES } from "./camyKaze/abilities";
 import { LEVI_ACTIVE_ABILITIES } from "./levi/abilities";
 
 /**
@@ -31,17 +31,17 @@ import { LEVI_ACTIVE_ABILITIES } from "./levi/abilities";
 export const CHARACTER_ACTIVE_ABILITIES: Partial<
   Record<CharacterId, ActiveAbility[]>
 > = {
-  artur: ARTUR_ACTIVE_ABILITIES,
-  larissa: LARISSA_ACTIVE_ABILITIES,
-  riquelme: RIQUELME_ACTIVE_ABILITIES,
-  lucas: LUCAS_ACTIVE_ABILITIES,
-  lucaua: LUCAUA_ACTIVE_ABILITIES,
-  emanuel: EMANUEL_ACTIVE_ABILITIES,
-  marcelo: MARCELO_ACTIVE_ABILITIES,
-  eduarda: EDUARDA_ACTIVE_ABILITIES,
-  samuel: SAMUEL_ACTIVE_ABILITIES,
-  mayra: MAYRA_ACTIVE_ABILITIES,
-  camilly: CAMILLY_ACTIVE_ABILITIES,
+  srGuaxinim: SR_GUAXINIM_ACTIVE_ABILITIES,
+  laricell: LARICELL_ACTIVE_ABILITIES,
+  natsuki: NATSUKI_ACTIVE_ABILITIES,
+  yvel: YVEL_ACTIVE_ABILITIES,
+  babidi: BABIDI_ACTIVE_ABILITIES,
+  ematron: EMATRON_ACTIVE_ABILITIES,
+  marshadow: MARSHADOW_ACTIVE_ABILITIES,
+  drika: DRIKA_ACTIVE_ABILITIES,
+  samurion: SAMUEL_ACTIVE_ABILITIES,
+  yra: YRA_ACTIVE_ABILITIES,
+  camyKaze: CAMYKAZE_ACTIVE_ABILITIES,
   levi: LEVI_ACTIVE_ABILITIES,
 };
 

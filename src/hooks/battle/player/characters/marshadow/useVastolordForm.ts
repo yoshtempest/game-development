@@ -45,14 +45,14 @@ export type VastolordFormApi = {
 };
 
 /**
- * Passiva do marcelo: ao morrer, desperta a Forma Vastolord por `durationMs`.
+ * Passiva do marshadow: ao morrer, desperta a Forma Vastolord por `durationMs`.
  * A barra de vida volta a 100%, dano e armadura multiplicam por 4 e, se o
  * inimigo não for derrotado dentro do prazo, o jogador perde a batalha.
  *
  * A transformação ativa a sequência de sprites `transformating/` por
  * `VASTOLORD_TRANSFORM_MS` (1s por quadro), ao fim da qual o sprite volta ao
  * `idle` da forma. `vastolordActive` já é verdadeiro durante a animação — os
- * sprites do marcelo passam a vir exclusivamente de `vastolordForm/`.
+ * sprites do marshadow passam a vir exclusivamente de `vastolordForm/`.
  */
 export function useVastolordForm({
   enabled,

@@ -17,15 +17,15 @@ import type { TimeEffect } from "@/gameRules/battle/time";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { DOMAIN_SHATTER_MS } from "@/data/characters/domainExpansions";
 import {
-  RIQUELME_DOMAIN_DRAIN_INTERVAL_MS,
-  RIQUELME_DOMAIN_DRAIN_RATIO,
-  RIQUELME_DOMAIN_MANA_RATIO,
-  RIQUELME_DOMAIN_MS,
-  RIQUELME_DOMAIN_TIME_ID,
-} from "@/data/characters/riquelme/riquelme";
+  NATSUKI_DOMAIN_DRAIN_INTERVAL_MS,
+  NATSUKI_DOMAIN_DRAIN_RATIO,
+  NATSUKI_DOMAIN_MANA_RATIO,
+  NATSUKI_DOMAIN_MS,
+  NATSUKI_DOMAIN_TIME_ID,
+} from "@/data/characters/natsuki/natsuki";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { SoundId } from "@/utils/audio/soundId";
-import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
+import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/types";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 
 type Props = {
@@ -38,7 +38,7 @@ type Props = {
   };
   /** Vida atual do NPC principal — se já está zerada, o tick não drena. */
   npcHP: number;
-  /** Vida MÁXIMA do NPC principal: o tick é `RIQUELME_DOMAIN_DRAIN_RATIO` dela. */
+  /** Vida MÁXIMA do NPC principal: o tick é `NATSUKI_DOMAIN_DRAIN_RATIO` dela. */
   npcMaxHp: number;
   setNpcHP: Dispatch<SetStateAction<number>>;
   /** Summons inimigos — todos drenam no mesmo ritmo do NPC principal. */
@@ -52,8 +52,8 @@ type Props = {
   ) => void;
   freezeActionsUntilRef: RefObject<number>;
   /**
-   * Energia amaldiçoada do riquelme: o uso do domínio consome metade do que ele
-   * tem no momento (`RIQUELME_DOMAIN_MANA_RATIO`), além das 40 cargas.
+   * Energia amaldiçoada do natsuki: o uso do domínio consome metade do que ele
+   * tem no momento (`NATSUKI_DOMAIN_MANA_RATIO`), além das 40 cargas.
    */
   battleManaRef: RefObject<BattleManaApi | null>;
   /** Efeitos de time da batalha (regra `gameRules/battle/time`). */
@@ -71,7 +71,7 @@ type Props = {
     character: string,
     onActivate: () => void,
     ability?: string,
-    form?: MarceloBattleForm,
+    form?: MarshadowBattleForm,
     onCancel?: () => void,
   ) => boolean;
   playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
@@ -82,7 +82,7 @@ type Props = {
   setDelicia: Dispatch<SetStateAction<number>>;
 };
 
-type RiquelmeDomainApi = {
+type NatsukiDomainApi = {
   /** O `expansion.svg` está em cena (intro + dreno + quebra). */
   active: boolean;
   /** Fase de estilhaço: algum inimigo sobreviveu e o vidro quebra e desce. */
@@ -92,11 +92,11 @@ type RiquelmeDomainApi = {
 };
 
 /**
- * Expansão de Domínio do riquelme (Muryōkūsho): o personagem trava na pose
+ * Expansão de Domínio do natsuki (Muryōkūsho): o personagem trava na pose
  * `rioiki.svg`, o mundo inteiro congela (o player fica de fora do `TimeKind`;
  * o lock dele é o `freezeActionsUntilRef`) e TODOS os inimigos — o NPC
- * principal e os summons — drenam `RIQUELME_DOMAIN_DRAIN_RATIO` (0,2%) da
- * própria vida MÁXIMA a cada `RIQUELME_DOMAIN_DRAIN_INTERVAL_MS` (50ms), por
+ * principal e os summons — drenam `NATSUKI_DOMAIN_DRAIN_RATIO` (0,2%) da
+ * própria vida MÁXIMA a cada `NATSUKI_DOMAIN_DRAIN_INTERVAL_MS` (50ms), por
  * 5s. O dreno é direto no HP (não passa pelo funil de armadura), então um boss
  * que se regenera continua perdendo vida até o domínio acabar (a regeneração
  * dele entra no meio).
@@ -108,10 +108,10 @@ type RiquelmeDomainApi = {
  *
  * No fim, se algum inimigo sobreviveu, o `expansion.svg` estilhaça como vidro
  * e desce para fora do campo de visão — a mesma quebra que a Expansão do
- * marcelo usa quando sobra alguém. Se ninguém sobreviveu, a batalha só segue
+ * marshadow usa quando sobra alguém. Se ninguém sobreviveu, a batalha só segue
  * (vitória pelo lifecycle normal: o dreno pode zerar a vida e matar de verdade).
  * Custo: as 40 cargas da barra + metade da energia amaldiçoada que ele tem no
- * momento (`RIQUELME_DOMAIN_MANA_RATIO`), sem cooldown próprio. Durante o
+ * momento (`NATSUKI_DOMAIN_MANA_RATIO`), sem cooldown próprio. Durante o
  * domínio o personagem fica na pose `rioiki`, e é ela que trava o blink
  * (passiva O Abençoado): teleportar no meio do domínio seria fugir dele.
  */
@@ -137,7 +137,7 @@ export function useMuryokushoExpansion({
   charges,
   chargesMax,
   setDelicia,
-}: Props): RiquelmeDomainApi {
+}: Props): NatsukiDomainApi {
   const [active, setActive] = useState(false);
   const [shattering, setShattering] = useState(false);
 
@@ -176,7 +176,7 @@ export function useMuryokushoExpansion({
 
   const { usable, usableRef, shouldCancelRef } = useSkillGuard({
     player,
-    character: "riquelme",
+    character: "natsuki",
     freezeActionsUntilRef,
     disabledRef,
     isPausedRef,
@@ -197,9 +197,9 @@ export function useMuryokushoExpansion({
     }
   }, []);
 
-  /** Vida máxima → 1 tick de dreno (`RIQUELME_DOMAIN_DRAIN_RATIO`, no mínimo 1). */
+  /** Vida máxima → 1 tick de dreno (`NATSUKI_DOMAIN_DRAIN_RATIO`, no mínimo 1). */
   const tickDamage = useCallback((maxHp: number) => {
-    return Math.max(1, Math.floor(maxHp * RIQUELME_DOMAIN_DRAIN_RATIO));
+    return Math.max(1, Math.floor(maxHp * NATSUKI_DOMAIN_DRAIN_RATIO));
   }, []);
 
   /**
@@ -265,11 +265,11 @@ export function useMuryokushoExpansion({
     activeRef.current = false;
     clearTimers();
     clearDrain();
-    timeRef.current = clearTime(timeRef.current, RIQUELME_DOMAIN_TIME_ID);
+    timeRef.current = clearTime(timeRef.current, NATSUKI_DOMAIN_TIME_ID);
     setActive(false);
     setShattering(false);
     setPlayer((p) =>
-      p.mode !== "battle" || !ALL_PREDICATES.isRiquelmeDomain(p.state)
+      p.mode !== "battle" || !ALL_PREDICATES.isNatsukiDomain(p.state)
         ? p
         : { ...p, state: "idle" },
     );
@@ -284,7 +284,7 @@ export function useMuryokushoExpansion({
    */
   const endDomain = useCallback(() => {
     clearDrain();
-    timeRef.current = clearTime(timeRef.current, RIQUELME_DOMAIN_TIME_ID);
+    timeRef.current = clearTime(timeRef.current, NATSUKI_DOMAIN_TIME_ID);
 
     if (!hasSurvivor()) {
       finishRef.current();
@@ -297,7 +297,7 @@ export function useMuryokushoExpansion({
     // abrindo uma janela para ser atacado sem reagir.
     freezeActionsUntilRef.current = Date.now();
     setPlayer((p) =>
-      p.mode !== "battle" || !ALL_PREDICATES.isRiquelmeDomain(p.state)
+      p.mode !== "battle" || !ALL_PREDICATES.isNatsukiDomain(p.state)
         ? p
         : { ...p, state: "idle" },
     );
@@ -327,15 +327,13 @@ export function useMuryokushoExpansion({
     }
 
     // O custo é a barra inteira: as 40 cargas somem no uso (sem cooldown) —
-    // mais `RIQUELME_DOMAIN_MANA_RATIO` da energia amaldiçoada que ele tem no
+    // mais `NATSUKI_DOMAIN_MANA_RATIO` da energia amaldiçoada que ele tem no
     // momento. Como é sempre metade do que existe, não há mínimo exigido: o
     // domínio sempre paga (e esvazia o tanque pela metade).
     setDeliciaRef.current(0);
     const mana = battleManaRef.current;
     if (mana) {
-      mana.consumeMana(
-        Math.floor(mana.playerMana * RIQUELME_DOMAIN_MANA_RATIO),
-      );
+      mana.consumeMana(Math.floor(mana.playerMana * NATSUKI_DOMAIN_MANA_RATIO));
     }
 
     setShattering(false);
@@ -344,22 +342,22 @@ export function useMuryokushoExpansion({
     // `TimeKind`; o lock dele é o `freezeActionsUntilRef`.
     timeRef.current = applyTime(
       timeRef.current,
-      freezeWorldSpec(RIQUELME_DOMAIN_TIME_ID, RIQUELME_DOMAIN_MS),
+      freezeWorldSpec(NATSUKI_DOMAIN_TIME_ID, NATSUKI_DOMAIN_MS),
     );
     freezeActionsUntilRef.current = Math.max(
       freezeActionsUntilRef.current,
-      Date.now() + RIQUELME_DOMAIN_MS,
+      Date.now() + NATSUKI_DOMAIN_MS,
     );
     playSoundRef.current("domainInitiate");
-    playSoundRef.current("riquelmeOpenedDomain");
+    playSoundRef.current("natsukiOpenedDomain");
 
     timers.clear();
     drainTickRef.current();
     drainTimerRef.current = setInterval(
       () => drainTickRef.current(),
-      RIQUELME_DOMAIN_DRAIN_INTERVAL_MS,
+      NATSUKI_DOMAIN_DRAIN_INTERVAL_MS,
     );
-    timers.schedule(() => endDomainRef.current(), RIQUELME_DOMAIN_MS);
+    timers.schedule(() => endDomainRef.current(), NATSUKI_DOMAIN_MS);
   }, [
     battleManaRef,
     drainTickRef,
@@ -385,7 +383,7 @@ export function useMuryokushoExpansion({
     // nunca entrou em cena.
     freezeActionsUntilRef.current = Math.max(
       freezeActionsUntilRef.current,
-      Date.now() + RIQUELME_DOMAIN_MS,
+      Date.now() + NATSUKI_DOMAIN_MS,
     );
     // `activeRef` liga aqui, não só no `startDomain`: a intro pode segurar 1s
     // antes de chamar o callback, e é ele que fecha o botão (`extraCanUse`) e
@@ -402,14 +400,14 @@ export function useMuryokushoExpansion({
 
     // SFX da abertura: sai junto com a intro `background.svg` entrando na
     // tela (é o grito/pose do `rioiki.svg`). O som do domínio em si —
-    // `riquelmeOpenedDomain` — é o `startDomain`, que roda só no fim da intro.
-    playSoundRef.current("riquelmeRioiki");
+    // `natsukiOpenedDomain` — é o `startDomain`, que roda só no fim da intro.
+    playSoundRef.current("natsukiRioiki");
 
     // A intro `background.svg` abre o domínio; sem o intro (Config), o
     // `startDomain` roda na hora. Se já havia um intro em curso (o hook
     // devolve false sem chamar o callback), não deixa o domínio pendurado.
     const started = startIntroRef.current(
-      "riquelme",
+      "natsuki",
       () => startDomainRef.current(),
       "domainExpansion",
       undefined,
@@ -438,7 +436,7 @@ export function useMuryokushoExpansion({
       clearDrain();
       activeRef.current = false;
       // Desmontou no meio do domínio: não deixa o mundo congelado para trás.
-      time.current = clearTime(time.current, RIQUELME_DOMAIN_TIME_ID);
+      time.current = clearTime(time.current, NATSUKI_DOMAIN_TIME_ID);
     };
   }, [clearDrain, clearTimers, timeRef]);
 

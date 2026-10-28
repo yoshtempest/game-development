@@ -44,15 +44,15 @@ export function saveProgress(data: RewardsProgress): void {
 }
 
 const CHAR_TO_FLAG: Record<string, FlagId> = {
-  samuel: "samurionUnlocked",
-  artur: "srGuaxinimUnlocked",
-  emanuel: "ematronUnlocked",
-  larissa: "laricellUnlocked",
-  mayra: "yraUnlocked",
-  camilly: "kamykazeUnlocked",
-  lucas: "yvelUnlocked",
-  lucaua: "babidiUnlocked",
-  riquelme: "natsukiUnlocked",
+  samurion: "samurionUnlocked",
+  srGuaxinim: "srGuaxinimUnlocked",
+  ematron: "ematronUnlocked",
+  laricell: "laricellUnlocked",
+  yra: "yraUnlocked",
+  camyKaze: "kamykazeUnlocked",
+  yvel: "yvelUnlocked",
+  babidi: "babidiUnlocked",
+  natsuki: "natsukiUnlocked",
 };
 
 export function getUnlockedCount(flags: FlagId[]): number {

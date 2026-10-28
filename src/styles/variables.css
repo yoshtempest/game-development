@@ -149,13 +149,13 @@
   --ability-ematron-pale: #cffafe;
   --ability-freeze: #7dd3fc;
   --ability-freeze-80: rgba(125, 211, 252, 0.8);
-  --ability-lucaua: #34d399;
-  --ability-lucaua-15: rgba(52, 211, 153, 0.15);
-  --ability-lucaua-25: rgba(52, 211, 153, 0.25);
-  --ability-lucaua-35: rgba(52, 211, 153, 0.35);
-  --ability-lucaua-50: rgba(52, 211, 153, 0.5);
-  --ability-lucaua-80: rgba(52, 211, 153, 0.8);
-  --ability-lucaua-pale: #d1fae5;
+  --ability-babidi: #34d399;
+  --ability-babidi-15: rgba(52, 211, 153, 0.15);
+  --ability-babidi-25: rgba(52, 211, 153, 0.25);
+  --ability-babidi-35: rgba(52, 211, 153, 0.35);
+  --ability-babidi-50: rgba(52, 211, 153, 0.5);
+  --ability-babidi-80: rgba(52, 211, 153, 0.8);
+  --ability-babidi-pale: #d1fae5;
   --ability-marshadow: #8b7cf6;
   --ability-marshadow-50: rgba(139, 124, 246, 0.5);
   --ability-marshadow-deep: #6d5bd0;
@@ -173,7 +173,7 @@
   --ability-natsuki-50: rgba(232, 65, 24, 0.5);
   --ability-natsuki-80: rgba(232, 65, 24, 0.8);
   --ability-natsuki-deep: #e03a1f;
-  /* Esfera roxa (fusão blue+red do riquelme) */
+  /* Esfera roxa (fusão blue+red do natsuki) */
   --ability-purple: #a855f7;
   --ability-purple-15: rgba(168, 85, 247, 0.15);
   --ability-purple-30: rgba(168, 85, 247, 0.3);

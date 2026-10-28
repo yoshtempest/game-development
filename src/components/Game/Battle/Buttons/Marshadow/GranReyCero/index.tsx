@@ -1,6 +1,6 @@
 import { playerPathMarshadowHabilities } from "@/utils/paths";
 
-import { GRAN_REY_CERO_AOE_RADIUS } from "@/data/characters/marcelo/granReyCero";
+import { GRAN_REY_CERO_AOE_RADIUS } from "@/data/characters/marshadow/granReyCero";
 
 import styles from "./styles.module.css";
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";

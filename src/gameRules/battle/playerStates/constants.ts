@@ -74,7 +74,7 @@ export const ATTACK_WINDUP_STATES = stateSet<PlayerBasicAttackState>(
 );
 /**
  * Ataque básico em pose: windup `preAttack` ou golpe `attack` segurado. É o
- * que o ORA do artur mantém na pose de ataque.
+ * que o ORA do srGuaxinim mantém na pose de ataque.
  */
 export const ATTACK_POSE_STATES = stateSet<PlayerBasicAttackState>(
   "preAttack",
@@ -88,41 +88,43 @@ export const ABILITY_TRIGGER_STATES = stateSet<PlayerAbilityState>(
 );
 
 // ── Habilidades ───────────────────────────────────────────
-/** Genki Dama (emanuel) — o personagem sobe e fica flutuando. */
+/** Genki Dama (ematron) — o personagem sobe e fica flutuando. */
 export const GENKI_DAMA_STATES = stateSet<PlayerGenkiDamaState>(
   "genkiDamaRising",
   "preparingGenkiDama",
   "throwGenkiDama",
 );
-/** "I Am Atomic" (marcelo). */
+/** "I Am Atomic" (marshadow). */
 export const ATOMIC_STATES = stateSet<PlayerAtomicState>(
   "preparingAtomic",
   "finalizatingAtomic",
 );
-/** Expansão de Domínio (marcelo). */
+/** Expansão de Domínio (marshadow). */
 export const DOMAIN_EXPANSION_STATES = stateSet<PlayerDomainExpansionState>(
   "preMugetsu",
   "mugetsu",
 );
-/** Expansão de Domínio do riquelme (Muryōkūsho) — pose `rioiki.svg` por 5s. */
-export const RIQUELME_DOMAIN_STATES =
-  stateSet<PlayerRiquelmeDomainState>("rioiki");
-/** Laser da Forma Vastolord (marcelo). */
+/** Expansão de Domínio do natsuki (Muryōkūsho) — pose `rioiki.svg` por 5s. */
+export const NATSUKI_DOMAIN_STATES =
+  stateSet<PlayerNatsukiDomainState>("rioiki");
+/** Laser da Forma Vastolord (marshadow). */
 export const LASER_STATES = stateSet<PlayerLaserState>("laser");
-/** "Gran Rey Cero" (marcelo). */
+/** "Gran Rey Cero" (marshadow). */
 export const GRAN_REY_CERO_STATES =
   stateSet<PlayerGranReyCeroState>("granReyCero");
 
 /**
- * Kamehameha do emanuel: fase de carga (`chargingKamehameha`, sprite
+ * Kamehameha do ematron: fase de carga (`chargingKamehameha`, sprite
  * `chargingKamehameha.svg`) e fase de disparo (`kamehameha`, sprite
  * `kamehameha.svg` + efeito `kamehamehaEffect`).
  */
-export const KAMEHAMEHA_STATES =
-  stateSet<PlayerKamehamehaState>("chargingKamehameha", "kamehameha");
+export const KAMEHAMEHA_STATES = stateSet<PlayerKamehamehaState>(
+  "chargingKamehameha",
+  "kamehameha",
+);
 /**
- * Esferas do riquelme (blue/red) e a fusão delas na purple: a sequência é
- * conduzida pelo hook `useRiquelmeSpheres`; `purpleJunction` é a fusão (blue +
+ * Esferas do natsuki (blue/red) e a fusão delas na purple: a sequência é
+ * conduzida pelo hook `useNatsukiSpheres`; `purpleJunction` é a fusão (blue +
  * red convergindo) e `blueSphereControl` é o Hold do controle da blue.
  */
 export const SPHERE_STATES = stateSet<PlayerSphereState>(
@@ -161,7 +163,7 @@ export const ACTION_LOCK_STATES = unionOf(
     "kamehameha",
   ),
   SPHERE_STATES,
-  RIQUELME_DOMAIN_STATES,
+  NATSUKI_DOMAIN_STATES,
 );
 /** O jogador não age: trava de ação, defesa ou reação a dano. */
 export const CANNOT_ACT_STATES = unionOf(
@@ -199,7 +201,7 @@ export const ABILITY_LOCKED_STATES = unionOf(
   INVULNERABLE_STATES,
 );
 
-// ── Combo do emanuel ──────────────────────────────────────
+// ── Combo do ematron ──────────────────────────────────────
 /** Golpes de solo do combo. */
 export const GROUND_COMBO_STATES = stateSet<PlayerComboState>(
   "punch",
@@ -239,7 +241,7 @@ export const ALL_STATES = {
   LASER_STATES,
   GRAN_REY_CERO_STATES,
   SPHERE_STATES,
-  RIQUELME_DOMAIN_STATES,
+  NATSUKI_DOMAIN_STATES,
   KAMEHAMEHA_STATES,
 
   // Defesa e reação

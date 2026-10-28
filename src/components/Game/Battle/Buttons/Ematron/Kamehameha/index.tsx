@@ -1,4 +1,4 @@
-import { playerPathEmanuelHabilities } from "@/utils/paths";
+import { playerPathEmatronHabilities } from "@/utils/paths";
 
 import styles from "./styles.module.css";
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
@@ -9,7 +9,7 @@ type Props = {
 };
 
 /**
- * Botão do Kamehameha do Emanuel: press dispara a carga (2.8s no sprite
+ * Botão do Kamehameha do Ematron: press dispara a carga (2.8s no sprite
  * `chargingKamehameha.svg`) e o efeito (`kamehamehaEffect.svg`, 2s) dispara em
  * direção da face. Enquanto a habilidade está em curso o player não pode agir.
  */
@@ -18,11 +18,8 @@ const kamehamehaClasses: CustomAbilityClasses = {
   label: styles.label,
 };
 
-export function EmanuelKamehamehaButton({
-  disabled = false,
-  onClick,
-}: Props) {
-  const imageUrl = playerPathEmanuelHabilities("/kamehameha/kamehameha.svg");
+export function EmatronKamehamehaButton({ disabled = false, onClick }: Props) {
+  const imageUrl = playerPathEmatronHabilities("/kamehameha/kamehameha.svg");
 
   return (
     <AbilityButton

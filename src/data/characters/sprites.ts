@@ -1,16 +1,16 @@
 import { playerPath } from "@/utils/paths";
 
 export const characterSprites = {
-  marcelo: playerPath("/marcelo/expressions/default.svg"),
-  eduarda: playerPath("/eduarda/expressions/default.svg"),
-  lucas: playerPath("/lucas/expressions/default.svg"),
-  artur: playerPath("/arturexpressions//default.svg"),
-  camilly: playerPath("/camilly/expressions/default.svg"),
-  emanuel: playerPath("/emanuel/expressions/default.svg"),
-  mayra: playerPath("/mayra/expressions/default.svg"),
-  riquelme: playerPath("/riquelme/expressions/default.svg"),
-  samuel: playerPath("/samuel/expressions/default.svg"),
-  larissa: playerPath("/larissa/expressions/default.svg"),
-  lucaua: playerPath("/lucaua/expressions/default.svg"),
+  marshadow: playerPath("/marshadow/expressions/default.svg"),
+  drika: playerPath("/drika/expressions/default.svg"),
+  yvel: playerPath("/yvel/expressions/default.svg"),
+  srGuaxinim: playerPath("/srGuaxinimexpressions//default.svg"),
+  camyKaze: playerPath("/camyKaze/expressions/default.svg"),
+  ematron: playerPath("/ematron/expressions/default.svg"),
+  yra: playerPath("/yra/expressions/default.svg"),
+  natsuki: playerPath("/natsuki/expressions/default.svg"),
+  samurion: playerPath("/samurion/expressions/default.svg"),
+  laricell: playerPath("/laricell/expressions/default.svg"),
+  babidi: playerPath("/babidi/expressions/default.svg"),
   levi: playerPath("/levi/expressions/default.svg"),
 };

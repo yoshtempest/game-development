@@ -1,9 +1,9 @@
 import { playerProjectilePath } from "@/utils/paths";
-import { VASTOLORD_LASER_BEAM_HEIGHT } from "@/data/characters/marcelo/marshadowLaser";
+import { VASTOLORD_LASER_BEAM_HEIGHT } from "@/data/characters/marshadow/marshadowLaser";
 import {
   vastolordLaserTop,
   type VastolordLaserBeam,
-} from "@/gameRules/battle/characters/marcelo/vastolordLaser";
+} from "@/gameRules/battle/characters/marshadow/vastolordLaser";
 import type { BattleEntityPositioning } from "@/components/Game/Battle/Entities/types";
 import styles from "./styles.module.css";
 
@@ -18,7 +18,7 @@ type Props = BattleEntityPositioning & {
  * (o sprite tem exatamente 1000x243, a largura do mapa) do personagem até a
  * ponta do mapa na direção que ele mira, centralizada na imagem do jogador:
  * o centro vertical do feixe coincide com o centro vertical do sprite
- * renderizado do marcelo na Forma Vastolord.
+ * renderizado do marshadow na Forma Vastolord.
  *
  * Animações:
  * - starting: cresce do centro (scaleX 0 -> 1) em 300ms

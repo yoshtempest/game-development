@@ -1,0 +1,48 @@
+.button {
+  border: var(--size-2) solid var(--ability-babidi-50);
+  background: var(--ability-babidi-15);
+  animation: portalGlow 2s ease-in-out infinite;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--ability-babidi-35);
+}
+
+.full {
+  border-color: var(--ability-babidi-80);
+  background: var(--ability-babidi-25);
+}
+
+.count,
+.label,
+.cost {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.count {
+  font-size: var(--fs-18);
+  font-weight: bold;
+  color: var(--ability-babidi);
+}
+
+.label {
+  color: var(--ability-babidi-pale);
+}
+
+.cost {
+  font-size: var(--fs-11);
+  font-weight: bold;
+  color: var(--ability-babidi-pale);
+}
+
+@keyframes portalGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 var(--size-4) var(--ability-babidi-25);
+  }
+  50% {
+    box-shadow: 0 0 var(--size-16) var(--ability-babidi-80);
+  }
+}

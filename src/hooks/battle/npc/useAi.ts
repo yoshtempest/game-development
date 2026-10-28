@@ -27,7 +27,7 @@ import { getTime, NPC_TIME_ID, type TimeEffect } from "@/gameRules/battle/time";
 
 import { clampX } from "@/gameRules/movement/clampX";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
-import type { LucauaPortalWarpFn } from "@/utils/types/character/lucaua";
+import type { BabidiPortalWarpFn } from "@/utils/types/character/babidi";
 type Props = {
   playerX: number;
   playerY: number;
@@ -71,7 +71,7 @@ type Props = {
   onApplyDebuff?: (status: NewPlayerStatus) => void;
   /** Hit da burst do hungryKing (fase 2): 10% do dano base + push de 50px. */
   onBurstHit?: (pushDir: number) => void;
-  /** Esfera do Riquelme no estado atual (para colisão com projéteis inimigos). */
+  /** Esfera do Natsuki no estado atual (para colisão com projéteis inimigos). */
   playerProjectileRef?: React.RefObject<PlayerSpecialProjectile | null>;
   /** Vida dos projéteis destrutíveis, indexada pela natureza do seu dano. */
   projectileHpRef?: React.RefObject<Record<DamageKind, number>>;
@@ -81,8 +81,8 @@ type Props = {
   playerCooldownRef?: React.RefObject<boolean>;
   /** Dano real do golpe ativo (básico ou special) aplicado nos projéteis. */
   playerHitDamageRef?: React.RefObject<ProjectileHitDamageFn>;
-  /** Portais do lucaua: faz o projétil do NPC atravessar de um portal ao outro. */
-  portalWarpRef?: React.RefObject<LucauaPortalWarpFn | null>;
+  /** Portais do babidi: faz o projétil do NPC atravessar de um portal ao outro. */
+  portalWarpRef?: React.RefObject<BabidiPortalWarpFn | null>;
   /** Timestamp até onde os projéteis ficam congelados (Killer Queen). */
 };
 

@@ -2,7 +2,7 @@ import { useRef, useCallback, useEffect } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { PLAYER_CHARGE_DASH_COOLDOWN } from "@/data/cooldowns";
 import { isPlayerInRange } from "@/gameRules/battle/range";
-import { LUCAS_WEAPON_RANGES } from "@/data/characters/lucas/lucasWeapons";
+import { YVEL_WEAPON_RANGES } from "@/data/characters/yvel/yvelWeapons";
 import {
   DASH_DURATION,
   DASH_INTERVAL,
@@ -49,7 +49,7 @@ type Props = {
   playerHP: number;
   playerMaxHp: number;
   vampirism: VampirismStats;
-  weapon?: LucasWeapon;
+  weapon?: YvelWeapon;
   /** Multiplicador da Forma Vastolord aplicado no dano do dash. */
   vastolordMultiplierRef?: React.RefObject<() => number>;
 };
@@ -227,7 +227,7 @@ export function useChargeDash(props: Props) {
           titleDamageBonus,
         );
         const berserkRaw =
-          dashCharacter === "samuel" && dashCharRef.current.level >= 20
+          dashCharacter === "samurion" && dashCharRef.current.level >= 20
             ? rawDmg *
               combatService.getBerserkMultiplier(
                 playerHpRef.current,
@@ -257,8 +257,8 @@ export function useChargeDash(props: Props) {
               false,
               false,
               target.id === "main" ? npcClass : "common",
-              dashCharacter === "lucas" && weaponRef.current
-                ? LUCAS_WEAPON_RANGES[weaponRef.current]
+              dashCharacter === "yvel" && weaponRef.current
+                ? YVEL_WEAPON_RANGES[weaponRef.current]
                 : undefined,
             )
           ) {

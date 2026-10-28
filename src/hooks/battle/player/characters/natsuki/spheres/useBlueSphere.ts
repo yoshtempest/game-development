@@ -12,12 +12,12 @@ import {
   BLUE_SPHERE_PULL_PX,
   BLUE_SPHERE_RANGE,
   SPHERE_CONTROL_PX,
-} from "@/data/characters/riquelme/riquelme";
+} from "@/data/characters/natsuki/natsuki";
 
 import type { RefObject } from "react";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { SoundId } from "@/utils/audio/soundId";
-import type { RiquelmeSphere } from "@/utils/types/character/riquelme";
+import type { NatsukiSphere } from "@/utils/types/character/natsuki";
 import type { SphereBattle, SphereCore } from "./types";
 
 const BLUE_DAMAGE_KIND = getAbilityDamageType("blueSphere");
@@ -34,7 +34,7 @@ type Api = {
   press: () => void;
   usable: boolean;
   /** Tick das fases em campo (controle + atração/dano contínuo). */
-  tick: (s: RiquelmeSphere) => void;
+  tick: (s: NatsukiSphere) => void;
   /** Drain de energia amaldiçoada enquanto a esfera está em campo. */
   drain: () => void;
   /** Chamado quando o Setup acaba: o joystick passa a mover a esfera. */
@@ -42,7 +42,7 @@ type Api = {
 };
 
 /**
- * Blue do riquelme: a esfera persistente.
+ * Blue do natsuki: a esfera persistente.
  *
  * O 1º aperto casta e ENTREGA o controle (o joystick move a esfera e o
  * personagem fica parado); o 2º aperto para a esfera no lugar (ela segue
@@ -166,7 +166,7 @@ export function useBlueSphere({
   }
 
   /** Blue controlada: move pelo joystick (sem gravidade, presa na arena). */
-  function moveControlled(s: RiquelmeSphere) {
+  function moveControlled(s: NatsukiSphere) {
     let dx = 0;
     let dy = 0;
     if (leftRef.current) dx -= 1;
@@ -191,7 +191,7 @@ export function useBlueSphere({
   }
 
   /** Blue: atrai NPC/summons e causa dano mágico contínuo. */
-  function pullAndDamage(s: RiquelmeSphere, now: number) {
+  function pullAndDamage(s: NatsukiSphere, now: number) {
     const ratio = specialRatioRef.current;
     const mainNpc = npcRef.current;
 
@@ -252,7 +252,7 @@ export function useBlueSphere({
     }
   }
 
-  function tick(s: RiquelmeSphere) {
+  function tick(s: NatsukiSphere) {
     if (s.phase === "controlled") moveControlled(s);
     pullAndDamage(s, Date.now());
   }

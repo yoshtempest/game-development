@@ -10,7 +10,7 @@ type Props = {
 };
 
 /**
- * Botão do Blink (teleporte curto do Riquelme).
+ * Botão do Blink (teleporte curto do Natsuki).
  * type="hold" para usar valueText/costText.
  */
 const blinkClasses: CustomAbilityClasses = {

@@ -8,7 +8,7 @@ import { getComboAction } from "@/data/battle/comboActions";
  *
  * Não tem `onOpen`: o special saiu de `g`/Tab e virou botão de habilidade, e
  * o open agora abre a BattleNavbar (tratado em `useGameKeyboard`/`GameButtons`
- * fora da layer). Layers empurradas por cima (clone do emanuel, baú) podem
+ * fora da layer). Layers empurradas por cima (clone do ematron, baú) podem
  * ter `onOpen` próprio — a checagem vem antes do fallback de batalha.
  */
 type Props = {
@@ -21,7 +21,7 @@ type Props = {
   onChargePress?: () => void;
   onChargeRelease?: () => void;
   onChargeCancel?: () => void;
-  /** Chamado no onConfirmRelease quando não há charge (ex.: hold do artur). */
+  /** Chamado no onConfirmRelease quando não há charge (ex.: hold do srGuaxinim). */
   onComboRelease?: () => void;
 };
 

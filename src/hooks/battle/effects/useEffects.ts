@@ -25,7 +25,7 @@ export function useBattleEffects({ character }: Props) {
   }, []);
 
   const spawnPiercing = useCallback(() => {
-    if (character !== "larissa") return;
+    if (character !== "laricell") return;
 
     const offset = createRandomOffset();
 
@@ -40,7 +40,7 @@ export function useBattleEffects({ character }: Props) {
   }, [character, createRandomOffset]);
 
   const triggerExplosion = useCallback(() => {
-    if (character !== "larissa") return;
+    if (character !== "laricell") return;
 
     setIsExploding(true);
     setPiercings([]);

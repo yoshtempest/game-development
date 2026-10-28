@@ -1,9 +1,9 @@
 import { ProjectileConstants } from "@/data/projectile";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import {
-  EMANUEL_KI_CHARGE_EFFECT_ASPECT,
-  EMANUEL_KI_CHARGE_EFFECT_SIZE_MULTIPLIER,
-} from "@/data/characters/emanuel/emanuel";
+  EMATRON_KI_CHARGE_EFFECT_ASPECT,
+  EMATRON_KI_CHARGE_EFFECT_SIZE_MULTIPLIER,
+} from "@/data/characters/ematron";
 import { getViewportSize } from "@/utils/viewport";
 
 export interface PlayerDimensions {
@@ -30,10 +30,10 @@ export function getPlayerDimensions(playerSize: number): PlayerDimensions {
     (ProjectileConstants.MAP_HEIGHT * scale) / PLAYER_SPRITE_DIVISOR;
 
   const chargingEffectHeight =
-    height * EMANUEL_KI_CHARGE_EFFECT_SIZE_MULTIPLIER;
+    height * EMATRON_KI_CHARGE_EFFECT_SIZE_MULTIPLIER;
 
   const chargingEffectWidth =
-    chargingEffectHeight / EMANUEL_KI_CHARGE_EFFECT_ASPECT;
+    chargingEffectHeight / EMATRON_KI_CHARGE_EFFECT_ASPECT;
 
   return {
     scaleX,

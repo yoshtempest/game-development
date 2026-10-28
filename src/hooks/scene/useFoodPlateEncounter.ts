@@ -89,7 +89,7 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
   const raparigaPosRef = useRef({ gridX: 0, gridY: 0 });
   raparigaPosRef.current = raparigaPos;
 
-    const walkRouteRef = useRef<() => void>(() => {});
+  const walkRouteRef = useRef<() => void>(() => {});
 
   const walkLeaveRoute = useCallback(() => {
     if (stepIndexRef.current >= routeRef.current.length) {
@@ -398,10 +398,7 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
       // Começa a andar
       walkRoute();
     },
-    [
-      pushControls,
-      walkRoute,
-    ],
+    [pushControls, walkRoute],
   );
 
   // Verifica se tem foodPlate no chão (não estragado) a cada 5s
@@ -435,12 +432,7 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
 
     const interval = setInterval(checkForFoodPlate, RAPARIGA_CHECK_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [
-    getLootAt,
-    location.pathname,
-    startRaparigaEncounter,
-    player
-  ]);
+  }, [getLootAt, location.pathname, startRaparigaEncounter, player]);
 
   walkRouteRef.current = walkRoute;
 

@@ -8,7 +8,7 @@
   max-width: var(--size-720);
   padding: var(--size-32);
   overflow: hidden;
-  border: var(--size-2) solid var(--ability-lucaua-50);
+  border: var(--size-2) solid var(--ability-babidi-50);
   border-radius: var(--size-16);
   background: var(--overlay-92);
   animation: modalScaleIn 0.3s ease-out;
@@ -37,8 +37,8 @@
   margin: 0;
   font-size: var(--fs-28);
   font-weight: bold;
-  color: var(--ability-lucaua-pale);
-  text-shadow: 0 0 var(--size-12) var(--ability-lucaua-80);
+  color: var(--ability-babidi-pale);
+  text-shadow: 0 0 var(--size-12) var(--ability-babidi-80);
 }
 
 .hint {
@@ -63,7 +63,7 @@
   border: var(--size-2) solid transparent;
   border-radius: var(--size-12);
   background: none;
-  color: var(--ability-lucaua-pale);
+  color: var(--ability-babidi-pale);
   font: inherit;
   cursor: pointer;
   transition:
@@ -72,12 +72,12 @@
 }
 
 .options .option:hover {
-  border-color: var(--ability-lucaua-50);
+  border-color: var(--ability-babidi-50);
 }
 
 .options .selected {
-  border-color: var(--ability-lucaua);
-  background: var(--ability-lucaua-15);
+  border-color: var(--ability-babidi);
+  background: var(--ability-babidi-15);
   transform: translateY(calc(var(--size-4) * -1));
 }
 
@@ -85,11 +85,11 @@
   width: var(--size-96);
   height: var(--size-96);
   object-fit: contain;
-  filter: drop-shadow(0 0 var(--size-12) var(--ability-lucaua-50));
+  filter: drop-shadow(0 0 var(--size-12) var(--ability-babidi-50));
 }
 
 .label {
   font-size: var(--fs-14);
   font-weight: bold;
-  color: var(--ability-lucaua-pale);
+  color: var(--ability-babidi-pale);
 }

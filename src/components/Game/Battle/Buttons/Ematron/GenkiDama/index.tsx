@@ -1,7 +1,7 @@
 import {
   GENKI_DAMA_INITIAL_COST,
   GENKI_DAMA_MAX_DAMAGE_MULTIPLIER,
-} from "@/data/characters/emanuel/emanuel";
+} from "@/data/characters/ematron";
 
 import { spriteMap } from "@/data/battle/projectileSprites";
 import styles from "./styles.module.css";
@@ -15,7 +15,7 @@ type Props = {
 };
 
 /**
- * Botão de hold da Genki Dama do Emanuel: segurar flutua o personagem e reúne
+ * Botão de hold da Genki Dama do Ematron: segurar flutua o personagem e reúne
  * energia na esfera (cresce até 7x o dano básico); soltar arremessa a esfera
  * ao inimigo. Usa pointer capture para garantir o release mesmo soltando fora
  * do botão.
@@ -28,7 +28,7 @@ const genkiDamaClasses: CustomAbilityClasses = {
   depleted: styles.depleted,
 };
 
-export function EmanuelGenkiDamaButton({
+export function EmatronGenkiDamaButton({
   energy,
   disabled = false,
   onPress,

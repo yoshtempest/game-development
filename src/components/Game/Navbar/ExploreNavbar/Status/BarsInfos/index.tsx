@@ -102,7 +102,7 @@ export function BarsInfos() {
             value={currentMana}
             max={maxMana}
             animationId={`char-mana-${player.character}`}
-            color={character === "riquelme" ? "#e84118" : "#7fc7ff"}
+            color={character === "natsuki" ? "#e84118" : "#7fc7ff"}
           />
         </div>
       )}

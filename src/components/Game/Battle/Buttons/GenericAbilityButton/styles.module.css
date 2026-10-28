@@ -37,10 +37,18 @@
   0%,
   100% {
     box-shadow: 0 0 var(--size-4)
-      color-mix(in srgb, var(--ability-accent, var(--accent-60)) 30%, transparent);
+      color-mix(
+        in srgb,
+        var(--ability-accent, var(--accent-60)) 30%,
+        transparent
+      );
   }
   50% {
     box-shadow: 0 0 var(--size-18)
-      color-mix(in srgb, var(--ability-accent, var(--accent-60)) 80%, transparent);
+      color-mix(
+        in srgb,
+        var(--ability-accent, var(--accent-60)) 80%,
+        transparent
+      );
   }
 }

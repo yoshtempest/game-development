@@ -50,7 +50,7 @@ export function handleLinearProjectile(
     y: p.y + p.dirY * speed,
   };
 
-  // Colisão com a esfera do Riquelme em voo: a esfera (indestrutível) aniquila
+  // Colisão com a esfera do Natsuki em voo: a esfera (indestrutível) aniquila
   // projéteis inimigos no seu caminho.
   if (
     opts.sphere &&
@@ -64,7 +64,7 @@ export function handleLinearProjectile(
   }
 
   // Golpe do jogador (básico ou special) intercepta o projétil no alcance: o
-  // Marcelo divide em duas partes (corte nunca destrói); os demais causam o
+  // Marshadow divide em duas partes (corte nunca destrói); os demais causam o
   // dano real do ataque.
   const intercepted = tryMeleeIntercept(p, next, opts);
   if (intercepted !== undefined) return intercepted;

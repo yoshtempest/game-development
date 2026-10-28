@@ -5,10 +5,10 @@ import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import {
   KILLER_QUEEN_COOLDOWN_MS,
   TOTAL_FREEZE_MS,
-} from "@/data/characters/artur/srGuaxinim";
-import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa/larissa";
-import { LUCAS_WEAPONS } from "@/data/characters/lucas/lucasWeapons";
-import { LucauaPortalConstants } from "@/data/characters/lucaua";
+} from "@/data/characters/srGuaxinim/srGuaxinim";
+import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/laricell/laricell";
+import { YVEL_WEAPONS } from "@/data/characters/yvel/yvelWeapons";
+import { BabidiPortalConstants } from "@/data/characters/babidi";
 import {
   BLINK_ENERGY_COST,
   CURSED_ENERGY_HEAL_RATIO,
@@ -16,7 +16,7 @@ import {
   PURPLE_SPHERE_ENERGY_PERCENT,
   RED_SPHERE_ENERGY_PERCENT,
 } from "@/gameRules/battle/cursedEnergy";
-import { LUCAS_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
+import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 
 /**
  * Fábrica genérica de habilidade ativa.
@@ -33,8 +33,8 @@ export function createActiveAbility(
 }
 
 /**
- * Killer Queen do Artur: o special dele virou habilidade própria. A coreografia
- * (time-freeze, bombas e explosão) vive em `useArturKillerQueen`; aqui ficam só
+ * Killer Queen do SrGuaxinim: o special dele virou habilidade própria. A coreografia
+ * (time-freeze, bombas e explosão) vive em `useSrGuaxinimKillerQueen`; aqui ficam só
  * nome, descrição e cooldown, como em qualquer ativa.
  */
 export function killerQueenAbility(): ActiveAbility {
@@ -47,8 +47,8 @@ export function killerQueenAbility(): ActiveAbility {
 }
 
 /**
- * Explosão de Stacks da Larissa: o dano é `stacks * 5` (ver
- * `calculateSpecialHitDamage`) e o efeito/visual continuam no `larissaBehavior`;
+ * Explosão de Stacks da Laricell: o dano é `stacks * 5` (ver
+ * `calculateSpecialHitDamage`) e o efeito/visual continuam no `laricellBehavior`;
  * aqui ficam só nome, descrição e cooldown.
  */
 export function stackExplosionAbility(): ActiveAbility {
@@ -63,7 +63,7 @@ export function stackExplosionAbility(): ActiveAbility {
 /**
  * Expansão de Domínio do efeito base (`burst`): nome/descrição saem do registro
  * `DOMAIN_EXPANSIONS`, o dano é especial (mágico). O id é próprio
- * (`domainBurst`) porque o efeito é outro — o `domainExpansion` do marcelo é um
+ * (`domainBurst`) porque o efeito é outro — o `domainExpansion` do marshadow é um
  * execute e continua declarando `damageType: "true"`.
  */
 export function domainBurstAbility(characterId: CharacterId): ActiveAbility {
@@ -77,9 +77,9 @@ export function domainBurstAbility(characterId: CharacterId): ActiveAbility {
 }
 
 /**
- * Expansão de Domínio do riquelme (`kind: "muryokusho"`): o dreno é 0,2% da vida
+ * Expansão de Domínio do natsuki (`kind: "muryokusho"`): o dreno é 0,2% da vida
  * MÁXIMA direto no HP, a cada 50ms — não passa pelo funil de armadura, então
- * `"true"` fixa a semântica (o mesmo caso do `domainExpansion` do marcelo).
+ * `"true"` fixa a semântica (o mesmo caso do `domainExpansion` do marshadow).
  */
 export function muryokushoAbility(characterId: CharacterId): ActiveAbility {
   const def = DOMAIN_EXPANSIONS[characterId];
@@ -101,17 +101,17 @@ export function hakaiAbility(characterId: CharacterId): ActiveAbility {
   });
 }
 
-/** Troca de arma do Lucas: cada arma tem alcance e sprite próprios. */
+/** Troca de arma do Yvel: cada arma tem alcance e sprite próprios. */
 export function weaponSwitchAbility(): ActiveAbility {
   return createActiveAbility({
     id: "weaponSwitch",
     name: "Trocar Arma",
-    description: `Troca a arma aleatoriamente entre ${LUCAS_WEAPONS.length} armas, cada uma com seu próprio alcance.`,
-    cost: LUCAS_WEAPON_SWITCH_MANA_COST,
+    description: `Troca a arma aleatoriamente entre ${YVEL_WEAPONS.length} armas, cada uma com seu próprio alcance.`,
+    cost: YVEL_WEAPON_SWITCH_MANA_COST,
   });
 }
 
-/** Punho Divergente do Riquelme: garante duas instâncias no próximo soco. */
+/** Punho Divergente do Natsuki: garante duas instâncias no próximo soco. */
 export function divergentFistAbility(): ActiveAbility {
   return createActiveAbility({
     id: "divergentFist",
@@ -122,7 +122,7 @@ export function divergentFistAbility(): ActiveAbility {
   });
 }
 
-/** Blink do Riquelme: teleporte curto, some enquanto O Abençoado está ativo. */
+/** Blink do Natsuki: teleporte curto, some enquanto O Abençoado está ativo. */
 export function blinkAbility(): ActiveAbility {
   return createActiveAbility({
     id: "blink",
@@ -134,7 +134,7 @@ export function blinkAbility(): ActiveAbility {
   });
 }
 
-/** Conversão de Energia do Riquelme: energia amaldiçoada vira vida. */
+/** Conversão de Energia do Natsuki: energia amaldiçoada vira vida. */
 export function cursedEnergyConversionAbility(): ActiveAbility {
   return createActiveAbility({
     id: "cursedEnergyConversion",
@@ -179,11 +179,11 @@ export function purpleSphereAbility(): ActiveAbility {
   });
 }
 
-/** Portal Dimensional do Lucaua: cria até dois portais ligados entre si. */
+/** Portal Dimensional do Babidi: cria até dois portais ligados entre si. */
 export function dimensionalPortalAbility(): ActiveAbility {
   return createActiveAbility({
     id: "dimensionalPortal",
     name: "Energia Dimensional",
-    description: `Clique para escolher o tipo (chão/frontal/aéreo), posicione com o joystick e confirme para fincar. Cada portal custa ${LucauaPortalConstants.COST_RATIO * 100}% da energia máxima e até ${LucauaPortalConstants.MAX_PORTALS} ficam no mapa — quem entra num sai no outro. Com os dois em campo, clicar o botão desfaz o último e devolve a energia.`,
+    description: `Clique para escolher o tipo (chão/frontal/aéreo), posicione com o joystick e confirme para fincar. Cada portal custa ${BabidiPortalConstants.COST_RATIO * 100}% da energia máxima e até ${BabidiPortalConstants.MAX_PORTALS} ficam no mapa — quem entra num sai no outro. Com os dois em campo, clicar o botão desfaz o último e devolve a energia.`,
   });
 }

@@ -52,7 +52,7 @@ export function handleGroundProjectile(
     x: p.x + p.dirX * ProjectileConstants.GROUND_SPEED * (opts.speedScale ?? 1),
   };
 
-  // Colisão com a esfera do Riquelme em voo.
+  // Colisão com a esfera do Natsuki em voo.
   if (
     opts.sphere &&
     !next.indestructible &&

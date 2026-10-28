@@ -13,7 +13,7 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { SPECIAL_INTRO_DURATION } from "@/hooks/battle/modals/useSpecialIntro";
 import { useSettings } from "@/hooks/settings/useSetting";
-import type { MarceloBattleForm } from "@/utils/paths";
+import type { MarshadowBattleForm } from "@/utils/paths";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { clampX } from "@/gameRules/movement/clampX";
 import { combatService } from "@/services/combat";
@@ -36,7 +36,7 @@ import {
   GRAN_REY_CERO_PUSH_PX,
   GRAN_REY_CERO_TICK_MS,
   GRAN_REY_CERO_TRAVEL_MS,
-} from "@/data/characters/marcelo/granReyCero";
+} from "@/data/characters/marshadow/granReyCero";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
 import type { VampirismStats } from "@/gameRules/battle/vampirism/applyVampirism";
@@ -44,7 +44,7 @@ import {
   granReyCeroDistance,
   granReyCeroHits,
   type GranReyCeroEffect,
-} from "@/gameRules/battle/characters/marcelo/granReyCero";
+} from "@/gameRules/battle/characters/marshadow/granReyCero";
 
 /** Natureza do corte pelo registro de habilidades (o GameData e o hook concordam). */
 const GRAN_REY_CERO_DAMAGE_KIND = getAbilityDamageType("granReyCero");
@@ -91,7 +91,7 @@ type Props = {
     character: string,
     onActivate: () => void,
     ability?: string,
-    form?: MarceloBattleForm,
+    form?: MarshadowBattleForm,
   ) => boolean;
   playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
   /** Chamado quando o press arma a habilidade (carga da Expansão de Domínio). */
@@ -114,7 +114,7 @@ type GranReyCeroApi = {
 };
 
 /**
- * "Gran Rey Cero" do marcelo: o `press` abre o `SpecialIntro` (background
+ * "Gran Rey Cero" do marshadow: o `press` abre o `SpecialIntro` (background
  * `habilities/granReyCero/` por 1s em slow-motion, com o personagem travado) e,
  * ao fim do intro, a lâmina nasce no personagem e corre 500px na direção em que
  * ele mira, com orçamento de 2s. Ao encostar num inimigo ela para de correr e
@@ -193,7 +193,7 @@ export function useGranReyCero({
 
   const { usableRef, shouldCancelRef } = useSkillGuard({
     player,
-    character: "marcelo",
+    character: "marshadow",
     freezeActionsUntilRef,
     disabledRef,
     isPausedRef,
@@ -521,7 +521,9 @@ export function useGranReyCero({
     // O specialIntro (1s) mostra o background da habilidade; a lâmina entra
     // logo depois. Se já houver um intro em andamento o callback não roda,
     // então o corte acontece na hora.
-    if (!startSpecialIntro("marcelo", () => fireRef.current(), "granReyCero")) {
+    if (
+      !startSpecialIntro("marshadow", () => fireRef.current(), "granReyCero")
+    ) {
       fireRef.current();
     }
   }, [

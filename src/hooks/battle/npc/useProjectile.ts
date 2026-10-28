@@ -9,7 +9,7 @@ import {
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { resetCooldownRef } from "@/utils/battle/cooldown";
 import { getProjectileCenter } from "@/gameRules/npc/projectile/projectileDamage";
-import { getPortalExitDirection } from "@/gameRules/battle/characters/lucaua/lucauaPortal";
+import { getPortalExitDirection } from "@/gameRules/battle/characters/babidi/babidiPortal";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { applyPlayerStrike } from "./apply/applyPlayerStrike";
 import { handleGroundProjectile } from "./handle/handleGroundProjectile";
@@ -24,7 +24,7 @@ import type {
 import { getTime, type TimeEffect } from "@/gameRules/battle/time";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
-import type { LucauaPortalWarpFn } from "@/utils/types/character/lucaua";
+import type { BabidiPortalWarpFn } from "@/utils/types/character/babidi";
 
 export function useProjectile(
   projectiles: Projectile[],
@@ -48,7 +48,7 @@ export function useProjectile(
   spawnDamageRef?: React.RefObject<SpawnDamageFn>,
   playerCooldownRef?: React.RefObject<boolean>,
   playerHitDamageRef?: React.RefObject<ProjectileHitDamageFn>,
-  portalWarpRef?: React.RefObject<LucauaPortalWarpFn | null>,
+  portalWarpRef?: React.RefObject<BabidiPortalWarpFn | null>,
 ) {
   const onHitRef = useLatestRef(onHit);
   const onPullPlayerRef = useLatestRef(onPullPlayer);
@@ -72,7 +72,7 @@ export function useProjectile(
   // 1 instância de dano por golpe: `playerCooldown` é o mesmo token que o
   // `handlePlayerHit` consome ao acertar NPC/summon. Sem este claim o loop
   // de 20ms causaria dano a cada tick enquanto o estado é de golpe (hold do
-  // artur = dezenas de instâncias e projétil destruído na hora).
+  // srGuaxinim = dezenas de instâncias e projétil destruído na hora).
   const claimToken = useCallback(
     (state: PlayerState) => {
       if (playerCooldownRef?.current === false) return false;
@@ -163,7 +163,7 @@ export function useProjectile(
       const misses: number[] = [];
       let stick = false;
 
-      // Esfera do Riquelme em voo (phase "fire") destrói projéteis no caminho.
+      // Esfera do Natsuki em voo (phase "fire") destrói projéteis no caminho.
       const sphere =
         playerProjectileRef?.current?.phase === "fire"
           ? playerProjectileRef.current
@@ -251,7 +251,7 @@ export function useProjectile(
       if (stick) onStickRef.current?.();
       for (const x of misses) onMissRef.current?.(x);
 
-      // Portais do lucaua: o projétil que cruza a zona reaparece no outro portal
+      // Portais do babidi: o projétil que cruza a zona reaparece no outro portal
       // (o deslocamento leva o **centro** ao destino) e o portal de saída decide
       // a nova direção. Só `common`/`pull` têm rumo próprio para obedecer —
       // `ground`, `rain` e `cut` seguem o movimento deles e só mudam de posição.

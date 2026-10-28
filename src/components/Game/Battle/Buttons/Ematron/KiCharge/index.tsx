@@ -1,7 +1,7 @@
 import {
-  EMANUEL_KI_CHARGE_PER_TICK,
-  EMANUEL_KI_CHARGE_TICK_MS,
-} from "@/data/characters/emanuel/emanuel";
+  EMATRON_KI_CHARGE_PER_TICK,
+  EMATRON_KI_CHARGE_TICK_MS,
+} from "@/data/characters/ematron";
 
 import styles from "./styles.module.css";
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
@@ -15,7 +15,7 @@ type Props = {
 };
 
 /**
- * Botão de hold da carga de Ki do Emanuel: segurar deixa o personagem parado
+ * Botão de hold da carga de Ki do Ematron: segurar deixa o personagem parado
  * no sprite `chargingKi.svg` recarregando +1 de Ki a cada 100ms (sem poder
  * agir); soltar volta ao normal. Usa pointer capture para garantir o release
  * mesmo soltando fora do botão.
@@ -28,7 +28,7 @@ const kiChargeClasses: CustomAbilityClasses = {
   cost: styles.cost,
 };
 
-export function EmanuelKiChargeButton({
+export function EmatronKiChargeButton({
   energy,
   energyMax,
   disabled = false,
@@ -47,8 +47,8 @@ export function EmanuelKiChargeButton({
       onRelease={onRelease}
       full={full}
       valueText={Math.round(energy).toString()}
-      costText={`+${EMANUEL_KI_CHARGE_PER_TICK}/100ms`}
-      title={`Carga de Ki: segure para recarregar +${EMANUEL_KI_CHARGE_PER_TICK} de Ki a cada ${EMANUEL_KI_CHARGE_TICK_MS}ms (o personagem fica parado sem poder agir)`}
+      costText={`+${EMATRON_KI_CHARGE_PER_TICK}/100ms`}
+      title={`Carga de Ki: segure para recarregar +${EMATRON_KI_CHARGE_PER_TICK} de Ki a cada ${EMATRON_KI_CHARGE_TICK_MS}ms (o personagem fica parado sem poder agir)`}
     />
   );
 }

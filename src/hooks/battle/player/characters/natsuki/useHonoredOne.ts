@@ -114,11 +114,11 @@ export function useHonoredOne({
   ]);
 
   /**
-   * Passiva O Abençoado do riquelme: o primeiro golpe letal em uma batalha não
+   * Passiva O Abençoado do natsuki: o primeiro golpe letal em uma batalha não
    * mata — o personagem sobrevive com 1 de vida. A batalha congela (NPCs,
    * projéteis, controles e fluxo) e o sprite troca para mostHonored.svg com a
    * seguinte coreografia:
-   * 1. ~~5s: o riquelme sobe 400px em y girando ~90° enquanto os inimigos
+   * 1. ~~5s: o natsuki sobe 400px em y girando ~90° enquanto os inimigos
    *    próximos recuam até ficarem a >=300px em x;
    * 2. a rotação volta a 0° e ele cai do alto com falling.svg;
    * 3. ao aterrissar vira idleCrounched.svg e só então a batalha volta ao
@@ -141,7 +141,7 @@ export function useHonoredOne({
     );
     setPlayer((p) => ({ ...p, state: "mostHonored", velY: 0 }));
     // Regra de time: o mundo inteiro sai do time normal, **exceto a esfera do
-    // riquelme** — ela é a única coisa que continua em 1x enquanto ele sobe. O
+    // natsuki** — ela é a única coisa que continua em 1x enquanto ele sobe. O
     // player fica de fora do `TimeKind`, então o lock de ação dele é escrito à
     // mão (é o mesmo ref que câmera/vastolord/etc já usam).
     refs.timeRef.current = applyTime(
@@ -166,7 +166,7 @@ export function useHonoredOne({
       clearTimeout(honoredOneTimerRef.current);
     }
 
-    // Fim da fase de subida/rotação: o riquelme cai do alto; a física cuida da
+    // Fim da fase de subida/rotação: o natsuki cai do alto; a física cuida da
     // queda e o pouso em `idleCrounched` destrava a batalha (ver efeito abaixo).
     honoredOneTimerRef.current = setTimeout(() => {
       honoredOneTimerRef.current = null;
@@ -196,7 +196,7 @@ export function useHonoredOne({
     setHonoredSequence(false);
     refs.timeRef.current = clearTime(refs.timeRef.current, HONORED_ONE_TIME_ID);
     // A sequência acabou no pouso: o slow e o lock do player valem só até
-    // aqui, senão o riquelme ficaria travado no resto dos ~7.3s do efeito.
+    // aqui, senão o natsuki ficaria travado no resto dos ~7.3s do efeito.
     freezeActionsUntilRef.current = Date.now();
     activateHonoredOne();
   }, [

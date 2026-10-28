@@ -63,7 +63,7 @@ function createEmptyCharacterData(character?: string): CharacterEquipmentData {
   const equipped = createEmptyEquipped();
   const collection: Record<string, number> = {};
 
-  if (character === "marcelo") {
+  if (character === "marshadow") {
     equipped.weapon = { id: "weapon_espada_ferro", enhance: 0 };
     collection[colKey("weapon_espada_ferro", 0)] = 1;
   }

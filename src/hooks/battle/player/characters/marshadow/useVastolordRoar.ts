@@ -6,7 +6,7 @@ import {
   VASTOLORD_ROAR_RADIUS_PX,
   VASTOLORD_ROAR_SCREAM_FRAMES,
   VASTOLORD_ROAR_TICK_MS,
-} from "@/data/characters/marcelo/vastolordForm";
+} from "@/data/characters/marshadow/vastolordForm";
 import type { NPCBattleState, SummonedNpc } from "@/utils/types/npc/npc";
 
 type Props = {

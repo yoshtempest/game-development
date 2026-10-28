@@ -1,9 +1,9 @@
 import { isFacingTarget } from "@/gameRules/battle/direction";
-import { blocksOmnidirectionally } from "@/gameRules/battle/characters/lucaua/lucauaShield";
+import { blocksOmnidirectionally } from "@/gameRules/battle/characters/babidi/babidiShield";
 import { handleNpcBlocking } from "./useBlocking";
 import { type TimeEffect } from "@/gameRules/battle/time";
 
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
+import type { BabidiShieldSide } from "@/utils/types/character/babidi";
 
 export function checkBlocked(params: {
   dmg: number;
@@ -27,7 +27,7 @@ export function checkBlocked(params: {
   lastBlockPressRef: React.RefObject<number>;
   lastAttackPressRef?: React.RefObject<number>;
   onFullBlock?: () => void;
-  onBlockRef?: React.RefObject<(side?: LucauaShieldSide) => void>;
+  onBlockRef?: React.RefObject<(side?: BabidiShieldSide) => void>;
   onParry?: () => void;
   onDamageBlocked?: (blockedDamage: number) => void;
 }): boolean {
@@ -56,7 +56,7 @@ export function checkBlocked(params: {
     onDamageBlocked,
   } = params;
 
-  // O lucaua bloqueia os dois lados (Babidi Block); os demais só bloqueiam o
+  // O babidi bloqueia os dois lados (Babidi Block); os demais só bloqueiam o
   // golpe quando estão virados para quem ataca.
   const isBlocking =
     playerState === "blocked" &&

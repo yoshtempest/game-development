@@ -14,8 +14,8 @@ import { useNpcAI } from "@/hooks/battle/npc/useAi";
 import { useBattleSystem } from "@/hooks/battle/main/useSystem";
 import { useNpcTargeting } from "@/hooks/battle/npc/useNpcTargeting";
 import { usePlayerBattleActions } from "@/hooks/battle/player/usePlayerActions";
-import { useLucauaEnergyAttack } from "@/hooks/battle/player/characters/lucaua/useLucauaEnergyAttack";
-import { useLucauaShield } from "@/hooks/battle/player/characters/lucaua/useLucauaShield";
+import { useBabidiEnergyAttack } from "@/hooks/battle/player/characters/babidi/useEnergyAttack";
+import { useBabidiShield } from "@/hooks/battle/player/characters/babidi/useShield";
 import { useSummonAI } from "@/hooks/battle/summon/useAi";
 import { useAllyAI } from "@/hooks/battle/summon/useAllyAI";
 import { useBattleControls } from "@/hooks/battle/useControls";
@@ -25,24 +25,25 @@ import { useBattleKillCounter } from "@/hooks/battle/death/useKillCounter";
 import { useChargeAttack } from "@/hooks/battle/charge/useAttack";
 import { usePhaseTransition } from "@/hooks/battle/death/usePhaseTransition";
 import { usePlayerSpecialProjectile } from "@/hooks/battle/player/usePlayerSpecialProjectile";
-import { useLucasWeaponSwitch } from "@/hooks/battle/player/characters/yvel/useLucasWeaponSwitch";
+import { useYvelWeaponSwitch } from "@/hooks/battle/player/characters/yvel/useYvelWeaponSwitch";
 import { useBattleSync } from "@/hooks/battle/useSync";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { useStatCallbacks } from "@/hooks/battle/effects/useStatCallbacks";
 import { useActiveSkills } from "@/hooks/battle/utilities/useActiveSkills";
 import { useStatusDots } from "@/hooks/battle/effects/useStatusDots";
 import { useTrainingEffects } from "@/hooks/battle/effects/useTrainingEffects";
-import { useArturBattle } from "@/hooks/battle/player/characters/srGuaxinim/useArturBattle";
-import { useEmanuelClone } from "@/hooks/battle/player/characters/ematron/useEmanuelClone";
-import { useEmanuelKiCharge } from "@/hooks/battle/player/characters/ematron/useEmanuelKiCharge";
-import { useEmanuelGenkiDama } from "@/hooks/battle/player/characters/ematron/useEmanuelGenkiDama";
+import { useSrGuaxinimBattle } from "@/hooks/battle/player/characters/srGuaxinim/useSrGuaxinimBattle";
+import { useEmatronClone } from "@/hooks/battle/player/characters/ematron/useClone";
+import { useEmatronKiCharge } from "@/hooks/battle/player/characters/ematron/useKiCharge";
+import { useEmatronGenkiDama } from "@/hooks/battle/player/characters/ematron/useGenkiDama";
 import { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
 import { useKamehameha } from "@/hooks/battle/player/characters/ematron/useKamehameha";
 import { useVastolordRoar } from "@/hooks/battle/player/characters/marshadow/useVastolordRoar";
 import { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
-import { useRiquelmeSpheres } from "@/hooks/battle/player/characters/natsuki/spheres/useRiquelmeSpheres";
+import { useNatsukiSpheres } from "@/hooks/battle/player/characters/natsuki/spheres/useNatsukiSpheres";
 import { useMuryokushoExpansion } from "@/hooks/battle/player/characters/natsuki/useMuryokushoExpansion";
-import { useLucauaPortals } from "@/hooks/battle/player/characters/lucaua/useLucauaPortals";
+import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/useHakaiExpansion";
+import { useBabidiPortals } from "@/hooks/battle/player/characters/babidi/usePortals";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import {
   useAtomic,
@@ -82,9 +83,9 @@ import {
   type Enchantment,
 } from "@/data/equipment/enchantments";
 import { CHARGE_ATTACK_MIN_LEVEL } from "@/data/battle/charge";
-import { KILLER_QUEEN_COOLDOWN_MS } from "@/data/characters/artur/srGuaxinim";
-import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/larissa/larissa";
-import { LUCAS_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
+import { KILLER_QUEEN_COOLDOWN_MS } from "@/data/characters/srGuaxinim/srGuaxinim";
+import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/laricell/laricell";
+import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import { cursedEnergyFromDamage } from "@/gameRules/battle/cursedEnergy";
 import { PET_ROOT_DURATION_MS } from "@/data/characters/pets/petSkills";
 import {
@@ -105,9 +106,9 @@ import type { BattleObstacle } from "@/utils/types/maps/battle";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { useBlinkAnimation } from "@/hooks/battle/player/characters/natsuki/useBlinkAnimation";
 import type {
-  LucauaPortalWarpFn,
-  LucauaTarget,
-} from "@/utils/types/character/lucaua";
+  BabidiPortalWarpFn,
+  BabidiTarget,
+} from "@/utils/types/character/babidi";
 
 type Props = {
   setup: ReturnType<typeof useBattleStageSetup>;
@@ -137,9 +138,9 @@ type Props = {
   honoredRegenActive: boolean;
   vastolordMultiplierRef: RefObject<() => number>;
   vastolordActive: boolean;
-  /** Quadro da transformação do marcelo (0=screamOne … 3=transformated) ou null. */
+  /** Quadro da transformação do marshadow (0=screamOne … 3=transformated) ou null. */
   transformationFrame: number | null;
-  /** Aumenta a duração restante da Forma Vastolord (passiva do marcelo). */
+  /** Aumenta a duração restante da Forma Vastolord (passiva do marshadow). */
   extendVastolordRef: RefObject<(ms: number) => void>;
   cursedEnergyEnabled: boolean;
   onKokusenRef: RefObject<() => void>;
@@ -201,10 +202,10 @@ export function useBattleCombat({
     honoredFallRef,
     genkiDamaRiseStartRef,
     genkiDamaRiseStartYRef,
-    emanuelComboMultiplierRef,
-    emanuelComboActiveRef,
-    emanuelComboAirActiveRef,
-    emanuelComboStepIndexRef,
+    ematronComboMultiplierRef,
+    ematronComboActiveRef,
+    ematronComboAirActiveRef,
+    ematronComboStepIndexRef,
     setTimeScale,
     resetTimeScale,
     timeScaleRef,
@@ -249,7 +250,7 @@ export function useBattleCombat({
     quests,
   } = setup;
 
-  const { weapon: lucasWeapon, switchWeapon } = useLucasWeaponSwitch({
+  const { weapon: yvelWeapon, switchWeapon } = useYvelWeaponSwitch({
     character: player.character,
     timeRef: refs.timeRef,
   });
@@ -314,12 +315,12 @@ export function useBattleCombat({
   }, []);
   const dragBattleRef = useRef<ReturnType<typeof useBattleSystem> | null>(null);
 
-  // Esfera do Riquelme em voo — consumida pelo useProjectile para colisões.
+  // Esfera do Natsuki em voo — consumida pelo useProjectile para colisões.
   const playerProjectileRef = useRef<PlayerSpecialProjectile | null>(null);
 
-  // Portais do lucaua: o hook de portais publica o warp de projéteis aqui e os
+  // Portais do babidi: o hook de portais publica o warp de projéteis aqui e os
   // loops de projétil (NPC e energia) o consultam a cada tick.
-  const portalWarpRef = useRef<LucauaPortalWarpFn | null>(null);
+  const portalWarpRef = useRef<BabidiPortalWarpFn | null>(null);
 
   // Vida de projéteis NPC destrutíveis (1/3 do dano que causariam), uma por
   // natureza de dano — usa ref porque o battle (fonte de totalArmor) só existe
@@ -514,7 +515,7 @@ export function useBattleCombat({
     return { blocked: true, remainingDamage: remaining };
   };
 
-  const lucauaShield = useLucauaShield(player.character);
+  const babidiShield = useBabidiShield(player.character);
 
   const {
     onBlockRef,
@@ -529,13 +530,13 @@ export function useBattleCombat({
     incrementDamageTaken,
     incrementDodgeCounter,
     incrementDamageDealt,
-    onBlockSide: lucauaShield.register,
+    onBlockSide: babidiShield.register,
   });
 
   const executePetSkillRef = useRef<() => void>(() => {});
 
-  // Preenchido pelo useArturOraPunch com o multiplicador atual (escala ORA).
-  const arturOraMultiplierRef = useRef<() => number>(() => 1);
+  // Preenchido pelo useSrGuaxinimOraPunch com o multiplicador atual (escala ORA).
+  const srGuaxinimOraMultiplierRef = useRef<() => number>(() => 1);
 
   // O gatilho de O Abençoado vive no funil de dano (useSystem/useExternal), que
   // só conhece o `surviveLethalHitRef`. Envolvemos ele para, no mesmo instante
@@ -587,7 +588,7 @@ export function useBattleCombat({
     onKokusenRef,
     onBlackFlashRef,
     onCriticalPushRef,
-    arturOraMultiplierRef,
+    srGuaxinimOraMultiplierRef,
     vastolordMultiplierRef,
     vastolordActive,
     divergentFistRef,
@@ -599,7 +600,7 @@ export function useBattleCombat({
     savedPlayerHP: savedPlayerHPRef.current,
     npcStatMultiplier: isAlfa ? 2 : 1,
     npcArmorBonus,
-    weapon: lucasWeapon,
+    weapon: yvelWeapon,
     surviveLethalHitRef: honoredLethalRef,
   });
 
@@ -628,9 +629,9 @@ export function useBattleCombat({
 
   const handleWeaponSwitch = useCallback(() => {
     const mana = battleManaRef.current;
-    if (mana && !mana.consumeMana(LUCAS_WEAPON_SWITCH_MANA_COST)) return;
+    if (mana && !mana.consumeMana(YVEL_WEAPON_SWITCH_MANA_COST)) return;
     if (!switchWeapon()) return;
-    // Troca de arma é habilidade do Lucas: concede carga da Expansão.
+    // Troca de arma é habilidade do Yvel: concede carga da Expansão.
     onAbilityUsed();
   }, [battleManaRef, onAbilityUsed, switchWeapon]);
 
@@ -749,13 +750,13 @@ export function useBattleCombat({
   refs.spawnDamageRef.current = battle.spawnDamageNumber;
   dragBattleRef.current = battle;
 
-  // Lucaua: o básico é um projétil de energia. O press dispara via `fireRef`
+  // Babidi: o básico é um projétil de energia. O press dispara via `fireRef`
   // (preenchido pelo hook criado logo abaixo) e a colisão resolve o dano via
   // `onHitRef` (preenchido pelo usePlayerBattleActions com playerHit/damageSummon).
-  const lucauaFireRef = useRef<
-    ((player: Player, targets: LucauaTarget[]) => boolean) | null
+  const babidiFireRef = useRef<
+    ((player: Player, targets: BabidiTarget[]) => boolean) | null
   >(null);
-  const lucauaOnHitRef = useRef<((target: LucauaTarget) => void) | null>(null);
+  const babidiOnHitRef = useRef<((target: BabidiTarget) => void) | null>(null);
 
   const { handlePlayerHit, handleSpecialHit, handleExtraPunch, hitTargetList } =
     usePlayerBattleActions({
@@ -766,7 +767,7 @@ export function useBattleCombat({
       npcHP: battle.npcHP,
       npcClass: npcData.class,
       playerClass,
-      weapon: lucasWeapon,
+      weapon: yvelWeapon,
       progress,
       npcLevel,
       battle,
@@ -798,24 +799,24 @@ export function useBattleCombat({
             pullStartTime: Date.now(),
           };
         }),
-      emanuelComboMultiplierRef,
-      emanuelComboActiveRef,
-      emanuelComboAirActiveRef,
-      emanuelComboStepIndexRef,
-      lucauaFireRef,
-      lucauaOnHitRef,
+      ematronComboMultiplierRef,
+      ematronComboActiveRef,
+      ematronComboAirActiveRef,
+      ematronComboStepIndexRef,
+      babidiFireRef,
+      babidiOnHitRef,
     });
 
-  const lucauaEnergy = useLucauaEnergyAttack({
+  const babidiEnergy = useBabidiEnergyAttack({
     PLAYER_SIZE,
     timeRef: refs.timeRef,
     npc: { x: npc.x, y: npc.y },
     npcClass: npcData.class,
     summons,
-    onProjectileHit: (target) => lucauaOnHitRef.current?.(target),
+    onProjectileHit: (target) => babidiOnHitRef.current?.(target),
     portalWarpRef,
   });
-  lucauaFireRef.current = lucauaEnergy.fire;
+  babidiFireRef.current = babidiEnergy.fire;
 
   const freezeSummonsUntilRef = useRef(0);
 
@@ -870,7 +871,7 @@ export function useBattleCombat({
     killerQueenSprite,
     bombSprite,
     explosionSprite,
-  } = useArturBattle({
+  } = useSrGuaxinimBattle({
     player,
     setPlayer,
     npc,
@@ -893,7 +894,7 @@ export function useBattleCombat({
         }
       }
     },
-    arturOraMultiplierRef,
+    srGuaxinimOraMultiplierRef,
     refs,
     freezeActionsUntilRef,
     onBombProjectiles: (strikes) => {
@@ -958,7 +959,7 @@ export function useBattleCombat({
     playerHP: battle.playerHP,
     playerMaxHp: battle.playerMaxHp,
     vampirism: battle.vampirism,
-    weapon: lucasWeapon,
+    weapon: yvelWeapon,
     vastolordMultiplierRef,
   });
 
@@ -1013,9 +1014,9 @@ export function useBattleCombat({
   // O gatilho de O Abençoado (definido lá em cima) cancela a intro pendente.
   cancelSpecialIntroRef.current = cancelSpecialIntro;
 
-  // Artur não usa o charge (segurar onConfirm = ORA ORA). Os demais mantêm.
+  // SrGuaxinim não usa o charge (segurar onConfirm = ORA ORA). Os demais mantêm.
   const canCharge =
-    player.character !== "artur" && playerLevel >= CHARGE_ATTACK_MIN_LEVEL;
+    player.character !== "srGuaxinim" && playerLevel >= CHARGE_ATTACK_MIN_LEVEL;
 
   const controlsDisabled =
     isPausedRef.current ||
@@ -1025,21 +1026,21 @@ export function useBattleCombat({
     alfaIntroActive ||
     isDragging;
 
-  // ── Habilidades ativas do Artur e da Larissa ──────────────────────────
+  // ── Habilidades ativas do SrGuaxinim e da Laricell ──────────────────────────
   // Cada uma tem o próprio botão e cooldown e reaproveita o pipeline genérico
   // da habilidade ativa (os estados `preAbility`/`ability` e o
   // `handleSpecialHit`). O dano especial também é usado pelas esferas do
-  // Riquelme, mas aquelas têm estados próprios (`sphereCast`…) — nenhum
+  // Natsuki, mas aquelas têm estados próprios (`sphereCast`…) — nenhum
   // personagem ganha mais uma habilidade "special" genérica.
 
-  const activateArturKillerQueen = useCallback(() => {
-    // O Artur não dá o golpe no press: `useArturKillerQueen` dispara quando o
+  const activateSrGuaxinimKillerQueen = useCallback(() => {
+    // O SrGuaxinim não dá o golpe no press: `useSrGuaxinimKillerQueen` dispara quando o
     // estado entra em `preAbility`.
     startAbility();
   }, [startAbility]);
 
-  const activateLarissaExplosion = useCallback(() => {
-    // A Larissa dá o golpe na hora (dano `stacks * 5` + explosão), como fazia
+  const activateLaricellExplosion = useCallback(() => {
+    // A Laricell dá o golpe na hora (dano `stacks * 5` + explosão), como fazia
     // a habilidade antiga quando não havia override de fluxo.
     startAbility();
     handleSpecialHit();
@@ -1054,10 +1055,10 @@ export function useBattleCombat({
     if (activeAbilityReadyAtRef.current > Date.now()) return;
 
     const activate =
-      player.character === "artur"
-        ? activateArturKillerQueen
-        : player.character === "larissa"
-          ? activateLarissaExplosion
+      player.character === "srGuaxinim"
+        ? activateSrGuaxinimKillerQueen
+        : player.character === "laricell"
+          ? activateLaricellExplosion
           : null;
     if (!activate) return;
 
@@ -1067,7 +1068,7 @@ export function useBattleCombat({
     const started = startSpecialIntro(player.character, activate);
     if (!started) return;
     const cooldownMs = applyCooldownReduction(
-      player.character === "artur"
+      player.character === "srGuaxinim"
         ? KILLER_QUEEN_COOLDOWN_MS
         : STACK_EXPLOSION_COOLDOWN_MS,
       battle.char.stats.cooldownReduction,
@@ -1082,13 +1083,13 @@ export function useBattleCombat({
     grabFlippedRef,
     startSpecialIntro,
     player.character,
-    activateArturKillerQueen,
-    activateLarissaExplosion,
+    activateSrGuaxinimKillerQueen,
+    activateLaricellExplosion,
     battle,
   ]);
 
   // Tick do cooldown restante do botão de habilidade ativa (mesmo intervalo
-  // dos cooldowns do marcelo). Com o menu de batalha aberto o cooldown
+  // dos cooldowns do marshadow). Com o menu de batalha aberto o cooldown
   // congela: a batalha pausada não regenera habilidade.
   const activeAbilityCooldownTick = useCooldownPauseTick({
     readyAtRef: activeAbilityReadyAtRef,
@@ -1168,11 +1169,11 @@ export function useBattleCombat({
   const cloneDisabledRef = useLatestRef(controlsDisabled);
 
   const {
-    cloneVisual: emanuelClone,
+    cloneVisual: ematronClone,
     press: clonePress,
     release: cloneRelease,
     canUse: cloneUsable,
-  } = useEmanuelClone({
+  } = useEmatronClone({
     player,
     setPlayer,
     battleManaRef,
@@ -1191,7 +1192,7 @@ export function useBattleCombat({
     press: kiChargePress,
     release: kiChargeRelease,
     canUse: kiChargeUsable,
-  } = useEmanuelKiCharge({
+  } = useEmatronKiCharge({
     player,
     setPlayer,
     battleManaRef,
@@ -1259,7 +1260,7 @@ export function useBattleCombat({
     press: genkiDamaPress,
     release: genkiDamaRelease,
     canUse: genkiDamaUsable,
-  } = useEmanuelGenkiDama({
+  } = useEmatronGenkiDama({
     player,
     setPlayer,
     battleManaRef,
@@ -1313,32 +1314,35 @@ export function useBattleCombat({
 
   addVastolordLaserChargeRef.current = addVastolordLaserCharge;
 
-  const { effect: kamehameha, press: kamehamehaPress, usable: kamehamehaUsable } =
-    useKamehameha({
-      player,
-      setPlayer,
-      PLAYER_SIZE,
-      char: battle.char,
-      playerClass,
-      npc,
-      summons,
-      setSummons,
-      setNpcHP: battle.setNpcHP,
-      npcArmor: battle.npcArmor,
-      vampirism: battle.vampirism,
-      playerMaxHp: battle.playerMaxHp,
-      setPlayerHP: battle.setPlayerHP,
-      giveSummonRewards,
-      spawnDamageNumber: battle.spawnDamageNumber,
-      registerHitRef: refs.registerHitRef,
-      freezeActionsUntilRef,
-      isPausedRef,
-      isMenuOpenRef,
-      battleEndedRef: battle.isEnding,
-      disabledRef: cloneDisabledRef,
-      playSound,
-      onUsed: onAbilityUsed,
-    });
+  const {
+    effect: kamehameha,
+    press: kamehamehaPress,
+    usable: kamehamehaUsable,
+  } = useKamehameha({
+    player,
+    setPlayer,
+    PLAYER_SIZE,
+    char: battle.char,
+    playerClass,
+    npc,
+    summons,
+    setSummons,
+    setNpcHP: battle.setNpcHP,
+    npcArmor: battle.npcArmor,
+    vampirism: battle.vampirism,
+    playerMaxHp: battle.playerMaxHp,
+    setPlayerHP: battle.setPlayerHP,
+    giveSummonRewards,
+    spawnDamageNumber: battle.spawnDamageNumber,
+    registerHitRef: refs.registerHitRef,
+    freezeActionsUntilRef,
+    isPausedRef,
+    isMenuOpenRef,
+    battleEndedRef: battle.isEnding,
+    disabledRef: cloneDisabledRef,
+    playSound,
+    onUsed: onAbilityUsed,
+  });
 
   // Grito da transformação: empurra os inimigos próximos para longe enquanto o
   // Vastolord está nos quadros de grito (screamOne/Two/Three).
@@ -1349,7 +1353,7 @@ export function useBattleCombat({
     setSummons,
   });
 
-  // "I Am Atomic" do marcelo -------------------------------------------------
+  // "I Am Atomic" do marshadow -------------------------------------------------
   // Proporção especial/básico: a explosão deve causar "2x o dano de especial".
   // O playerHit aplica o multiplicador sobre o dano básico (full pipeline:
   // crítico/armadura/elemento), então fatorá-lo pela proporção produz o dano
@@ -1430,7 +1434,9 @@ export function useBattleCombat({
   );
 
   const handleAtomicBoomRef = useLatestRef(handleAtomicBoom);
-  const marceloCutInTriggerLatest = useLatestRef(battle.marceloCutInTrigger);
+  const marshadowCutInTriggerLatest = useLatestRef(
+    battle.marshadowCutInTrigger,
+  );
 
   const {
     halo: atomicHalo,
@@ -1450,7 +1456,7 @@ export function useBattleCombat({
     summons,
     startSpecialIntro,
     onBoom: handleAtomicBoomRef.current,
-    onNpcCutInRef: marceloCutInTriggerLatest,
+    onNpcCutInRef: marshadowCutInTriggerLatest,
     freezeActionsUntilRef,
     isPausedRef,
     isMenuOpenRef,
@@ -1461,7 +1467,7 @@ export function useBattleCombat({
     cooldownReduction: battle.char.stats.cooldownReduction,
   });
 
-  // Expansão de Domínio do marcelo -------------------------------------------
+  // Expansão de Domínio do marshadow -------------------------------------------
   // Causa 100% da vida máxima de tudo que o mugetsuEffect toca. A vitória só é
   // disparada quando a varredura chega na outra ponta do mapa — por isso o
   // isEnding fica setado pelo hook durante a varredura (bloqueando o lifecycle)
@@ -1540,7 +1546,7 @@ export function useBattleCombat({
   // Expansão de Domínio (burst) dos demais 11 personagens ---------------------
   // O uso consome as 40 cargas e causa dano especial em TODOS os inimigos da
   // arena de uma vez. Sem cutin de intro de propósito: a arte em
-  // `habilities/<skill>/background.svg` só existe para o marcelo.
+  // `habilities/<skill>/background.svg` só existe para o marshadow.
   const handleDomainBurst = useCallback(() => {
     if (battle.isEnding.current) return;
 
@@ -1608,13 +1614,13 @@ export function useBattleCombat({
     playSound,
   });
 
-  // Expansão de Domínio do riquelme (Muryōkūsho) ------------------------------
+  // Expansão de Domínio do natsuki (Muryōkūsho) ------------------------------
   // Domínio próprio: congela o mundo, segura a pose `rioiki.svg` por 5s e
   // drena 0,2% da vida MÁXIMA de todos os inimigos a cada 50ms. No fim, se
   // alguém sobreviveu, o `expansion.svg` estilhaça e desce.
   const {
-    active: riquelmeDomainActive,
-    shattering: riquelmeDomainShattering,
+    active: natsukiDomainActive,
+    shattering: natsukiDomainShattering,
     press: muryokushoPress,
     usable: muryokushoUsable,
   } = useMuryokushoExpansion({
@@ -1641,14 +1647,46 @@ export function useBattleCombat({
     setDelicia: battle.setDelicia,
   });
 
-  // Preenchimento (`expansion.svg`) e quebra do vidro são um só para toda
-  // Expansão de Domínio: o marcelo mostra durante a varredura, o riquelme
-  // durante os 5s do dreno.
-  const domainBackgroundActive = domainExpansionActive || riquelmeDomainActive;
-  const domainShattering =
-    domainExpansionShattering || riquelmeDomainShattering;
+  const {
+    active: ematronDomainActive,
+    shattering: ematronDomainShattering,
+    press: hakaiPress,
+    usable: hakaiUsable,
+  } = useHakaiExpansion({
+    player,
+    setPlayer,
+    npc,
+    npcHP: battle.npcHP,
+    npcMaxHp: battle.npcMaxHp,
+    setNpcHP: battle.setNpcHP,
+    summons,
+    setSummons,
+    spawnDamageNumber: battle.spawnDamageNumber,
+    freezeActionsUntilRef,
+    battleManaRef,
+    timeRef: refs.timeRef,
+    isPausedRef,
+    isMenuOpen,
+    battleEndedRef: battle.isEnding,
+    disabledRef: cloneDisabledRef,
+    startSpecialIntro,
+    playSound,
+    charges: battle.delicia,
+    chargesMax: battle.hitsToSpecial,
+    setDelicia: battle.setDelicia,
+  });
 
-  // "Gran Rey Cero" do marcelo ------------------------------------------------
+  // Preenchimento (`expansion.svg`) e quebra do vidro são um só para toda
+  // Expansão de Domínio: o marshadow mostra durante a varredura, o natsuki
+  // durante os 5s do dreno.
+  const domainBackgroundActive =
+    domainExpansionActive || natsukiDomainActive || ematronDomainActive;
+  const domainShattering =
+    domainExpansionShattering ||
+    natsukiDomainShattering ||
+    ematronDomainShattering;
+
+  // "Gran Rey Cero" do marshadow ------------------------------------------------
   // Lâmina de 500px que corre por quadro; disponível na forma normal (os
   // sprites ficam em `habilities/granReyCero/`, fora da pasta vastolordForm).
   const {
@@ -1683,8 +1721,8 @@ export function useBattleCombat({
     cooldownReduction: battle.char.stats.cooldownReduction,
   });
 
-  // Esferas do riquelme (blue/red) ---------------------------------------------
-  const riquelmeSpheres = useRiquelmeSpheres({
+  // Esferas do natsuki (blue/red) ---------------------------------------------
+  const natsukiSpheres = useNatsukiSpheres({
     player,
     setPlayer,
     battle,
@@ -1709,8 +1747,8 @@ export function useBattleCombat({
     playerProjectileRef,
   });
 
-  // Portais do lucaua (Energia Dimensional) --------------------------------
-  const lucauaPortals = useLucauaPortals({
+  // Portais do babidi (Energia Dimensional) --------------------------------
+  const babidiPortals = useBabidiPortals({
     player,
     setPlayer,
     npc,
@@ -1741,10 +1779,10 @@ export function useBattleCombat({
       press: muryokushoPress,
       usable: muryokushoUsable,
     },
-    // hakai: {
-    //   press: hakaiPress,
-    //   usable: hakaiUsable,
-    // },
+    hakai: {
+      press: hakaiPress,
+      usable: hakaiUsable,
+    },
   } as const;
 
   const domainExpansionAbility =
@@ -1753,12 +1791,12 @@ export function useBattleCombat({
     ];
 
   return {
-    ...riquelmeSpheres,
-    ...lucauaPortals,
+    ...natsukiSpheres,
+    ...babidiPortals,
     battle,
     npc,
     charge,
-    lucasWeapon,
+    yvelWeapon,
     switchWeapon: handleWeaponSwitch,
     grabFlipped,
     grabbedTimerRef,
@@ -1788,7 +1826,7 @@ export function useBattleCombat({
     killerQueenSprite,
     bombSprite,
     explosionSprite,
-    emanuelClone,
+    ematronClone,
     clonePress,
     cloneRelease,
     cloneUsable,
@@ -1820,14 +1858,12 @@ export function useBattleCombat({
     mugetsuSweep,
     domainExpansionActive,
     mugetsuBlink,
-    // Mesmo par de props para os três efeitos: o marcelo usa o mugetsu
-    // (cutin + varredura), o riquelme a Muryōkūsho (dreno contínuo) e os demais
+    // Mesmo par de props para os três efeitos: o marshadow usa o mugetsu
+    // (cutin + varredura), o natsuki a Muryōkūsho (dreno contínuo) e os demais
     // o burst (dano em área).
-    domainExpansionPress:
-      domainExpansionAbility?.press ?? domainBurstPress,
+    domainExpansionPress: domainExpansionAbility?.press ?? domainBurstPress,
 
-    domainExpansionUsable:
-      domainExpansionAbility?.usable ?? domainBurstUsable,
+    domainExpansionUsable: domainExpansionAbility?.usable ?? domainBurstUsable,
     domainBurstActive,
     domainBackgroundActive,
     domainShattering,
@@ -1836,9 +1872,9 @@ export function useBattleCombat({
     granReyCeroUsable,
     granReyCeroRemaining,
     disintegrating,
-    lucauaEnergyProjectiles: lucauaEnergy.projectiles,
-    lucauaAttackVariant: lucauaEnergy.attackVariant,
-    lucauaShieldSides: lucauaShield.sides,
-    onLucauaShieldEnd: lucauaShield.end,
+    babidiEnergyProjectiles: babidiEnergy.projectiles,
+    babidiAttackVariant: babidiEnergy.attackVariant,
+    babidiShieldSides: babidiShield.sides,
+    onBabidiShieldEnd: babidiShield.end,
   };
 }

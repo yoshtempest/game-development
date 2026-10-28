@@ -5,20 +5,20 @@ import { resolveSpriteState } from "@/gameRules/battle/playerStates";
 import { getIdleFrames, IDLE_FRAME_MS } from "@/data/sprites/idleFrames";
 
 import { resolvePlayerSprite } from "@/components/Game/Entities/Player/Battle/utils/resolvePlayerSprite";
-import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
+import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
 
 interface UseBattleSpriteParams {
   character: CharacterId;
   state: PlayerState;
-  weapon?: LucasWeapon;
+  weapon?: YvelWeapon;
   form?: "vastolordForm";
   transformationFrame?: number | null;
   teleportSprite: boolean;
   preAtomic: boolean;
   outroExpression?: "victory" | "defeat" | null;
-  lucauaAttackVariant?: LucauaAttackVariant;
-  /** Player saindo de um portal do lucaua (voo/decolagem). */
-  lucauaPortalLanding?: boolean;
+  babidiAttackVariant?: BabidiAttackVariant;
+  /** Player saindo de um portal do babidi (voo/decolagem). */
+  babidiPortalLanding?: boolean;
 }
 
 export function useBattleSprite({
@@ -30,8 +30,8 @@ export function useBattleSprite({
   teleportSprite,
   preAtomic,
   outroExpression = null,
-  lucauaAttackVariant,
-  lucauaPortalLanding = false,
+  babidiAttackVariant,
+  babidiPortalLanding = false,
 }: UseBattleSpriteParams) {
   const resolvedState = resolveSpriteState(state);
 
@@ -44,8 +44,8 @@ export function useBattleSprite({
     teleportSprite,
     preAtomic,
     outroExpression,
-    lucauaAttackVariant,
-    lucauaPortalLanding,
+    babidiAttackVariant,
+    babidiPortalLanding,
   });
 
   // Sequência idle do personagem (e forma):1 frame = parado, >1 = animado.
@@ -95,7 +95,7 @@ export function useBattleSprite({
           teleportSprite,
           preAtomic,
           outroExpression: null,
-          lucauaAttackVariant,
+          babidiAttackVariant,
         }),
       );
       return;
@@ -118,7 +118,7 @@ export function useBattleSprite({
         fallbackState,
         weapon,
         form,
-        lucauaAttackVariant,
+        babidiAttackVariant,
       ),
     );
   };

@@ -13,9 +13,9 @@ import { timeSinceParryInput } from "./timeSinceParryInput";
 import { applyGuardBreak } from "./apply/applyGuardBreak";
 import { applyDesperateBlock } from "./apply/applyDesperateBlock";
 import { applyHitstop, type TimeEffect } from "@/gameRules/battle/time";
-import { getShieldSide } from "@/gameRules/battle/characters/lucaua/lucauaShield";
+import { getShieldSide } from "@/gameRules/battle/characters/babidi/babidiShield";
 
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
+import type { BabidiShieldSide } from "@/utils/types/character/babidi";
 
 /**
  * Janela de time (ms) entre a entrada do jogador e sofrer o dano para o
@@ -51,7 +51,7 @@ type HandleBlockingParams = {
   spawnDamageRef: React.RefObject<SpawnDamageFn>;
   playerX: number;
   playerY: number;
-  /** X de quem ataca: define o lado em que o shield do lucaua surge. */
+  /** X de quem ataca: define o lado em que o shield do babidi surge. */
   attackerX: number;
   timeRef: React.RefObject<TimeEffect[]>;
   npcStaggerRef: React.RefObject<number>;
@@ -59,7 +59,7 @@ type HandleBlockingParams = {
   lastBlockPressRef: React.RefObject<number>;
   lastAttackPressRef?: React.RefObject<number>;
   onFullBlock?: () => void;
-  onBlockRef?: React.RefObject<(side?: LucauaShieldSide) => void>;
+  onBlockRef?: React.RefObject<(side?: BabidiShieldSide) => void>;
   onParry?: () => void;
   onDamageBlocked?: (blockedDamage: number) => void;
 };

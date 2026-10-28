@@ -24,11 +24,11 @@ type Props = {
 };
 
 /**
- * Sobreposição do Punho Divergente do riquelme: exibe `one.svg` → `eight.svg`
+ * Sobreposição do Punho Divergente do natsuki: exibe `one.svg` → `eight.svg`
  * sobre o inimigo, cada sprite com `DIVERGENT_FIST_FRAME_MS` de duração. O
  * inimigo é empurrado e recebe a segunda instância de dano no sprite `four`.
  * Os sprites vivem em `assets/effects/divergent/` (compartilhados — podem ser
- * usados por outros NPCs/efeitos sem depender da pasta do riquelme).
+ * usados por outros NPCs/efeitos sem depender da pasta do natsuki).
  */
 export function DivergentFistAnimation({
   frame,

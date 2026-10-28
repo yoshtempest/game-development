@@ -13,7 +13,7 @@ type Props = {
 };
 
 /**
- * Silhueta preta deixada no local de origem do blink do riquelme. Sobe junto
+ * Silhueta preta deixada no local de origem do blink do natsuki. Sobe junto
  * com o escurecimento do personagem nos primeiros 50ms, segue visível depois
  * do teleporte e some ao final de `BLINK_AFTERIMAGE_MS`.
  */

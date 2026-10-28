@@ -15,16 +15,16 @@ import type {
   VampirismStats,
 } from "@/gameRules/battle/vampirism/applyVampirism";
 import { BLOCK_ATTACK_PUSH_DISTANCE } from "@/gameRules/movement/constants";
-import { LUCAS_WEAPON_RANGES } from "@/data/characters/lucas/lucasWeapons";
+import { YVEL_WEAPON_RANGES } from "@/data/characters/yvel/yvelWeapons";
 import { PlayerSpecialConstants } from "@/data/projectile";
 import { useBuildTargetList } from "./usePlayerTargeting";
 import { resetCooldownRef } from "@/utils/battle/cooldown";
-import { EMANUEL_COMBO_STEPS } from "@/data/characters/emanuel/emanuel";
+import { EMATRON_COMBO_STEPS } from "@/data/characters/ematron";
 
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 import type { SpecialHitOptions } from "@/utils/types/battle/specialHitOptions";
 import type { CharactersProgress } from "@/data/characters/defaultProgress";
-import type { LucauaTarget } from "@/utils/types/character/lucaua";
+import type { BabidiTarget } from "@/utils/types/character/babidi";
 
 type Props = {
   player: Player;
@@ -36,7 +36,7 @@ type Props = {
   npcHP: number;
   npcClass: NPCClass;
   playerClass: PlayerClass;
-  weapon?: LucasWeapon;
+  weapon?: YvelWeapon;
   progress: CharactersProgress;
   npcLevel: number;
   battle: {
@@ -70,22 +70,22 @@ type Props = {
   playerMaxHp: number;
   vampirism: VampirismStats;
   onNpcPush?: (targetX: number) => void;
-  /** Multiplicador do último step do combo do emanuel (lido no press). */
-  emanuelComboMultiplierRef?: React.RefObject<number>;
-  /** true quando o último press do emanuel AVANÇOU o combo. */
-  emanuelComboActiveRef?: React.RefObject<boolean>;
-  /** Combo do emanuel: true durante a sequência aérea (airKick windup). */
-  emanuelComboAirActiveRef?: React.RefObject<boolean>;
-  /** Índice do último step do combo do emanuel (lido no press). */
-  emanuelComboStepIndexRef?: React.RefObject<number>;
-  /** Avança o player um passo em direção ao alvo atingido (combo do emanuel). */
+  /** Multiplicador do último step do combo do ematron (lido no press). */
+  ematronComboMultiplierRef?: React.RefObject<number>;
+  /** true quando o último press do ematron AVANÇOU o combo. */
+  ematronComboActiveRef?: React.RefObject<boolean>;
+  /** Combo do ematron: true durante a sequência aérea (airKick windup). */
+  ematronComboAirActiveRef?: React.RefObject<boolean>;
+  /** Índice do último step do combo do ematron (lido no press). */
+  ematronComboStepIndexRef?: React.RefObject<number>;
+  /** Avança o player um passo em direção ao alvo atingido (combo do ematron). */
   onComboAdvance?: (forwardDistance: number, targetX: number) => void;
-  /** Básico do lucaua: dispara o projétil no press (devolve se disparou). */
-  lucauaFireRef?: React.RefObject<
-    ((player: Player, targets: LucauaTarget[]) => boolean) | null
+  /** Básico do babidi: dispara o projétil no press (devolve se disparou). */
+  babidiFireRef?: React.RefObject<
+    ((player: Player, targets: BabidiTarget[]) => boolean) | null
   >;
-  /** Colisão do projétil do lucaua com um alvo (resolve o dano básico). */
-  lucauaOnHitRef?: React.RefObject<((target: LucauaTarget) => void) | null>;
+  /** Colisão do projétil do babidi com um alvo (resolve o dano básico). */
+  babidiOnHitRef?: React.RefObject<((target: BabidiTarget) => void) | null>;
 };
 
 export function usePlayerBattleActions({
@@ -107,13 +107,13 @@ export function usePlayerBattleActions({
   playerMaxHp,
   vampirism,
   onNpcPush,
-  emanuelComboMultiplierRef,
-  emanuelComboActiveRef,
-  emanuelComboAirActiveRef,
-  emanuelComboStepIndexRef,
+  ematronComboMultiplierRef,
+  ematronComboActiveRef,
+  ematronComboAirActiveRef,
+  ematronComboStepIndexRef,
   onComboAdvance,
-  lucauaFireRef,
-  lucauaOnHitRef,
+  babidiFireRef,
+  babidiOnHitRef,
 }: Props) {
   const fallingAttackUsedRef = useRef(false);
 
@@ -179,13 +179,13 @@ export function usePlayerBattleActions({
     ],
   );
 
-  // Impacto do projétil de energia do lucaua: o básico não tem fase corpo a
+  // Impacto do projétil de energia do babidi: o básico não tem fase corpo a
   // corpo — o golpe É o projétil, resolvido aqui no momento da colisão (NPC
   // principal via playerHit com bypass de alcance/cooldown; summons pelo mesmo
   // pipeline do melee). Reatribuído a cada render para manter os closures
   // frescos (mesmo padrão do `refs.spawnDamageRef` no useBattleCombat).
-  if (lucauaOnHitRef) {
-    lucauaOnHitRef.current = (target) => {
+  if (babidiOnHitRef) {
+    babidiOnHitRef.current = (target) => {
       if (target.id === "main") {
         battle.playerHit(1, true, true);
         return;
@@ -242,46 +242,46 @@ export function usePlayerBattleActions({
   );
 
   const handlePlayerHit = useCallback(() => {
-    // Combo do emanuel: o multiplicador vem do passo avançado no último press
+    // Combo do ematron: o multiplicador vem do passo avançado no último press
     // (sinal síncrono setado pelo attack() no useBattleMovement). Usamos
     // bypassCooldown=true porque o pacing do combo é a janela de 300ms, não o
     // cooldown básico de 400ms.
-    const isEmanuelComboHit =
-      player.character === "emanuel" &&
-      emanuelComboActiveRef?.current === true &&
-      emanuelComboMultiplierRef != null;
-    const comboMultiplier = isEmanuelComboHit
-      ? (emanuelComboMultiplierRef.current ?? 1)
+    const isEmatronComboHit =
+      player.character === "ematron" &&
+      ematronComboActiveRef?.current === true &&
+      ematronComboMultiplierRef != null;
+    const comboMultiplier = isEmatronComboHit
+      ? (ematronComboMultiplierRef.current ?? 1)
       : 1;
 
-    // Uma instância de dano por sprite do combo do emanuel: presses repetidos
+    // Uma instância de dano por sprite do combo do ematron: presses repetidos
     // durante a exibição de um golpe (mash/hold) que NÃO avançaram o combo não
     // podem vazar dano pelo caminho normal (cooldown básico de 400ms).
     if (
-      player.character === "emanuel" &&
+      player.character === "ematron" &&
       player.mode === "battle" &&
-      !isEmanuelComboHit &&
+      !isEmatronComboHit &&
       (player.state === "preAttack" ||
         ALL_PREDICATES.isCombo(player.state) ||
-        (player.state === "jump" && emanuelComboAirActiveRef?.current === true))
+        (player.state === "jump" && ematronComboAirActiveRef?.current === true))
     ) {
       return;
     }
 
     if (battle.isEnding.current) return;
-    if (!isEmanuelComboHit && !battle.playerCooldown.current) {
+    if (!isEmatronComboHit && !battle.playerCooldown.current) {
       return;
     }
 
     const targets = getTargets();
     const mainTarget = targets.find((t) => t.id === "main");
 
-    // Lucaua: o básico é um disparo de energia — o press só gera o projétil
+    // Babidi: o básico é um disparo de energia — o press só gera o projétil
     // (ninguém leva dano na hora); o dano acontece na colisão, quando o
     // projétil some no primeiro alvo atingido. O cooldown é consumido no
     // disparo para o mash não gerar saraivada.
-    if (player.character === "lucaua") {
-      const fired = lucauaFireRef?.current?.(player, targets) ?? false;
+    if (player.character === "babidi") {
+      const fired = babidiFireRef?.current?.(player, targets) ?? false;
       if (fired) {
         playAttackSound(player.character);
         resetCooldownRef(PLAYER_BASIC_COOLDOWN, battle.playerCooldown);
@@ -302,8 +302,8 @@ export function usePlayerBattleActions({
             false,
             true,
             target.id === "main" ? npcClass : "common",
-            weapon && player.character === "lucas"
-              ? LUCAS_WEAPON_RANGES[weapon]
+            weapon && player.character === "yvel"
+              ? YVEL_WEAPON_RANGES[weapon]
               : undefined,
           ) &&
           isFacingTarget(
@@ -323,9 +323,9 @@ export function usePlayerBattleActions({
 
     // Priority 1: hit main NPC (boss) if in range
     if (mainTarget && isInAttackRange(mainTarget)) {
-      if (isEmanuelComboHit) {
-        const stepIndex = emanuelComboStepIndexRef?.current ?? 0;
-        const step = EMANUEL_COMBO_STEPS[stepIndex] ?? EMANUEL_COMBO_STEPS[0];
+      if (isEmatronComboHit) {
+        const stepIndex = ematronComboStepIndexRef?.current ?? 0;
+        const step = EMATRON_COMBO_STEPS[stepIndex] ?? EMATRON_COMBO_STEPS[0];
         const pushDir = player.battleDirection === "right" ? 1 : -1;
         onNpcPush?.(npc.x + pushDir * step.pushDistance);
         onComboAdvance?.(step.forwardDistance, mainTarget.x);
@@ -351,14 +351,14 @@ export function usePlayerBattleActions({
       const pushDir = player.battleDirection === "right" ? 1 : -1;
       hitSummon(
         target,
-        isEmanuelComboHit ? comboMultiplier : 1,
+        isEmatronComboHit ? comboMultiplier : 1,
         "basic",
-        isEmanuelComboHit ? pushDir : undefined,
+        isEmatronComboHit ? pushDir : undefined,
       );
 
-      if (isEmanuelComboHit) {
-        const stepIndex = emanuelComboStepIndexRef?.current ?? 0;
-        const step = EMANUEL_COMBO_STEPS[stepIndex] ?? EMANUEL_COMBO_STEPS[0];
+      if (isEmatronComboHit) {
+        const stepIndex = ematronComboStepIndexRef?.current ?? 0;
+        const step = EMATRON_COMBO_STEPS[stepIndex] ?? EMATRON_COMBO_STEPS[0];
         onComboAdvance?.(step.forwardDistance, target.x);
       } else {
         resetCooldownRef(PLAYER_BASIC_COOLDOWN, battle.playerCooldown);
@@ -378,12 +378,12 @@ export function usePlayerBattleActions({
     weapon,
     npc.x,
     onNpcPush,
-    emanuelComboMultiplierRef,
-    emanuelComboActiveRef,
-    emanuelComboAirActiveRef,
-    emanuelComboStepIndexRef,
+    ematronComboMultiplierRef,
+    ematronComboActiveRef,
+    ematronComboAirActiveRef,
+    ematronComboStepIndexRef,
     onComboAdvance,
-    lucauaFireRef,
+    babidiFireRef,
   ]);
 
   const handleExtraPunch = useCallback(
@@ -445,7 +445,7 @@ export function usePlayerBattleActions({
       return;
     }
 
-    if (player.character === "riquelme") {
+    if (player.character === "natsuki") {
       const dir = player.battleDirection === "right" ? 1 : -1;
       const inProjectileLine = (target: { x: number }) => {
         const dx = target.x - player.x;

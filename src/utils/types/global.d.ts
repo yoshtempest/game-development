@@ -293,7 +293,7 @@ declare global {
     id: string;
     hp: number;
     maxHp: number;
-    /** Indestrutível: não pode ser destruído nem cortado (ex: esfera do Riquelme). */
+    /** Indestrutível: não pode ser destruído nem cortado (ex: esfera do Natsuki). */
     indestructible: boolean;
     /**
      * Natureza do dano ao acertar o player: decide qual coluna de armadura ele
@@ -431,36 +431,36 @@ declare global {
   /** Ataque básico: windup → golpe. */
   type PlayerBasicAttackState =
     "preAttack" | "attack" | "crit" | "preKick" | "kick";
-  /** Golpes de solo do combo do emanuel. */
+  /** Golpes de solo do combo do ematron. */
   type PlayerComboState = "punch" | "hook" | "lowKick" | "airGrab" | "airKick";
   /** Habilidade ativa de solo: windup (`preAbility*`) → execução (`ability`). */
   type PlayerAbilityState = "preAbility" | "preAbility2" | "ability";
-  /** Genki Dama do emanuel — o personagem sobe e fica flutuando. */
+  /** Genki Dama do ematron — o personagem sobe e fica flutuando. */
   type PlayerGenkiDamaState =
     "genkiDamaRising" | "preparingGenkiDama" | "throwGenkiDama";
-  /** "I Am Atomic" do marcelo. */
+  /** "I Am Atomic" do marshadow. */
   type PlayerAtomicState = "preparingAtomic" | "finalizatingAtomic";
-  /** Expansão de Domínio do marcelo. */
+  /** Expansão de Domínio do marshadow. */
   type PlayerDomainExpansionState = "preMugetsu" | "mugetsu";
   /**
-   * Expansão de Domínio do riquelme (Muryōkūsho): a pose `rioiki.svg` segura o
+   * Expansão de Domínio do natsuki (Muryōkūsho): a pose `rioiki.svg` segura o
    * personagem durante os 5s do domínio, que congela o mundo e drena 0,2% da
    * vida máxima dos inimigos a cada 50ms.
    */
-  type PlayerRiquelmeDomainState = "rioiki";
-  /** Laser da Forma Vastolord do marcelo. */
+  type PlayerNatsukiDomainState = "rioiki";
+  /** Laser da Forma Vastolord do marshadow. */
   type PlayerLaserState = "laser";
-  /** "Gran Rey Cero" do marcelo. */
+  /** "Gran Rey Cero" do marshadow. */
   type PlayerGranReyCeroState = "granReyCero";
   /**
-   * Kamehameha do emanuel: fase de carga (`chargingKamehameha` — sprite
+   * Kamehameha do ematron: fase de carga (`chargingKamehameha` — sprite
    * `chargingKamehameha.svg`) e fase de disparo (`kamehameha` — sprite
    * `kamehameha.svg` + o efeito `kamehamehaEffect`, que dura 2s).
    */
   type PlayerKamehamehaState = "chargingKamehameha" | "kamehameha";
   /**
-   * Esferas do riquelme (habilidades "blue"/"red") e a fusão delas na purple:
-   * a sequência é conduzida pelo hook `useRiquelmeSpheres`, não pelo
+   * Esferas do natsuki (habilidades "blue"/"red") e a fusão delas na purple:
+   * a sequência é conduzida pelo hook `useNatsukiSpheres`, não pelo
    * `animationFlow`. `purpleJunction` é o sprite `purple/junction.svg`, o
    * instante em que a blue e a red se fundem; o Setup (`one.svg` → `two.svg` →
    * `three.svg`) usa os três estados seguintes.
@@ -471,7 +471,7 @@ declare global {
     | "sphereMove"
     | "sphereFire"
     | "blueSphereControl";
-  /** Passiva "O Abençoado" (riquelme) — invencível enquanto sobe. */
+  /** Passiva "O Abençoado" (natsuki) — invencível enquanto sobe. */
   type PlayerHonoredState = "mostHonored";
   /** Locomoção com compromisso: dash e carga de ki. */
   type PlayerChargeState = "dash" | "charging" | "chargingKi";
@@ -483,8 +483,8 @@ declare global {
   /**
    * Estados que seguram o personagem e travam novas ações: qualquer
    * `PlayerChargeState`, o O Abençoado, as habilidades de cast longas (Genki
-   * Dama, o Laser da Forma Vastolord, o Gran Rey Cero, as esferas do riquelme),
-   * a Expansão de Domínio do riquelme e o Kamehameha do emanuel (fase de carga
+   * Dama, o Laser da Forma Vastolord, o Gran Rey Cero, as esferas do natsuki),
+   * a Expansão de Domínio do natsuki e o Kamehameha do ematron (fase de carga
    * e fase de disparo).
    */
   type PlayerActionLockState =
@@ -494,7 +494,7 @@ declare global {
     | PlayerLaserState
     | PlayerGranReyCeroState
     | PlayerSphereState
-    | PlayerRiquelmeDomainState
+    | PlayerNatsukiDomainState
     | PlayerKamehamehaState;
 
   /** O jogador não age: trava de ação, defesa ou reação a dano. */
@@ -522,7 +522,7 @@ declare global {
 
   type PlayerClass = "fracote" | "idiota" | "amostradinho" | null;
 
-  type LucasWeapon =
+  type YvelWeapon =
     | "withDoubleSwords"
     | "withSniper"
     | "withPistol"
@@ -579,7 +579,7 @@ declare global {
     redX: number;
     redY: number;
     direction: Direction;
-    /** A esfera do Riquelme é indestrutível: não sofre dano nem some ao colidir. */
+    /** A esfera do Natsuki é indestrutível: não sofre dano nem some ao colidir. */
     indestructible: boolean;
   };
 

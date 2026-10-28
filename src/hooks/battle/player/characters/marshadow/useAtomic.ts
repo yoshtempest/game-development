@@ -8,7 +8,7 @@ import {
   type SetStateAction,
 } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
-import { ATOMIC_COOLDOWN_MS } from "@/data/characters/marcelo/marshadow";
+import { ATOMIC_COOLDOWN_MS } from "@/data/characters/marshadow/marshadow";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
 import {
   ONE_HUNDRED_MS,
@@ -65,7 +65,7 @@ type Props = {
   ) => void;
   /** Aplica o dano em todos os inimigos atingidos (implementado no useBattleCombat). */
   onBoom: (payload: AtomicBoomPayload) => void;
-  /** CutInEnemie do marcelo sobre o NPC principal (chance de sangrar). */
+  /** CutInEnemie do marshadow sobre o NPC principal (chance de sangrar). */
   onNpcCutInRef: RefObject<() => void>;
   freezeActionsUntilRef: RefObject<number>;
   isPausedRef: RefObject<boolean>;
@@ -101,7 +101,7 @@ type AtomicApi = {
 };
 
 /**
- * "I Am Atomic" do marcelo: o jogador dispara a sequência starting.svg →
+ * "I Am Atomic" do marshadow: o jogador dispara a sequência starting.svg →
  * preparing.svg → finalizating.svg (todas sob o background do specialIntro e
  * com o halo acima do sprite), centra a explosion.svg no inimigo com maior
  * vida máxima e, 100ms depois da troca para finalizating.svg, causa dano em
@@ -156,7 +156,7 @@ export function useAtomic({
 
   const { usable, usableRef, shouldCancelRef } = useSkillGuard({
     player,
-    character: "marcelo",
+    character: "marshadow",
     freezeActionsUntilRef,
     disabledRef,
     isPausedRef,
@@ -284,7 +284,7 @@ export function useAtomic({
     // O specialIntro (1s) exibe o background da habilidade por cima de tudo e
     // deixa o tempo em slow-motion; a coreografia roda em paralelo cobrindo o
     // mesmo 1s (starting → preparing → finalizating → explosion).
-    startSpecialIntro("marcelo", () => {}, "atomic");
+    startSpecialIntro("marshadow", () => {}, "atomic");
 
     const prepareAt = ATOMIC_STARTING_MS;
     const finalizeAt = ATOMIC_STARTING_MS + ATOMIC_PREPARING_MS;
@@ -370,7 +370,7 @@ export function useAtomic({
         }
 
         // NPC principal atingido: dano (via onBoom) + CutInEnemie com
-        // chance de sangrar (mecânica padrão de ataque do marcelo).
+        // chance de sangrar (mecânica padrão de ataque do marshadow).
         if (hitMain && npcHpRef.current > 0) {
           onNpcCutInRef.current?.();
         }

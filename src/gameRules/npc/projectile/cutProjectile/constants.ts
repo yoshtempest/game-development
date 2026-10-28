@@ -6,5 +6,5 @@
  * o barrel que o re-exporta.
  */
 
-/** boolean marcado como "marshadow" (characterId "marcelo"). */
-export const MARSHADOW_CHARACTER_ID = "marcelo";
+/** boolean marcado como "marshadow" (characterId "marshadow"). */
+export const MARSHADOW_CHARACTER_ID = "marshadow";

@@ -5,7 +5,7 @@ import {
   getNpcSpriteYOffset,
 } from "@/utils/npc/getSpritePath";
 import { playerPathMarshadowHabilities } from "@/utils/paths";
-import { MARCELO_CUT_IN_ENEMIE_SRC } from "@/data/characters/marcelo/marshadowCutIn";
+import { MARSHADOW_CUT_IN_ENEMIE_SRC } from "@/data/characters/marshadow/marshadowCutIn";
 import type { AtomicCut, AtomicExplosion } from "@/utils/types/battle/atomic";
 import styles from "./styles.module.css";
 
@@ -27,7 +27,7 @@ function explosionSrc(phase: AtomicExplosion["phase"]): string {
 }
 
 /**
- * Efeitos visuais da habilidade "I Am Atomic" do marcelo: a startingExplosion/
+ * Efeitos visuais da habilidade "I Am Atomic" do marshadow: a startingExplosion/
  * explosion.svg centrada no alvo (inimigo de maior vida máxima) e um
  * CutInEnemie sobre cada inimigo atingido dentro do raio. Cada overlay é
  * ancorado no mesmo container do adversário (pés + offset de sprite).
@@ -98,7 +98,7 @@ export function AtomicEffects({
             }}
           >
             <img
-              src={MARCELO_CUT_IN_ENEMIE_SRC}
+              src={MARSHADOW_CUT_IN_ENEMIE_SRC}
               alt=""
               className={styles.cut}
               style={{

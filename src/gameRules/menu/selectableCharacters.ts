@@ -10,8 +10,8 @@ export function getSelectableCharacters(flags: UnlockFlags) {
   return CHARACTERS.filter(
     (c) =>
       c.selectable ||
-      (c.image === "samuel" && flags.samurionUnlocked) ||
-      (c.image === "lucas" && flags.yvelUnlocked) ||
-      (c.image === "artur" && flags.srGuaxinimUnlocked),
+      (c.image === "samurion" && flags.samurionUnlocked) ||
+      (c.image === "yvel" && flags.yvelUnlocked) ||
+      (c.image === "srGuaxinim" && flags.srGuaxinimUnlocked),
   );
 }

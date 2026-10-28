@@ -22,7 +22,7 @@ export function KillerQueen({
 
   useEffect(() => {
     // killerQueen entrou em palm -> clap.mp3
-    // (prePalm.mp3 é disparado pelo arturSeeing.svg no PlayerBattle)
+    // (prePalm.mp3 é disparado pelo srGuaxinimSeeing.svg no PlayerBattle)
     const sprite = killerQueen?.active ? killerQueen.sprite : "idle";
     if (sprite === "palm" && prevKillerQueenSpriteRef.current !== "palm") {
       playSound("clap");

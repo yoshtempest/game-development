@@ -12,7 +12,7 @@ import { applyPlayerStrike } from "./apply/applyPlayerStrike";
 /**
  * Interceptação pelo golpe do jogador (projéteis common/pull).
  *
- * - Marcelo: a corte passiva desvia o projétil dividindo em 2 — nunca o
+ * - Marshadow: a corte passiva desvia o projétil dividindo em 2 — nunca o
  *   destrói. Projéteis indestrutíveis não podem ser cortados.
  * - Demais personagens: o golpe (básico ou special) causa o dano real do
  *   ataque, destruindo o projétil ao zerar o HP.
@@ -42,8 +42,8 @@ export function tryMeleeIntercept(
   );
   if (!inRange) return undefined;
 
-  const isMarcelo = opts.playerCharacter === MARSHADOW_CHARACTER_ID;
-  if (isMarcelo && !isSpecial) {
+  const isMarshadow = opts.playerCharacter === MARSHADOW_CHARACTER_ID;
+  if (isMarshadow && !isSpecial) {
     const cut = shouldCutProjectile({
       projectile: next,
       playerX: opts.playerX,

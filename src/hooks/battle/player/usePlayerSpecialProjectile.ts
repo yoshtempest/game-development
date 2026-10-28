@@ -52,7 +52,7 @@ export function usePlayerSpecialProjectile({
   useEffect(() => {
     const { state, x, battleDirection } = player;
 
-    if (state === "preAbility" && player.character === "riquelme") {
+    if (state === "preAbility" && player.character === "natsuki") {
       firedRef.current = false;
       const override = getAbilityFlowOverride(player.character);
       mergeDurationRef.current = override?.preAbility.duration ?? 200;

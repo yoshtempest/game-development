@@ -11,10 +11,10 @@ export function applySpecialHit(params: SpecialHitParams) {
     type: dmgType,
   } = calculateSpecialHitDamage(params);
 
-  if (isCrit && params.player.character !== "riquelme")
+  if (isCrit && params.player.character !== "natsuki")
     params.setPlayer((p) => ({ ...p, state: "crit" }));
 
-  if (isCrit && params.player.character === "riquelme") {
+  if (isCrit && params.player.character === "natsuki") {
     params.onKokusenRef?.current?.();
     params.onBlackFlashRef?.current?.();
     params.onCriticalPushRef?.current?.();

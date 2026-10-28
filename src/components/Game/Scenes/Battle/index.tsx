@@ -6,15 +6,15 @@ import { CursedEnergyButton } from "@/components/Game/Battle/Buttons/Natsuki/Cur
 import { BlinkButton } from "@/components/Game/Battle/Buttons/Natsuki/Blink";
 import { DivergentFistButton } from "@/components/Game/Battle/Buttons/Natsuki/DivergentFist";
 import { SphereJunction } from "@/components/Game/Battle/Buttons/Natsuki/SphereJunction";
-import { EmanuelCloneButton } from "@/components/Game/Battle/Buttons/Ematron/Clone";
-import { EmanuelKiChargeButton } from "@/components/Game/Battle/Buttons/Ematron/KiCharge";
-import { EmanuelGenkiDamaButton } from "@/components/Game/Battle/Buttons/Ematron/GenkiDama";
-import { EmanuelKamehamehaButton } from "@/components/Game/Battle/Buttons/Ematron/Kamehameha";
+import { EmatronCloneButton } from "@/components/Game/Battle/Buttons/Ematron/Clone";
+import { EmatronKiChargeButton } from "@/components/Game/Battle/Buttons/Ematron/KiCharge";
+import { EmatronGenkiDamaButton } from "@/components/Game/Battle/Buttons/Ematron/GenkiDama";
+import { EmatronKamehamehaButton } from "@/components/Game/Battle/Buttons/Ematron/Kamehameha";
 import { VastolordLaserButton } from "@/components/Game/Battle/Buttons/Marshadow/VastolordLaser";
 import { AtomicButton } from "@/components/Game/Battle/Buttons/Marshadow/Atomic";
-import { KillerQueenButton } from "@/components/Game/Battle/Buttons/Artur/KillerQueen";
-import { StackExplosionButton } from "@/components/Game/Battle/Buttons/Larissa/StackExplosion";
-import { LucauaPortalsButton } from "@/components/Game/Battle/Buttons/Lucaua/Portals";
+import { KillerQueenButton } from "@/components/Game/Battle/Buttons/SrGuaxinim/KillerQueen";
+import { StackExplosionButton } from "@/components/Game/Battle/Buttons/Laricell/StackExplosion";
+import { BabidiPortalsButton } from "@/components/Game/Battle/Buttons/Babidi/Portals";
 import { PortalSelect } from "@/components/Game/Battle/Modal/PortalSelect";
 import { DomainExpansionButton } from "@/components/Game/Battle/Buttons/DomainExpansion";
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
@@ -54,8 +54,8 @@ import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { useBattleMana } from "@/contexts/BattleManaContext";
 import { useCameraShake } from "@/hooks/battle/effects/useCameraShake";
-import { VASTOLORD_ROAR_SCREAM_FRAMES } from "@/data/characters/marcelo/vastolordForm";
-import { LUCAS_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
+import { VASTOLORD_ROAR_SCREAM_FRAMES } from "@/data/characters/marshadow/vastolordForm";
+import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import {
   CURSED_ENERGY_HEAL_RATIO,
@@ -154,7 +154,7 @@ export function BattleScene(props: Props) {
     explosionSprite,
     extraPunches,
     extraPunchSprite,
-    lucasWeapon,
+    yvelWeapon,
     switchWeapon,
     convertCursedEnergy,
     blink,
@@ -179,7 +179,7 @@ export function BattleScene(props: Props) {
     lootBags,
     lootNotifications,
     npcClass,
-    emanuelClone,
+    ematronClone,
     clonePress,
     cloneRelease,
     cloneUsable,
@@ -222,21 +222,21 @@ export function BattleScene(props: Props) {
     granReyCeroPress,
     granReyCeroUsable,
     granReyCeroRemaining,
-    lucauaEnergyProjectiles,
-    lucauaAttackVariant,
-    lucauaShieldSides,
-    onLucauaShieldEnd,
-    lucauaPortals,
-    lucauaPortalGhost,
-    lucauaPortalSelection,
-    lucauaPortalLanding,
-    lucauaPortalFocus,
-    lucauaPortalClick,
-    lucauaPortalPick,
-    lucauaPortalUsable,
-    lucauaPortalCount,
-    lucauaPortalCost,
-    lucauaPortalMaxPortals,
+    babidiEnergyProjectiles,
+    babidiAttackVariant,
+    babidiShieldSides,
+    onBabidiShieldEnd,
+    babidiPortals,
+    babidiPortalGhost,
+    babidiPortalSelection,
+    babidiPortalLanding,
+    babidiPortalFocus,
+    babidiPortalClick,
+    babidiPortalPick,
+    babidiPortalUsable,
+    babidiPortalCount,
+    babidiPortalCost,
+    babidiPortalMaxPortals,
     sphere,
     sphereFocus,
     castActive,
@@ -302,8 +302,8 @@ export function BattleScene(props: Props) {
   // câmera de mais e esconderia o jogador, que está em BATTLE_SPAWN.player.y.
   const focus = mugetsuSweep
     ? { x: mugetsuSweep.x, y: player.y }
-    : lucauaPortalFocus
-      ? { x: lucauaPortalFocus.x, y: lucauaPortalFocus.y }
+    : babidiPortalFocus
+      ? { x: babidiPortalFocus.x, y: babidiPortalFocus.y }
       : sphereFocus
         ? { x: sphereFocus.x, y: sphereFocus.y }
         : { x: focusEntity.x, y: focusEntity.y };
@@ -330,7 +330,7 @@ export function BattleScene(props: Props) {
     (containerHeight * 0.5 * (bgPosY - initialBgPosRef.current.y)) / 100;
 
   const baseZoom =
-    lucauaPortalFocus || sphereFocus ? 1 : (cameraFocus?.zoom ?? 1);
+    babidiPortalFocus || sphereFocus ? 1 : (cameraFocus?.zoom ?? 1);
   // Expansão de Domínio: leve zoomOut de 1.4x enquanto a habilidade está ativa
   // — o mugetsuEffect é gigante em altura e o zoom revela mais do mapa.
   const domainZoom = domainExpansionActive ? 1 / 1.4 : 1;
@@ -637,13 +637,13 @@ export function BattleScene(props: Props) {
             explosionSprite={explosionSprite}
             extraPunches={extraPunches}
             extraPunchSprite={extraPunchSprite}
-            weapon={lucasWeapon}
+            weapon={yvelWeapon}
             playerForm={vastolordActive ? "vastolordForm" : undefined}
             transformationFrame={transformationFrame}
             blinkVisual={blinkVisual}
             lootBags={lootBags}
             npcClass={npcClass}
-            emanuelClone={emanuelClone}
+            ematronClone={ematronClone}
             genkiDamaVisual={genkiDamaVisual}
             vastolordLaser={vastolordLaser}
             kamehameha={kamehameha}
@@ -659,13 +659,13 @@ export function BattleScene(props: Props) {
             mugetsuSweep={mugetsuSweep}
             mugetsuBlink={mugetsuBlink}
             disintegrating={disintegrating}
-            lucauaEnergyProjectiles={lucauaEnergyProjectiles}
-            lucauaAttackVariant={lucauaAttackVariant}
-            lucauaShieldSides={lucauaShieldSides}
-            onLucauaShieldEnd={onLucauaShieldEnd}
-            lucauaPortals={lucauaPortals}
-            lucauaPortalGhost={lucauaPortalGhost}
-            lucauaPortalLanding={lucauaPortalLanding}
+            babidiEnergyProjectiles={babidiEnergyProjectiles}
+            babidiAttackVariant={babidiAttackVariant}
+            babidiShieldSides={babidiShieldSides}
+            onBabidiShieldEnd={onBabidiShieldEnd}
+            babidiPortals={babidiPortals}
+            babidiPortalGhost={babidiPortalGhost}
+            babidiPortalLanding={babidiPortalLanding}
             sphere={sphere}
             purpleHole={purpleHole}
           />
@@ -789,8 +789,8 @@ export function BattleScene(props: Props) {
         />
       )}
 
-      {lucauaPortalSelection !== null && (
-        <PortalSelect index={lucauaPortalSelection} onPick={lucauaPortalPick} />
+      {babidiPortalSelection !== null && (
+        <PortalSelect index={babidiPortalSelection} onPick={babidiPortalPick} />
       )}
 
       <ComboAction />
@@ -808,19 +808,19 @@ export function BattleScene(props: Props) {
           />
         )}
 
-        {player.character === "lucas" && (
+        {player.character === "yvel" && (
           <WeaponSwitchButton
-            weapon={lucasWeapon}
+            weapon={yvelWeapon}
             disabled={
               controlsDisabled ||
               (battleMana != null &&
-                battleMana.playerMana < LUCAS_WEAPON_SWITCH_MANA_COST)
+                battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST)
             }
             onClick={switchWeapon}
           />
         )}
 
-        {player.character === "riquelme" && (
+        {player.character === "natsuki" && (
           <>
             <SphereJunction
               blueActive={
@@ -846,13 +846,13 @@ export function BattleScene(props: Props) {
           </>
         )}
 
-        {player.character === "riquelme" &&
+        {player.character === "natsuki" &&
           (honoredOneActive ? (
             <BlinkButton
               energy={battleMana?.playerMana ?? 0}
               disabled={
                 controlsDisabled ||
-                ALL_PREDICATES.isRiquelmeDomain(player.state) ||
+                ALL_PREDICATES.isNatsukiDomain(player.state) ||
                 (battleMana?.playerMana ?? 0) < BLINK_ENERGY_COST
               }
               onClick={blink}
@@ -870,60 +870,59 @@ export function BattleScene(props: Props) {
             />
           ))}
 
-        {player.character === "emanuel" && (
+        {player.character === "ematron" && (
           <>
-            <EmanuelCloneButton
+            <EmatronCloneButton
               energy={battleMana?.playerMana ?? 0}
               disabled={controlsDisabled || !cloneUsable}
               onPress={clonePress}
               onRelease={cloneRelease}
             />
-            <EmanuelKiChargeButton
+            <EmatronKiChargeButton
               energy={battleMana?.playerMana ?? 0}
               energyMax={battleMana?.playerMaxMana ?? 100}
               disabled={controlsDisabled || !kiChargeUsable}
               onPress={kiChargePress}
               onRelease={kiChargeRelease}
             />
-            <EmanuelGenkiDamaButton
+            <EmatronGenkiDamaButton
               energy={battleMana?.playerMana ?? 0}
               disabled={controlsDisabled || !genkiDamaUsable}
               onPress={genkiDamaPress}
               onRelease={genkiDamaRelease}
             />
-            <EmanuelKamehamehaButton
+            <EmatronKamehamehaButton
               disabled={controlsDisabled || !kamehamehaUsable}
               onClick={kamehamehaPress}
             />
           </>
         )}
-          
-        {player.character === "marcelo" && (
-          !vastolordActive ? (
-          <>
-            <AtomicButton
-              ready={atomicUsable}
-              remaining={atomicRemaining}
-              disabled={controlsDisabled}
-              onClick={atomicPress}
-            />
-            <GranReyCeroButton
-              ready={granReyCeroUsable}
-              remaining={granReyCeroRemaining}
-              disabled={controlsDisabled}
-              onClick={granReyCeroPress}
-            />
-          </>
+
+        {player.character === "marshadow" &&
+          (!vastolordActive ? (
+            <>
+              <AtomicButton
+                ready={atomicUsable}
+                remaining={atomicRemaining}
+                disabled={controlsDisabled}
+                onClick={atomicPress}
+              />
+              <GranReyCeroButton
+                ready={granReyCeroUsable}
+                remaining={granReyCeroRemaining}
+                disabled={controlsDisabled}
+                onClick={granReyCeroPress}
+              />
+            </>
           ) : (
             <VastolordLaserButton
               charges={vastolordLaserStacks}
               disabled={!vastolordLaserUsable}
               onClick={vastolordLaserPress}
             />
-          )
-        )}
+          ))}
 
-        {player.character === "artur" && (
+        {player.character === "srGuaxinim" && (
           <KillerQueenButton
             ready={activeAbilityUsable}
             remaining={activeAbilityRemaining}
@@ -932,7 +931,7 @@ export function BattleScene(props: Props) {
           />
         )}
 
-        {player.character === "larissa" && (
+        {player.character === "laricell" && (
           <StackExplosionButton
             ready={activeAbilityUsable}
             remaining={activeAbilityRemaining}
@@ -941,13 +940,13 @@ export function BattleScene(props: Props) {
           />
         )}
 
-        {player.character === "lucaua" && (
-          <LucauaPortalsButton
-            count={lucauaPortalCount}
-            maxPortals={lucauaPortalMaxPortals}
-            cost={lucauaPortalCost}
-            disabled={controlsDisabled || !lucauaPortalUsable}
-            onClick={lucauaPortalClick}
+        {player.character === "babidi" && (
+          <BabidiPortalsButton
+            count={babidiPortalCount}
+            maxPortals={babidiPortalMaxPortals}
+            cost={babidiPortalCost}
+            disabled={controlsDisabled || !babidiPortalUsable}
+            onClick={babidiPortalClick}
           />
         )}
 

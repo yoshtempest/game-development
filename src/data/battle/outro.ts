@@ -4,43 +4,43 @@ type OutroLines = {
 };
 
 export const OUTRO_LINES: Record<string, OutroLines> = {
-  marcelo: {
+  marshadow: {
     victory: "E vai tomando!",
     defeat: "Não aconteceu nada...",
   },
-  lucaua: {
+  babidi: {
     victory: "Éeeeee! Toma essa, seu f#dido!",
     defeat: "Wubba lubba dub dub!",
   },
-  camilly: {
+  camyKaze: {
     victory: "Ai sim!",
     defeat: "PQP!!",
   },
-  emanuel: {
+  ematron: {
     victory: "Você não passa de um fracassado.",
     defeat: "...",
   },
-  lucas: {
+  yvel: {
     victory: "Viva a Mazim!!!",
     defeat: "Me ajude Mazim!",
   },
-  larissa: {
+  laricell: {
     victory: "Booya!",
     defeat: "Game Over.",
   },
-  samuel: {
+  samurion: {
     victory: "Ha! Ha! Eu tinha um dente.",
     defeat: "Nem doeu!",
   },
-  artur: {
+  srGuaxinim: {
     victory: "Stand, farmar aura!",
     defeat: "Killer Queen, bites the dust!",
   },
-  riquelme: {
+  natsuki: {
     victory: "Yowai Mo",
     defeat: "Gomen Yamanai...",
   },
-  eduarda: {
+  drika: {
     victory: "Ebaa!",
     defeat: "Que ódio!",
   },

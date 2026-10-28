@@ -18,7 +18,7 @@ export const SPEAKERS = {
   laricell: {
     name: "Laricell",
     kind: "player",
-    base: "/larissa",
+    base: "/laricell",
     pose: "expressions/default",
   },
   drika: { name: "Drika", base: "/characters/drika", pose: "default" },
@@ -30,17 +30,17 @@ export const SPEAKERS = {
   yvel: {
     name: "Yvel",
     kind: "player",
-    base: "/characters/lucas",
+    base: "/characters/yvel",
     pose: "default",
   },
   samurion: {
     name: "Samurion",
-    base: "/samuel",
+    base: "/samurion",
     pose: "default",
   },
   ematron: {
     name: "Ematron",
-    base: "/emanuel",
+    base: "/ematron",
     pose: "default",
   },
 

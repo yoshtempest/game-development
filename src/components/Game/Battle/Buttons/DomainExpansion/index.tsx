@@ -7,7 +7,7 @@ type Props = {
   description: string;
   /** Cor do efeito (borda, rótulo e brilho), vinda de `DOMAIN_EXPANSIONS`. */
   accent: string;
-  /** Fundo da arte da habilidade — só o marcelo tem; os demais usam o accent. */
+  /** Fundo da arte da habilidade — só o marshadow tem; os demais usam o accent. */
   background?: string;
   ready: boolean;
   disabled?: boolean;
@@ -16,7 +16,7 @@ type Props = {
 
 /**
  * Botão da Expansão de Domínio: presente para TODOS os personagens, porque a
- * barra de cargas é universal. O marcelo roda o mugetsu bespoke (com a arte
+ * barra de cargas é universal. O marshadow roda o mugetsu bespoke (com a arte
  * `habilities/domainExpansion/background.svg`); os demais rodam o burst
  * universal (`kind: "burst"`), todos com nome/cor de `DOMAIN_EXPANSIONS`.
  */

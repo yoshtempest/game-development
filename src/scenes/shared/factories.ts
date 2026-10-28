@@ -48,14 +48,18 @@ export const createNpc = (
   };
 
   // Handle legacy size parameter (number or NpcSizeResolver)
-  if (typeof sizeOrOptions === "number" || typeof sizeOrOptions === "function") {
+  if (
+    typeof sizeOrOptions === "number" ||
+    typeof sizeOrOptions === "function"
+  ) {
     result.size = sizeOrOptions;
   }
   // Handle new options object
   else if (sizeOrOptions && typeof sizeOrOptions === "object") {
     const options = sizeOrOptions;
     if (options.size !== undefined) result.size = options.size;
-    if (options.interaction !== undefined) result.interaction = options.interaction;
+    if (options.interaction !== undefined)
+      result.interaction = options.interaction;
     if (options.className !== undefined) result.className = options.className;
     if (options.hidden !== undefined) result.hidden = options.hidden;
     if (options.id !== undefined) result.id = options.id;

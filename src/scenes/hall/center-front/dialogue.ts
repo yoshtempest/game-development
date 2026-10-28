@@ -13,7 +13,7 @@ export const getCenterFrontDialogue = ({
   character: CharacterId;
 }) => {
   if (
-    playerCharacter(character, "marcelo") &&
+    playerCharacter(character, "marshadow") &&
     !hasQuest(quests, "save_samurion") &&
     !hasQuest(quests, "save_ematron")
   ) {

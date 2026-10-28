@@ -1,5 +1,5 @@
 /**
- * Modelo de tela da habilidade "I Am Atomic" do marcelo: a explosão, o
+ * Modelo de tela da habilidade "I Am Atomic" do marshadow: a explosão, o
  * cut-in sobre cada inimigo atingido e a carga que o combate consome.
  *
  * Tipos puros: o hook que dispara a habilidade, o que aplica o dano e o

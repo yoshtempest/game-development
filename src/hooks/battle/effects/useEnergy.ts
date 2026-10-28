@@ -3,9 +3,9 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 
 /**
  * Personagens com barra de energia (fluxo).
- * Atualmente apenas o Marshadow (id "marcelo") possui.
+ * Atualmente apenas o Marshadow (id "marshadow") possui.
  */
-const ENERGY_CHARACTERS = new Set<CharacterId>(["marcelo"]);
+const ENERGY_CHARACTERS = new Set<CharacterId>(["marshadow"]);
 
 const ENERGY_MAX = 100;
 

@@ -43,7 +43,7 @@ type Props = {
   playerHP: number;
   playerMaxHp: number;
   vampirism: VampirismStats;
-  weapon?: LucasWeapon;
+  weapon?: YvelWeapon;
   /** Multiplicador da Forma Vastolord aplicado no dano do dash. */
   vastolordMultiplierRef?: React.RefObject<() => number>;
 };

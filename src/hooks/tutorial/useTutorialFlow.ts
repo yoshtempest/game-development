@@ -22,7 +22,7 @@ export function useTutorialFlow() {
     setMode("ui");
   }
 
-  function chooseGender(characterId: "marcelo" | "eduarda") {
+  function chooseGender(characterId: "marshadow" | "drika") {
     setCharacter(characterId);
     setShowGenderChoice(false);
     setMode("explore");

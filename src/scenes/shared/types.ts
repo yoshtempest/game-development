@@ -13,20 +13,20 @@ export type TileRouteFunction = (
 import type { useBattleSystem } from "@/hooks/battle/main/useSystem";
 import type { useNpcAI } from "@/hooks/battle/npc/useAi";
 import type { useChargeAttack } from "@/hooks/battle/charge/useAttack";
-import type { useArturOraPunch } from "@/hooks/battle/player/characters/srGuaxinim/useArturOraPunch";
-import type { useArturKillerQueen } from "@/hooks/battle/player/characters/srGuaxinim/useArturKillerQueen";
+import type { useSrGuaxinimOraPunch } from "@/hooks/battle/player/characters/srGuaxinim/useSrGuaxinimOraPunch";
+import type { useSrGuaxinimKillerQueen } from "@/hooks/battle/player/characters/srGuaxinim/useSrGuaxinimKillerQueen";
 import type { useKokusenAnimation } from "@/hooks/battle/player/characters/natsuki/useKokusenAnimation";
 import type { useBlackFlashAnimation } from "@/hooks/battle/player/characters/natsuki/useBlackFlashAnimation";
 import type { useSpecialIntro } from "@/hooks/battle/modals/useSpecialIntro";
 import type { usePlayerSpecialProjectile } from "@/hooks/battle/player/usePlayerSpecialProjectile";
 import type { useCoffinAnimation } from "@/hooks/battle/summon/useCoffinAnimation";
 import type { useNpcSetup } from "@/hooks/battle/npc/useSetup";
-import type { useEmanuelClone } from "@/hooks/battle/player/characters/ematron/useEmanuelClone";
-import type { useEmanuelGenkiDama } from "@/hooks/battle/player/characters/ematron/useEmanuelGenkiDama";
+import type { useEmatronClone } from "@/hooks/battle/player/characters/ematron/useClone";
+import type { useEmatronGenkiDama } from "@/hooks/battle/player/characters/ematron/useGenkiDama";
 import type { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
 import type { useKamehameha } from "@/hooks/battle/player/characters/ematron/useKamehameha";
 import type { useAtomic } from "@/hooks/battle/player/characters/marshadow/useAtomic";
-import type { useDomainExpansion } from "@/hooks/battle/player/characters/marshadow/useMugetsuExpansion";
+import type { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/useMugetsuExpansion";
 import type { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
 import type { CameraFocus } from "@/hooks/battle/effects/useCameraSequence";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
@@ -34,14 +34,14 @@ import type { CharactersProgress } from "@/data/characters/defaultProgress";
 import type { ReplayData } from "@/utils/types/replay";
 import type { NavigateFunction } from "react-router";
 import type {
-  LucauaEnergyProjectile,
-  LucauaPortal,
-  LucauaPortalFocus,
-  LucauaPortalGhost,
-  LucauaShieldSide,
-  LucauaShieldSides,
-} from "@/utils/types/character/lucaua";
-import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
+  BabidiEnergyProjectile,
+  BabidiPortal,
+  BabidiPortalFocus,
+  BabidiPortalGhost,
+  BabidiShieldSide,
+  BabidiShieldSides,
+} from "@/utils/types/character/babidi";
+import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
 
 type Battle = ReturnType<typeof useBattleSystem>;
 type Npc = ReturnType<typeof useNpcAI>;
@@ -94,16 +94,18 @@ export type BattleSceneApi = {
   playerProjectile: ReturnType<
     typeof usePlayerSpecialProjectile
   >["playerProjectile"];
-  killerQueen: ReturnType<typeof useArturKillerQueen>["killerQueen"];
-  bombTargets: ReturnType<typeof useArturKillerQueen>["bombTargets"];
+  killerQueen: ReturnType<typeof useSrGuaxinimKillerQueen>["killerQueen"];
+  bombTargets: ReturnType<typeof useSrGuaxinimKillerQueen>["bombTargets"];
   killerQueenSprite: ReturnType<
-    typeof useArturKillerQueen
+    typeof useSrGuaxinimKillerQueen
   >["killerQueenSprite"];
-  bombSprite: ReturnType<typeof useArturKillerQueen>["bombSprite"];
-  explosionSprite: ReturnType<typeof useArturKillerQueen>["explosionSprite"];
-  extraPunches: ReturnType<typeof useArturOraPunch>["punches"];
+  bombSprite: ReturnType<typeof useSrGuaxinimKillerQueen>["bombSprite"];
+  explosionSprite: ReturnType<
+    typeof useSrGuaxinimKillerQueen
+  >["explosionSprite"];
+  extraPunches: ReturnType<typeof useSrGuaxinimOraPunch>["punches"];
   extraPunchSprite: string;
-  lucasWeapon: LucasWeapon | undefined;
+  yvelWeapon: YvelWeapon | undefined;
   switchWeapon: () => void;
   convertCursedEnergy: () => void;
   blink: () => void;
@@ -125,7 +127,7 @@ export type BattleSceneApi = {
   cameraFocus: CameraFocus;
   vastolordActive: boolean;
   vastolordRemainingMs: number;
-  /** Quadro da transformação do marcelo (0=screamOne … 3=transformated) ou null. */
+  /** Quadro da transformação do marshadow (0=screamOne … 3=transformated) ou null. */
   vastolordTransformationFrame: number | null;
   specialIntroActive: ReturnType<typeof useSpecialIntro>["specialIntroActive"];
   specialIntroCharacter: ReturnType<
@@ -138,21 +140,21 @@ export type BattleSceneApi = {
   lootNotifications: import("@/utils/types/battle/loot").LootNotification[];
   clearLootNotifications: () => void;
   npcClass: NPCClass;
-  emanuelClone: ReturnType<typeof useEmanuelClone>["cloneVisual"];
+  ematronClone: ReturnType<typeof useEmatronClone>["cloneVisual"];
   clonePress: () => void;
   cloneRelease: () => void;
   cloneUsable: boolean;
   kiChargePress: () => void;
   kiChargeRelease: () => void;
   kiChargeUsable: boolean;
-  genkiDamaVisual: ReturnType<typeof useEmanuelGenkiDama>["genkiDamaVisual"];
+  genkiDamaVisual: ReturnType<typeof useEmatronGenkiDama>["genkiDamaVisual"];
   genkiDamaPress: () => void;
   genkiDamaRelease: () => void;
   genkiDamaUsable: boolean;
   vastolordLaser: ReturnType<typeof useVastolordLaser>["beam"];
   vastolordLaserPress: () => void;
   vastolordLaserUsable: boolean;
-  /** Feixe de Kamehameha do emanuel (efeito em curso, ou null). */
+  /** Feixe de Kamehameha do ematron (efeito em curso, ou null). */
   kamehameha: ReturnType<typeof useKamehameha>["effect"];
   kamehamehaPress: () => void;
   kamehamehaUsable: boolean;
@@ -167,25 +169,25 @@ export type BattleSceneApi = {
   atomicUsable: boolean;
   atomicRemaining: number;
   /**
-   * Habilidade ativa própria do personagem (Artur/Killer Queen,
-   * Larissa/Explosão de Stacks): 20s de cooldown com CDR. Substitui o antigo
+   * Habilidade ativa própria do personagem (SrGuaxinim/Killer Queen,
+   * Laricell/Explosão de Stacks): 20s de cooldown com CDR. Substitui o antigo
    * "special" universal, que não existe mais.
    */
   activeAbilityPress: () => void;
   activeAbilityUsable: boolean;
   activeAbilityRemaining: number;
-  mugetsuSweep: ReturnType<typeof useDomainExpansion>["mugetsuSweep"];
+  mugetsuSweep: ReturnType<typeof useMugetsuExpansion>["mugetsuSweep"];
   domainExpansionActive: ReturnType<
-    typeof useDomainExpansion
+    typeof useMugetsuExpansion
   >["domainExpansionActive"];
-  mugetsuBlink: ReturnType<typeof useDomainExpansion>["mugetsuBlink"];
-  disintegrating: ReturnType<typeof useDomainExpansion>["disintegrating"];
+  mugetsuBlink: ReturnType<typeof useMugetsuExpansion>["mugetsuBlink"];
+  disintegrating: ReturnType<typeof useMugetsuExpansion>["disintegrating"];
   domainExpansionPress: () => void;
   domainExpansionUsable: boolean;
-  /** Overlay ativo do burst da Expansão (marcelo usa `domainExpansionActive`). */
+  /** Overlay ativo do burst da Expansão (marshadow usa `domainExpansionActive`). */
   domainBurstActive: boolean;
   /**
-   * Preenchimento `expansion.svg` em cena (marcelo na varredura, riquelme nos
+   * Preenchimento `expansion.svg` em cena (marshadow na varredura, natsuki nos
    * 5s da Muryōkūsho).
    */
   domainBackgroundActive: boolean;
@@ -194,11 +196,11 @@ export type BattleSceneApi = {
   granReyCeroEffect: ReturnType<typeof useGranReyCero>["effect"];
   granReyCeroPress: () => void;
   granReyCeroUsable: boolean;
-  /** Esfera das habilidades do riquelme (blue/red/purple). */
-  sphere: import("@/utils/types/character/riquelme").RiquelmeSphere | null;
+  /** Esfera das habilidades do natsuki (blue/red/purple). */
+  sphere: import("@/utils/types/character/natsuki").NatsukiSphere | null;
   /** Foco de câmera enquanto a blue é controlada. */
   sphereFocus:
-    import("@/utils/types/character/riquelme").RiquelmeSphereFocus | null;
+    import("@/utils/types/character/natsuki").NatsukiSphereFocus | null;
   /** Ativo durante o Setup (shake de cast). */
   castActive: boolean;
   /** Furo no sprite do NPC quando a purple o mata (junto com `isNpcDying`). */
@@ -211,34 +213,34 @@ export type BattleSceneApi = {
   purplePress: () => void;
   purpleUsable: boolean;
   granReyCeroRemaining: number;
-  /** Projéteis de energia do ataque básico do lucaua em voo. */
-  lucauaEnergyProjectiles: LucauaEnergyProjectile[];
-  /** Variante de mão do sprite do ataque básico do lucaua (pose do golpe atual). */
-  lucauaAttackVariant: LucauaAttackVariant;
-  /** Nonces dos shields de bloqueio do lucaua por lado (`0` = inativo). */
-  lucauaShieldSides: LucauaShieldSides;
+  /** Projéteis de energia do ataque básico do babidi em voo. */
+  babidiEnergyProjectiles: BabidiEnergyProjectile[];
+  /** Variante de mão do sprite do ataque básico do babidi (pose do golpe atual). */
+  babidiAttackVariant: BabidiAttackVariant;
+  /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
+  babidiShieldSides: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
-  onLucauaShieldEnd: (side: LucauaShieldSide, nonce: number) => void;
-  /** Portais fincados no mapa (Energia Dimensional do lucaua). */
-  lucauaPortals: LucauaPortal[];
+  onBabidiShieldEnd: (side: BabidiShieldSide, nonce: number) => void;
+  /** Portais fincados no mapa (Energia Dimensional do babidi). */
+  babidiPortals: BabidiPortal[];
   /** Fantasma do posicionamento (antes de soltar o botão) ou `null`. */
-  lucauaPortalGhost: LucauaPortalGhost | null;
+  babidiPortalGhost: BabidiPortalGhost | null;
   /** Índice do tipo destacado no seletor, ou `null` se o seletor está fechado. */
-  lucauaPortalSelection: number | null;
+  babidiPortalSelection: number | null;
   /** Player no "voo do portal" (override de sprite pós-teletransporte). */
-  lucauaPortalLanding: boolean;
+  babidiPortalLanding: boolean;
   /** Foco de câmera durante o voo do portal. */
-  lucauaPortalFocus: LucauaPortalFocus;
+  babidiPortalFocus: BabidiPortalFocus;
   /** Clique no botão: abre o seletor (ou desfaz o último portal se cheio). */
-  lucauaPortalClick: () => void;
+  babidiPortalClick: () => void;
   /** Escolha do tipo pelo card do modal (entra no posicionamento). */
-  lucauaPortalPick: (index: number) => void;
+  babidiPortalPick: (index: number) => void;
   /** Se a habilidade pode ser usada agora (portais cheios ou guard + energia). */
-  lucauaPortalUsable: boolean;
+  babidiPortalUsable: boolean;
   /** Quantidade de portais fincados. */
-  lucauaPortalCount: number;
+  babidiPortalCount: number;
   /** Custo em energia de cada portal (25% da energia máxima). */
-  lucauaPortalCost: number;
+  babidiPortalCost: number;
   /** Teto de portais simultâneos. */
-  lucauaPortalMaxPortals: number;
+  babidiPortalMaxPortals: number;
 };

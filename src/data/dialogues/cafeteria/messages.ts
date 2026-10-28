@@ -17,7 +17,7 @@ export const cafeteriaMessages: Record<string, string> = {
   "10,4":
     "Segunda a segunda, bode todo dia, somente aqui no Jorjão, ofertas imperdíveis!",
   "12,4": "Oxe, carne de urubu e não de bode?",
-  "14,4": "Atu... by Peru tentando dizer Artur",
+  "14,4": "Atu... by Peru tentando dizer SrGuaxinim",
   "4,7":
     "Treine, treine seu corpo, sua mente, seu eu social e sua espiritualidade, só assim você irá conseguir fugir do Jorjão.",
   "3,10": "Como treinar seu bode, esse filme parece ser bem maneiro",

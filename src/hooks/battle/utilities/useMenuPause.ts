@@ -18,7 +18,7 @@ type MenuPause = {
  * Ela congela a IA, os ticks, os sons e o tempo de batalha, mas NÃO aborta a
  * habilidade em curso: o golpe tem de continuar enquanto o menu está aberto.
  * Antes a pausa entrava no `shouldCancel` das habilidades e a entidade gerada
- * (a lâmina do Gran Rey Cero, a esfera do riquelme, a explosão do Atomic)
+ * (a lâmina do Gran Rey Cero, a esfera do natsuki, a explosão do Atomic)
  * sumia no meio do caminho — o cooldown já gasto virava "nada aconteceu".
  *
  * A pausa que interrompe a batalha de verdade (vitória, derrota, cutscene,

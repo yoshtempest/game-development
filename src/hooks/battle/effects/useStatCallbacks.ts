@@ -8,7 +8,7 @@ import {
   incrementMissesStats,
 } from "@/utils/rewards";
 
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
+import type { BabidiShieldSide } from "@/utils/types/character/babidi";
 
 type Props = {
   playerCharacter: CharacterId;
@@ -16,8 +16,8 @@ type Props = {
   incrementDamageTaken: (amount: number) => void;
   incrementDodgeCounter: () => void;
   incrementDamageDealt: (amount: number) => void;
-  /** Lado do shield de bloqueio do lucaua (repasse do golpe bloqueado). */
-  onBlockSide?: (side?: LucauaShieldSide) => void;
+  /** Lado do shield de bloqueio do babidi (repasse do golpe bloqueado). */
+  onBlockSide?: (side?: BabidiShieldSide) => void;
 };
 
 export function useStatCallbacks({
@@ -28,7 +28,7 @@ export function useStatCallbacks({
   incrementDamageDealt,
   onBlockSide,
 }: Props) {
-  const onBlockRef = useLatestRef((side?: LucauaShieldSide) => {
+  const onBlockRef = useLatestRef((side?: BabidiShieldSide) => {
     incrementBlockCount(playerCharacter);
     incrementBlockCounter();
     onBlockSide?.(side);

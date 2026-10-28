@@ -2,21 +2,21 @@ import styles from "./styles.module.css";
 import type { PlayerBattleProps } from "./types";
 import { useBattleSprite } from "./hooks/useBattleSprite";
 import { useHonoredRotation } from "./hooks/useHonoredRotation";
-import { useArturSeeingSound } from "./hooks/useArturSeeingSound";
+import { useSrGuaxinimSeeingSound } from "./hooks/useSrGuaxinimSeeingSound";
 import { getPlayerDimensions } from "./utils/getPlayerDimensions";
 import { getPlayerTransform } from "./utils/getPlayerTransform";
 import { getBlinkConfig } from "./utils/getBlink";
 import { ChargingKiEffect } from "./ChargingKiEffect";
 import { BattleSprite } from "./BattleSprite";
 import { AtomicHalo } from "./AtomicHalo";
-import { LucauaShield } from "./LucauaShield";
+import { BabidiShield } from "./BabidiShield";
 import { LevelUpParticles } from "@/components/Game/LevelUpParticles";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 
-import type { LucauaShieldSides } from "@/utils/types/character/lucaua";
+import type { BabidiShieldSides } from "@/utils/types/character/babidi";
 
-/** Nenhum shield do lucaua ativo, usado quando a prop não vem. */
-const NO_LUCAUA_SHIELD: LucauaShieldSides = { left: 0, right: 0 };
+/** Nenhum shield do babidi ativo, usado quando a prop não vem. */
+const NO_BABIDI_SHIELD: BabidiShieldSides = { left: 0, right: 0 };
 
 export function PlayerBattle(props: PlayerBattleProps) {
   const {
@@ -39,14 +39,14 @@ export function PlayerBattle(props: PlayerBattleProps) {
     atomicFlash = false,
     mugetsuBlink = null,
     levelUpParticles = false,
-    lucauaAttackVariant,
-    lucauaShieldSides = NO_LUCAUA_SHIELD,
-    onLucauaShieldEnd,
-    lucauaPortalLanding = false,
-    lucauaPortalCross = null,
+    babidiAttackVariant,
+    babidiShieldSides = NO_BABIDI_SHIELD,
+    onBabidiShieldEnd,
+    babidiPortalLanding = false,
+    babidiPortalCross = null,
   } = props;
 
-  const isChargingKi = character === "emanuel" && state === "chargingKi";
+  const isChargingKi = character === "ematron" && state === "chargingKi";
 
   const isCrouching = ALL_PREDICATES.isCrouched(state);
 
@@ -65,15 +65,15 @@ export function PlayerBattle(props: PlayerBattleProps) {
     teleportSprite,
     preAtomic,
     outroExpression,
-    lucauaAttackVariant,
-    lucauaPortalLanding,
+    babidiAttackVariant,
+    babidiPortalLanding,
   });
 
   const isMostHonored = state === "mostHonored";
 
   const rotationDeg = useHonoredRotation(isMostHonored);
 
-  useArturSeeingSound(src);
+  useSrGuaxinimSeeingSound(src);
 
   const dimensions = getPlayerDimensions(PLAYER_SIZE);
 
@@ -115,16 +115,16 @@ export function PlayerBattle(props: PlayerBattleProps) {
   // Enquanto o corpo afunda na linha do portal de origem, a parte que já passou
   // some daqui e reaparece saindo do portal par. O corte é medido na mesma
   // escala do render (`scaleY`), então o pedaço "de dentro" casa com a arte.
-  const inside = lucauaPortalCross
+  const inside = babidiPortalCross
     ? Math.min(
-        Math.max(lucauaPortalCross.depth * dimensions.scaleY, 0),
+        Math.max(babidiPortalCross.depth * dimensions.scaleY, 0),
         dimensions.height,
       )
     : 0;
-  const sourceMask = lucauaPortalCross
+  const sourceMask = babidiPortalCross
     ? `linear-gradient(to top, transparent 0 ${inside}px, #000 ${inside}px)`
     : undefined;
-  const destMask = lucauaPortalCross
+  const destMask = babidiPortalCross
     ? `linear-gradient(to bottom, transparent 0 ${dimensions.height - inside}px, #000 ${dimensions.height - inside}px)`
     : undefined;
 
@@ -154,28 +154,28 @@ export function PlayerBattle(props: PlayerBattleProps) {
 
         {sprite}
 
-        {/* Bloqueio do lucaua: um shield por lado atacado, remontado a cada golpe
+        {/* Bloqueio do babidi: um shield por lado atacado, remontado a cada golpe
             (nonce) para repetir o blink. O `key` por lado+nonce é o que garante
             que dois lados coexistam sem que um roube a animação do outro. */}
-        {onLucauaShieldEnd && lucauaShieldSides.left > 0 && (
-          <LucauaShield
-            key={`lucaua-shield-left-${lucauaShieldSides.left}`}
+        {onBabidiShieldEnd && babidiShieldSides.left > 0 && (
+          <BabidiShield
+            key={`babidi-shield-left-${babidiShieldSides.left}`}
             side="left"
-            nonce={lucauaShieldSides.left}
-            onEnd={onLucauaShieldEnd}
+            nonce={babidiShieldSides.left}
+            onEnd={onBabidiShieldEnd}
           />
         )}
 
-        {onLucauaShieldEnd && lucauaShieldSides.right > 0 && (
-          <LucauaShield
-            key={`lucaua-shield-right-${lucauaShieldSides.right}`}
+        {onBabidiShieldEnd && babidiShieldSides.right > 0 && (
+          <BabidiShield
+            key={`babidi-shield-right-${babidiShieldSides.right}`}
             side="right"
-            nonce={lucauaShieldSides.right}
-            onEnd={onLucauaShieldEnd}
+            nonce={babidiShieldSides.right}
+            onEnd={onBabidiShieldEnd}
           />
         )}
 
-        {atomicHalo && character === "marcelo" && <AtomicHalo />}
+        {atomicHalo && character === "marshadow" && <AtomicHalo />}
 
         {levelUpParticles && (
           <LevelUpParticles
@@ -187,14 +187,14 @@ export function PlayerBattle(props: PlayerBattleProps) {
 
       {/* Portal par: só o pedaço que está "dentro" da origem, saindo do destino.
           Fora do container mascarado para o corte da origem não vazá-lo também. */}
-      {lucauaPortalCross && inside > 0 && (
+      {babidiPortalCross && inside > 0 && (
         <div
           style={{
             position: "absolute",
             width: dimensions.width,
             height: dimensions.height,
-            left: lucauaPortalCross.destX * dimensions.scaleX,
-            top: lucauaPortalCross.destY * dimensions.scaleY,
+            left: babidiPortalCross.destX * dimensions.scaleX,
+            top: babidiPortalCross.destY * dimensions.scaleY,
             transform: "translate(-50%, -100%)",
             zIndex: 10,
             overflow: "visible",

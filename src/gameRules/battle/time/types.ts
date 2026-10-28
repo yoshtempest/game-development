@@ -21,7 +21,7 @@
  *
  * O **player** não faz parte de `TimeKind`: o gate de ação dele é o
  * `freezeActionsUntilRef`, compartilhado por dez habilidades (câmera, Vastolord,
- * Emanuel, Órbita...). Habilidades que travam o mundo escrevem os dois: o
+ * Ematron, Órbita...). Habilidades que travam o mundo escrevem os dois: o
  * efeito de time para o mundo e o lock de ação para o player.
  *
  * Este módulo é o dono dos tipos e das constantes. Os helpers de `time/`
@@ -43,7 +43,7 @@ export type TimeKind =
   /** Projéteis do NPC. */
   | "projectile"
   /**
-   * Projétil do jogador (esfera do Riquelme). Declarado para efeitos que
+   * Projétil do jogador (esfera do Natsuki). Declarado para efeitos que
    * precisam **isentar** a esfera (`PLAYER_SPHERE_TIME_ID`): a esfera anima por
    * time absoluto e a fase dela avança pelo `player.state`, então ela nunca
    * consulta a regra — o que a torna 1x por construção, inclusive sob o slow do

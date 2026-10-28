@@ -7,7 +7,7 @@ import {
 import {
   GENKI_DAMA_RISE_MS,
   GENKI_DAMA_RISE_Y,
-} from "@/data/characters/emanuel/emanuel";
+} from "@/data/characters/ematron";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import type { CollisionParams } from "@/utils/types/battle/collision";
 
@@ -96,7 +96,7 @@ export function useBattleGravity(
           return settle(p, { ...p, velY: 0 });
         }
 
-        // Genki Dama do emanuel: a subida é manual (300px em 2.5s). Enquanto
+        // Genki Dama do ematron: a subida é manual (300px em 2.5s). Enquanto
         // prepara (preparingGenkiDama) e durante o arremesso (throwGenkiDama)
         // o personagem é segurado no topo; a queda só acontece quando o hook
         // troca para o estado `falling` no release.

@@ -11,7 +11,7 @@ type Props = {
 };
 
 /**
- * Botão do Laser da Forma Vastolord do marcelo: dispara um feixe que cruza o
+ * Botão do Laser da Forma Vastolord do marshadow: dispara um feixe que cruza o
  * mapa por 3s, causando 1% do dano base a cada 20ms e empurrando o inimigo.
  * Só é renderizado durante a forma; cada inimigo derrotado (incluindo minions)
  * concede +1 stack de Laser.

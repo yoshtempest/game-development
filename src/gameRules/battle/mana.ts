@@ -11,7 +11,7 @@ export const MAX_MANA_BASE = 100;
  * habilidades continuam válidas numa luta longa.
  */
 export const MAX_MANA_PER_SPIRIT_POINT = 5;
-export const LUCAS_WEAPON_SWITCH_MANA_COST = 50;
+export const YVEL_WEAPON_SWITCH_MANA_COST = 50;
 export const MANA_REGEN_PER_SECOND = 1;
 
 /**
@@ -61,17 +61,17 @@ export function getMaxMana(character: CharacterId, spirit: number): number {
 }
 
 /**
- * Personagens que exibem barra de mana genérica. Exceção: o marcelo usa a
+ * Personagens que exibem barra de mana genérica. Exceção: o marshadow usa a
  * barra de energia de fluxo (carregada ao caminhar, ver useEnergy.ts) no
  * lugar do mana — e esta barra não deve aparecer em duelos a seu lado.
  */
 export function hasManaBar(character: CharacterId): boolean {
-  return character !== "marcelo";
+  return character !== "marshadow";
 }
 
 export function getEnergyName(character: CharacterId): string {
-  if (character === "riquelme") return "Energia Amaldiçoada";
-  if (character === "emanuel") return "Ki";
-  if (character === "lucaua") return "Energia Dimensional";
+  if (character === "natsuki") return "Energia Amaldiçoada";
+  if (character === "ematron") return "Ki";
+  if (character === "babidi") return "Energia Dimensional";
   return "Mana";
 }

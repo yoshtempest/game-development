@@ -25,7 +25,7 @@ export const DOMAIN_BURST_SUMMON_MULTIPLIER = 1;
 
 type Props = {
   player: Player;
-  /** Dono da habilidade: todos os personagens (o marcelo usa o mugetsu). */
+  /** Dono da habilidade: todos os personagens (o marshadow usa o mugetsu). */
   character: Player["character"];
   /** Carga atual/máxima da barra da Expansão (o uso consome tudo). */
   charges: number;

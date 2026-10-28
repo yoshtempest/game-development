@@ -1,21 +1,21 @@
 export const CHARACTERS = [
-  "marcelo",
-  "eduarda",
-  "lucas",
-  "samuel",
-  "artur",
-  "mayra",
-  "lucaua",
-  "riquelme",
-  "larissa",
-  "camilly",
-  "emanuel",
+  "marshadow",
+  "drika",
+  "yvel",
+  "samurion",
+  "srGuaxinim",
+  "yra",
+  "babidi",
+  "natsuki",
+  "laricell",
+  "camyKaze",
+  "ematron",
   "levi",
 ] as const;
 
 export type CharacterId = (typeof CHARACTERS)[number];
 
-export const DEFAULT_CHARACTER: CharacterId = "marcelo";
+export const DEFAULT_CHARACTER: CharacterId = "marshadow";
 
 export function isCharacter(value: unknown): value is CharacterId {
   return (

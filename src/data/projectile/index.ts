@@ -26,7 +26,7 @@ export const ProjectileConstants = {
 export const ProjectileHpConstants = {
   /** HP padrão de projéteis comuns/pull/ground/rain (inteiro). */
   DEFAULT_HP: 6,
-  /** HP dos fragmentos cortados pelo Marcelo. */
+  /** HP dos fragmentos cortados pelo Marshadow. */
   CUT_FRAGMENT_HP: 2,
   /**
    * Dano de fallback quando não há golpe do jogador resolvido (ex: treino, antes
@@ -34,9 +34,9 @@ export const ProjectileHpConstants = {
    * pipeline de `playerHit`/`specialHit`.
    */
   PLAYER_MELEE_DAMAGE: 4,
-  /** Alcance horizontal da esfera do Riquelme em voo para destruir projéteis. */
+  /** Alcance horizontal da esfera do Natsuki em voo para destruir projéteis. */
   SPHERE_HIT_RANGE_X: 60,
-  /** Alcance vertical da esfera do Riquelme em voo para destruir projéteis. */
+  /** Alcance vertical da esfera do Natsuki em voo para destruir projéteis. */
   SPHERE_HIT_RANGE_Y: 140,
   /** Alcance de destruição da chuva de lanças (DX ao espinho mais próximo). */
   RAIN_DESTROY_RANGE_X: 110,

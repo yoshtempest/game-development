@@ -1,9 +1,9 @@
-import { playerPathEmanuelHabilities } from "@/utils/paths";
-import { EMANUEL_KAMEHAMEHA_BEAM_HEIGHT } from "@/data/characters/emanuel/emanuel";
+import { playerPathEmatronHabilities } from "@/utils/paths";
+import { EMATRON_KAMEHAMEHA_BEAM_HEIGHT } from "@/data/characters/ematron";
 import {
   kamehamehaTop,
   type KamehamehaEffect,
-} from "@/gameRules/battle/characters/emanuel/kamehameha";
+} from "@/gameRules/battle/characters/ematron/kamehameha";
 import type { BattleEntityPositioning } from "@/components/Game/Battle/Entities/types";
 import styles from "./styles.module.css";
 
@@ -12,25 +12,21 @@ type Props = BattleEntityPositioning & {
 };
 
 /**
- * Feixe de Kamehameha do Emanuel: instância `kamehamehaEffect.svg` esticada
+ * Feixe de Kamehameha do Ematron: instância `kamehamehaEffect.svg` esticada
  * (o sprite tem 500x178, a largura do mapa) do personagem até a ponta do mapa na
  * direção que ele mira, centralizado na imagem do jogador: o centro vertical do
- * feixe coincide com o centro vertical do sprite renderizado do emanuel.
+ * feixe coincide com o centro vertical do sprite renderizado do ematron.
  *
  * Animações:
  * - starting: cresce do centro (scaleX 0 -> 1) em 500ms
  * - active: pulso sutil de glow contínuo
  * - ending: encolhe para o centro + fade out em 500ms
  */
-export function Kamehameha({
-  effect,
-  battleScaleX,
-  battleScaleY,
-}: Props) {
+export function Kamehameha({ effect, battleScaleX, battleScaleY }: Props) {
   if (!effect) return null;
 
   const width = Math.abs(effect.toX - effect.fromX) * battleScaleX;
-  const height = EMANUEL_KAMEHAMEHA_BEAM_HEIGHT * battleScaleY;
+  const height = EMATRON_KAMEHAMEHA_BEAM_HEIGHT * battleScaleY;
   const left = Math.min(effect.fromX, effect.toX) * battleScaleX;
   const top = kamehamehaTop(effect.y) * battleScaleY;
 
@@ -52,7 +48,7 @@ export function Kamehameha({
       }}
     >
       <img
-        src={playerPathEmanuelHabilities("/kamehameha/kamehamehaEffect.svg")}
+        src={playerPathEmatronHabilities("/kamehameha/kamehamehaEffect.svg")}
         alt=""
         draggable={false}
         className={styles.beam}

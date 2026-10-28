@@ -5,7 +5,7 @@ export function Footer() {
     <footer className={styles.footer}>
       <p>Jomásio Adventures &copy; {new Date().getFullYear()}</p>
       <p className={styles.footerSmall}>
-        Feito pelo desenvolvedor Marcelo Benjamin, com carinho e lembranças.
+        Feito pelo desenvolvedor Marshadow Benjamin, com carinho e lembranças.
       </p>
     </footer>
   );

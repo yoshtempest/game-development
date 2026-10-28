@@ -1,22 +1,22 @@
 import { PlayerBattle } from "@/components/Game/Entities/Player/Battle";
 import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/useBlinkAnimation";
 import type {
-  LucauaPortalCross,
-  LucauaShieldSide,
-  LucauaShieldSides,
-} from "@/utils/types/character/lucaua";
-import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
+  BabidiPortalCross,
+  BabidiShieldSide,
+  BabidiShieldSides,
+} from "@/utils/types/character/babidi";
+import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
 
 type Props = {
   player: Player;
   PLAYER_SIZE: number;
-  weapon?: LucasWeapon;
+  weapon?: YvelWeapon;
   grabFlipped?: boolean;
   form?: "vastolordForm";
-  /** Quadro da transformação do marcelo (0=screamOne … 3=transformated) ou null. */
+  /** Quadro da transformação do marshadow (0=screamOne … 3=transformated) ou null. */
   transformationFrame?: number | null;
   blinkVisual?: BlinkVisual | null;
-  /** Emanuel segurando a instância: troca o sprite para teleport.svg. */
+  /** Ematron segurando a instância: troca o sprite para teleport.svg. */
   teleportSprite?: boolean;
   /** Durante o specialBackground: troca o sprite para preAtomic.svg. */
   preAtomic?: boolean;
@@ -26,18 +26,18 @@ type Props = {
   atomicHalo?: boolean;
   /** Flash no sprite quando a explosion.svg da habilidade aparece. */
   atomicFlash?: boolean;
-  /** Blink do teleporte da Expansão de Domínio do marcelo. */
+  /** Blink do teleporte da Expansão de Domínio do marshadow. */
   mugetsuBlink?: "out" | "in" | null;
-  /** Pose de mão do sprite do ataque básico do lucaua. */
-  lucauaAttackVariant?: LucauaAttackVariant;
-  /** Nonces dos shields de bloqueio do lucaua por lado (`0` = inativo). */
-  lucauaShieldSides?: LucauaShieldSides;
+  /** Pose de mão do sprite do ataque básico do babidi. */
+  babidiAttackVariant?: BabidiAttackVariant;
+  /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
+  babidiShieldSides?: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
-  onLucauaShieldEnd?: (side: LucauaShieldSide, nonce: number) => void;
-  /** Player saindo de um portal do lucaua (voo/decolagem). */
-  lucauaPortalLanding?: boolean;
+  onBabidiShieldEnd?: (side: BabidiShieldSide, nonce: number) => void;
+  /** Player saindo de um portal do babidi (voo/decolagem). */
+  babidiPortalLanding?: boolean;
   /** Travessia em andamento por um portal terrestre (sprite dividido). */
-  lucauaPortalCross?: LucauaPortalCross | null;
+  babidiPortalCross?: BabidiPortalCross | null;
 };
 
 export function Player({
@@ -54,14 +54,14 @@ export function Player({
   atomicHalo = false,
   atomicFlash = false,
   mugetsuBlink = null,
-  lucauaAttackVariant,
-  lucauaShieldSides,
-  onLucauaShieldEnd,
-  lucauaPortalLanding = false,
-  lucauaPortalCross = null,
+  babidiAttackVariant,
+  babidiShieldSides,
+  onBabidiShieldEnd,
+  babidiPortalLanding = false,
+  babidiPortalCross = null,
 }: Props) {
   const blinkSilhouette =
-    player.character === "riquelme" && blinkVisual
+    player.character === "natsuki" && blinkVisual
       ? blinkVisual.teleported
         ? "white"
         : "black"
@@ -87,11 +87,11 @@ export function Player({
       atomicHalo={atomicHalo}
       atomicFlash={atomicFlash}
       mugetsuBlink={mugetsuBlink}
-      lucauaAttackVariant={lucauaAttackVariant}
-      lucauaShieldSides={lucauaShieldSides}
-      onLucauaShieldEnd={onLucauaShieldEnd}
-      lucauaPortalLanding={lucauaPortalLanding}
-      lucauaPortalCross={lucauaPortalCross}
+      babidiAttackVariant={babidiAttackVariant}
+      babidiShieldSides={babidiShieldSides}
+      onBabidiShieldEnd={onBabidiShieldEnd}
+      babidiPortalLanding={babidiPortalLanding}
+      babidiPortalCross={babidiPortalCross}
       levelUpParticles
     />
   );

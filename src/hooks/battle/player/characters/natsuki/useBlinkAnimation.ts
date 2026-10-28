@@ -16,7 +16,7 @@ export type BlinkVisual = {
 };
 
 /**
- * Coreografia visual do blink do riquelme:
+ * Coreografia visual do blink do natsuki:
  * 1. Por `BLINK_UNTIL_TELEPORT_MS` o personagem não teleporta e vira silhueta
  *    preta no local de origem.
  * 2. Em seguida teleporta: o destino mostra silhueta branca enquanto a silhueta

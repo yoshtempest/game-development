@@ -7,9 +7,9 @@ import {
   RED_SPHERE_MULTIPLIER,
   RED_SPHERE_PUSH,
   RED_SPHERE_RANGE,
-} from "@/data/characters/riquelme/riquelme";
+} from "@/data/characters/natsuki/natsuki";
 
-import type { RiquelmeSphere } from "@/utils/types/character/riquelme";
+import type { NatsukiSphere } from "@/utils/types/character/natsuki";
 import type { SphereBattle, SphereCore } from "./types";
 
 const RED_DAMAGE_KIND = getAbilityDamageType("redSphere");
@@ -28,11 +28,11 @@ type Api = {
   /** Chamado quando o Setup acaba: prepara o voo até o alvo. */
   enterFire: () => void;
   /** Tick do voo: move até o alvo e resolve o impacto no fim. */
-  tickFire: (s: RiquelmeSphere, now: number) => void;
+  tickFire: (s: NatsukiSphere, now: number) => void;
 };
 
 /**
- * Red do riquelme: a esfera de arremesso.
+ * Red do natsuki: a esfera de arremesso.
  *
  * Depois do Setup ela voa em linha reta até o NPC principal — se ele estiver à
  * frente na direção da esfera, mira nele; senão voa `RED_SPHERE_RANGE` e para.
@@ -80,7 +80,7 @@ export function useRedSphere({ core, battle }: Props): Api {
   }
 
   /** Red: dano + empurrão no ponto de chegada. */
-  function applyRedImpact(s: RiquelmeSphere) {
+  function applyRedImpact(s: NatsukiSphere) {
     const b = battleRef.current;
     const ratio = specialRatioRef.current;
     const damageMult = RED_SPHERE_MULTIPLIER * ratio;
@@ -127,14 +127,14 @@ export function useRedSphere({ core, battle }: Props): Api {
     }
   }
 
-  function tickFire(s: RiquelmeSphere, now: number) {
+  function tickFire(s: NatsukiSphere, now: number) {
     const t = Math.min(1, (now - phaseStartRef.current) / RED_SPHERE_FLY_MS);
     const ease = t * t * (3 - 2 * t);
     const x =
       fromRef.current.x + (targetRef.current.x - fromRef.current.x) * ease;
     const y =
       fromRef.current.y + (targetRef.current.y - fromRef.current.y) * ease;
-    const next: RiquelmeSphere = { ...s, x, y };
+    const next: NatsukiSphere = { ...s, x, y };
     publish(next);
 
     if (t >= 1) {

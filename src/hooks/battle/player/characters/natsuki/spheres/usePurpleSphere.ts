@@ -8,14 +8,14 @@ import {
   PURPLE_JUNCTION_MS,
   PURPLE_SPHERE_MULTIPLIER,
   PURPLE_SPHERE_RANGE,
-} from "@/data/characters/riquelme/riquelme";
+} from "@/data/characters/natsuki/natsuki";
 
 import type { RefObject } from "react";
-import type { RiquelmeSphere } from "@/utils/types/character/riquelme";
+import type { NatsukiSphere } from "@/utils/types/character/natsuki";
 import type { SphereBattle, SphereCore } from "./types";
 
 /** Id estável do projétil da purple (colisão com projéteis inimigos). */
-const PURPLE_PROJECTILE_ID = "riquelme:purpleSphere";
+const PURPLE_PROJECTILE_ID = "natsuki:purpleSphere";
 const PURPLE_DAMAGE_KIND = getAbilityDamageType("purpleSphere");
 
 type Props = {
@@ -34,17 +34,17 @@ type Api = {
   press: () => void;
   usable: boolean;
   /** `junction`: a blue e a red convergem até a cabeça e se fundem. */
-  tickJunction: (s: RiquelmeSphere) => void;
+  tickJunction: (s: NatsukiSphere) => void;
   /** Chamado quando o Setup acaba: arremessa a esfera fundida. */
   enterFire: () => void;
   /** Tick do voo: move, publica o projétil e resolve o dano em linha. */
-  tickFire: (s: RiquelmeSphere, now: number) => void;
+  tickFire: (s: NatsukiSphere, now: number) => void;
   /** Furo no sprite (só é desenhado se o NPC morrer — ver `isNpcDying`). */
   hole: boolean;
 };
 
 /**
- * Purple do riquelme: a fusão da blue com a red.
+ * Purple do natsuki: a fusão da blue com a red.
  *
  * O cast começa pela `junction` (as duas esferas convergem até a cabeça e se
  * fundem, `purpleJunction`) e segue o Setup compartilhado; em campo ela
@@ -95,7 +95,7 @@ export function usePurpleSphere({
   }, [sphere, playerProjectileRef]);
 
   /** Junção: a blue e a red convergem dos lados da cabeça até o centro. */
-  function tickJunction(s: RiquelmeSphere) {
+  function tickJunction(s: NatsukiSphere) {
     const now = Date.now();
     const t = Math.min(1, (now - phaseStartRef.current) / PURPLE_JUNCTION_MS);
     const ease = t * t * (3 - 2 * t);
@@ -103,7 +103,7 @@ export function usePurpleSphere({
     const blueFromY = s.blueY ?? s.y;
     const redFromX = s.redX ?? s.x;
     const redFromY = s.redY ?? s.y;
-    const next: RiquelmeSphere = {
+    const next: NatsukiSphere = {
       ...s,
       blueX: blueFromX + (s.x - blueFromX) * ease,
       blueY: blueFromY + (s.y - blueFromY) * ease,
@@ -137,7 +137,7 @@ export function usePurpleSphere({
   }
 
   /** Publica a esfera em voo para o `useProjectile` destruir projéteis. */
-  function syncProjectile(s: RiquelmeSphere) {
+  function syncProjectile(s: NatsukiSphere) {
     playerProjectileRef.current = {
       id: PURPLE_PROJECTILE_ID,
       phase: "fire",
@@ -160,7 +160,7 @@ export function usePurpleSphere({
    * Purple: dano perfurante. Atravessa todos os alvos à frente e acerta cada um
    * uma única vez (não é parada pelo primeiro). Dano mágico de 2x a redSphere.
    */
-  function applyLine(s: RiquelmeSphere) {
+  function applyLine(s: NatsukiSphere) {
     const b = battleRef.current;
     const ratio = specialRatioRef.current;
     const damageMult = PURPLE_SPHERE_MULTIPLIER * ratio;
@@ -209,12 +209,12 @@ export function usePurpleSphere({
     }
   }
 
-  function tickFire(s: RiquelmeSphere, now: number) {
+  function tickFire(s: NatsukiSphere, now: number) {
     const t = Math.min(1, (now - phaseStartRef.current) / PURPLE_FLY_MS);
     const ease = t * t * (3 - 2 * t);
     const x =
       fromRef.current.x + (targetRef.current.x - fromRef.current.x) * ease;
-    const next: RiquelmeSphere = { ...s, x };
+    const next: NatsukiSphere = { ...s, x };
     publish(next);
     syncProjectile(next);
     applyLine(next);

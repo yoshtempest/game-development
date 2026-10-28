@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { isPlayerInRange } from "@/gameRules/battle/range";
 import { isFacingTarget } from "@/gameRules/battle/direction";
-import { LUCAS_WEAPON_RANGES } from "@/data/characters/lucas/lucasWeapons";
+import { YVEL_WEAPON_RANGES } from "@/data/characters/yvel/yvelWeapons";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 
 type Target = { id: string; x: number; y: number };
@@ -12,7 +12,7 @@ export function useBuildTargetList(
   npcHP: number,
   summons: SummonedNpc[],
   npcClass: NPCClass,
-  weapon?: LucasWeapon,
+  weapon?: YvelWeapon,
 ) {
   const getTargets = useCallback((): Target[] => {
     const targets: Target[] = [];
@@ -46,8 +46,8 @@ export function useBuildTargetList(
         false,
         false,
         npcClass,
-        player.character === "lucas" && weapon
-          ? LUCAS_WEAPON_RANGES[weapon]
+        player.character === "yvel" && weapon
+          ? YVEL_WEAPON_RANGES[weapon]
           : undefined,
       ) &&
       isFacingTarget(

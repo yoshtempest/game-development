@@ -11,7 +11,7 @@ type Props = {
 const CLONE_MIN_KI = 1;
 
 /**
- * Botão de hold da instância do Emanuel: segurar cria a cópia de silhueta e
+ * Botão de hold da instância do Ematron: segurar cria a cópia de silhueta e
  * soltar teleporta para a posição dela (consome até 50 de Ki pela distância).
  * Usa pointer capture para garantir o release mesmo soltando fora do botão.
  */
@@ -23,7 +23,7 @@ const cloneClasses: CustomAbilityClasses = {
   depleted: styles.depleted,
 };
 
-export function EmanuelCloneButton({
+export function EmatronCloneButton({
   energy,
   disabled = false,
   onPress,
@@ -41,7 +41,7 @@ export function EmanuelCloneButton({
       onRelease={onRelease}
       full={noKi}
       valueText={Math.round(energy).toString()}
-      costText={`-{EMANUEL_CLONE_MAX_COST} Ki`}
+      costText={`-{EMATRON_CLONE_MAX_COST} Ki`}
       extraProps={{ depleted: noKi }}
       title="Instância: segure para criar a cópia fantasma e mova pela arena; solte para teleportar até ela (custa até 50 de Ki pela distância)"
     />

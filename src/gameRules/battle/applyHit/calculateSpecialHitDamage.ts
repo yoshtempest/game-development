@@ -6,7 +6,7 @@ export function calculateSpecialHitDamage(
   params: Omit<DamageCalcParams, "titleDamageBonus"> & { stacks: number },
 ): { damage: number; isCrit: boolean; type: DamageType } {
   let rawDmg: number;
-  if (params.player.character === "larissa") {
+  if (params.player.character === "laricell") {
     rawDmg = params.stacks * 5;
   } else {
     const baseSpecial = combatService.calculateSpecialDamage(
@@ -20,7 +20,7 @@ export function calculateSpecialHitDamage(
       params.playerClass,
     );
     rawDmg =
-      params.player.character === "riquelme" ? baseSpecial * 2 : baseSpecial;
+      params.player.character === "natsuki" ? baseSpecial * 2 : baseSpecial;
   }
 
   return computeHitDamage({ ...params, rawDmg });

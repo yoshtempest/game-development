@@ -11,7 +11,7 @@ import type { OnBeforeNpcHit } from "@/hooks/battle/npc/useBlocking";
 
 import { useBattleStats } from "@/hooks/battle/useStats";
 import { VASTOLORD_MULTIPLIER } from "@/hooks/battle/player/characters/marshadow/useVastolordForm";
-import { VASTOLORD_UNIVERSAL_VAMPIRISM } from "@/data/characters/marcelo/vastolordForm";
+import { VASTOLORD_UNIVERSAL_VAMPIRISM } from "@/data/characters/marshadow/vastolordForm";
 import { useBattleHP } from "@/hooks/battle/death/useHP";
 import { useBattleCooldowns } from "@/hooks/battle/utilities/useCooldowns";
 import { useBattleEffects } from "@/hooks/battle/effects/useEffects";
@@ -36,7 +36,7 @@ import { useEnergy } from "@/hooks/battle/effects/useEnergy";
 import { useBattleMana } from "@/contexts/BattleManaContext";
 import { gainSpecial } from "@/gameRules/battle/special";
 import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
+import type { BabidiShieldSide } from "@/utils/types/character/babidi";
 import {
   applyPlayerStatus,
   clearPlayerStatuses,
@@ -48,7 +48,7 @@ import { useStatusDotTicks } from "@/hooks/battle/time/ticks/useStatusDotsTicks"
 import { useNpcBleedTicks } from "@/hooks/battle/time/ticks/useNpcBleedTicks";
 import { useManaRegenTick } from "@/hooks/battle/time/ticks/useManaRegenTick";
 import { usePlayerPullAnimation } from "@/hooks/battle/player/usePlayerPullAnimation";
-import { useMarceloCutInEnemie } from "@/hooks/battle/player/characters/marshadow/useMarceloCutInEnemie";
+import { useMarshadowCutInEnemie } from "@/hooks/battle/player/characters/marshadow/useMarshadowCutInEnemie";
 import { type TimeEffect } from "@/gameRules/battle/time";
 
 type Props = {
@@ -76,7 +76,7 @@ type Props = {
   lastAttackPressRef?: React.RefObject<number>;
   npcPhaseRef: React.RefObject<number>;
   onBeforeNpcHitRef?: React.RefObject<OnBeforeNpcHit>;
-  onBlockRef?: React.RefObject<(side?: LucauaShieldSide) => void>;
+  onBlockRef?: React.RefObject<(side?: BabidiShieldSide) => void>;
   onDamageTakenRef?: React.RefObject<(amount: number) => void>;
   onDodgeRef?: React.RefObject<() => void>;
   onDamageDealtRef?: React.RefObject<(amount: number) => void>;
@@ -85,10 +85,10 @@ type Props = {
   onKokusenRef?: React.RefObject<() => void>;
   onBlackFlashRef?: React.RefObject<() => void>;
   onCriticalPushRef?: React.RefObject<() => void>;
-  arturOraMultiplierRef?: React.RefObject<() => number>;
-  /** Aplica o multiplicador da Forma Vastolord no dano do marcelo. */
+  srGuaxinimOraMultiplierRef?: React.RefObject<() => number>;
+  /** Aplica o multiplicador da Forma Vastolord no dano do marshadow. */
   vastolordMultiplierRef?: React.RefObject<() => number>;
-  /** Forma Vastolord ativa: multiplica a armadura do marcelo por 4. */
+  /** Forma Vastolord ativa: multiplica a armadura do marshadow por 4. */
   vastolordActive?: boolean;
   /** Punho Divergente: true quando ativado, consome no próximo golpe básico. */
   divergentFistRef?: React.RefObject<boolean>;
@@ -101,7 +101,7 @@ type Props = {
   savedPlayerHP?: number | null;
   npcStatMultiplier?: number;
   npcArmorBonus?: number;
-  weapon?: LucasWeapon;
+  weapon?: YvelWeapon;
   /** Passiva O Abençoado: quando retorna true, o golpe letal reduz a vida a 1. */
   surviveLethalHitRef?: React.RefObject<() => boolean>;
 };
@@ -138,7 +138,7 @@ export function useBattleSystem(props: Props) {
     onKokusenRef,
     onBlackFlashRef,
     onCriticalPushRef,
-    arturOraMultiplierRef,
+    srGuaxinimOraMultiplierRef,
     vastolordMultiplierRef,
     vastolordActive = false,
     petId = null,
@@ -264,8 +264,8 @@ export function useBattleSystem(props: Props) {
   const npcBleedXRef = useLatestRef(npcX);
   const npcBleedYRef = useLatestRef(npcY);
 
-  /** Preenchido pelo useMarceloCutInEnemie (disparado no ataque do marcelo). */
-  const marceloCutInTriggerRef = useRef<() => void>(() => {});
+  /** Preenchido pelo useMarshadowCutInEnemie (disparado no ataque do marshadow). */
+  const marshadowCutInTriggerRef = useRef<() => void>(() => {});
 
   const {
     playerHP,
@@ -339,12 +339,12 @@ export function useBattleSystem(props: Props) {
     onBlackFlashRef,
     onCriticalPushRef,
     onHalfHeal,
-    arturOraMultiplierRef,
+    srGuaxinimOraMultiplierRef,
     vastolordMultiplierRef,
     divergentFistRef,
     onDivergentFistConsumedRef,
     weapon,
-    onMarceloDefaultHitRef: marceloCutInTriggerRef,
+    onMarshadowDefaultHitRef: marshadowCutInTriggerRef,
   });
 
   /**
@@ -491,7 +491,7 @@ export function useBattleSystem(props: Props) {
     battleManaRef,
     isEnding,
     isMenuRef,
-    player.character !== "riquelme",
+    player.character !== "natsuki",
     isPausedRef,
   );
 
@@ -502,11 +502,11 @@ export function useBattleSystem(props: Props) {
     );
   }, []);
 
-  // CutInEnemie do marcelo (forma padrão): sprite sobre o NPC atingido + chance
+  // CutInEnemie do marshadow (forma padrão): sprite sobre o NPC atingido + chance
   // acumulativa de sangramento. Estado renderizado via `battle.cutInEnemie` e
   // `battle.npcBleeding`.
-  const marceloCutIn = useMarceloCutInEnemie({ isEnding, applyNpcBleed });
-  marceloCutInTriggerRef.current = marceloCutIn.trigger;
+  const marshadowCutIn = useMarshadowCutInEnemie({ isEnding, applyNpcBleed });
+  marshadowCutInTriggerRef.current = marshadowCutIn.trigger;
 
   const resetBattle = () => {
     setPlayerHP(playerMaxHp);
@@ -530,7 +530,7 @@ export function useBattleSystem(props: Props) {
     resetPetSkill();
     resetPetPassive();
     npcBleedUntilRef.current = 0;
-    marceloCutIn.reset();
+    marshadowCutIn.reset();
     energy.resetEnergy();
     battleMana?.resetMana();
     setPlayer((p) => ({
@@ -600,10 +600,10 @@ export function useBattleSystem(props: Props) {
     isEnding,
     piercings: effects.piercings,
     isExploding: effects.isExploding,
-    cutInEnemie: marceloCutIn.cutInEnemie,
-    npcBleeding: marceloCutIn.npcBleeding,
-    /** Dispara o CutInEnemie do marcelo sobre o NPC principal (com chance de sangrar). */
-    marceloCutInTrigger: marceloCutIn.trigger,
+    cutInEnemie: marshadowCutIn.cutInEnemie,
+    npcBleeding: marshadowCutIn.npcBleeding,
+    /** Dispara o CutInEnemie do marshadow sobre o NPC principal (com chance de sangrar). */
+    marshadowCutInTrigger: marshadowCutIn.trigger,
     pet,
     setPet,
     triggerJumpAttack,

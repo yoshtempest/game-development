@@ -5,7 +5,7 @@ import {
 } from "@/gameRules/battle/cursedEnergy";
 
 /**
- * Animação de sobreposição do Punho Divergente do riquelme sobre o inimigo:
+ * Animação de sobreposição do Punho Divergente do natsuki sobre o inimigo:
  * exibe `one.svg` → `eight.svg`, cada sprite por `DIVERGENT_FIST_FRAME_MS`.
  * O quadro `divergentFistFrame` começa em 0 e avança a cada 50ms; a animação
  * se encerra (volta a `null`) após `DIVERGENT_FIST_SPRITE_COUNT` quadros.

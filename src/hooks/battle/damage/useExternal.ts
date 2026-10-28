@@ -2,10 +2,10 @@ import { useCallback } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { isParryPress } from "@/hooks/battle/npc/isParryPress";
 import { combatService } from "@/services/combat";
-import { getShieldSide } from "@/gameRules/battle/characters/lucaua/lucauaShield";
+import { getShieldSide } from "@/gameRules/battle/characters/babidi/babidiShield";
 import type { DamageArmor, DamageKind } from "@/utils/types/battle/damageKind";
 import type { SpawnDamageFn } from "@/utils/types/battle/spawnDamageFn";
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
+import type { BabidiShieldSide } from "@/utils/types/character/babidi";
 
 type Props = {
   playerX: number;
@@ -20,7 +20,7 @@ type Props = {
   setBlockGauge: React.Dispatch<React.SetStateAction<number>>;
   setPlayer: React.Dispatch<React.SetStateAction<Player>>;
   spawnDamageRef: React.RefObject<SpawnDamageFn>;
-  onBlockRef?: React.RefObject<(side?: LucauaShieldSide) => void>;
+  onBlockRef?: React.RefObject<(side?: BabidiShieldSide) => void>;
   oneHitShieldRef?: React.RefObject<boolean>;
   lastBlockPressRef: React.RefObject<number>;
   lastAttackPressRef?: React.RefObject<number>;

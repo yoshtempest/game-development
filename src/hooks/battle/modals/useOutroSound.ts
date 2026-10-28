@@ -10,7 +10,7 @@ const OUTRO_SOUND_VOLUME = 1;
  * O arquivo é procurado em
  * `assets/songs/soundEffects/player/<character>/<battleResult>.mp3`
  * (victory.mp3 | defeat.mp3). Caso não exista som na pasta do personagem,
- * toca o fallback `player/artur/defeat.mp3`.
+ * toca o fallback `player/srGuaxinim/defeat.mp3`.
  */
 export function useBattleOutroSound(
   character: string,
@@ -21,7 +21,7 @@ export function useBattleOutroSound(
   useEffect(() => {
     const battleResult = type === "victory" ? "victory.mp3" : "defeat.mp3";
     const primarySrc = charactersSoundPath(`${character}/${battleResult}`).src;
-    const fallbackSrc = charactersSoundPath("artur/defeat.mp3").src;
+    const fallbackSrc = charactersSoundPath("srGuaxinim/defeat.mp3").src;
 
     const audio = new Audio();
     audio.preload = "auto";

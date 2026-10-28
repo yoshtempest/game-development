@@ -23,19 +23,19 @@ import type { NPCBattleState, SummonedNpc } from "@/utils/types/npc/npc";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
 import { ProjectileConstants } from "@/data/projectile";
 import {
-  EMANUEL_KAMEHAMEHA_DAMAGE_RATIO,
-  EMANUEL_KAMEHAMEHA_DURATION_MS,
-  EMANUEL_KAMEHAMEHA_FADE_MS,
-  EMANUEL_KAMEHAMEHA_PUSH_PX,
-  EMANUEL_KAMEHAMEHA_BEAM_HEIGHT,
-  EMANUEL_KAMEHAMEHA_STARTUP_MS,
-  EMANUEL_KAMEHAMEHA_TICK_MS,
-  EMANUEL_KAMEHAMEHA_CHARGING_MS,
-} from "@/data/characters/emanuel/emanuel";
+  EMATRON_KAMEHAMEHA_DAMAGE_RATIO,
+  EMATRON_KAMEHAMEHA_DURATION_MS,
+  EMATRON_KAMEHAMEHA_FADE_MS,
+  EMATRON_KAMEHAMEHA_PUSH_PX,
+  EMATRON_KAMEHAMEHA_BEAM_HEIGHT,
+  EMATRON_KAMEHAMEHA_STARTUP_MS,
+  EMATRON_KAMEHAMEHA_TICK_MS,
+  EMATRON_KAMEHAMEHA_CHARGING_MS,
+} from "@/data/characters/ematron";
 import {
   kamehamehaTop,
   type KamehamehaEffect,
-} from "@/gameRules/battle/characters/emanuel/kamehameha";
+} from "@/gameRules/battle/characters/ematron/kamehameha";
 
 type Props = {
   player: Player;
@@ -93,7 +93,7 @@ type KamehamehaApi = {
 };
 
 /**
- * Kamehameha do Emanuel: press dispara a carga — o personagem troca para o
+ * Kamehameha do Ematron: press dispara a carga — o personagem troca para o
  * sprite `chargingKamehameha.svg` e fica travado (2.8s); ao fim da carga ele
  * troca para o sprite `kamehameha.svg` e o `kamehamehaEffect` (2s) parte em
  * direção da face, causando 1% do dano base a cada 20ms e empurrando o inimigo,
@@ -152,7 +152,7 @@ export function useKamehameha({
 
   const { usableRef, shouldCancelRef } = useSkillGuard({
     player,
-    character: "emanuel",
+    character: "ematron",
     freezeActionsUntilRef,
     disabledRef,
     isPausedRef,
@@ -198,7 +198,7 @@ export function useKamehameha({
           : { ...p, state: "idle" },
       );
       freezeActionsUntilRef.current = Date.now();
-    }, EMANUEL_KAMEHAMEHA_FADE_MS);
+    }, EMATRON_KAMEHAMEHA_FADE_MS);
   }, [clearTimers, freezeActionsUntilRef, setPlayerRef, stopSoundRef]);
 
   const finishRef = useLatestRef(finish);
@@ -214,7 +214,7 @@ export function useKamehameha({
       }
       const effectData = effectRef.current;
       if (!effectData) return;
-      if (Date.now() - shotStartRef.current >= EMANUEL_KAMEHAMEHA_DURATION_MS) {
+      if (Date.now() - shotStartRef.current >= EMATRON_KAMEHAMEHA_DURATION_MS) {
         finishRef.current();
         return;
       }
@@ -224,11 +224,12 @@ export function useKamehameha({
       // `rawAccRef` carrega a FRAÇÃO entre ticks: com dano base baixo o
       // incremento é menor que 1 e não pode ser jogado fora a cada tick.
       const rawTick =
-        rawAccRef.current + baseDamageRef.current * EMANUEL_KAMEHAMEHA_DAMAGE_RATIO;
+        rawAccRef.current +
+        baseDamageRef.current * EMATRON_KAMEHAMEHA_DAMAGE_RATIO;
       rawAccRef.current = 0;
 
       const top = kamehamehaTop(effectData.y);
-      const bottom = top + EMANUEL_KAMEHAMEHA_BEAM_HEIGHT;
+      const bottom = top + EMATRON_KAMEHAMEHA_BEAM_HEIGHT;
 
       const reportTick = (
         key: string,
@@ -272,7 +273,7 @@ export function useKamehameha({
           });
           reportTick(MAIN_TARGET_KEY, dmg, mainNpc.x, mainNpc.y, "npc");
           mainNpc.updateNpc({
-            x: clampX(mainNpc.x + dir * EMANUEL_KAMEHAMEHA_PUSH_PX),
+            x: clampX(mainNpc.x + dir * EMATRON_KAMEHAMEHA_PUSH_PX),
           });
         }
       }
@@ -311,7 +312,7 @@ export function useKamehameha({
         return {
           ...s,
           hp: newHp,
-          x: clampX(s.x + dir * EMANUEL_KAMEHAMEHA_PUSH_PX),
+          x: clampX(s.x + dir * EMATRON_KAMEHAMEHA_PUSH_PX),
         };
       });
       if (changed) {
@@ -327,8 +328,7 @@ export function useKamehameha({
       if (killed) {
         giveSummonRewards("rare");
       }
-    },
-    [
+    }, [
       baseDamageRef,
       effectRef,
       finishRef,
@@ -346,9 +346,8 @@ export function useKamehameha({
       spawnDamageNumber,
       summonsRef,
       vampirism,
-    ],
-  ),
-);
+    ]),
+  );
 
   const fire = useCallback(() => {
     if (shouldCancelRef.current()) {
@@ -372,7 +371,7 @@ export function useKamehameha({
       pp.mode !== "battle" ? pp : { ...pp, state: "kamehameha" },
     );
     // Define o freeze para a fase de efeito (2s), substituindo o freeze da carga
-    freezeActionsUntilRef.current = Date.now() + EMANUEL_KAMEHAMEHA_DURATION_MS;
+    freezeActionsUntilRef.current = Date.now() + EMATRON_KAMEHAMEHA_DURATION_MS;
     // O som do feixe fica em loop enquanto o kamehameha estiver ativo (começa
     // no press, para no finish).
 
@@ -380,12 +379,12 @@ export function useKamehameha({
     startupTimerRef.current = setTimeout(() => {
       startupTimerRef.current = null;
       setEffect((prev) => (prev ? { ...prev, phase: "active" } : null));
-    }, EMANUEL_KAMEHAMEHA_STARTUP_MS);
+    }, EMATRON_KAMEHAMEHA_STARTUP_MS);
 
     clearTimers();
     tickTimerRef.current = setInterval(
       tickRef.current,
-      EMANUEL_KAMEHAMEHA_TICK_MS,
+      EMATRON_KAMEHAMEHA_TICK_MS,
     );
   }, [
     clearTimers,
@@ -418,7 +417,7 @@ export function useKamehameha({
     timerRef.current = setTimeout(() => {
       timerRef.current = null;
       fireRef.current();
-    }, EMANUEL_KAMEHAMEHA_CHARGING_MS);
+    }, EMATRON_KAMEHAMEHA_CHARGING_MS);
   }, [
     fireRef,
     freezeActionsUntilRef,

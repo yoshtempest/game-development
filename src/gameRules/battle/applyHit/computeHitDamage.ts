@@ -9,7 +9,7 @@ import type { ComputeHitDamageParams } from "./types";
  *
  * Ordem das reduções (importante: `damageKind` decide a armadura, e a armadura
  * vem antes de qualquer multiplicador):
- * HP máximo → fúria do samuel → crítico → **armadura da coluna do golpe** →
+ * HP máximo → fúria do samurion → crítico → **armadura da coluna do golpe** →
  * elemental → multiplicadores da habilidade → **+ dano verdadeiro do equipamento**
  * (por último e sem escala, porque é o que existe para furar armadura).
  */
@@ -38,7 +38,7 @@ export function computeHitDamage({
   );
   const dmgWithHpBonus = rawDmg + maxHpBonus;
   const berserkDmg =
-    player.character === "samuel" && char.level >= 20
+    player.character === "samurion" && char.level >= 20
       ? dmgWithHpBonus *
         combatService.getBerserkMultiplier(playerHP, playerMaxHp)
       : dmgWithHpBonus;

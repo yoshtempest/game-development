@@ -1,7 +1,7 @@
 import { ProjectileConstants } from "@/data/projectile";
 import { getViewportSize } from "@/utils/viewport";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
-import { getPortalCross } from "@/gameRules/battle/characters/lucaua/lucauaPortal";
+import { getPortalCross } from "@/gameRules/battle/characters/babidi/babidiPortal";
 import { MainNpc } from "./MainNpc";
 import { NpcProjectile } from "./Projectiles/NpcProjectile";
 import { GroundPaper } from "./Maugrelo/GroundPaper";
@@ -12,7 +12,7 @@ import { Summon } from "./Summon";
 import { Ally } from "./Ally";
 import { Pet } from "./Pet";
 import { Player } from "./Player";
-import { EmanuelClone } from "./Ematron/EmanuelClone";
+import { EmatronClone } from "./Ematron/EmatronClone";
 import { GenkiDama } from "./Ematron/GenkiDama";
 import { VastolordLaser } from "./VastolordLaser";
 import { Kamehameha } from "./Kamehameha";
@@ -28,8 +28,8 @@ import { DeiseDashAfterimage } from "@/components/Game/Battle/Effects/DeiseDashA
 import { AtomicEffects } from "@/components/Game/Battle/Effects/Marshadow/Atomic";
 import { DomainExpansionEffects } from "@/components/Game/Battle/Effects/Domain/DomainExpansion";
 import { MugetsuDisintegration } from "@/components/Game/Battle/Effects/Marshadow/MugetsuDisintegration";
-import { RiquelmeSphere } from "@/components/Game/Battle/Entities/Projectiles/RiquelmeSphere";
-import { LucauaPortals } from "@/components/Game/Battle/Entities/LucauaPortals";
+import { NatsukiSphere } from "@/components/Game/Battle/Entities/Projectiles/NatsukiSphere";
+import { BabidiPortals } from "@/components/Game/Battle/Entities/BabidiPortals";
 import type { BattleEntitiesBattle, MainNpcState } from "./types";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 import type { PetState } from "@/hooks/battle/player/pets/usePet";
@@ -38,11 +38,11 @@ import type { KillerQueenOverlay } from "@/utils/types/character/srGuaxinim";
 import type { ExtraPunchVisual } from "@/utils/types/character/srGuaxinim";
 import type { BattleLootBag } from "@/utils/types/battle/loot";
 import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/useBlinkAnimation";
-import type { EmanuelCloneVisual } from "@/utils/types/character/emanuel";
-import type { GenkiDamaVisual } from "@/utils/types/character/emanuel";
-import type { VastolordLaserBeam } from "@/gameRules/battle/characters/marcelo/vastolordLaser";
-import type { KamehamehaEffect } from "@/gameRules/battle/characters/emanuel/kamehameha";
-import type { GranReyCeroEffect } from "@/gameRules/battle/characters/marcelo/granReyCero";
+import type { EmatronCloneVisual } from "@/utils/types/character/ematron";
+import type { GenkiDamaVisual } from "@/utils/types/character/ematron";
+import type { VastolordLaserBeam } from "@/gameRules/battle/characters/marshadow/vastolordLaser";
+import type { KamehamehaEffect } from "@/gameRules/battle/characters/ematron/kamehameha";
+import type { GranReyCeroEffect } from "@/gameRules/battle/characters/marshadow/granReyCero";
 import type { CutInEnemieOverlay } from "@/utils/types/battle/cutInEnemie";
 import type { AtomicExplosion, AtomicCut } from "@/utils/types/battle/atomic";
 import type {
@@ -51,13 +51,13 @@ import type {
   MugetsuDisintegrationTarget,
 } from "@/utils/types/battle/mugetsu";
 import type {
-  LucauaEnergyProjectile,
-  LucauaPortal,
-  LucauaPortalGhost,
-  LucauaShieldSide,
-  LucauaShieldSides,
-} from "@/utils/types/character/lucaua";
-import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
+  BabidiEnergyProjectile,
+  BabidiPortal,
+  BabidiPortalGhost,
+  BabidiShieldSide,
+  BabidiShieldSides,
+} from "@/utils/types/character/babidi";
+import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
 
 type Props = {
   npc: MainNpcState;
@@ -82,23 +82,23 @@ type Props = {
   explosionSprite?: string;
   extraPunches?: ExtraPunchVisual[];
   extraPunchSprite?: string;
-  weapon?: LucasWeapon;
-  /** Pasta de sprites do marcelo durante a Forma Vastolord. */
+  weapon?: YvelWeapon;
+  /** Pasta de sprites do marshadow durante a Forma Vastolord. */
   playerForm?: "vastolordForm";
-  /** Quadro da transformação do marcelo (0=screamOne … 3=transformated) ou null. */
+  /** Quadro da transformação do marshadow (0=screamOne … 3=transformated) ou null. */
   transformationFrame?: number | null;
-  /** Estado da coreografia do blink do riquelme (silhuetas de origem/destino). */
+  /** Estado da coreografia do blink do natsuki (silhuetas de origem/destino). */
   blinkVisual?: BlinkVisual | null;
-  /** Cópia de silhueta do Emanuel durante o hold da instância. */
-  emanuelClone?: EmanuelCloneVisual | null;
-  /** Esfera da Genki Dama do Emanuel (preparando ou voando). */
+  /** Cópia de silhueta do Ematron durante o hold da instância. */
+  ematronClone?: EmatronCloneVisual | null;
+  /** Esfera da Genki Dama do Ematron (preparando ou voando). */
   genkiDamaVisual?: GenkiDamaVisual | null;
-  /** Feixe do Laser da Forma Vastolord do marcelo. */
+  /** Feixe do Laser da Forma Vastolord do marshadow. */
   vastolordLaser?: VastolordLaserBeam | null;
-  /** Feixe de Kamehameha do emanuel (em curso, ou null). */
+  /** Feixe de Kamehameha do ematron (em curso, ou null). */
   kamehameha?: KamehamehaEffect | null;
   granReyCeroEffect?: GranReyCeroEffect | null;
-  /** CutInEnemie do marcelo sobrepondo o NPC atingido. */
+  /** CutInEnemie do marshadow sobrepondo o NPC atingido. */
   cutInEnemie?: CutInEnemieOverlay | null;
   /** NPC em sangramento (bloodIcon acima da imagem). */
   npcBleeding?: boolean;
@@ -114,26 +114,26 @@ type Props = {
   atomicExplosion?: AtomicExplosion | null;
   /** CutInEnemie sobre cada inimigo atingido dentro do raio. */
   atomicCuts?: AtomicCut[];
-  /** Varredura do mugetsuEffect da Expansão de Domínio do marcelo. */
+  /** Varredura do mugetsuEffect da Expansão de Domínio do marshadow. */
   mugetsuSweep?: MugetsuSweep | null;
   /** Blink do teleporte da Expansão de Domínio. */
   mugetsuBlink?: MugetsuBlink;
   /** Alvos sendo desintegrados em pó pela varredura. */
   disintegrating?: MugetsuDisintegrationTarget[];
-  /** Projéteis de energia do ataque básico do lucaua. */
-  lucauaEnergyProjectiles?: LucauaEnergyProjectile[];
-  /** Pose de mão do sprite do ataque básico do lucaua. */
-  lucauaAttackVariant?: LucauaAttackVariant;
-  /** Nonces dos shields de bloqueio do lucaua por lado (`0` = inativo). */
-  lucauaShieldSides?: LucauaShieldSides;
+  /** Projéteis de energia do ataque básico do babidi. */
+  babidiEnergyProjectiles?: BabidiEnergyProjectile[];
+  /** Pose de mão do sprite do ataque básico do babidi. */
+  babidiAttackVariant?: BabidiAttackVariant;
+  /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
+  babidiShieldSides?: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
-  onLucauaShieldEnd?: (side: LucauaShieldSide, nonce: number) => void;
-  /** Portais fincados no mapa (Energia Dimensional do lucaua). */
-  lucauaPortals?: LucauaPortal[];
+  onBabidiShieldEnd?: (side: BabidiShieldSide, nonce: number) => void;
+  /** Portais fincados no mapa (Energia Dimensional do babidi). */
+  babidiPortals?: BabidiPortal[];
   /** Fantasma do posicionamento do portal (antes de soltar o botão). */
-  lucauaPortalGhost?: LucauaPortalGhost | null;
+  babidiPortalGhost?: BabidiPortalGhost | null;
   /** Player no "voo do portal" (override de sprite pós-teletransporte). */
-  lucauaPortalLanding?: boolean;
+  babidiPortalLanding?: boolean;
   /** Furo no sprite do NPC quando a purple o mata (junto com `isDying`). */
   purpleHole?: boolean;
 };
@@ -165,7 +165,7 @@ export function BattleEntities({
   playerForm,
   transformationFrame = null,
   blinkVisual = null,
-  emanuelClone = null,
+  ematronClone = null,
   genkiDamaVisual = null,
   vastolordLaser = null,
   kamehameha = null,
@@ -181,17 +181,17 @@ export function BattleEntities({
   mugetsuSweep = null,
   mugetsuBlink = null,
   disintegrating = [],
-  lucauaEnergyProjectiles = [],
-  lucauaAttackVariant,
-  lucauaShieldSides,
-  onLucauaShieldEnd,
-  lucauaPortals = [],
-  lucauaPortalGhost = null,
-  lucauaPortalLanding = false,
+  babidiEnergyProjectiles = [],
+  babidiAttackVariant,
+  babidiShieldSides,
+  onBabidiShieldEnd,
+  babidiPortals = [],
+  babidiPortalGhost = null,
+  babidiPortalLanding = false,
   sphere = null,
   purpleHole = false,
 }: Props & {
-  sphere?: import("@/utils/types/character/riquelme").RiquelmeSphere | null;
+  sphere?: import("@/utils/types/character/natsuki").NatsukiSphere | null;
 }) {
   const battleScaleX = getViewportSize().width / ProjectileConstants.MAP_WIDTH;
   const battleScaleY =
@@ -207,8 +207,8 @@ export function BattleEntities({
   // Travessia em andamento pelos portais terrestres: a parte do sprite que já
   // passou da linha de um portal tem de reaparecer saindo do par (o hook só
   // mexe na posição — o recorte é reconstruído aqui a partir dela).
-  const playerPortalCross = getPortalCross(lucauaPortals, player.x, player.y);
-  const npcPortalCross = getPortalCross(lucauaPortals, npc.x, npc.y);
+  const playerPortalCross = getPortalCross(babidiPortals, player.x, player.y);
+  const npcPortalCross = getPortalCross(babidiPortals, npc.x, npc.y);
 
   return (
     <>
@@ -226,7 +226,7 @@ export function BattleEntities({
         cutInEnemie={cutInEnemie}
         npcBleeding={npcBleeding}
         purpleHole={purpleHole}
-        lucauaPortalCross={npcPortalCross}
+        babidiPortalCross={npcPortalCross}
       />
 
       <NpcProjectile
@@ -278,20 +278,20 @@ export function BattleEntities({
         summons={summons}
         hiddenIds={activeBombIds}
         TILE_SIZE={TILE_SIZE}
-        lucauaPortals={lucauaPortals}
+        babidiPortals={babidiPortals}
       />
 
       <Ally
         allies={allies}
         TILE_SIZE={TILE_SIZE}
-        lucauaPortals={lucauaPortals}
+        babidiPortals={babidiPortals}
       />
 
-      <Pet pet={pet} TILE_SIZE={TILE_SIZE} lucauaPortals={lucauaPortals} />
+      <Pet pet={pet} TILE_SIZE={TILE_SIZE} babidiPortals={babidiPortals} />
 
-      <LucauaPortals
-        portals={lucauaPortals}
-        ghost={lucauaPortalGhost}
+      <BabidiPortals
+        portals={babidiPortals}
+        ghost={babidiPortalGhost}
         battleScaleX={battleScaleX}
         battleScaleY={battleScaleY}
       />
@@ -304,21 +304,21 @@ export function BattleEntities({
         form={playerForm}
         transformationFrame={transformationFrame}
         blinkVisual={blinkVisual}
-        teleportSprite={emanuelClone != null}
+        teleportSprite={ematronClone != null}
         preAtomic={preAtomic}
         outroExpression={outroExpression}
         atomicHalo={atomicHalo}
         atomicFlash={atomicFlash}
         mugetsuBlink={mugetsuBlink}
-        lucauaAttackVariant={lucauaAttackVariant}
-        lucauaShieldSides={lucauaShieldSides}
-        onLucauaShieldEnd={onLucauaShieldEnd}
-        lucauaPortalLanding={lucauaPortalLanding}
-        lucauaPortalCross={playerPortalCross}
+        babidiAttackVariant={babidiAttackVariant}
+        babidiShieldSides={babidiShieldSides}
+        onBabidiShieldEnd={onBabidiShieldEnd}
+        babidiPortalLanding={babidiPortalLanding}
+        babidiPortalCross={playerPortalCross}
       />
 
       <EnergyProjectile
-        projectiles={lucauaEnergyProjectiles}
+        projectiles={babidiEnergyProjectiles}
         battleScaleX={battleScaleX}
         battleScaleY={battleScaleY}
       />
@@ -347,7 +347,7 @@ export function BattleEntities({
         />
       )}
 
-      {blinkVisual && player.character === "riquelme" && (
+      {blinkVisual && player.character === "natsuki" && (
         <BlinkAfterimage
           visual={blinkVisual}
           PLAYER_SIZE={PLAYER_SIZE}
@@ -355,11 +355,11 @@ export function BattleEntities({
         />
       )}
 
-      {emanuelClone && player.character === "emanuel" && (
-        <EmanuelClone clone={emanuelClone} PLAYER_SIZE={PLAYER_SIZE} />
+      {ematronClone && player.character === "ematron" && (
+        <EmatronClone clone={ematronClone} PLAYER_SIZE={PLAYER_SIZE} />
       )}
 
-      {genkiDamaVisual && player.character === "emanuel" && (
+      {genkiDamaVisual && player.character === "ematron" && (
         <GenkiDama
           visual={genkiDamaVisual}
           battleScaleX={battleScaleX}
@@ -367,7 +367,7 @@ export function BattleEntities({
         />
       )}
 
-      {vastolordLaser && player.character === "marcelo" && (
+      {vastolordLaser && player.character === "marshadow" && (
         <VastolordLaser
           beam={vastolordLaser}
           PLAYER_SIZE={PLAYER_SIZE}
@@ -376,7 +376,7 @@ export function BattleEntities({
         />
       )}
 
-      {kamehameha && player.character === "emanuel" && (
+      {kamehameha && player.character === "ematron" && (
         <Kamehameha
           effect={kamehameha}
           battleScaleX={battleScaleX}
@@ -384,7 +384,7 @@ export function BattleEntities({
         />
       )}
 
-      {granReyCeroEffect && player.character === "marcelo" && (
+      {granReyCeroEffect && player.character === "marshadow" && (
         <GranReyCero
           tipX={granReyCeroEffect.tipX}
           tipY={granReyCeroEffect.tipY}
@@ -437,7 +437,7 @@ export function BattleEntities({
         />
       ))}
 
-      <RiquelmeSphere
+      <NatsukiSphere
         sphere={sphere ?? null}
         battleScaleX={battleScaleX}
         battleScaleY={battleScaleY}

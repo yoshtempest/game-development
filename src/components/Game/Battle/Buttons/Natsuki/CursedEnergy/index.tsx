@@ -12,7 +12,7 @@ type Props = {
 };
 
 /**
- * Botão de conversão de energia amaldiçoada em HP (Riquelme).
+ * Botão de conversão de energia amaldiçoada em HP (Natsuki).
  * Mostra barra de energia, valor atual e cura disponível.
  */
 const cursedEnergyClasses: CustomAbilityClasses = {

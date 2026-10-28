@@ -1,4 +1,4 @@
-import type { MarceloBattleForm } from "@/utils/paths";
+import type { MarshadowBattleForm } from "@/utils/paths";
 import { playerAbilityBackgroundPath, playerPath } from "@/utils/paths";
 import { AbilityOverlay } from "@/components/Game/Battle/Effects/Ability/AbilityOverlay";
 
@@ -11,7 +11,7 @@ type Props = {
    * Forma do personagem no momento do intro. Só importa quando há `ability`:
    * habilidades da Forma Vastolord (o laser) têm sprites em `vastolordForm/`.
    */
-  form?: MarceloBattleForm | null;
+  form?: MarshadowBattleForm | null;
   /** Pausa da batalha (menu aberto): congela a animação CSS no lugar. */
   paused?: boolean;
   /** Nome da habilidade exibido acima da imagem (opcional). */

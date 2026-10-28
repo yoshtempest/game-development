@@ -4,8 +4,8 @@ import {
   GENKI_DAMA_CHARGE_EFFECT_ASPECT,
   GENKI_DAMA_CHARGE_EFFECT_SIZE_MULTIPLIER,
   GENKI_DAMA_SPRITE_ASPECT,
-} from "@/data/characters/emanuel/emanuel";
-import type { GenkiDamaVisual } from "@/utils/types/character/emanuel";
+} from "@/data/characters/ematron";
+import type { GenkiDamaVisual } from "@/utils/types/character/ematron";
 import styles from "./styles.module.css";
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 };
 
 /**
- * Esfera da Genki Dama do Emanuel: rende o projétil `genkiDama.svg` no formato
+ * Esfera da Genki Dama do Ematron: rende o projétil `genkiDama.svg` no formato
  * atual (pairando sobre o jogador enquanto prepara, ou voando até o inimigo).
  * O tamanho base cresce pelo multiplicador de escala (1.2x por segundo).
  */

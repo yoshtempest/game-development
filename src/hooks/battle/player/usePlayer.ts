@@ -6,7 +6,7 @@ import {
 import { canPlayerHit } from "@/gameRules/battle/combat";
 import { evaluateStatusGuards } from "@/gameRules/battle/status/evaluateStatusGuards";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
-import { LUCAS_WEAPON_RANGES } from "@/data/characters/lucas/lucasWeapons";
+import { YVEL_WEAPON_RANGES } from "@/data/characters/yvel/yvelWeapons";
 import { DIVERGENT_FIST_DELAY_MS } from "@/gameRules/battle/cursedEnergy";
 import {
   applyBasicHit,
@@ -51,7 +51,7 @@ type Props = {
   playerState: PlayerState;
   npcClass: NPCClass;
   npcElementTypes: readonly ElementType[];
-  weapon?: LucasWeapon;
+  weapon?: YvelWeapon;
 
   HITS_TO_SPECIAL: number;
 
@@ -79,11 +79,11 @@ type Props = {
   timeRef: React.RefObject<TimeEffect[]>;
   registerHitRef: React.RefObject<(damage: number) => void>;
   setPlayer: React.Dispatch<React.SetStateAction<Player>>;
-  /** Devolve o multiplicador atual do ataque básico do artur (escala ORA). */
-  arturOraMultiplierRef?: React.RefObject<() => number>;
-  /** Devolve o multiplicador atual da Forma Vastolord do marcelo. */
+  /** Devolve o multiplicador atual do ataque básico do srGuaxinim (escala ORA). */
+  srGuaxinimOraMultiplierRef?: React.RefObject<() => number>;
+  /** Devolve o multiplicador atual da Forma Vastolord do marshadow. */
   vastolordMultiplierRef?: React.RefObject<() => number>;
-  /** Punho Divergente do riquelme: true quando o próximo ataque dobra o dano. */
+  /** Punho Divergente do natsuki: true quando o próximo ataque dobra o dano. */
   divergentFistRef?: React.RefObject<boolean>;
   /** Dispara quando o Punho Divergente é consumido pelo golpe. */
   onDivergentFistConsumedRef?: React.RefObject<() => void>;
@@ -94,8 +94,8 @@ type Props = {
   onKokusenRef?: React.RefObject<() => void>;
   onBlackFlashRef?: React.RefObject<() => void>;
   onCriticalPushRef?: React.RefObject<() => void>;
-  /** Dispara quando o marcelo (forma padrão) acerta um ataque básico no NPC. */
-  onMarceloDefaultHitRef?: React.RefObject<() => void>;
+  /** Dispara quando o marshadow (forma padrão) acerta um ataque básico no NPC. */
+  onMarshadowDefaultHitRef?: React.RefObject<() => void>;
   onHalfHeal?: () => void;
 };
 
@@ -140,7 +140,7 @@ export function usePlayerBattle({
   timeRef,
   registerHitRef,
   setPlayer,
-  arturOraMultiplierRef,
+  srGuaxinimOraMultiplierRef,
   vastolordMultiplierRef,
   divergentFistRef,
   onDivergentFistConsumedRef,
@@ -151,7 +151,7 @@ export function usePlayerBattle({
   onKokusenRef,
   onBlackFlashRef,
   onCriticalPushRef,
-  onMarceloDefaultHitRef,
+  onMarshadowDefaultHitRef,
   onHalfHeal,
 }: Props) {
   const { playSound } = useSoundEffects();
@@ -170,25 +170,25 @@ export function usePlayerBattle({
       if (isEnding.current) return;
       if (!playerCooldown.current && !bypassCooldown) return;
 
-      // Ataque básico do artur escala pelo count de extraPunches na tela.
-      // Forma Vastolord multiplica o dano do marcelo por 4.
+      // Ataque básico do srGuaxinim escala pelo count de extraPunches na tela.
+      // Forma Vastolord multiplica o dano do marshadow por 4.
       const vastolordMult = vastolordMultiplierRef?.current?.() ?? 1;
       const mult =
-        (arturOraMultiplierRef?.current &&
-        player.character === "artur" &&
+        (srGuaxinimOraMultiplierRef?.current &&
+        player.character === "srGuaxinim" &&
         damageMultiplier === 1
-          ? (arturOraMultiplierRef.current() ?? damageMultiplier)
+          ? (srGuaxinimOraMultiplierRef.current() ?? damageMultiplier)
           : damageMultiplier) * vastolordMult;
 
       const guard = evaluateStatusGuards(player);
       if (guard === "frozen") return;
 
-      // CutInEnemie + chance de sangramento: só no ataque básico do marcelo em
+      // CutInEnemie + chance de sangramento: só no ataque básico do marshadow em
       // forma padrão (Forma Vastolord multiplica o dano, então é excluída).
-      const isMarceloDefaultHit =
-        player.character === "marcelo" && vastolordMult === 1;
-      const notifyMarceloDefaultHit = () => {
-        if (isMarceloDefaultHit) onMarceloDefaultHitRef?.current?.();
+      const isMarshadowDefaultHit =
+        player.character === "marshadow" && vastolordMult === 1;
+      const notifyMarshadowDefaultHit = () => {
+        if (isMarshadowDefaultHit) onMarshadowDefaultHitRef?.current?.();
       };
 
       if (
@@ -203,14 +203,14 @@ export function usePlayerBattle({
           direction: player.battleDirection,
           isSpecial: false,
           npcClass,
-          rangeOverride: weapon ? LUCAS_WEAPON_RANGES[weapon] : undefined,
+          rangeOverride: weapon ? YVEL_WEAPON_RANGES[weapon] : undefined,
         })
       ) {
         return;
       }
 
       // Cegueira, bloqueio e confusão formam a mesma passagem para todo golpe
-      // do jogador; o básico só acrescenta o cut-in do marcelo quando bloqueado.
+      // do jogador; o básico só acrescenta o cut-in do marshadow quando bloqueado.
       const outcome = runHitPrelude({
         guard,
         calculateDamage: (targetElements) =>
@@ -233,7 +233,7 @@ export function usePlayerBattle({
         npcElements: npcElementTypes,
         cooldownMs: PLAYER_BASIC_COOLDOWN,
         playerCooldown,
-        onBlocked: notifyMarceloDefaultHit,
+        onBlocked: notifyMarshadowDefaultHit,
         onBeforeNpcHitRef,
         setNpcHP,
         setPlayerHP,
@@ -251,7 +251,7 @@ export function usePlayerBattle({
       if (outcome.kind !== "proceed") return;
 
       // Golpe que não rende carga (`grantCharge: false`, o dano contínuo das
-      // esferas do riquelme): o `behavior` é quem escreve na barra da Expansão,
+      // esferas do natsuki): o `behavior` é quem escreve na barra da Expansão,
       // então entregar a ele o setter no-op desliga só essa parte do golpe.
       const hitSetDelicia =
         options?.grantCharge === false ? ignoreDelicia : setDelicia;
@@ -294,7 +294,7 @@ export function usePlayerBattle({
         });
 
       const isDivergentFist = divergentFistRef?.current === true;
-      notifyMarceloDefaultHit();
+      notifyMarshadowDefaultHit();
       runBasicHit();
 
       if (isDivergentFist) {
@@ -346,12 +346,12 @@ export function usePlayerBattle({
       onKokusenRef,
       onBlackFlashRef,
       onCriticalPushRef,
-      onMarceloDefaultHitRef,
+      onMarshadowDefaultHitRef,
       onHalfHeal,
       npcClass,
       npcElementTypes,
       weapon,
-      arturOraMultiplierRef,
+      srGuaxinimOraMultiplierRef,
       vastolordMultiplierRef,
       divergentFistRef,
       onDivergentFistConsumedRef,
@@ -388,7 +388,7 @@ export function usePlayerBattle({
           direction: player.battleDirection,
           isSpecial: true,
           npcClass,
-          rangeOverride: weapon ? LUCAS_WEAPON_RANGES[weapon] : undefined,
+          rangeOverride: weapon ? YVEL_WEAPON_RANGES[weapon] : undefined,
         })
       ) {
         return;
@@ -396,7 +396,7 @@ export function usePlayerBattle({
 
       // Mesma passagem do ataque básico (cegueira, bloqueio, confusão). O
       // special zera a delícia nos desfechos que gastaram o combo, mas não
-      // avisa o cut-in do marcelo: esse aviso é exclusivo do golpe básico.
+      // avisa o cut-in do marshadow: esse aviso é exclusivo do golpe básico.
       const outcome = runHitPrelude({
         guard,
         calculateDamage: (targetElements) =>
@@ -437,7 +437,7 @@ export function usePlayerBattle({
       });
       if (outcome.kind !== "proceed") return;
 
-      if (player.character === "riquelme") {
+      if (player.character === "natsuki") {
         playSound("impact");
         logPlay("impact");
       }
@@ -575,12 +575,13 @@ export function usePlayerBattle({
         return { damage, type: "projectile" };
       }
 
-      // Escala ORA do artur (só no ataque básico com multiplicador 1) e a Forma
-      // Vastolord do marcelo — mesma conta do `playerHit`.
+      // Escala ORA do srGuaxinim (só no ataque básico com multiplicador 1) e a Forma
+      // Vastolord do marshadow — mesma conta do `playerHit`.
       const vastolordMult = vastolordMultiplierRef?.current?.() ?? 1;
       const mult =
-        (arturOraMultiplierRef?.current && player.character === "artur"
-          ? arturOraMultiplierRef.current()
+        (srGuaxinimOraMultiplierRef?.current &&
+        player.character === "srGuaxinim"
+          ? srGuaxinimOraMultiplierRef.current()
           : 1) * vastolordMult;
 
       const { damage } = calculateBasicHitDamage({
@@ -615,7 +616,7 @@ export function usePlayerBattle({
       totalMaxHpDamage,
       totalTrueDamage,
       stacks,
-      arturOraMultiplierRef,
+      srGuaxinimOraMultiplierRef,
       vastolordMultiplierRef,
     ],
   );

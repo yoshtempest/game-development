@@ -13,7 +13,7 @@ type Props = {
 /**
  * Flash visual do burst da Expansão de Domínio universal: tinge a arena com o
  * accent do personagem e estampa o nome do domínio no centro enquanto o dano
- * varre a arena (~900ms). Só o marcelo não usa — ele tem o mugetsu e o
+ * varre a arena (~900ms). Só o marshadow não usa — ele tem o mugetsu e o
  * `DomainExpansionBackground`.
  */
 export function DomainBurstOverlay({

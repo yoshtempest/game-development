@@ -87,7 +87,7 @@ export function useBattlePresentation({
     extendVastolord,
     skipVastolordTransform,
   } = useVastolordForm({
-    enabled: player.character === "marcelo" && !training,
+    enabled: player.character === "marshadow" && !training,
     durationMs: vastolordDurationMs,
     isPausedRef,
     isEndingRef: vastolordEndingRef,

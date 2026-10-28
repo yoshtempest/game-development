@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ONE_THOUSAND_MS, THREE_THOUSAND_MS } from "@/data/ms";
-import type { MarceloBattleForm } from "@/utils/paths";
+import type { MarshadowBattleForm } from "@/utils/paths";
 import { useSettings } from "@/hooks/settings/useSetting";
 import { usePausableTimers } from "@/hooks/battle/utilities/usePausableTimers";
 
@@ -49,7 +49,7 @@ export function useSpecialIntro({
   const [specialIntro, setSpecialIntro] = useState<{
     character: string;
     ability?: string;
-    form?: MarceloBattleForm;
+    form?: MarshadowBattleForm;
   } | null>(null);
   const activeRef = useRef(false);
   const onActivateRef = useRef<(() => void) | null>(null);
@@ -62,7 +62,7 @@ export function useSpecialIntro({
       character: string,
       onActivate: () => void,
       ability?: string,
-      form?: MarceloBattleForm,
+      form?: MarshadowBattleForm,
       onCancel?: () => void,
     ) => {
       // Intro desligado na config: a ação sai imediatamente, sem overlay e

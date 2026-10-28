@@ -1,5 +1,5 @@
 import type { CHARACTERS } from "@/data/characters/list";
-import { EMANUEL_COMBO_WINDOW_MS } from "@/data/characters/emanuel/emanuel";
+import { EMATRON_COMBO_WINDOW_MS } from "@/data/characters/ematron";
 import type { CharacterPassive } from "./types";
 import type { CharacterPassiveKind } from "./types";
 
@@ -9,9 +9,9 @@ export const CHARACTER_PASSIVES: Record<
   (typeof CHARACTERS)[number],
   CharacterPassive[]
 > = {
-  marcelo: [
+  marshadow: [
     {
-      characterId: "marcelo",
+      characterId: "marshadow",
       id: "vastolordForm",
       name: "Forma Vastolord",
       description:
@@ -21,7 +21,7 @@ export const CHARACTER_PASSIVES: Record<
       effect: { kind: "vastolordForm", durationMs: 10_000 },
     },
     // {
-    //   characterId: "marcelo",
+    //   characterId: "marshadow",
     //   id: "clearCut",
     //   name: "Corte Limpo",
     //   description:
@@ -31,9 +31,9 @@ export const CHARACTER_PASSIVES: Record<
     //   effect: { kind: "clearCut" },
     // }
   ],
-  eduarda: [
+  drika: [
     {
-      characterId: "eduarda",
+      characterId: "drika",
       id: "notImplemented",
       name: "Passiva (a definir)",
       description: "Passiva do personagem ainda não definida.",
@@ -42,9 +42,9 @@ export const CHARACTER_PASSIVES: Record<
       effect: NOT_IMPLEMENTED,
     },
   ],
-  lucas: [
+  yvel: [
     {
-      characterId: "lucas",
+      characterId: "yvel",
       id: "notImplemented",
       name: "Passiva (a definir)",
       description: "Passiva do personagem ainda não definida.",
@@ -53,9 +53,9 @@ export const CHARACTER_PASSIVES: Record<
       effect: NOT_IMPLEMENTED,
     },
   ],
-  samuel: [
+  samurion: [
     {
-      characterId: "samuel",
+      characterId: "samurion",
       id: "notImplemented",
       name: "Passiva (a definir)",
       description: "Passiva do personagem ainda não definida.",
@@ -64,9 +64,9 @@ export const CHARACTER_PASSIVES: Record<
       effect: NOT_IMPLEMENTED,
     },
   ],
-  artur: [
+  srGuaxinim: [
     {
-      characterId: "artur",
+      characterId: "srGuaxinim",
       id: "rewindTime",
       name: "Retrocesso Temporal",
       description:
@@ -76,9 +76,9 @@ export const CHARACTER_PASSIVES: Record<
       effect: { kind: "rewindTime", rewindMs: 10_000 },
     },
   ],
-  mayra: [
+  yra: [
     {
-      characterId: "mayra",
+      characterId: "yra",
       id: "notImplemented",
       name: "Passiva (a definir)",
       description: "Passiva do personagem ainda não definida.",
@@ -87,9 +87,9 @@ export const CHARACTER_PASSIVES: Record<
       effect: NOT_IMPLEMENTED,
     },
   ],
-  lucaua: [
+  babidi: [
     {
-      characterId: "lucaua",
+      characterId: "babidi",
       id: "notImplemented",
       name: "Passiva (a definir)",
       description: "Passiva do personagem ainda não definida.",
@@ -98,9 +98,9 @@ export const CHARACTER_PASSIVES: Record<
       effect: NOT_IMPLEMENTED,
     },
   ],
-  riquelme: [
+  natsuki: [
     {
-      characterId: "riquelme",
+      characterId: "natsuki",
       id: "cursedEnergy",
       name: "Energia Amaldiçoada",
       description:
@@ -110,7 +110,7 @@ export const CHARACTER_PASSIVES: Record<
       effect: { kind: "cursedEnergy" },
     },
     {
-      characterId: "riquelme",
+      characterId: "natsuki",
       id: "honoredOne",
       name: "O Mais Honrado",
       description:
@@ -120,9 +120,9 @@ export const CHARACTER_PASSIVES: Record<
       effect: { kind: "honoredOne" },
     },
   ],
-  larissa: [
+  laricell: [
     {
-      characterId: "larissa",
+      characterId: "laricell",
       id: "notImplemented",
       name: "Passiva (a definir)",
       description: "Passiva do personagem ainda não definida.",
@@ -131,9 +131,9 @@ export const CHARACTER_PASSIVES: Record<
       effect: NOT_IMPLEMENTED,
     },
   ],
-  camilly: [
+  camyKaze: [
     {
-      characterId: "camilly",
+      characterId: "camyKaze",
       id: "notImplemented",
       name: "Passiva (a definir)",
       description: "Passiva do personagem ainda não definida.",
@@ -142,16 +142,16 @@ export const CHARACTER_PASSIVES: Record<
       effect: NOT_IMPLEMENTED,
     },
   ],
-  emanuel: [
+  ematron: [
     {
-      characterId: "emanuel",
+      characterId: "ematron",
       id: "combo",
       name: "Combo",
       description:
-        "Ataques básicos consecutivos executam o combo: soco, gancho, chute baixo e finalizador aéreo. A cada golpe o Emanuel avança em direção ao inimigo e o empurra para trás. Pressionar atacar de novo dentro de 300ms encadeia o próximo golpe com dano crescente (1x até 1.5x). Parar por mais de 300ms volta ao primeiro golpe.",
+        "Ataques básicos consecutivos executam o combo: soco, gancho, chute baixo e finalizador aéreo. A cada golpe o Ematron avança em direção ao inimigo e o empurra para trás. Pressionar atacar de novo dentro de 300ms encadeia o próximo golpe com dano crescente (1x até 1.5x). Parar por mais de 300ms volta ao primeiro golpe.",
       unlockedAtLevel: 1,
       oncePerBattle: false,
-      effect: { kind: "combo", windowMs: EMANUEL_COMBO_WINDOW_MS },
+      effect: { kind: "combo", windowMs: EMATRON_COMBO_WINDOW_MS },
     },
   ],
   levi: [

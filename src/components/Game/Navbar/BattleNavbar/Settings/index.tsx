@@ -209,8 +209,8 @@ export function Settings() {
       })
     : null;
 
-  // Diálogo dinâmico para o Riquelme com a chance de vitória atual
-  const riquelmeDialogue = useMemo(() => {
+  // Diálogo dinâmico para o Natsuki com a chance de vitória atual
+  const natsukiDialogue = useMemo(() => {
     if (winProbability === null) return null;
     return defineDialogue([
       [
@@ -221,13 +221,13 @@ export function Settings() {
         who: "protagonista",
         message: "Nah i'd win.",
         expression: "victory",
-        soundSrc: soundEffectPath("player/characters/riquelme/nah-id-win.mp3"),
+        soundSrc: soundEffectPath("player/characters/natsuki/nah-id-win.mp3"),
       },
     ]);
   }, [winProbability]);
 
   const cutscene = useCutscene({
-    dialogue: riquelmeDialogue ?? [],
+    dialogue: natsukiDialogue ?? [],
     playOnce: false,
   });
 
@@ -288,7 +288,7 @@ export function Settings() {
                 {Math.round(displayedWin)}%
               </span>
             </div>
-            {cutscene.isOpen && dialogue && player.character === "riquelme" && (
+            {cutscene.isOpen && dialogue && player.character === "natsuki" && (
               <Talking
                 name={dialogue.name}
                 message={dialogue.message}

@@ -25,21 +25,21 @@ import {
   SPHERE_OFFSET_Y,
   SPHERE_SPAWN_MS,
   SPHERE_SPAWN_SCALE,
-} from "@/data/characters/riquelme/riquelme";
+} from "@/data/characters/natsuki/natsuki";
 
 import type { TimeEffect } from "@/gameRules/battle/time";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { SoundId } from "@/utils/audio/soundId";
-import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
+import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/types";
 import type {
-  RiquelmeSphere,
-  RiquelmeSphereVariant,
-} from "@/utils/types/character/riquelme";
+  NatsukiSphere,
+  NatsukiSphereVariant,
+} from "@/utils/types/character/natsuki";
 import { createSphereFrame } from "./createSphereFrame";
 import type { SphereCore } from "./types";
 
 /** Id do efeito de time do Setup (congela o mundo enquanto a esfera se forma). */
-const SPHERE_TIME_ID = "riquelme:spheres";
+const SPHERE_TIME_ID = "natsuki:spheres";
 /** Congelamento do mundo durante o Setup da purple (junction + one + two). */
 const PURPLE_CAST_FREEZE_MS =
   PURPLE_JUNCTION_MS + PURPLE_FORM_MS + SPHERE_MOVE_MS;
@@ -54,7 +54,7 @@ type Props = {
     character: string,
     onActivate: () => void,
     ability?: string,
-    form?: MarceloBattleForm,
+    form?: MarshadowBattleForm,
     onCancel?: () => void,
   ) => boolean;
   /** +5 cargas da Expansão por uso (a purple conta como dois: 2×). */
@@ -71,7 +71,7 @@ type Props = {
 };
 
 /**
- * Núcleo das esferas do riquelme: o estado da esfera em campo, as fases que as
+ * Núcleo das esferas do natsuki: o estado da esfera em campo, as fases que as
  * três variantes compartilham (Setup `spawning` → `moving` e a dissipação) e o
  * congelamento do mundo.
  *
@@ -92,10 +92,10 @@ export function useSphereCore({
   disabledRef,
   battleEndedRef,
 }: Props): SphereCore {
-  const [sphere, setSphere] = useState<RiquelmeSphere | null>(null);
+  const [sphere, setSphere] = useState<NatsukiSphere | null>(null);
 
   const activeRef = useRef(false);
-  const sphereRef = useRef<RiquelmeSphere | null>(null);
+  const sphereRef = useRef<NatsukiSphere | null>(null);
   const phaseStartRef = useRef(0);
   const fromRef = useRef({ x: 0, y: 0 });
   const targetRef = useRef({ x: 0, y: 0 });
@@ -111,7 +111,7 @@ export function useSphereCore({
   // é decidido pelas fases (o player está idle e `canUse` é readquirido).
   const { usableRef: canUseRef, shouldCancelRef } = useSkillGuard({
     player,
-    character: "riquelme",
+    character: "natsuki",
     freezeActionsUntilRef,
     disabledRef,
     isPausedRef,
@@ -119,7 +119,7 @@ export function useSphereCore({
   });
 
   /** Publica um frame novo: o ref é o valor que os ticks leem, o state desenha. */
-  const publish = useCallback((next: RiquelmeSphere) => {
+  const publish = useCallback((next: NatsukiSphere) => {
     sphereRef.current = next;
     setSphere(next);
   }, []);
@@ -183,7 +183,7 @@ export function useSphereCore({
    * que conhece as três esferas.
    */
   const tickSetup = useCallback(
-    (s: RiquelmeSphere): boolean => {
+    (s: NatsukiSphere): boolean => {
       const now = Date.now();
       const p = playerRef.current;
 
@@ -196,7 +196,7 @@ export function useSphereCore({
           ? 1
           : SPHERE_SPAWN_SCALE + (1 - SPHERE_SPAWN_SCALE) * t;
         const blink = isPurple ? 0 : Math.max(0, 1 - elapsed / SPHERE_BLINK_MS);
-        const next: RiquelmeSphere = {
+        const next: NatsukiSphere = {
           ...s,
           x: p.x,
           y: p.y - SPHERE_OFFSET_Y,
@@ -234,7 +234,7 @@ export function useSphereCore({
 
   /** Dissipação: escala e opacidade até 0 e então o ciclo termina. */
   const tickDismiss = useCallback(
-    (s: RiquelmeSphere) => {
+    (s: NatsukiSphere) => {
       const t = Math.min(
         1,
         (Date.now() - phaseStartRef.current) / SPHERE_DISMISS_MS,
@@ -250,7 +250,7 @@ export function useSphereCore({
   );
 
   const startCast = useCallback(
-    (variant: RiquelmeSphereVariant) => {
+    (variant: NatsukiSphereVariant) => {
       if (activeRef.current) return;
       if (Date.now() < cooldownUntilRef.current) return;
       if (!canUseRef.current) return;
@@ -316,7 +316,7 @@ export function useSphereCore({
       // `run` ao fim; se já houver um intro em andamento ele não roda, e o cast
       // precisa sair na hora para a ativação (e o recurso) não sumirem.
       const started = startIntroRef.current(
-        "riquelme",
+        "natsuki",
         run,
         variant,
         undefined,

@@ -21,7 +21,7 @@ import { useNavbar } from "@/contexts/NavbarContext";
 import { useEquipment } from "@/contexts/EquipmentContext";
 import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
 import { usePlayerAnimation } from "@/hooks/battle/player/usePlayerAnimation";
-import { useEmanuelCombo } from "@/hooks/battle/player/characters/ematron/useEmanuelCombo";
+import { useEmatronCombo } from "@/hooks/battle/player/characters/ematron/useCombo";
 import { useTimeScale } from "@/hooks/battle/time/useTimeScale";
 import { BATTLE_DEFAULT_STATE } from "@/gameRules/battle/defaultState";
 import { useBattleCollisionRef } from "@/hooks/battle/utilities/useBattleCollisionRef";
@@ -99,29 +99,29 @@ type PlayerActionsContextType = {
   battleTenacityRef: React.RefObject<number>;
   freezeActionsUntilRef: React.RefObject<number>;
 
-  /** Punho Divergente do riquelme: true força o próximo ataque a ser um soco. */
+  /** Punho Divergente do natsuki: true força o próximo ataque a ser um soco. */
   forcePunchRef: React.RefObject<boolean>;
 
   /** Sequência "O Mais Honrado": instante de início da subida (0 = inativa). */
   honoredRiseStartRef: React.RefObject<number>;
   /** Sequência "O Mais Honrado": y do jogador no instante em que ela disparou. */
   honoredRiseStartYRef: React.RefObject<number>;
-  /** Sequência "O Mais Honrado": true enquanto o riquelme está caindo (pouso vira idleCrounched). */
+  /** Sequência "O Mais Honrado": true enquanto o natsuki está caindo (pouso vira idleCrounched). */
   honoredFallRef: React.RefObject<boolean>;
 
-  /** Genki Dama do emanuel: instante de início da subida (0 = inativa). */
+  /** Genki Dama do ematron: instante de início da subida (0 = inativa). */
   genkiDamaRiseStartRef: React.RefObject<number>;
-  /** Genki Dama do emanuel: y do jogador no instante em que ela disparou. */
+  /** Genki Dama do ematron: y do jogador no instante em que ela disparou. */
   genkiDamaRiseStartYRef: React.RefObject<number>;
 
-  /** Combo do emanuel: multiplicador do último step avançado no press. */
-  emanuelComboMultiplierRef: React.RefObject<number>;
-  /** Combo do emanuel: true quando o último press avançou o combo. */
-  emanuelComboActiveRef: React.RefObject<boolean>;
-  /** Combo do emanuel: true durante a sequência aérea (airKick windup). */
-  emanuelComboAirActiveRef: React.RefObject<boolean>;
-  /** Combo do emanuel: índice do último step avançado no press. */
-  emanuelComboStepIndexRef: React.RefObject<number>;
+  /** Combo do ematron: multiplicador do último step avançado no press. */
+  ematronComboMultiplierRef: React.RefObject<number>;
+  /** Combo do ematron: true quando o último press avançou o combo. */
+  ematronComboActiveRef: React.RefObject<boolean>;
+  /** Combo do ematron: true durante a sequência aérea (airKick windup). */
+  ematronComboAirActiveRef: React.RefObject<boolean>;
+  /** Combo do ematron: índice do último step avançado no press. */
+  ematronComboStepIndexRef: React.RefObject<number>;
 
   setTimeScale: (scale: number) => void;
   resetTimeScale: () => void;
@@ -145,7 +145,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       gridY: 11,
       height: 0,
       direction: "up",
-      character: isCharacter(savedCharacter) ? savedCharacter : "marcelo",
+      character: isCharacter(savedCharacter) ? savedCharacter : "marshadow",
       ...BATTLE_DEFAULT_STATE,
       mode: "explore",
     };
@@ -155,21 +155,21 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const battleTenacityRef = useRef(0);
   const { progress } = useCharacterProgress();
   const { timeScaleRef, setTimeScale, resetTimeScale } = useTimeScale();
-  const emanuelCombo = useEmanuelCombo();
-  // Riquelme: o básico intercala kick/attack/punch e o punch deriva do windup
-  // `preAttack` (mesmo mecanismo do combo do emanuel). O press marca aqui qual
+  const ematronCombo = useEmatronCombo();
+  // Natsuki: o básico intercala kick/attack/punch e o punch deriva do windup
+  // `preAttack` (mesmo mecanismo do combo do ematron). O press marca aqui qual
   // desfecho este windup apresenta; o `usePlayerAnimation` lê e limpa.
-  const riquelmePunchRef = useRef(false);
+  const natsukiPunchRef = useRef(false);
   const playerRef = useLatestRef(player);
-  const emanuelComboMultiplierRef = emanuelCombo.multiplierRef;
-  const emanuelComboActiveRef = emanuelCombo.activeRef;
-  const emanuelComboAirActiveRef = emanuelCombo.airActiveRef;
-  const emanuelComboStepIndexRef = emanuelCombo.stepIndexRef;
-  const resetEmanuelCombo = emanuelCombo.reset;
+  const ematronComboMultiplierRef = ematronCombo.multiplierRef;
+  const ematronComboActiveRef = ematronCombo.activeRef;
+  const ematronComboAirActiveRef = ematronCombo.airActiveRef;
+  const ematronComboStepIndexRef = ematronCombo.stepIndexRef;
+  const resetEmatronCombo = ematronCombo.reset;
 
   useEffect(() => {
-    resetEmanuelCombo();
-  }, [player.character, player.mode, resetEmanuelCombo]);
+    resetEmatronCombo();
+  }, [player.character, player.mode, resetEmatronCombo]);
 
   usePlayerAnimation(
     player,
@@ -177,8 +177,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     battleTenacityRef,
     (progress[player.character]?.sleep ?? 0) > 0,
     timeScaleRef,
-    emanuelCombo,
-    riquelmePunchRef,
+    ematronCombo,
+    natsukiPunchRef,
   );
 
   const movingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -253,11 +253,11 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     honoredRiseStartYRef,
     honoredFallRef,
     forcePunchRef,
-    emanuelCombo,
+    ematronCombo,
     playerRef,
     genkiDamaRiseStartRef,
     genkiDamaRiseStartYRef,
-    riquelmePunchRef,
+    natsukiPunchRef,
   );
   const battleRef = useRef(battle);
   battleRef.current = battle;
@@ -504,10 +504,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       honoredFallRef,
       genkiDamaRiseStartRef,
       genkiDamaRiseStartYRef,
-      emanuelComboMultiplierRef,
-      emanuelComboActiveRef,
-      emanuelComboAirActiveRef,
-      emanuelComboStepIndexRef,
+      ematronComboMultiplierRef,
+      ematronComboActiveRef,
+      ematronComboAirActiveRef,
+      ematronComboStepIndexRef,
 
       setTimeScale,
       resetTimeScale,
@@ -562,10 +562,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       honoredFallRef,
       genkiDamaRiseStartRef,
       genkiDamaRiseStartYRef,
-      emanuelComboMultiplierRef,
-      emanuelComboActiveRef,
-      emanuelComboAirActiveRef,
-      emanuelComboStepIndexRef,
+      ematronComboMultiplierRef,
+      ematronComboActiveRef,
+      ematronComboAirActiveRef,
+      ematronComboStepIndexRef,
       setTimeScale,
       resetTimeScale,
       timeScaleRef,

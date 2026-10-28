@@ -1,4 +1,4 @@
-import { playerPathEmanuelHabilities } from "@/utils/paths";
+import { playerPathEmatronHabilities } from "@/utils/paths";
 import styles from "@/components/Game/Entities/Player/Battle/styles.module.css";
 
 interface ChargingKiEffectProps {
@@ -9,7 +9,7 @@ interface ChargingKiEffectProps {
 export function ChargingKiEffect({ width, height }: ChargingKiEffectProps) {
   return (
     <img
-      src={playerPathEmanuelHabilities("/chargingKi/chargingKiEffect.svg")}
+      src={playerPathEmatronHabilities("/chargingKi/chargingKiEffect.svg")}
       className={styles.chargingKiEffect}
       style={{
         height,

@@ -13,7 +13,7 @@ import { getEnergyName, hasManaBar } from "@/gameRules/battle/mana";
 type Props = {
   // characterColor: CharacterOption & { unlockedDate?: string | null };
   character: CharacterId;
-  /** Forma especial ativa (Forma Vastolord do marcelo): troca a face para a da forma. */
+  /** Forma especial ativa (Forma Vastolord do marshadow): troca a face para a da forma. */
   playerForm?: "vastolordForm";
   playerName: string;
   playerRank: string;
@@ -94,7 +94,7 @@ export function PlayerHUDPanel({
                 label={getEnergyName(character).toUpperCase()}
                 value={mana}
                 max={maxMana}
-                tone={character === "riquelme" ? "cursed" : "mana"}
+                tone={character === "natsuki" ? "cursed" : "mana"}
               />
             )}
             <Deliciometro delicia={delicia} hitsToSpecial={hitsToSpecial} />

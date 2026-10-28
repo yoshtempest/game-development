@@ -1,9 +1,9 @@
 import type {
-  LucauaPortalCross,
-  LucauaShieldSide,
-  LucauaShieldSides,
-} from "@/utils/types/character/lucaua";
-import type { LucauaAttackVariant } from "@/utils/types/character/lucaua/attack";
+  BabidiPortalCross,
+  BabidiShieldSide,
+  BabidiShieldSides,
+} from "@/utils/types/character/babidi";
+import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
 
 export interface PlayerBattleProps {
   x: number;
@@ -12,7 +12,7 @@ export interface PlayerBattleProps {
   state: PlayerState;
   direction: Direction;
   character: CharacterId;
-  weapon?: LucasWeapon;
+  weapon?: YvelWeapon;
   grabbedUntil?: number;
   grabFlipped?: boolean;
   form?: "vastolordForm";
@@ -26,17 +26,17 @@ export interface PlayerBattleProps {
   atomicFlash?: boolean;
   mugetsuBlink?: "out" | "in" | null;
   levelUpParticles?: boolean;
-  /** Pose de mão do sprite do ataque básico do lucaua. */
-  lucauaAttackVariant?: LucauaAttackVariant;
-  /** Nonces dos shields de bloqueio do lucaua por lado (`0` = inativo). */
-  lucauaShieldSides?: LucauaShieldSides;
+  /** Pose de mão do sprite do ataque básico do babidi. */
+  babidiAttackVariant?: BabidiAttackVariant;
+  /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
+  babidiShieldSides?: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
-  onLucauaShieldEnd?: (side: LucauaShieldSide, nonce: number) => void;
-  /** Player saindo de um portal do lucaua (voo/decolagem). */
-  lucauaPortalLanding?: boolean;
+  onBabidiShieldEnd?: (side: BabidiShieldSide, nonce: number) => void;
+  /** Player saindo de um portal do babidi (voo/decolagem). */
+  babidiPortalLanding?: boolean;
   /**
    * Travessia em andamento por um portal terrestre: a parte do sprite abaixo da
    * linha do portal some de um lado e reaparece saindo do outro.
    */
-  lucauaPortalCross?: LucauaPortalCross | null;
+  babidiPortalCross?: BabidiPortalCross | null;
 }

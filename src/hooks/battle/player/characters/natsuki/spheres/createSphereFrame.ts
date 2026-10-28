@@ -2,11 +2,11 @@ import {
   SPHERE_OFFSET_X,
   SPHERE_OFFSET_Y,
   SPHERE_SPAWN_SCALE,
-} from "@/data/characters/riquelme/riquelme";
+} from "@/data/characters/natsuki/natsuki";
 import type {
-  RiquelmeSphere,
-  RiquelmeSphereVariant,
-} from "@/utils/types/character/riquelme";
+  NatsukiSphere,
+  NatsukiSphereVariant,
+} from "@/utils/types/character/natsuki";
 
 /**
  * Frame inicial da esfera no instante do cast, antes do Setup compartilhado
@@ -16,9 +16,9 @@ import type {
  * posicionadas dos lados da cabeça, convergindo para o centro.
  */
 export function createSphereFrame(
-  variant: RiquelmeSphereVariant,
+  variant: NatsukiSphereVariant,
   player: Player,
-): RiquelmeSphere {
+): NatsukiSphere {
   const isPurple = variant === "purple";
   const forward = player.battleDirection === "right" ? 1 : -1;
 

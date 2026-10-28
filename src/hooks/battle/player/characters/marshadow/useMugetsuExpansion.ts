@@ -35,7 +35,7 @@ import {
   DOMAIN_EXPANSION_TIME_ID,
   DOMAIN_EXPANSION_TOTAL_MS,
   DOMAIN_EXPANSION_SWEEP_SPEED,
-} from "@/data/characters/marcelo/marshadowDomainExpansion";
+} from "@/data/characters/marshadow/marshadowDomainExpansion";
 import type {
   MugetsuBlink,
   MugetsuDisintegrationTarget,
@@ -123,7 +123,7 @@ type DomainExpansionApi = {
 };
 
 /**
- * Expansão de Domínio do marcelo: o jogador troca para preMugetsu.svg, dá um
+ * Expansão de Domínio do marshadow: o jogador troca para preMugetsu.svg, dá um
  * blink visual e se teletransporta para a ponta mais próxima do mapa; no pico
  * (mugetsu.svg) uma nova instância (mugetsuEffect.svg) cobre toda a altura do
  * mapa e varre de uma ponta à outra, matando instantaneamente (100% da vida
@@ -208,7 +208,7 @@ export function useMugetsuExpansion({
 
   const { usable, usableRef, shouldCancelRef } = useSkillGuard({
     player,
-    character: "marcelo",
+    character: "marshadow",
     freezeActionsUntilRef,
     disabledRef,
     isPausedRef,
@@ -355,7 +355,7 @@ export function useMugetsuExpansion({
     hasSurvivor,
     setPlayer,
     timers,
-    playSoundRef
+    playSoundRef,
   ]);
 
   const endDomainRef = useLatestRef(endDomain);
@@ -583,7 +583,7 @@ export function useMugetsuExpansion({
     const sweepDirection: "left" | "right" =
       fromX === BATTLE_LIMITS.minX ? "right" : "left";
 
-    startSpecialIntro("marcelo", () => {}, "domainExpansion");
+    startSpecialIntro("marshadow", () => {}, "domainExpansion");
 
     const mugetsuAt = DOMAIN_EXPANSION_PRE_MS;
     const sweepAt = mugetsuAt + DOMAIN_EXPANSION_MUGETSU_MS;

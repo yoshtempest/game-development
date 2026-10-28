@@ -154,9 +154,9 @@ export const BATTLE_QUESTS = createQuests({
     "Ela é muito perigosa, dá para sentir a insanidade daqui",
     1000,
   ),
-  x1_artur: battleQuest(
+  x1_srGuaxinim: battleQuest(
     "Que a ira de Baal caia sobre você!",
-    playerPath("/artur/default.svg"),
+    playerPath("/srGuaxinim/default.svg"),
     "Baal está furioso!",
     500,
   ),

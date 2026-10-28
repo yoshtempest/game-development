@@ -1,5 +1,5 @@
 // PlayerState vem do escopo global (src/utils/types/global.d.ts) — fonte única.
-import { EMANUEL_AIR_GRAB_DURATION_MS } from "@/data/characters/emanuel/emanuel";
+import { EMATRON_AIR_GRAB_DURATION_MS } from "@/data/characters/ematron";
 import {
   ONE_HUNDRED_MS,
   ONE_HUNDRED_FIFTY_MS,
@@ -27,7 +27,7 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
   punch: { next: "idle", duration: THREE_HUNDRED_MS },
   hook: { next: "idle", duration: THREE_HUNDRED_MS },
   lowKick: { next: "idle", duration: FIVE_HUNDRED_MS },
-  airGrab: { next: "airKick", duration: EMANUEL_AIR_GRAB_DURATION_MS },
+  airGrab: { next: "airKick", duration: EMATRON_AIR_GRAB_DURATION_MS },
   airKick: { next: "idle", duration: THREE_HUNDRED_MS },
 
   preWalk: { next: "walk", duration: ONE_HUNDRED_MS },
@@ -52,7 +52,7 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
 
   charging: { next: "idle", duration: FIVE_HUNDRED_MS },
 
-  // Carga de Ki do emanuel: estado controlado pelo hold do botão (useEmanuelKiCharge),
+  // Carga de Ki do ematron: estado controlado pelo hold do botão (useEmatronKiCharge),
   // não avança sozinho — o release volta para idle.
   chargingKi: null,
 
@@ -66,55 +66,55 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
 
   fallen: null,
 
-  // Passiva "O Abençoado" do riquelme: estado mantido pelo time scale/timer
+  // Passiva "O Abençoado" do natsuki: estado mantido pelo time scale/timer
   // durante a sequência do honored-one, não avança sozinho — o useScene força
   // `idle` quando o áudio termina.
   mostHonored: null,
 
-  // Conversão de energia amaldiçoada em cura do riquelme: troca para o sprite
+  // Conversão de energia amaldiçoada em cura do natsuki: troca para o sprite
   // heal.svg por 300ms e volta para idle.
   heal: { next: "idle", duration: THREE_HUNDRED_MS },
 
-  // Genki Dama do emanuel: estados controlados pelo hold (useEmanuelGenkiDama),
+  // Genki Dama do ematron: estados controlados pelo hold (useEmatronGenkiDama),
   // não avançam sozinhos — o hook troca os sprites conforme a fase.
   genkiDamaRising: null,
   preparingGenkiDama: null,
   throwGenkiDama: null,
 
-  // Laser da Forma Vastolord do marcelo: estado mantido pelo hook por 3s
+  // Laser da Forma Vastolord do marshadow: estado mantido pelo hook por 3s
   // (useVastolordLaser), que restaura o idle quando o feixe termina.
   laser: null,
 
-  // Kamehameha do emanuel: fase de disparo (efeito) mantida pelo hook
+  // Kamehameha do ematron: fase de disparo (efeito) mantida pelo hook
   // `useKamehameha`, que restaura o idle quando o efeito (2s) termina.
   kamehameha: null,
 
-  // Kamehameha do emanuel: fase de carregamento (sprite `chargingKamehameha.svg`)
+  // Kamehameha do ematron: fase de carregamento (sprite `chargingKamehameha.svg`)
   // controlada pelo hook `useKamehameha` (2.8s), que troca para o disparo
   // (`kamehameha`) quando o carregamento termina.
   chargingKamehameha: null,
 
-  // "Gran Rey Cero" do marcelo: estado mantido pelo hook enquanto a lâmina
+  // "Gran Rey Cero" do marshadow: estado mantido pelo hook enquanto a lâmina
   // corre/rasteja (useGranReyCero), que restaura o idle no fade-out.
   granReyCero: null,
 
-  // "I Am Atomic" do marcelo: estados da sequência controlados pelo hook
+  // "I Am Atomic" do marshadow: estados da sequência controlados pelo hook
   // (useAtomic), que restaura o idle quando a animação termina.
   preparingAtomic: null,
   finalizatingAtomic: null,
 
-  // Expansão de Domínio do marcelo: estados da sequência controlados pelo hook
+  // Expansão de Domínio do marshadow: estados da sequência controlados pelo hook
   // (useDomainExpansion), que restaura o idle quando o mugetsuEffect termina.
   preMugetsu: null,
   mugetsu: null,
 
-  // Expansão de Domínio do riquelme (Muryōkūsho): o hook
-  // (useRiquelmeDomainExpansion) segura a pose `rioiki.svg` por 5s e restaura o
+  // Expansão de Domínio do natsuki (Muryōkūsho): o hook
+  // (useNatsukiDomainExpansion) segura a pose `rioiki.svg` por 5s e restaura o
   // idle quando o domínio (e a quebra do vidro) termina.
   rioiki: null,
 
-  // Esferas do riquelme (blue/red + a fusão na purple): estados da sequência
-  // Setup controlados pelo hook (useRiquelmeSpheres), que restaura o idle ao
+  // Esferas do natsuki (blue/red + a fusão na purple): estados da sequência
+  // Setup controlados pelo hook (useNatsukiSpheres), que restaura o idle ao
   // fim do cast/arremesso. `purpleJunction` é o sprite de fusão.
   purpleJunction: null,
   sphereCast: null,
@@ -126,20 +126,20 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
 type AbilityFlowOverride = {
   preAbility: { next: PlayerState; duration: number };
   preAbility2: { next: PlayerState; duration: number };
-  // Opcional: como `ability` normalmente avança sozinho para `idle`, o artur
+  // Opcional: como `ability` normalmente avança sozinho para `idle`, o srGuaxinim
   // o segura (duração gigante) durante toda a coreografia da Killer Queen.
-  // O hook `useArturKillerQueen` força `idle` quando a sequência termina.
+  // O hook `useSrGuaxinimKillerQueen` força `idle` quando a sequência termina.
   ability?: { next: PlayerState; duration: number };
 };
 
 export const CHARACTER_ABILITY_FLOWS: Partial<
   Record<CharacterId, AbilityFlowOverride>
 > = {
-  riquelme: {
+  natsuki: {
     preAbility: { next: "preAbility2", duration: FOUR_HUNDRED_MS },
     preAbility2: { next: "ability", duration: EIGHT_HUNDRED_MS },
   },
-  artur: {
+  srGuaxinim: {
     preAbility: { next: "preAbility2", duration: FOUR_HUNDRED_MS },
     preAbility2: { next: "ability", duration: FIVE_HUNDRED_MS },
     ability: { next: "idle", duration: 999_999_999 },

@@ -51,7 +51,7 @@ type Props = {
   npc: ReturnType<typeof useNpcAI>;
   resetBattleState: () => void;
   resetCombo: () => void;
-  /** Zera os portais do lucaua (o estado deles sobrevive ao retry da batalha). */
+  /** Zera os portais do babidi (o estado deles sobrevive ao retry da batalha). */
   resetPortals: () => void;
   grabbedTimerRef: RefObject<ReturnType<typeof setTimeout> | null>;
   setIsGrabbed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -167,7 +167,7 @@ export function useDefeatFlow({
     npc.resetNpc();
     resetBattleState();
     resetCombo();
-    // Os portais do lucaua vivem fora do estado da batalha: sem este reset a
+    // Os portais do babidi vivem fora do estado da batalha: sem este reset a
     // nova tentativa já começaria com os portais fincados no mapa.
     resetPortals();
     battleStartRef.current = Date.now();

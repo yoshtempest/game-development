@@ -6,67 +6,67 @@ export const CHARACTER_RANGE_X: Record<
     specialHitRange: number;
   }
 > = {
-  eduarda: {
+  drika: {
     normalHitRange: 150,
     blockHitRange: 100,
     specialHitRange: 180,
   },
 
-  marcelo: {
+  marshadow: {
     normalHitRange: 80,
     blockHitRange: 100,
     specialHitRange: 3000,
   },
 
-  samuel: {
+  samurion: {
     normalHitRange: 100,
     blockHitRange: 100,
     specialHitRange: 180,
   },
 
-  artur: {
+  srGuaxinim: {
     normalHitRange: 120,
     blockHitRange: 100,
     specialHitRange: 260,
   },
 
-  emanuel: {
+  ematron: {
     normalHitRange: 160,
     blockHitRange: 100,
     specialHitRange: 320,
   },
 
-  larissa: {
+  laricell: {
     normalHitRange: 8000,
     blockHitRange: 8000,
     specialHitRange: 8000,
   },
 
-  mayra: {
+  yra: {
     normalHitRange: 80,
     blockHitRange: 80,
     specialHitRange: 300,
   },
 
-  camilly: {
+  camyKaze: {
     normalHitRange: 100,
     blockHitRange: 100,
     specialHitRange: 100,
   },
 
-  lucas: {
+  yvel: {
     normalHitRange: 80,
     blockHitRange: 80,
     specialHitRange: 280,
   },
 
-  lucaua: {
+  babidi: {
     normalHitRange: 150,
     blockHitRange: 100,
     specialHitRange: 3000,
   },
 
-  riquelme: {
+  natsuki: {
     normalHitRange: 90,
     blockHitRange: 90,
     specialHitRange: 3000,

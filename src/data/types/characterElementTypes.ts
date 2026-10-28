@@ -9,17 +9,17 @@ import type { ElementType } from "@/utils/types/battle/element";
  * Não há progressão elemental: a lista vale do nível 1 ao fim do jogo.
  */
 export const CHARACTER_ELEMENT_TYPES = {
-  marcelo: ["Normalis", "Darkus"],
-  eduarda: ["Normalis", "Haos"],
-  lucas: ["Normalis"],
-  samuel: ["Normalis", "Subterra"],
-  artur: ["Normalis", "Darkus", "Umbra"],
-  mayra: ["Normalis", "Aquos", "Umbra"],
-  lucaua: ["Normalis", "Metallum", "Psychicus"],
-  riquelme: ["Normalis", "Haos", "Darkus"],
-  larissa: ["Normalis", "Metallum", "Electricus"],
-  camilly: ["Normalis"],
-  emanuel: ["Normalis", "Ventus", "Electricus"],
+  marshadow: ["Normalis", "Darkus"],
+  drika: ["Normalis", "Haos"],
+  yvel: ["Normalis"],
+  samurion: ["Normalis", "Subterra"],
+  srGuaxinim: ["Normalis", "Darkus", "Umbra"],
+  yra: ["Normalis", "Aquos", "Umbra"],
+  babidi: ["Normalis", "Metallum", "Psychicus"],
+  natsuki: ["Normalis", "Haos", "Darkus"],
+  laricell: ["Normalis", "Metallum", "Electricus"],
+  camyKaze: ["Normalis"],
+  ematron: ["Normalis", "Ventus", "Electricus"],
   levi: ["Normalis", "Draco"],
 } as const satisfies Record<CharacterId, readonly ElementType[]>;
 

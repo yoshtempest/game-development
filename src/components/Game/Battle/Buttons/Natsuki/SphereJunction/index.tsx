@@ -52,7 +52,7 @@ function centersCloseEnough(a: DOMRect, b: DOMRect, factor: number) {
 }
 
 /**
- * Botões blue/red do riquelme com o gesto de FUSÃO: arrastar uma esfera sobre a
+ * Botões blue/red do natsuki com o gesto de FUSÃO: arrastar uma esfera sobre a
  * outra as funde numa única esfera roxa (purple). Enquanto a purple está em
  * campo, os dois botões viram um só; ao terminar o disparo, blue e red voltam.
  *

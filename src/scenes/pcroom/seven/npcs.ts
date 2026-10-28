@@ -6,5 +6,5 @@ export const pcRoomSevenNpcs = [
   createNpc(npcPath("/hungryKing/default.svg"), 9, 2),
   createNpc(npcPath("/hungryDog/default.svg"), 10, 3),
   createNpc(npcPath("/hungryDeath/right.svg"), 8, 3),
-  createNpc(playerPath("/samuel/movement/up.svg"), 9, 3),
+  createNpc(playerPath("/samurion/movement/up.svg"), 9, 3),
 ];

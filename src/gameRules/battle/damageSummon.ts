@@ -43,7 +43,7 @@ type Params = {
   setPlayerHP: React.Dispatch<React.SetStateAction<number>>;
   /**
    * Rende +1 de carga da Expansão por golpe. **Ausente = o golpe não rende
-   * carga** — é o caso do dano contínuo da esfera azul do riquelme, que já
+   * carga** — é o caso do dano contínuo da esfera azul do natsuki, que já
    * pagou os +5 do uso da habilidade e não pode encher a barra tick a tick.
    */
   deliciaSetter?: React.Dispatch<React.SetStateAction<number>>;
@@ -90,7 +90,7 @@ export function damageSummon({
   // invocar viraria a forma mais barata de ignorar a build de armadura do chefe.
   // Mesma ordem do funil principal: fúria → armadura → multiplicadores.
   const berserkRaw =
-    player.character === "samuel" && char.level >= 20
+    player.character === "samurion" && char.level >= 20
       ? raw * combatService.getBerserkMultiplier(playerHP, playerMaxHp)
       : raw;
   const armorReduced = combatService.applyArmor(

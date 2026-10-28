@@ -67,7 +67,7 @@ export type ComputeHitDamageParams = Omit<
 
 export type BasicHitParams = BaseHitParams & {
   damageMultiplier: number;
-  /** O ataque básico do marcelo é físico; o resto do jogo também. */
+  /** O ataque básico do marshadow é físico; o resto do jogo também. */
   damageKind: DamageKind;
   npcX: number;
   npcY: number;

@@ -59,7 +59,7 @@ export function useActiveSkills({
     // Usar habilidade concede carga da Expansão de Domínio (custo da barra).
     battle.setDelicia((d) => gainAbilityCharge(d, battle.hitsToSpecial));
     playSound("reversalRed");
-    if (player.character === "riquelme") {
+    if (player.character === "natsuki") {
       setPlayer((p) => ({ ...p, state: "heal" }));
     }
   }, [
@@ -71,13 +71,13 @@ export function useActiveSkills({
     setPlayer,
   ]);
 
-  // A Expansão de Domínio do riquelme (Muryōkūsho) segura o personagem na pose
+  // A Expansão de Domínio do natsuki (Muryōkūsho) segura o personagem na pose
   // `rioiki` até o fim do dreno (e da quebra do vidro): blink no meio dela seria
   // um teleporte para fora do domínio, então a habilidade morre junto.
-  const riquelmeDomainActive = ALL_PREDICATES.isRiquelmeDomain(player.state);
+  const natsukiDomainActive = ALL_PREDICATES.isNatsukiDomain(player.state);
 
   const handleBlink = useCallback(() => {
-    if (riquelmeDomainActive) return;
+    if (natsukiDomainActive) return;
     if (!honoredOneActiveRef.current) return;
     const mana = battleManaRef.current;
     if (!mana || battle.isEnding.current) return;
@@ -102,7 +102,7 @@ export function useActiveSkills({
     player.x,
     player.y,
     playSound,
-    riquelmeDomainActive,
+    natsukiDomainActive,
     setPlayer,
     triggerBlink,
   ]);

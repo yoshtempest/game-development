@@ -2,7 +2,7 @@ import { ProjectileHpConstants } from "@/data/projectile";
 import { updateSlicedProjectile } from "@/gameRules/npc/projectile/cutProjectile";
 
 /**
- * Fragmentos cortados pelo Marcelo avançam até saírem da tela. Quando um
+ * Fragmentos cortados pelo Marshadow avançam até saírem da tela. Quando um
  * fragmento (que voltou ao NPC em cenário espelhado) chega perto dele, o NPC
  * o destrói — a corte desvia, mas o alvo pode aniquilar o que retorna.
  */

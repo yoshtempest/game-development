@@ -131,7 +131,7 @@ export const HISTORY_QUESTS = createQuests({
   ),
   go_to_pandemony: historyQuest(
     "Salve Maura da Loucura",
-    playerPath("/larissa/default.svg"),
+    playerPath("/laricell/default.svg"),
     "Encontre Maura no Corredor do Pandemônio",
     40,
   ),

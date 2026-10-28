@@ -11,7 +11,7 @@ type Props = {
 };
 
 /**
- * Botão do Punho Divergente (Riquelme).
+ * Botão do Punho Divergente (Natsuki).
  * type="custom" para suportar estado active.
  */
 const divergentFistClasses: CustomAbilityClasses = {

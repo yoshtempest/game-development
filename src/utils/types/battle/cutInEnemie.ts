@@ -1,4 +1,4 @@
-/** Overlay do cut-in de golpe do marcelo desenhado sobre o NPC atingido. */
+/** Overlay do cut-in de golpe do marshadow desenhado sobre o NPC atingido. */
 export type CutInEnemieOverlay = {
   /** Contador de ativações — vira a chave React para reiniciar o sprite. */
   key: number;

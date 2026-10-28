@@ -11,7 +11,7 @@ type SkillGuardOptions = {
   player: Player;
   /** Personagem dono da habilidade. */
   character: Player["character"];
-  /** Lock de ação compartilhado (câmera, Vastolord, Emanuel, Órbita...). */
+  /** Lock de ação compartilhado (câmera, Vastolord, Ematron, Órbita...). */
   freezeActionsUntilRef: RefObject<number>;
   disabledRef: RefObject<boolean>;
   isPausedRef: RefObject<boolean>;

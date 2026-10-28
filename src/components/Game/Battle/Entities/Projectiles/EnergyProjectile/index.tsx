@@ -1,15 +1,15 @@
-import { LucauaEnergyConstants } from "@/data/characters/lucaua";
+import { BabidiEnergyConstants } from "@/data/characters/babidi";
 import { spriteMap } from "@/data/battle/projectileSprites";
 
-import type { LucauaEnergyProjectile } from "@/utils/types/character/lucaua";
+import type { BabidiEnergyProjectile } from "@/utils/types/character/babidi";
 
 type Props = {
-  projectiles: LucauaEnergyProjectile[];
+  projectiles: BabidiEnergyProjectile[];
   battleScaleX: number;
   battleScaleY: number;
 };
 
-/** Projéteis de energia do ataque básico do lucaua (`energyAttack.svg`). */
+/** Projéteis de energia do ataque básico do babidi (`energyAttack.svg`). */
 export function EnergyProjectile({
   projectiles,
   battleScaleX,
@@ -34,7 +34,7 @@ export function EnergyProjectile({
               position: "absolute",
               left: p.x * battleScaleX,
               top: p.y * battleScaleY,
-              width: LucauaEnergyConstants.SPRITE_WIDTH,
+              width: BabidiEnergyConstants.SPRITE_WIDTH,
               transform: `translate(-50%, -50%) rotate(${angle}deg)${flip}`,
               zIndex: 15,
               pointerEvents: "none",

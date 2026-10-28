@@ -1,15 +1,15 @@
 import { CHARACTERS } from "@/data/options/characters";
 
 const CHAR_UNLOCK_FLAGS: Record<string, FlagId> = {
-  samuel: "samurionUnlocked",
-  artur: "srGuaxinimUnlocked",
-  emanuel: "ematronUnlocked",
-  larissa: "laricellUnlocked",
-  mayra: "yraUnlocked",
-  camilly: "kamykazeUnlocked",
-  lucas: "yvelUnlocked",
-  lucaua: "babidiUnlocked",
-  riquelme: "natsukiUnlocked",
+  samurion: "samurionUnlocked",
+  srGuaxinim: "srGuaxinimUnlocked",
+  ematron: "ematronUnlocked",
+  laricell: "laricellUnlocked",
+  yra: "yraUnlocked",
+  camyKaze: "kamykazeUnlocked",
+  yvel: "yvelUnlocked",
+  babidi: "babidiUnlocked",
+  natsuki: "natsukiUnlocked",
 };
 
 export function getUnlockedCharacters(hasFlag: (flag: FlagId) => boolean) {

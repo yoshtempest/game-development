@@ -9,27 +9,27 @@ type AttackSoundConfig = {
 export const ATTACK_SOUNDS: Partial<
   Record<Player["character"], AttackSoundConfig>
 > = {
-  eduarda: {
+  drika: {
     volume: 0.2,
-    sounds: [charactersSoundPath("eduarda/normalAttack.mp3")],
+    sounds: [charactersSoundPath("drika/normalAttack.mp3")],
   },
 
-  marcelo: {
+  marshadow: {
     volume: 0.2,
     sounds: [
-      charactersSoundPath("marcelo/sword-slash-1.mp3"),
-      charactersSoundPath("marcelo/sword-slash-2.mp3"),
-      charactersSoundPath("marcelo/sword-slash-4.mp3"),
+      charactersSoundPath("marshadow/sword-slash-1.mp3"),
+      charactersSoundPath("marshadow/sword-slash-2.mp3"),
+      charactersSoundPath("marshadow/sword-slash-4.mp3"),
     ],
   },
 
-  lucaua: {
+  babidi: {
     volume: 1,
-    sounds: [charactersSoundPath("lucaua/shot.mp3")],
+    sounds: [charactersSoundPath("babidi/shot.mp3")],
   },
 
-  artur: {
+  srGuaxinim: {
     volume: 1,
-    sounds: [charactersSoundPath("artur/ORA!.mp3")],
+    sounds: [charactersSoundPath("srGuaxinim/ORA!.mp3")],
   },
 };

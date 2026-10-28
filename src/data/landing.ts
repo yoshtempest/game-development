@@ -60,56 +60,56 @@ export const bosses = [
 
 export const characters = [
   {
-    name: "Marcelo",
-    image: playerPath("/marcelo/expressions/default.svg"),
+    name: "Marshadow",
+    image: playerPath("/marshadow/expressions/default.svg"),
     class: "Espadachim",
   },
   {
-    name: "Artur",
-    image: playerPath("/artur/expressions/default.svg"),
+    name: "SrGuaxinim",
+    image: playerPath("/srGuaxinim/expressions/default.svg"),
     class: "Explosivo",
   },
   {
-    name: "Eduarda",
-    image: playerPath("/eduarda/expressions/default.svg"),
+    name: "Drika",
+    image: playerPath("/drika/expressions/default.svg"),
     class: "Inquisidora",
   },
   {
-    name: "Riquelme",
-    image: playerPath("/riquelme/expressions/default.svg"),
+    name: "Natsuki",
+    image: playerPath("/natsuki/expressions/default.svg"),
     class: "Tanque",
   },
   {
-    name: "Emanuel",
-    image: playerPath("/emanuel/expressions/default.svg"),
+    name: "Ematron",
+    image: playerPath("/ematron/expressions/default.svg"),
     class: "Atacante",
   },
   {
-    name: "Lucas",
-    image: playerPath("/lucas/expressions/default.svg"),
+    name: "Yvel",
+    image: playerPath("/yvel/expressions/default.svg"),
     class: "Boxeador",
   },
   {
-    name: "Lucauã",
-    image: playerPath("/lucaua/default.svg"),
+    name: "Babidi n.º 78==Dζ3",
+    image: playerPath("/babidi/default.svg"),
     class: "Versátil",
   },
   {
-    name: "Larissa",
-    image: playerPath("/larissa/default.svg"),
+    name: "Laricell",
+    image: playerPath("/laricell/default.svg"),
     class: "Atiradora",
   },
   {
-    name: "Camilly",
-    image: playerPath("/camilly/default.svg"),
+    name: "CamyKaze",
+    image: playerPath("/camyKaze/default.svg"),
     class: "Lutadora",
   },
   {
-    name: "Samuel",
-    image: playerPath("/samuel/default.svg"),
+    name: "Samurion",
+    image: playerPath("/samurion/default.svg"),
     class: "Berserker",
   },
-  { name: "Mayra", image: playerPath("/mayra/default.svg"), class: "DPS" },
+  { name: "Y.R.A", image: playerPath("/yra/default.svg"), class: "DPS" },
 ];
 
 export const funnyMoments = [

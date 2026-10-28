@@ -10,7 +10,7 @@ import { logPlay } from "@/utils/replay/audioEventLog";
 import { getNpcVsPlayerMultiplier } from "@/gameRules/battle/npcVsPlayerDamage";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { combatService } from "@/services/combat";
-import { getBabidiBlockReflect } from "@/gameRules/battle/characters/lucaua/babidiBlock";
+import { getBabidiBlockReflect } from "@/gameRules/battle/characters/babidi/babidiBlock";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
 import type { VampirismStats } from "@/gameRules/battle/vampirism/applyVampirism";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
@@ -27,7 +27,7 @@ import {
 
 import { clampX } from "@/gameRules/movement/clampX";
 import type { DamageArmor, DamageKind } from "@/utils/types/battle/damageKind";
-import type { LucauaShieldSide } from "@/utils/types/character/lucaua";
+import type { BabidiShieldSide } from "@/utils/types/character/babidi";
 
 type Props = {
   npcLevel: number;
@@ -66,7 +66,7 @@ type Props = {
   setBlockGauge: React.Dispatch<React.SetStateAction<number>>;
   lastBlockPressRef: React.RefObject<number>;
   lastAttackPressRef?: React.RefObject<number>;
-  onBlockRef?: React.RefObject<(side?: LucauaShieldSide) => void>;
+  onBlockRef?: React.RefObject<(side?: BabidiShieldSide) => void>;
   titleEnemyMissChance?: number;
   onDamageTakenRef?: React.RefObject<(amount: number) => void>;
   onDodgeRef?: React.RefObject<() => void>;
@@ -209,7 +209,7 @@ export function useNpcBattle({
   );
 
   const onFullBlock = useCallback(() => {
-    if (player.character === "marcelo") {
+    if (player.character === "marshadow") {
       playSound("swordDeflected");
       logPlay("swordDeflected");
     }

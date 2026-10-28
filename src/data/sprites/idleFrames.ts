@@ -1,5 +1,5 @@
 import { TWO_THOUSAND_MS } from "@/data/ms";
-import type { MarceloBattleForm } from "@/utils/paths/characters/marcelo/types";
+import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/types";
 
 /**
  * Duração de cada frame da animação idle em batalha. É um respirar, não uma
@@ -14,8 +14,8 @@ export const IDLE_FRAME_MS = TWO_THOUSAND_MS;
  */
 const DEFAULT_IDLE_FRAMES: readonly string[] = ["idle"];
 
-/** Frames do marcelo no formulário default (`default/idle/idle{,2,3}.svg`). */
-const MARCELO_IDLE_FRAMES: readonly string[] = ["idle", "idle2", "idle3"];
+/** Frames do marshadow no formulário default (`default/idle/idle{,2,3}.svg`). */
+const MARSHADOW_IDLE_FRAMES: readonly string[] = ["idle", "idle2", "idle3"];
 
 /**
  * Sequência de frames do idle por personagem. O primeiro nome é o sprite base
@@ -28,8 +28,8 @@ const MARCELO_IDLE_FRAMES: readonly string[] = ["idle", "idle2", "idle3"];
 const IDLE_FRAMES_BY_CHARACTER: Partial<
   Record<CharacterId, readonly string[]>
 > = {
-  marcelo: MARCELO_IDLE_FRAMES,
-  riquelme: MARCELO_IDLE_FRAMES,
+  marshadow: MARSHADOW_IDLE_FRAMES,
+  natsuki: MARSHADOW_IDLE_FRAMES,
 };
 
 /**
@@ -39,7 +39,7 @@ const IDLE_FRAMES_BY_CHARACTER: Partial<
  * ciclo da batalha. Formas sem entrada aqui caem na tabela do personagem.
  */
 const IDLE_FRAMES_BY_FORM: Partial<
-  Record<MarceloBattleForm, readonly string[]>
+  Record<MarshadowBattleForm, readonly string[]>
 > = {
   vastolordForm: DEFAULT_IDLE_FRAMES,
 };
@@ -51,7 +51,7 @@ const IDLE_FRAMES_BY_FORM: Partial<
  */
 export function getIdleFrames(
   character: CharacterId,
-  form?: MarceloBattleForm,
+  form?: MarshadowBattleForm,
 ): readonly string[] {
   if (form) {
     return (

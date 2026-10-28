@@ -1,21 +1,21 @@
 import { NPCBattle } from "@/components/Game/Entities/Npc/Battle";
-import { getPortalCross } from "@/gameRules/battle/characters/lucaua/lucauaPortal";
+import { getPortalCross } from "@/gameRules/battle/characters/babidi/babidiPortal";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
-import type { LucauaPortal } from "@/utils/types/character/lucaua";
+import type { BabidiPortal } from "@/utils/types/character/babidi";
 
 type Props = {
   summons: SummonedNpc[];
   hiddenIds: Set<string>;
   TILE_SIZE: number;
-  /** Portais do lucaua, para dividir o sprite de quem afunda num deles. */
-  lucauaPortals?: LucauaPortal[];
+  /** Portais do babidi, para dividir o sprite de quem afunda num deles. */
+  babidiPortals?: BabidiPortal[];
 };
 
 export function Summon({
   summons,
   hiddenIds,
   TILE_SIZE,
-  lucauaPortals = [],
+  babidiPortals = [],
 }: Props) {
   return (
     <>
@@ -30,7 +30,7 @@ export function Summon({
           direction={s.direction}
           isHidden={hiddenIds.has(s.id)}
           isDying={s.isDying}
-          lucauaPortalCross={getPortalCross(lucauaPortals, s.x, s.y)}
+          babidiPortalCross={getPortalCross(babidiPortals, s.x, s.y)}
         />
       ))}
     </>
