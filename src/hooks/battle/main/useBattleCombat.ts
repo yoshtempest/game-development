@@ -1648,14 +1648,14 @@ export function useBattleCombat({
   });
 
   const {
-    active: ematronDomainActive,
-    shattering: ematronDomainShattering,
+    active: ematronHakaiActive,
+    shattering: ematronHakaiShattering,
     press: hakaiPress,
     usable: hakaiUsable,
   } = useHakaiExpansion({
     player,
     setPlayer,
-    npc,
+    npc: { x: npc.x, y: npc.y },
     npcHP: battle.npcHP,
     npcMaxHp: battle.npcMaxHp,
     setNpcHP: battle.setNpcHP,
@@ -1669,7 +1669,6 @@ export function useBattleCombat({
     isMenuOpen,
     battleEndedRef: battle.isEnding,
     disabledRef: cloneDisabledRef,
-    startSpecialIntro,
     playSound,
     charges: battle.delicia,
     chargesMax: battle.hitsToSpecial,
@@ -1680,11 +1679,11 @@ export function useBattleCombat({
   // Expansão de Domínio: o marshadow mostra durante a varredura, o natsuki
   // durante os 5s do dreno.
   const domainBackgroundActive =
-    domainExpansionActive || natsukiDomainActive || ematronDomainActive;
+    domainExpansionActive || natsukiDomainActive || ematronHakaiActive;
   const domainShattering =
     domainExpansionShattering ||
     natsukiDomainShattering ||
-    ematronDomainShattering;
+    ematronHakaiShattering;
 
   // "Gran Rey Cero" do marshadow ------------------------------------------------
   // Lâmina de 500px que corre por quadro; disponível na forma normal (os
