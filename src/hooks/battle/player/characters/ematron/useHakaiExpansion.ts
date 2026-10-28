@@ -89,44 +89,38 @@ export function useHakaiExpansion({
     if (!usableRef.current) return;
     if (chargesRef.current < chargesMaxRef.current) return;
 
-    const started = startSpecialIntro("ematron", () => {
-      activeRef.current = true;
-      setActive(true);
-    }, "domainExpansion");
-    if (!started) {
-      activeRef.current = true;
-      setActive(true);
-    }
     setDeliciaRef.current(0);
 
-    const n = npcRef.current;
-    // teleport behind enemy
-    setPlayer((p) => {
-      if (p.mode !== "battle") return p;
-      const behind = n.x > p.x ? n.x - 60 : n.x + 60;
-      return { ...p, x: behind, y: p.y, groundY: p.groundY, velY: 0, state: "domainExpansion" as PlayerState, battleDirection: n.x > p.x ? "left" : "right" };
-    });
-
-    freezeActionsUntilRef.current = Date.now() + 4000;
-    playSoundRef.current("ematronTeleport" as SoundId);
-
-    // drain 1 hp every 2ms
-    timerRef.current = setInterval(() => {
-      if (isPausedRef.current) return;
-      setNpcHPRef.current((hp) => {
-        const next = Math.max(0, hp - 1);
-        spawnDamageRef.current(1, n.x, n.y, "true" as DamageType);
-        return next;
+    const activate = () => {
+      activeRef.current = true;
+      setActive(true);
+      const n = npcRef.current;
+      setPlayer((p) => {
+        if (p.mode !== "battle") return p;
+        const behind = n.x > p.x ? n.x - 60 : n.x + 60;
+        return { ...p, x: behind, y: p.y, groundY: p.groundY, velY: 0, state: "domainExpansion" as PlayerState, battleDirection: n.x > p.x ? "left" : "right" };
       });
-    }, 10);
+      freezeActionsUntilRef.current = Date.now() + 4000;
+      playSoundRef.current("ematronTeleport" as SoundId);
+      timerRef.current = setInterval(() => {
+        if (isPausedRef.current) return;
+        setNpcHPRef.current((hp) => {
+          const next = Math.max(0, hp - 1);
+          spawnDamageRef.current(1, n.x, n.y, "true" as DamageType);
+          return next;
+        });
+      }, 10);
+      timeoutRef.current = setTimeout(() => {
+        clear();
+        activeRef.current = false;
+        setActive(false);
+        freezeActionsUntilRef.current = Date.now();
+        setPlayer((p) => (p.mode !== "battle" ? p : { ...p, state: "idle" }));
+      }, 4000);
+    };
 
-    timeoutRef.current = setTimeout(() => {
-      clear();
-      activeRef.current = false;
-      setActive(false);
-      freezeActionsUntilRef.current = Date.now();
-      setPlayer((p) => (p.mode !== "battle" ? p : { ...p, state: "idle" }));
-    }, 4000);
+    const started = startSpecialIntro("ematron", activate, "domainExpansion");
+    if (!started) activate();
   }, [clear, freezeActionsUntilRef, isPausedRef, npcRef, playSoundRef, setDeliciaRef, setNpcHPRef, setPlayer, spawnDamageRef, usableRef]);
 
   useEffect(() => () => clear(), [clear]);
