@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState, type Dispatch, type RefObject, type SetStateAction } from "react";
 
 import { useLatestRef } from "@/hooks/useLatestRef";
+import { applyTime, clearTime } from "@/gameRules/battle/time";
 import type { TimeEffect } from "@/gameRules/battle/time";
+import { ALL_TIME_KINDS } from "@/gameRules/battle/time/types";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { SoundId } from "@/utils/audio/soundId";
@@ -47,6 +49,7 @@ export function useHakaiExpansion({
   spawnDamageNumber,
   freezeActionsUntilRef,
   startSpecialIntro,
+  timeRef,
   isPausedRef,
   battleEndedRef,
   disabledRef,
@@ -91,6 +94,9 @@ export function useHakaiExpansion({
 
     setDeliciaRef.current(0);
 
+    // Congela todas as entidades durante a intro e a habilidade.
+    freezeActionsUntilRef.current = Infinity;
+
     const activate = () => {
       activeRef.current = true;
       setActive(true);
@@ -101,6 +107,7 @@ export function useHakaiExpansion({
         return { ...p, x: behind, y: p.y, groundY: p.groundY, velY: 0, state: "domainExpansion" as PlayerState, battleDirection: n.x > p.x ? "left" : "right" };
       });
       freezeActionsUntilRef.current = Date.now() + 4000;
+      timeRef.current = applyTime(timeRef.current ?? [], { id: "hakai", kinds: ALL_TIME_KINDS, exempt: [], speed: 0, cooldown: Infinity, durationMs: 4000 });
       playSoundRef.current("ematronTeleport" as SoundId);
       timerRef.current = setInterval(() => {
         if (isPausedRef.current) return;
@@ -115,6 +122,7 @@ export function useHakaiExpansion({
         activeRef.current = false;
         setActive(false);
         freezeActionsUntilRef.current = Date.now();
+        timeRef.current = clearTime(timeRef.current ?? [], "hakai");
         setPlayer((p) => (p.mode !== "battle" ? p : { ...p, state: "idle" }));
       }, 4000);
     };
