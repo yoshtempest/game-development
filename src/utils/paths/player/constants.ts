@@ -85,6 +85,7 @@ export const EMATRON_HABILITIES_SPRITES = {
   ability: "teleport/teleport",
   preAbility: "teleport/teleport",
   preAbility2: "teleport/teleport",
+  domainExpansion: "domainExpansion/hakai",
 } as const;
 
 export const EMATRON_ATTACK_SPRITES = {

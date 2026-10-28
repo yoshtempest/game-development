@@ -103,7 +103,7 @@ export function useHakaiExpansion({
       const n = npcRef.current;
       setPlayer((p) => {
         if (p.mode !== "battle") return p;
-        const behind = n.x > p.x ? n.x - 60 : n.x + 60;
+        const behind = n.x > p.x ? n.x + 60 : n.x - 60;
         return { ...p, x: behind, y: p.y, groundY: p.groundY, velY: 0, state: "domainExpansion" as PlayerState, battleDirection: n.x > p.x ? "left" : "right" };
       });
       freezeActionsUntilRef.current = Date.now() + 4000;
