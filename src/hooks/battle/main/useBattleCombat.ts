@@ -1669,6 +1669,7 @@ export function useBattleCombat({
     isMenuOpen,
     battleEndedRef: battle.isEnding,
     disabledRef: cloneDisabledRef,
+    startSpecialIntro,
     playSound,
     charges: battle.delicia,
     chargesMax: battle.hitsToSpecial,

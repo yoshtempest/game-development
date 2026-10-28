@@ -5,6 +5,7 @@ import type { TimeEffect } from "@/gameRules/battle/time";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { SoundId } from "@/utils/audio/soundId";
+import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/types";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 
 type Props = {
@@ -18,6 +19,7 @@ type Props = {
   setSummons: Dispatch<SetStateAction<SummonedNpc[]>>;
   spawnDamageNumber: (value: number, x: number, y: number, type: DamageType) => void;
   freezeActionsUntilRef: RefObject<number>;
+  startSpecialIntro: (character: string, onActivate: () => void, ability?: string, form?: MarshadowBattleForm, onCancel?: () => void) => boolean;
   battleManaRef: RefObject<BattleManaApi | null>;
   timeRef: RefObject<TimeEffect[]>;
   isPausedRef: RefObject<boolean>;
@@ -44,6 +46,7 @@ export function useHakaiExpansion({
   setNpcHP,
   spawnDamageNumber,
   freezeActionsUntilRef,
+  startSpecialIntro,
   isPausedRef,
   battleEndedRef,
   disabledRef,
@@ -86,8 +89,14 @@ export function useHakaiExpansion({
     if (!usableRef.current) return;
     if (chargesRef.current < chargesMaxRef.current) return;
 
-    activeRef.current = true;
-    setActive(true);
+    const started = startSpecialIntro("ematron", () => {
+      activeRef.current = true;
+      setActive(true);
+    }, "domainExpansion");
+    if (!started) {
+      activeRef.current = true;
+      setActive(true);
+    }
     setDeliciaRef.current(0);
 
     const n = npcRef.current;
@@ -98,7 +107,7 @@ export function useHakaiExpansion({
       return { ...p, x: behind, y: p.y, groundY: p.groundY, velY: 0, state: "domainExpansion" as PlayerState, battleDirection: n.x > p.x ? "left" : "right" };
     });
 
-    freezeActionsUntilRef.current = Date.now() + 2000;
+    freezeActionsUntilRef.current = Date.now() + 4000;
     playSoundRef.current("ematronTeleport" as SoundId);
 
     // drain 1 hp every 2ms
@@ -109,7 +118,7 @@ export function useHakaiExpansion({
         spawnDamageRef.current(1, n.x, n.y, "true" as DamageType);
         return next;
       });
-    }, 2);
+    }, 10);
 
     timeoutRef.current = setTimeout(() => {
       clear();
@@ -117,7 +126,7 @@ export function useHakaiExpansion({
       setActive(false);
       freezeActionsUntilRef.current = Date.now();
       setPlayer((p) => (p.mode !== "battle" ? p : { ...p, state: "idle" }));
-    }, 2000);
+    }, 4000);
   }, [clear, freezeActionsUntilRef, isPausedRef, npcRef, playSoundRef, setDeliciaRef, setNpcHPRef, setPlayer, spawnDamageRef, usableRef]);
 
   useEffect(() => () => clear(), [clear]);

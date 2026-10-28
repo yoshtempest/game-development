@@ -9,7 +9,7 @@ import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/typ
  * por outro lado, aninha tudo sob a forma (`inFight/default/habilities/` e
  * `inFight/vastolordForm/habilities/`).
  */
-const FLAT_ABILITY_FOLDER = new Set(["srGuaxinim", "natsuki", "babidi"]);
+const FLAT_ABILITY_FOLDER = new Set(["srGuaxinim", "natsuki", "babidi", "ematron"]);
 
 /**
  * Arte (`file`) de uma habilidade de personagem:
