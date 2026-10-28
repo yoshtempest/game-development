@@ -132,7 +132,7 @@ type DomainExpansionApi = {
  * efeito, bloqueando o lifecycle enquanto ela percorre o mapa. Custo: as 40
  * cargas da barra da Expansão (sem cooldown próprio).
  */
-export function useDomainExpansion({
+export function useMugetsuExpansion({
   player,
   setPlayer,
   npc,
@@ -204,6 +204,7 @@ export function useDomainExpansion({
   const chargesMaxRef = useLatestRef(chargesMax);
   const setDeliciaRef = useLatestRef(setDelicia);
   const isMenuOpenRef = useLatestRef(isMenuOpen);
+  const playSoundRef = useLatestRef(playSound);
 
   const { usable, usableRef, shouldCancelRef } = useSkillGuard({
     player,
@@ -346,8 +347,16 @@ export function useDomainExpansion({
         : { ...p, state: "idle" },
     );
     setShattering(true);
+    playSoundRef.current("domainBreak");
     timers.schedule(() => finishRef.current(), DOMAIN_SHATTER_MS);
-  }, [finishRef, freezeActionsUntilRef, hasSurvivor, setPlayer, timers]);
+  }, [
+    finishRef,
+    freezeActionsUntilRef,
+    hasSurvivor,
+    setPlayer,
+    timers,
+    playSoundRef
+  ]);
 
   const endDomainRef = useLatestRef(endDomain);
 
@@ -590,7 +599,7 @@ export function useDomainExpansion({
         pp.mode !== "battle" ? pp : { ...pp, state: "preMugetsu" },
       );
       setMugetsuBlink("out");
-      playSound("preAtomic");
+      playSoundRef.current("preAtomic");
     }, 0);
 
     // Teleporte para a ponta mais próxima no meio do blink + blink de chegada.
@@ -628,7 +637,7 @@ export function useDomainExpansion({
       setPlayer((pp) =>
         pp.mode !== "battle" ? pp : { ...pp, state: "mugetsu" },
       );
-      playSound("mugetsu");
+      playSoundRef.current("mugetsu");
     }, mugetsuAt);
 
     // Criação do mugetsuEffect: a partir daqui a câmera segue a varredura,
@@ -650,7 +659,7 @@ export function useDomainExpansion({
         y: p.y,
       });
       sweepStartRef.current = Date.now();
-      playSound("chargeAttack");
+      playSoundRef.current("chargeAttack");
       clearTimer();
       tickTimerRef.current = setInterval(tickRef.current, 16);
     }, sweepAt);
@@ -667,7 +676,7 @@ export function useDomainExpansion({
     cleanupRef,
     clearTimers,
     freezeActionsUntilRef,
-    playSound,
+    playSoundRef,
     playerRef,
     setPlayer,
     setDeliciaRef,

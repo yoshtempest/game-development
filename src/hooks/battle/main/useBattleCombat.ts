@@ -41,7 +41,7 @@ import { useKamehameha } from "@/hooks/battle/player/characters/ematron/useKameh
 import { useVastolordRoar } from "@/hooks/battle/player/characters/marshadow/useVastolordRoar";
 import { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
 import { useRiquelmeSpheres } from "@/hooks/battle/player/characters/natsuki/spheres/useRiquelmeSpheres";
-import { useRiquelmeDomainExpansion } from "@/hooks/battle/player/characters/natsuki/useRiquelmeDomainExpansion";
+import { useMuryokushoExpansion } from "@/hooks/battle/player/characters/natsuki/useMuryokushoExpansion";
 import { useLucauaPortals } from "@/hooks/battle/player/characters/lucaua/useLucauaPortals";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import {
@@ -49,7 +49,7 @@ import {
   ATOMIC_TARGET_MULTIPLIER,
   ATOMIC_AREA_MULTIPLIER,
 } from "@/hooks/battle/player/characters/marshadow/useAtomic";
-import { useDomainExpansion } from "@/hooks/battle/player/characters/marshadow/useDomainExpansion";
+import { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/useMugetsuExpansion";
 import {
   DOMAIN_BURST_MAIN_MULTIPLIER,
   DOMAIN_BURST_SUMMON_MULTIPLIER,
@@ -1501,9 +1501,9 @@ export function useBattleCombat({
     shattering: domainExpansionShattering,
     mugetsuBlink,
     disintegrating,
-    press: domainExpansionPress,
-    usable: domainExpansionUsable,
-  } = useDomainExpansion({
+    press: mugetsuPress,
+    usable: mugetsuUsable,
+  } = useMugetsuExpansion({
     player,
     setPlayer,
     npc,
@@ -1615,9 +1615,9 @@ export function useBattleCombat({
   const {
     active: riquelmeDomainActive,
     shattering: riquelmeDomainShattering,
-    press: riquelmeDomainPress,
-    usable: riquelmeDomainUsable,
-  } = useRiquelmeDomainExpansion({
+    press: muryokushoPress,
+    usable: muryokushoUsable,
+  } = useMuryokushoExpansion({
     player,
     setPlayer,
     npc,
@@ -1732,6 +1732,26 @@ export function useBattleCombat({
     portalWarpRef,
   });
 
+  const domainExpansionAbilities = {
+    mugetsu: {
+      press: mugetsuPress,
+      usable: mugetsuUsable,
+    },
+    muryokusho: {
+      press: muryokushoPress,
+      usable: muryokushoUsable,
+    },
+    // hakai: {
+    //   press: hakaiPress,
+    //   usable: hakaiUsable,
+    // },
+  } as const;
+
+  const domainExpansionAbility =
+    domainExpansionAbilities[
+      domainConfig.kind as keyof typeof domainExpansionAbilities
+    ];
+
   return {
     ...riquelmeSpheres,
     ...lucauaPortals,
@@ -1804,17 +1824,10 @@ export function useBattleCombat({
     // (cutin + varredura), o riquelme a Muryōkūsho (dreno contínuo) e os demais
     // o burst (dano em área).
     domainExpansionPress:
-      domainConfig.kind === "mugetsu"
-        ? domainExpansionPress
-        : domainConfig.kind === "muryokusho"
-          ? riquelmeDomainPress
-          : domainBurstPress,
+      domainExpansionAbility?.press ?? domainBurstPress,
+
     domainExpansionUsable:
-      domainConfig.kind === "mugetsu"
-        ? domainExpansionUsable
-        : domainConfig.kind === "muryokusho"
-          ? riquelmeDomainUsable
-          : domainBurstUsable,
+      domainExpansionAbility?.usable ?? domainBurstUsable,
     domainBurstActive,
     domainBackgroundActive,
     domainShattering,

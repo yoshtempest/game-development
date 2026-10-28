@@ -26,7 +26,7 @@ import type { useEmanuelGenkiDama } from "@/hooks/battle/player/characters/ematr
 import type { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
 import type { useKamehameha } from "@/hooks/battle/player/characters/ematron/useKamehameha";
 import type { useAtomic } from "@/hooks/battle/player/characters/marshadow/useAtomic";
-import type { useDomainExpansion } from "@/hooks/battle/player/characters/marshadow/useDomainExpansion";
+import type { useDomainExpansion } from "@/hooks/battle/player/characters/marshadow/useMugetsuExpansion";
 import type { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
 import type { CameraFocus } from "@/hooks/battle/effects/useCameraSequence";
 import type { SummonedNpc } from "@/utils/types/npc/npc";

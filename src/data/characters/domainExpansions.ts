@@ -43,9 +43,9 @@ export const DOMAIN_SHATTER_MS = ONE_THOUSAND_FIVE_HUNDRED_MS;
 export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
   {
     marcelo: {
-      name: "Expansão de Domínio",
+      name: "Mugetsu",
       description:
-        "Teleporta para a ponta mais próxima do mapa e varre tudo, causando 100% da vida máxima a quem atravessa. Boss com duas fases segue para a fase seguinte. Consome as 40 cargas da barra.",
+        "Teleporta para a ponta mais próxima do mapa e varre tudo, causando 100% da vida máxima a quem atravessa.",
       accent: "#8b5cf6",
       kind: "mugetsu",
       hasBackgroundArt: true,
@@ -53,28 +53,28 @@ export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
     eduarda: {
       name: "Tribunal Sem Fim",
       description:
-        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
+        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial.",
       accent: "#f59e0b",
       kind: "burst",
     },
     lucas: {
       name: "Ringue Infinito",
       description:
-        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
+        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial.",
       accent: "#f97316",
       kind: "burst",
     },
     samuel: {
       name: "Poço dos Gigantes",
       description:
-        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
+        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial.",
       accent: "#a16207",
       kind: "burst",
     },
     artur: {
       name: "Abismo Carmesim",
       description:
-        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
+        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial.",
       accent: "#ef4444",
       kind: "burst",
       hasBackgroundArt: true,
@@ -82,14 +82,14 @@ export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
     mayra: {
       name: "Maré Abissal",
       description:
-        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
+        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial.",
       accent: "#06b6d4",
       kind: "burst",
     },
     lucaua: {
       name: "Engrenagem Etérea",
       description:
-        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
+        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial.",
       accent: "#d946ef",
       kind: "burst",
       hasBackgroundArt: true,
@@ -97,7 +97,7 @@ export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
     riquelme: {
       name: "Muryōkūsho",
       description:
-        "Expande um domínio que congela o mundo e drena 0,2% da vida máxima de todos os inimigos a cada 50ms, por 5s. Consome as 40 cargas da barra.",
+        "Expande um domínio que congela o mundo e drena 0,2% da vida máxima de todos os inimigos a cada 50ms, por 5s.",
       accent: "#3b82f6",
       kind: "muryokusho",
       hasBackgroundArt: true,
@@ -105,29 +105,29 @@ export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
     larissa: {
       name: "Campo Fulminante",
       description:
-        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
+        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial.",
       accent: "#eab308",
       kind: "burst",
     },
     camilly: {
       name: "Horizonte Rubro",
       description:
-        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
+        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial.",
       accent: "#ec4899",
       kind: "burst",
     },
     emanuel: {
-      name: "Ciclone Fulgurante",
+      name: "Hakai",
       description:
-        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
+        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial.",
       accent: "#14b8a6",
       kind: "hakai",
       hasBackgroundArt: true,
     },
     levi: {
-      name: "Fauce do Draco",
+      name: "Explosão Galática",
       description:
-        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial. Consome as 40 cargas da barra.",
+        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial.",
       accent: "#52525b",
       kind: "burst",
     },

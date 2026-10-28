@@ -115,7 +115,7 @@ type RiquelmeDomainApi = {
  * domínio o personagem fica na pose `rioiki`, e é ela que trava o blink
  * (passiva O Abençoado): teleportar no meio do domínio seria fugir dele.
  */
-export function useRiquelmeDomainExpansion({
+export function useMuryokushoExpansion({
   player,
   setPlayer,
   npc,
