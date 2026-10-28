@@ -1652,6 +1652,7 @@ export function useBattleCombat({
     shattering: ematronHakaiShattering,
     press: hakaiPress,
     usable: hakaiUsable,
+    cloneVisual: ematronHakaiClone,
   } = useHakaiExpansion({
     player,
     setPlayer,
@@ -1826,7 +1827,7 @@ export function useBattleCombat({
     killerQueenSprite,
     bombSprite,
     explosionSprite,
-    ematronClone,
+    ematronClone: ematronHakaiActive ? ematronHakaiClone : ematronClone,
     clonePress,
     cloneRelease,
     cloneUsable,

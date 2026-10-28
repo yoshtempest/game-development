@@ -83,8 +83,6 @@ export const EMATRON_HABILITIES_SPRITES = {
   chargingKamehameha: "kamehameha/chargingKamehameha",
   kamehameha: "kamehameha/kamehameha",
   ability: "teleport/teleport",
-  preAbility: "teleport/teleport",
-  preAbility2: "teleport/teleport",
   domainExpansion: "domainExpansion/hakai",
 } as const;
 

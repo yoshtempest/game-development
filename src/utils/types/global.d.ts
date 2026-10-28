@@ -441,7 +441,7 @@ declare global {
   /** "I Am Atomic" do marshadow. */
   type PlayerAtomicState = "preparingAtomic" | "finalizatingAtomic";
   /** Expansão de Domínio do marshadow. */
-  type PlayerDomainExpansionState = "preMugetsu" | "mugetsu";
+  type PlayerDomainExpansionState = "preMugetsu" | "mugetsu" | "hakai";
   /**
    * Expansão de Domínio do natsuki (Muryōkūsho): a pose `rioiki.svg` segura o
    * personagem durante os 5s do domínio, que congela o mundo e drena 0,2% da
