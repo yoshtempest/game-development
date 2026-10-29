@@ -49,11 +49,11 @@ export const EMATRON_KAMEHAMEHA_STARTUP_MS = FIVE_HUNDRED_MS;
 /** Duração da animação de saída do efeito (encolhe + fade). */
 export const EMATRON_KAMEHAMEHA_FADE_MS = FIVE_HUNDRED_MS;
 /** Intervalo de dano/empurrão: 1% do dano base por tick (mesmo ratio do feixe do Vastolord). */
-export const EMATRON_KAMEHAMEHA_TICK_MS = 20;
+export const EMATRON_KAMEHAMEHA_TICK_MS = 2;
 /** Fração do dano base aplicada por tick (1%). */
 export const EMATRON_KAMEHAMEHA_DAMAGE_RATIO = 0.01;
 /** Distância (px no plano lógico) que o Kamehameha empurra o inimigo por tick. */
-export const EMATRON_KAMEHAMEHA_PUSH_PX = 10;
+export const EMATRON_KAMEHAMEHA_PUSH_PX = 1;
 /** Altura renderizada do sprite do efeito `kamehamehaEffect.svg` (500x178) em px lógicos. */
 export const EMATRON_KAMEHAMEHA_BEAM_HEIGHT = 178;
 

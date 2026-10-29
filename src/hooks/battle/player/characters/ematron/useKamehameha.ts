@@ -443,6 +443,11 @@ export function useKamehameha({
 
   const [effect, setEffect] = useState<KamehamehaEffect | null>(null);
 
+  // Mantém o ref sincronizado com o estado (a ref foi criada antes do state
+  // por causa da ordem dos hooks); sem isso o tick não enxerga o feixe e o
+  // Kamehameha não causa dano nem desaparece após a duração.
+  effectRef.current = effect;
+
   return {
     effect,
     press,

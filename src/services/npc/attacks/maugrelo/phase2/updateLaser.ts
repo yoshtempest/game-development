@@ -35,6 +35,7 @@ export function updateLaser(
     toX,
     toY: fromY,
     dirX: facingRight ? 1 : -1,
+    phase: "active",
   };
 
   if (!inFront) return;
