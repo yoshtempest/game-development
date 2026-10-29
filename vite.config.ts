@@ -21,7 +21,7 @@ import { tempestPwaDevSw, tempestPwaManifest } from "tempest-react-sdk/vite";
  * verbatim. Likewise `tempestPwaDevSw` matches `req.url` literally.
  */
 // const BASE = "/react-jomasio-adventures/";
-const BASE = "/jomasio-adventures/";
+const BASE = "/game-development/";
 
 export default defineConfig({
   base: BASE,

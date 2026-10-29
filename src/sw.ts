@@ -29,7 +29,7 @@ import {
  * fails, which is why the previous Workbox `CacheFirst` rule broke scrubbing.
  */
 // const BASE = "/react-jomasio-adventures/";
-const BASE = "/jomasio-adventures/";
+const BASE = "/game-development/";
 
 installPushHandler({
   defaultTitle: "Nova notificação",
