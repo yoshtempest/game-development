@@ -5,26 +5,15 @@ import {
   type VastolordLaserBeam,
 } from "@/gameRules/battle/characters/marshadow/vastolordLaser";
 import type { BattleEntityPositioning } from "@/components/Game/Battle/Entities/types";
+
+import { BattleBeam } from "@/components/Game/Battle/Entities/Beam";
 import styles from "./styles.module.css";
 
 type Props = BattleEntityPositioning & {
   beam: VastolordLaserBeam | null;
-  /** PLAYER_SIZE do layout — o feixe acompanha a imagem renderizada do personagem. */
   PLAYER_SIZE: number;
 };
 
-/**
- * Feixe do Laser da Forma Vastolord: instância `vastolordLaser.svg` esticada
- * (o sprite tem exatamente 1000x243, a largura do mapa) do personagem até a
- * ponta do mapa na direção que ele mira, centralizada na imagem do jogador:
- * o centro vertical do feixe coincide com o centro vertical do sprite
- * renderizado do marshadow na Forma Vastolord.
- *
- * Animações:
- * - starting: cresce do centro (scaleX 0 -> 1) em 300ms
- * - active: pulso sutil de glow contínuo
- * - ending: encolhe para o centro + fade out em 300ms
- */
 export function VastolordLaser({
   beam,
   battleScaleX,
@@ -38,26 +27,17 @@ export function VastolordLaser({
   const left = Math.min(beam.fromX, beam.toX) * battleScaleX;
   const top = vastolordLaserTop(beam.y, PLAYER_SIZE) * battleScaleY;
 
-  const phaseClass =
-    beam.phase === "starting"
-      ? beam.facing === "right"
-        ? styles.startingLeft
-        : styles.startingRight
-      : beam.phase === "ending"
-        ? beam.facing === "right"
-          ? styles.endingLeft
-          : styles.endingRight
-        : styles.active;
-
   return (
-    <div
-      className={`${styles.container} ${phaseClass}`}
-      style={{
-        left,
-        top,
-        width,
-        height,
-      }}
+    <BattleBeam
+      battleScaleX={battleScaleX}
+      battleScaleY={battleScaleY}
+      phase={beam.phase}
+      direction={beam.facing}
+      left={left}
+      top={top}
+      width={width}
+      height={height}
+      pulseAxis="y"
     >
       <img
         src={playerProjectilePath("vastolordLaser.svg")}
@@ -65,6 +45,6 @@ export function VastolordLaser({
         draggable={false}
         className={styles.beam}
       />
-    </div>
+    </BattleBeam>
   );
 }

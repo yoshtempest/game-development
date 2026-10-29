@@ -36,6 +36,7 @@ export type LaserBeam = {
   toX: number;
   toY: number;
   dirX: 1 | -1;
+  phase: "starting" | "active" | "ending";
 };
 
 export type MaugreloAI = {

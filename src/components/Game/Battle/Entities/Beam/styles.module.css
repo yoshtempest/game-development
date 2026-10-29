@@ -1,0 +1,96 @@
+.container {
+  position: absolute;
+  pointer-events: none;
+  clip-path: inset(0 0 0 0);
+  animation-duration: var(--beam-duration, 500ms);
+}
+
+.startingLeft {
+  animation-name: beamGrowLeft;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+.startingRight {
+  animation-name: beamGrowRight;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+.active {
+  animation: beamPulse 300ms ease-in-out infinite alternate;
+}
+
+.endingLeft {
+  animation-name: beamShrinkLeft;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+
+.endingRight {
+  animation-name: beamShrinkRight;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+
+@keyframes beamGrowLeft {
+  from {
+    clip-path: inset(0 100% 0 0);
+    filter: brightness(0);
+    opacity: 0.5;
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+    filter: brightness(1);
+    opacity: 1;
+  }
+}
+
+@keyframes beamGrowRight {
+  from {
+    clip-path: inset(0 0 0 100%);
+    filter: brightness(0);
+    opacity: 0.5;
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+    filter: brightness(1);
+    opacity: 1;
+  }
+}
+
+@keyframes beamPulse {
+    0% {
+        transform: scaleY(1);
+    }
+
+    100% {
+        transform: scaleY(0.95);
+    }
+}
+
+@keyframes beamShrinkLeft {
+  from {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+
+  to {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+}
+
+@keyframes beamShrinkRight {
+  from {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+
+  to {
+    clip-path: inset(0 0 0 100%);
+    opacity: 0;
+  }
+}

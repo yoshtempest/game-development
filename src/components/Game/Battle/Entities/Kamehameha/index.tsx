@@ -5,24 +5,19 @@ import {
   type KamehamehaEffect,
 } from "@/gameRules/battle/characters/ematron/kamehameha";
 import type { BattleEntityPositioning } from "@/components/Game/Battle/Entities/types";
+
+import { BattleBeam } from "@/components/Game/Battle/Entities/Beam";
 import styles from "./styles.module.css";
 
 type Props = BattleEntityPositioning & {
   effect: KamehamehaEffect | null;
 };
 
-/**
- * Feixe de Kamehameha do Ematron: instância `kamehamehaEffect.svg` esticada
- * (o sprite tem 500x178, a largura do mapa) do personagem até a ponta do mapa na
- * direção que ele mira, centralizado na imagem do jogador: o centro vertical do
- * feixe coincide com o centro vertical do sprite renderizado do ematron.
- *
- * Animações:
- * - starting: cresce do centro (scaleX 0 -> 1) em 500ms
- * - active: pulso sutil de glow contínuo
- * - ending: encolhe para o centro + fade out em 500ms
- */
-export function Kamehameha({ effect, battleScaleX, battleScaleY }: Props) {
+export function Kamehameha({
+  effect,
+  battleScaleX,
+  battleScaleY,
+}: Props) {
   if (!effect) return null;
 
   const width = Math.abs(effect.toX - effect.fromX) * battleScaleX;
@@ -30,26 +25,20 @@ export function Kamehameha({ effect, battleScaleX, battleScaleY }: Props) {
   const left = Math.min(effect.fromX, effect.toX) * battleScaleX;
   const top = kamehamehaTop(effect.y) * battleScaleY;
 
-  const phaseClass =
-    effect.phase === "starting"
-      ? effect.facing === "right"
-        ? styles.startingLeft
-        : styles.startingRight
-      : effect.phase === "ending"
-        ? effect.facing === "right"
-          ? styles.endingLeft
-          : styles.endingRight
-        : styles.active;
-
   return (
-    <div
-      className={`${styles.container} ${phaseClass}`}
+    <BattleBeam
+      battleScaleX={battleScaleX}
+      battleScaleY={battleScaleY}
+      phase={effect.phase}
+      direction={effect.facing}
+      left={left}
+      top={top}
+      width={width}
+      height={height}
+      pulseAxis="x"
       style={{
-        left,
-        top,
-        width,
-        height,
-        transformOrigin: effect.facing === "right" ? "left bottom" : "right bottom",
+        transformOrigin:
+          effect.facing === "right" ? "left bottom" : "right bottom",
       }}
     >
       <img
@@ -58,6 +47,6 @@ export function Kamehameha({ effect, battleScaleX, battleScaleY }: Props) {
         draggable={false}
         className={styles.beam}
       />
-    </div>
+    </BattleBeam>
   );
 }
