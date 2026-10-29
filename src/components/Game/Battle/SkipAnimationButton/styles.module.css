@@ -12,10 +12,9 @@
   font-weight: bold;
   color: var(--black);
   background: var(--accent-color);
-  border: var(--size-2) solid var(--accent-dark);
+  border: var(--size-2) solid var(--background-color);
   border-radius: var(--size-6);
   cursor: pointer;
-  box-shadow: 0 var(--size-4) var(--size-8) var(--shadow-50);
   animation: pulse 1.5s ease-in-out infinite;
   z-index: 1000;
 }
@@ -26,14 +25,4 @@
 
 .skipButton:active {
   transform: scale(0.98);
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    box-shadow: 0 var(--size-4) var(--size-8) var(--shadow-50);
-  }
-  50% {
-    box-shadow: 0 var(--size-6) var(--size-16) var(--accent-70);
-  }
 }

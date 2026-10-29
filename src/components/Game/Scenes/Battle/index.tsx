@@ -181,7 +181,7 @@ export function BattleScene(props: Props) {
     lootNotifications,
     npcClass,
     ematronClone,
-    hakaiSprite,
+    hakai,
     clonePress,
     cloneRelease,
     cloneUsable,
@@ -670,7 +670,7 @@ export function BattleScene(props: Props) {
             babidiPortalLanding={babidiPortalLanding}
             sphere={sphere}
             purpleHole={purpleHole}
-            hakai={hakaiSprite}
+            hakai={hakai}
           />
 
           <ChargeParticles

@@ -109,6 +109,11 @@ export type BattleSceneApi = {
   switchWeapon: () => void;
   convertCursedEnergy: () => void;
   blink: () => void;
+  showClear: boolean;
+  vastolordLaserStacks: number;
+  honoredSequence: boolean;
+  skipVastolordTransform: () => void;
+  skipHonoredOne: () => void;
   blinkVisual:
     | import("@/hooks/battle/player/characters/natsuki/useBlinkAnimation").BlinkVisual
     | null;
@@ -141,7 +146,7 @@ export type BattleSceneApi = {
   clearLootNotifications: () => void;
   npcClass: NPCClass;
   ematronClone: ReturnType<typeof useEmatronClone>["cloneVisual"];
-  hakaiSprite: boolean;
+  hakai: boolean;
   clonePress: () => void;
   cloneRelease: () => void;
   cloneUsable: boolean;

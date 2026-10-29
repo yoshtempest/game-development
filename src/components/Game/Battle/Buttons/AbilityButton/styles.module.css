@@ -30,10 +30,6 @@
   transition:
     border-color 150ms ease,
     box-shadow 150ms ease;
-
-  box-shadow:
-    0 var(--size-2) var(--size-8) var(--shadow-strong),
-    inset 0 var(--size-1) var(--size-2) var(--white-alpha-10);
 }
 
 /* Estados */
@@ -46,12 +42,6 @@
   opacity: 0.5;
   cursor: not-allowed;
   border-color: var(--accent-30);
-}
-
-/* Cheio (para count/hold) */
-.full {
-  border-color: var(--success-70);
-  background-color: var(--surface-success);
 }
 
 /* Container para type="combo" */
@@ -74,21 +64,17 @@
 .cooldown {
   font-size: var(--fs-14);
   font-weight: bold;
-  color: var(--warning-70);
-  text-shadow: 0 0 var(--size-4) var(--warning-glow);
 }
 
 /* Custo/valor */
 .cost {
   font-size: var(--fs-12);
   font-weight: bold;
-  color: var(--info-70);
 }
 
 .value {
   font-size: var(--fs-18);
   font-weight: bold;
-  color: var(--info-80);
 }
 
 /* Contador (count/max) */
@@ -102,10 +88,6 @@
   gap: var(--size-2);
 
   padding: var(--size-2) var(--size-6);
-
-  border-radius: var(--radius-sm);
-  background-color: var(--surface-elevated);
-  border: var(--size-1) solid var(--accent-40);
 
   font-size: var(--fs-10);
   font-weight: bold;

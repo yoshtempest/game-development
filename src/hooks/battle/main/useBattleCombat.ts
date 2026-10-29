@@ -1653,7 +1653,7 @@ export function useBattleCombat({
     press: hakaiPress,
     usable: hakaiUsable,
     cloneVisual: ematronHakaiClone,
-    hakai: ematronHakaiSprite,
+    hakai: ematronHakai,
   } = useHakaiExpansion({
     player,
     setPlayer,
@@ -1828,7 +1828,7 @@ export function useBattleCombat({
     killerQueenSprite,
     bombSprite,
     explosionSprite,
-    ematronClone: ematronHakaiSprite ? null : (ematronHakaiActive ? ematronHakaiClone : ematronClone),
+    ematronClone: ematronHakai ? null : (ematronHakaiActive ? ematronHakaiClone : ematronClone),
     clonePress,
     cloneRelease,
     cloneUsable,
@@ -1878,6 +1878,6 @@ export function useBattleCombat({
     babidiAttackVariant: babidiEnergy.attackVariant,
     babidiShieldSides: babidiShield.sides,
     onBabidiShieldEnd: babidiShield.end,
-    hakaiSprite: ematronHakaiSprite
+    hakai: ematronHakai
   };
 }

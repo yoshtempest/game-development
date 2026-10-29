@@ -22,15 +22,14 @@
 .cooldown {
   font-size: var(--fs-16);
   font-weight: bold;
-  color: var(--ability-accent, var(--warning-70));
 }
 
 .value {
-  color: var(--ability-accent, var(--info-80));
+  color: var(--ability-accent);
 }
 
 .cost {
-  color: var(--ability-accent, var(--info-70));
+  color: var(--ability-accent);
 }
 
 @keyframes abilityGlow {

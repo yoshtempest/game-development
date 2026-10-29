@@ -557,7 +557,7 @@ export function useBattleScene({
     purplePress,
     purpleUsable,
     babidiResetPortals,
-    hakaiSprite,
+    hakai,
   } = combat;
 
   vastolordEndingRef.current = battle.isEnding;
@@ -854,7 +854,7 @@ export function useBattleScene({
     lootNotifications,
     clearLootNotifications,
     ematronClone,
-    hakaiSprite,
+    hakai,
     clonePress,
     cloneRelease,
     cloneUsable,
