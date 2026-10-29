@@ -3,7 +3,7 @@ import os
 import sys
 import uuid
 
-ROOT = Path("src")
+ROOT = Path("public")
 
 REPLACEMENTS = [
     ("marcelo", "marshadow"),
