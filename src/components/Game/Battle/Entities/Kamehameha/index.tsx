@@ -32,9 +32,13 @@ export function Kamehameha({ effect, battleScaleX, battleScaleY }: Props) {
 
   const phaseClass =
     effect.phase === "starting"
-      ? styles.starting
+      ? effect.facing === "right"
+        ? styles.startingLeft
+        : styles.startingRight
       : effect.phase === "ending"
-        ? styles.ending
+        ? effect.facing === "right"
+          ? styles.endingLeft
+          : styles.endingRight
         : styles.active;
 
   return (
@@ -45,6 +49,7 @@ export function Kamehameha({ effect, battleScaleX, battleScaleY }: Props) {
         top,
         width,
         height,
+        transformOrigin: effect.facing === "right" ? "left bottom" : "right bottom",
       }}
     >
       <img

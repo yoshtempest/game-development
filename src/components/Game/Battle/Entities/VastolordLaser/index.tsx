@@ -33,16 +33,20 @@ export function VastolordLaser({
 }: Props) {
   if (!beam) return null;
 
-  const width = (beam.toX - beam.fromX) * battleScaleX;
+  const width = Math.abs(beam.toX - beam.fromX) * battleScaleX;
   const height = VASTOLORD_LASER_BEAM_HEIGHT * battleScaleY;
-  const left = beam.fromX * battleScaleX;
+  const left = Math.min(beam.fromX, beam.toX) * battleScaleX;
   const top = vastolordLaserTop(beam.y, PLAYER_SIZE) * battleScaleY;
 
   const phaseClass =
     beam.phase === "starting"
-      ? styles.starting
+      ? beam.facing === "right"
+        ? styles.startingLeft
+        : styles.startingRight
       : beam.phase === "ending"
-        ? styles.ending
+        ? beam.facing === "right"
+          ? styles.endingLeft
+          : styles.endingRight
         : styles.active;
 
   return (

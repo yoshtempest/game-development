@@ -250,11 +250,15 @@ export function useKamehameha({
       };
 
       // NPC principal: dano + empurrão para longe do jogador (clampado).
+      // O feixe pode ir do personagem até a borda em qualquer direção, então a
+      // faixa horizontal é sempre [min(fromX,toX), max(fromX,toX)] — a ordem
+      // dos extremos não pode decidir quem sofre dano (regra dos lasers).
       const mainNpc = npcRef.current;
+      const blastMinX = Math.min(effectData.fromX, effectData.toX);
+      const blastMaxX = Math.max(effectData.fromX, effectData.toX);
       if (mainNpc.y >= top && mainNpc.y <= bottom) {
         const dir = mainNpc.x >= playerRef.current.x ? 1 : -1;
-        const inBlast =
-          mainNpc.x >= effectData.fromX && mainNpc.x <= effectData.toX;
+        const inBlast = mainNpc.x >= blastMinX && mainNpc.x <= blastMaxX;
         if (inBlast) {
           const dmg = atLeastMinDamage(
             combatService.applyArmor(
@@ -286,8 +290,8 @@ export function useKamehameha({
           s.isDying ||
           s.y < top ||
           s.y > bottom ||
-          s.x < effectData.fromX ||
-          s.x > effectData.toX
+          s.x < blastMinX ||
+          s.x > blastMaxX
         ) {
           return s;
         }
@@ -365,6 +369,7 @@ export function useKamehameha({
       fromX: p.x,
       toX: isFacingLeft ? 0 : ProjectileConstants.MAP_WIDTH,
       y: p.y,
+      facing: isFacingLeft ? "left" : "right",
       phase: "starting",
     });
     setPlayerRef.current((pp) =>

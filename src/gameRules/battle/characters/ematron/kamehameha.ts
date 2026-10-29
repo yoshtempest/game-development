@@ -38,6 +38,8 @@ export type KamehamehaEffect = {
   toX: number;
   /** y do jogador no instante do disparo (pés) — centro do feixe = centro do sprite acima dele. */
   y: number;
+  /** Direção em que o personagem mira: define de qual extremo o feixe surge (regra dos lasers). */
+  facing: "left" | "right";
   /** Fase visual para animações: 'starting' cresce, 'active' mantém, 'ending' encolhe/fade. */
   phase: "starting" | "active" | "ending";
 };

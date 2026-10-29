@@ -42,5 +42,5 @@ export function updateLaser(
   if (now - ai.lastLaserDamage < LASER_DAMAGE_INTERVAL) return;
 
   ai.lastLaserDamage = now;
-  ctx.onLaserHit?.();
+  ctx.onLaserHit?.(npc.x);
 }

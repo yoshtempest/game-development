@@ -395,8 +395,18 @@ export function useBattleCombat({
       setNpcArmorBonus((b) => b + 1);
       refs.spawnDamageRef.current?.(1, x, y, "armor");
     },
-    onLaserHit: () => {
+    onLaserHit: (npcX?: number) => {
       battle.npcFixedHit(1);
+      // Empurrão contínuo e suave do laser (regra dos lasers): o jogador é
+      // afastado do NPC gerador a cada tick de dano.
+      if (npcX != null) {
+        setPlayer((p) => {
+          if (p.mode !== "battle") return p;
+          const direction = npcX > p.x ? -1 : 1;
+          const pushToX = clampX(p.x + direction * 5);
+          return { ...p, x: pushToX };
+        });
+      }
     },
     onStuckPaperExplode: () => {
       battle.npcUnblockableHit(2);

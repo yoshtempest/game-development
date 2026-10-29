@@ -264,6 +264,10 @@ export function useVastolordLaser({
       const { y: beamY, fromX, toX } = beamData;
       const top = vastolordLaserTop(beamY, PLAYER_SIZE);
       const bottom = top + VASTOLORD_LASER_BEAM_HEIGHT;
+      // A faixa horizontal do feixe é sempre [min,max], independente da
+      // direção em que o personagem mira (regra dos lasers).
+      const blastMinX = Math.min(fromX, toX);
+      const blastMaxX = Math.max(fromX, toX);
 
       /**
        * Fecha um tick: número de dano e combo só quando o dano MITIGADO
@@ -300,8 +304,8 @@ export function useVastolordLaser({
       if (
         mainNpc.y >= top &&
         mainNpc.y <= bottom &&
-        mainNpc.x >= fromX &&
-        mainNpc.x <= toX
+        mainNpc.x >= blastMinX &&
+        mainNpc.x <= blastMaxX
       ) {
         const dmg = atLeastMinDamage(
           combatService.applyArmor(
@@ -333,8 +337,8 @@ export function useVastolordLaser({
           s.isDying ||
           s.y < top ||
           s.y > bottom ||
-          s.x < fromX ||
-          s.x > toX
+          s.x < blastMinX ||
+          s.x > blastMaxX
         ) {
           return s;
         }
@@ -423,6 +427,7 @@ export function useVastolordLaser({
       fromX: isFacingLeft ? 0 : p.x,
       toX: isFacingLeft ? p.x : ProjectileConstants.MAP_WIDTH,
       y: p.y,
+      facing: isFacingLeft ? "left" : "right",
       phase: "starting",
     });
     setPlayer((pp) => (pp.mode !== "battle" ? pp : { ...pp, state: "laser" }));

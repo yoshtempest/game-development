@@ -42,7 +42,9 @@ export type BehaviorContext = {
   onGroundPaperHit?: () => void;
   onPaperExplode?: () => void;
   onArmorBuff?: (x: number, y: number) => void;
-  onLaserHit?: () => void;
+  /** Dano (e empurrão, quando aplicável) do laser do NPC. `npcX` é a
+   *  posição do NPC gerador, para empurrar o jogador na direção oposta. */
+  onLaserHit?: (npcX?: number) => void;
   onStuckPaperExplode?: () => void;
   onApplyDebuff?: (status: NewPlayerStatus) => void;
   /** true quando o NPC da batalha é um alfa (sprites de alfa, special etc). */

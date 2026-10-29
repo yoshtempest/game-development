@@ -322,6 +322,24 @@ DamageKind (physical | magical | true) + DamageArmor (physical | magical)
   execute da Expansão de Domínio, reflexo e o reflect do Babidi, ticks de
   sangramento e o dummy de treino.
 
+## Lasers (regras invariantes)
+
+Todo laser e feixe semelhante (Maugrelo, Vastolord, Kamehameha) obedece:
+
+1. **Origem na entidade geradora** — o feixe nasce na posição da entidade que
+   o invoca (`fromX`/`fromY` = entidade), nunca na borda da tela ou "do nada".
+2. **Dano contínuo + empurrão** — enquanto ativo, a cada tick todo inimigo na
+   faixa sofre dano (mitigado pela armadura do alvo) e é empurrado na direção
+   oposta à entidade; a distância por tick varia por laser.
+3. **Renderização do ponto à alvo** — a animação de criação revela o feixe do
+   extremo da entidade até o alvo via `clip-path` (inset), na direção em que a
+   entidade está voltada (direita → direita, esquerda → esquerda). O feixe não
+   "surge" inteiro de uma vez.
+
+A faixa horizontal de acerto é sempre `[min(fromX,toX), max(fromX,toX)]`,
+independente da ordem dos extremos. Novo laser = novo tipo de feixe seguindo
+estas três regras (origem, dano+push, clip-path de criação).
+
 ## Convenções
 
 | Categoria        | Convenção                                       | Exemplo                              |
