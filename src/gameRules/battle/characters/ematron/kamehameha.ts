@@ -28,7 +28,7 @@ export function ematronPlayerSpriteHeight(playerSize: number): number {
  * torno do chão do player), para atingir inimigos no mesmo nível.
  */
 export function kamehamehaTop(beamY: number): number {
-  return beamY - EMATRON_KAMEHAMEHA_BEAM_HEIGHT / 2;
+  return beamY - EMATRON_KAMEHAMEHA_BEAM_HEIGHT;
 }
 
 export type KamehamehaEffect = {
