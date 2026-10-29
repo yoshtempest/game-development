@@ -218,22 +218,26 @@
 @keyframes characterSweep {
   /* Entra da esquerda já crescendo, em velocidade normal. */
   0% {
-    transform: translateX(-60vw) scale(0.65);
+    transform: translateX(-60vw);
   }
 
   /* Centro da tela — fim da fase rápida. */
   35% {
-    transform: translateX(0) scale(1);
+    transform: translateX(0);
   }
 
   /* Fase lenta: quase parada no centro, crescendo bem. */
-  65% {
-    transform: translateX(6vw) scale(1.35);
+  50% {
+    transform: translateX(6vw);
+  }
+
+  75% {
+    transform: translateX(8vw);
   }
 
   /* Velocidade normal de volta e um pouco menor ao sair. */
   100% {
-    transform: translateX(66vw) scale(1.1);
+    transform: translateX(66vw);
   }
 }
 
