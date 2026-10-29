@@ -5,7 +5,13 @@ export type NpcLocation =
   | "Cachoeiras"
   | "Barragem"
   | "Tanque dos Crávos"
-  | "Lagoa do Canto";
+  | "Lagoa do Canto"
+  | "Shinjuku"
+  | "Cidadela"
+  | "Istar"
+  | "Kame House"
+  | "Vento Aureo"
+  | "Dragon Domain";
 
 export type BestiaryEntryData = {
   npcType: string;

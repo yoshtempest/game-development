@@ -37,20 +37,56 @@ export const PET_DROPS: Record<string, PetDropInfo> = {
     npcType: "madame",
     npcLabel: "Dona Aranha",
     chance: 0.01,
-    location: "Jomasio",
+    location: "Lagoa do Canto",
   },
   pet_mosquito: {
     npcType: "mosquito",
     npcLabel: "Muriçoca Soca Soca",
     chance: 0.01,
-    location: "Jomasio",
+    location: "Bocaina",
   },
   pet_hawkMother: {
     npcType: "hawkMother",
     npcLabel: "Mãe do Hawk",
     chance: 0,
     riddle: "O caos encarnado pode ser encontrado onde nunca se foi pensado.",
-    location: "Tanque dos Crávos",
+    location: "Istar",
+  },
+  pet_tyranosaur: {
+    npcType: "tyranosaur",
+    npcLabel: "Tiranossauro",
+    chance: 0.005,
+    location: "Lagoa do Canto",
+  },
+  pet_wonderOfYou: {
+    npcType: "wonderOfYou",
+    npcLabel: "Wonder Of You",
+    chance: 0,
+    location: "Vento Aureo",
+  },
+  pet_scaryMonters: {
+    npcType: "scaryMonters",
+    npcLabel: "Scary Monsters",
+    chance: 0,
+    location: "Vento Aureo",
+  },
+  pet_tusk: {
+    npcType: "tusk",
+    npcLabel: "Tusk",
+    chance: 0,
+    location: "Vento Aureo",
+  },
+  pet_supernova: {
+    npcType: "supernova",
+    npcLabel: "Supernova",
+    chance: 0,
+    location: "Dragon Domain",
+  },
+  pet_alduin: {
+    npcType: "alduin",
+    npcLabel: "Alduin",
+    chance: 0,
+    location: "Dragon Domain",
   },
   pet_flyingCloud: {
     npcType: "flyingCloud",
@@ -58,7 +94,7 @@ export const PET_DROPS: Record<string, PetDropInfo> = {
     chance: 0,
     riddle:
       "Leve como o suspiro do vento, ela carrega quem tem o coração puro. Não se prende ao chão, só à promessa.",
-    location: "Lagoa Grande",
+    location: "Kame House",
   },
   pet_crows: {
     npcType: "crows",
@@ -66,7 +102,7 @@ export const PET_DROPS: Record<string, PetDropInfo> = {
     chance: 0,
     riddle:
       "Dois olhos negros observam da janela do tempo. Um guarda o passado, o outro, o futuro. Juntos, nunca se separam.",
-    location: "Barragem",
+    location: "Cidadela",
   },
   pet_aerosmith: {
     npcType: "aerosmith",
@@ -74,7 +110,7 @@ export const PET_DROPS: Record<string, PetDropInfo> = {
     chance: 0,
     riddle:
       "O som que perfura o silêncio vem de asas metálicas. Quem ousa afinar a frequência da liberdade?",
-    location: "Cachoeiras",
+    location: "Vento Aureo",
   },
   pet_mahoraga: {
     npcType: "mahoraga",
@@ -82,7 +118,7 @@ export const PET_DROPS: Record<string, PetDropInfo> = {
     chance: 0,
     riddle:
       "A roda gira, imune a tudo que já foi visto. Adaptar-se é a única lei. Quem gira a roda?",
-    location: "Jomasio",
+    location: "Shinjuku",
   },
   pet_turkey: {
     npcType: "turkey",
@@ -105,20 +141,20 @@ export const PET_DROPS: Record<string, PetDropInfo> = {
     chance: 0,
     riddle:
       "A coroa não pesa em quem nasceu para reinar. O verdadeiro nobre não pede permissão para existir.",
-    location: "Lagoa do Canto",
+    location: "Bocaina",
   },
   pet_lupita: {
     npcType: "lupita",
     npcLabel: "Lupita",
     chance: 0,
     riddle: "Entre a luz da lua e a sombra da noite, ela destroi.",
-    location: "Lagoa Grande",
+    location: "Bocaina",
   },
   pet_vulture: {
     npcType: "zecaUrubu",
     npcLabel: "zecaUrubu",
     chance: 0.01,
-    location: "Cachoeiras",
+    location: "Bocaina",
   },
   pet_rapariga: {
     npcType: "rapariga",
