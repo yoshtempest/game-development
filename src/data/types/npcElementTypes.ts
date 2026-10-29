@@ -1,7 +1,21 @@
 import type { ElementType } from "@/utils/types/battle/element";
 
 /** Pets têm elementos mas não são NPCs de batalha. */
-export type PetElementKey = "turkey" | "rapariga" | "zecaUrubu" | "mosquito";
+export type PetElementKey =
+  "turkey"
+  | "rapariga"
+  | "zecaUrubu"
+  | "mosquito"
+  | "supernova"
+  | "alduin"
+  | "tusk"
+  | "tyranosaur"
+  | "scaryMonsters"
+  | "hawkMother"
+  | "crows"
+  | "flyingCloud"
+  | "mahoraga"
+  | "wonderOfYou";
 
 /**
  * Tipagens elementais de cada NPC.
@@ -88,10 +102,19 @@ export const NPC_TYPINGS = {
   rapariga: ["Normalis", "Haos"],
   zecaUrubu: ["Normalis", "Ventus"],
   mosquito: ["Ventus", "Natura"],
+  supernova: ["Draco", "Pyrus"],
+  alduin: ["Draco", "Darkus"],
+  tusk: ["Darkus"],
+  tyranosaur: ["Pyrus", "Darkus", "Subterra"],
+  scaryMonsters: ["Normalis", "Subterra"],
+  hawkMother: ["Natura", "Darkus"],
+  crows: ["Darkus", "Psychicus"],
+  flyingCloud: ["Ventus", "Electricus"],
+  mahoraga: ["Darkus", "Normalis"],
+  wonderOfYou: ["Darkus", "Psychicus"],
 } as const satisfies Partial<
   Record<NpcType | PetElementKey, readonly ElementType[]>
 >;
-
 export function getNpcElementTypes(npcType: string): readonly ElementType[] {
   const base = npcType.endsWith("_alfa") ? npcType.slice(0, -5) : npcType;
   return NPC_TYPINGS[base as keyof typeof NPC_TYPINGS] ?? ["Normalis"];
