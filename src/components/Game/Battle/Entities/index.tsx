@@ -136,6 +136,7 @@ type Props = {
   babidiPortalLanding?: boolean;
   /** Furo no sprite do NPC quando a purple o mata (junto com `isDying`). */
   purpleHole?: boolean;
+  hakai?: boolean;
 };
 
 export function BattleEntities({
@@ -190,6 +191,7 @@ export function BattleEntities({
   babidiPortalLanding = false,
   sphere = null,
   purpleHole = false,
+  hakai = false,
 }: Props & {
   sphere?: import("@/utils/types/character/natsuki").NatsukiSphere | null;
 }) {
@@ -315,6 +317,7 @@ export function BattleEntities({
         onBabidiShieldEnd={onBabidiShieldEnd}
         babidiPortalLanding={babidiPortalLanding}
         babidiPortalCross={playerPortalCross}
+        hakai={hakai}
       />
 
       <EnergyProjectile

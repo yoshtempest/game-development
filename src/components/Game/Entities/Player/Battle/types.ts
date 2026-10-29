@@ -39,4 +39,5 @@ export interface PlayerBattleProps {
    * linha do portal some de um lado e reaparece saindo do outro.
    */
   babidiPortalCross?: BabidiPortalCross | null;
+  hakai?: boolean;
 }

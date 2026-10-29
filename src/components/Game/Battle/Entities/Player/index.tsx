@@ -38,6 +38,7 @@ type Props = {
   babidiPortalLanding?: boolean;
   /** Travessia em andamento por um portal terrestre (sprite dividido). */
   babidiPortalCross?: BabidiPortalCross | null;
+  hakai?: boolean
 };
 
 export function Player({
@@ -59,6 +60,7 @@ export function Player({
   onBabidiShieldEnd,
   babidiPortalLanding = false,
   babidiPortalCross = null,
+  hakai = false,
 }: Props) {
   const blinkSilhouette =
     player.character === "natsuki" && blinkVisual
@@ -93,6 +95,7 @@ export function Player({
       babidiPortalLanding={babidiPortalLanding}
       babidiPortalCross={babidiPortalCross}
       levelUpParticles
+      hakai={hakai}
     />
   );
 }

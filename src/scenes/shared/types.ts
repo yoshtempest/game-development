@@ -141,6 +141,7 @@ export type BattleSceneApi = {
   clearLootNotifications: () => void;
   npcClass: NPCClass;
   ematronClone: ReturnType<typeof useEmatronClone>["cloneVisual"];
+  hakaiSprite: boolean;
   clonePress: () => void;
   cloneRelease: () => void;
   cloneUsable: boolean;

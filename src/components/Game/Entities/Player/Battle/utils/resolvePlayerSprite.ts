@@ -15,6 +15,7 @@ interface ResolvePlayerSpriteParams {
   form?: "vastolordForm";
   transformationFrame?: number | null;
   teleportSprite: boolean;
+  hakai?: boolean;
   preAtomic: boolean;
   outroExpression?: "victory" | "defeat" | null;
   babidiAttackVariant?: BabidiAttackVariant;
@@ -32,6 +33,7 @@ export function resolvePlayerSprite({
   outroExpression = null,
   babidiAttackVariant,
   babidiPortalLanding = false,
+  hakai = false,
 }: ResolvePlayerSpriteParams): string {
   const resolvedState = resolveSpriteState(state);
 
@@ -59,8 +61,13 @@ export function resolvePlayerSprite({
     );
   }
 
-  if (teleportSprite && character === "ematron") {
-    return playerPathEmatronHabilities(`/teleport/teleport.svg`);
+  if (character === "ematron") {
+    if (teleportSprite) {
+      return playerPathEmatronHabilities(`/teleport/teleport.svg`);
+    }
+    if (hakai) {
+      return playerPathEmatronHabilities("/domainExpansion/hakai.svg");
+    }
   }
 
   return resolveBattleSprite(

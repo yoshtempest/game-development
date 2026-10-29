@@ -108,6 +108,8 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
   preMugetsu: null,
   mugetsu: null,
 
+  hakai: null,
+
   // Expansão de Domínio do natsuki (Muryōkūsho): o hook
   // (useNatsukiDomainExpansion) segura a pose `rioiki.svg` por 5s e restaura o
   // idle quando o domínio (e a quebra do vidro) termina.

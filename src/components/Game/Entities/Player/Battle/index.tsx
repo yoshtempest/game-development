@@ -44,6 +44,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     onBabidiShieldEnd,
     babidiPortalLanding = false,
     babidiPortalCross = null,
+    hakai = false,
   } = props;
 
   const isChargingKi = character === "ematron" && state === "chargingKi";
@@ -67,6 +68,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     outroExpression,
     babidiAttackVariant,
     babidiPortalLanding,
+    hakai,
   });
 
   const isMostHonored = state === "mostHonored";

@@ -19,6 +19,7 @@ interface UseBattleSpriteParams {
   babidiAttackVariant?: BabidiAttackVariant;
   /** Player saindo de um portal do babidi (voo/decolagem). */
   babidiPortalLanding?: boolean;
+  hakai?: boolean;
 }
 
 export function useBattleSprite({
@@ -32,6 +33,7 @@ export function useBattleSprite({
   outroExpression = null,
   babidiAttackVariant,
   babidiPortalLanding = false,
+  hakai = false,
 }: UseBattleSpriteParams) {
   const resolvedState = resolveSpriteState(state);
 
@@ -46,6 +48,7 @@ export function useBattleSprite({
     outroExpression,
     babidiAttackVariant,
     babidiPortalLanding,
+    hakai,
   });
 
   // Sequência idle do personagem (e forma):1 frame = parado, >1 = animado.

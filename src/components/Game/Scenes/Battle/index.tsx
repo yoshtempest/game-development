@@ -92,6 +92,7 @@ type Props = {
   isAlfa?: boolean;
   npcLevel?: number;
   children?: ReactNode;
+  hakai?: boolean;
 };
 
 export function BattleScene(props: Props) {
@@ -180,6 +181,7 @@ export function BattleScene(props: Props) {
     lootNotifications,
     npcClass,
     ematronClone,
+    hakaiSprite,
     clonePress,
     cloneRelease,
     cloneUsable,
@@ -668,6 +670,7 @@ export function BattleScene(props: Props) {
             babidiPortalLanding={babidiPortalLanding}
             sphere={sphere}
             purpleHole={purpleHole}
+            hakai={hakaiSprite}
           />
 
           <ChargeParticles
