@@ -188,6 +188,41 @@
   gap: var(--size-16);
 
   padding: var(--size-16);
+
+  /* Numeração dos slots (1..9) dos atalhos de teclado: cada botão
+     `.abilityButton` recebe o próximo número na ordem de render. */
+  counter-reset: ability-slot;
+}
+
+.abilityButton {
+  counter-increment: ability-slot;
+}
+
+.abilityButton::before {
+  content: counter(ability-slot);
+
+  position: absolute;
+  top: var(--size-4);
+  right: var(--size-4);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: var(--size-12);
+  padding: var(--size-2) var(--size-4);
+
+  font-family: "Press Start 2P", monospace;
+  font-size: var(--fs-8);
+  font-weight: bold;
+  color: var(--white);
+
+  background: rgba(0, 0, 0, 0.55);
+  border: var(--size-1) solid var(--border-medium, var(--accent-40));
+  border-radius: var(--size-4);
+
+  pointer-events: none;
+  z-index: 2;
 }
 
 .abilityButton {

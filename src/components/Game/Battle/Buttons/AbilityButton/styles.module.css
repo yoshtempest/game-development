@@ -94,4 +94,28 @@
   color: var(--white);
 }
 
+/* Atalho de teclado (tecla numérica que dispara a habilidade). */
+.shortcut {
+  position: absolute;
+  top: var(--size-4);
+  right: var(--size-4);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: var(--size-12);
+  padding: var(--size-2) var(--size-4);
+
+  font-size: var(--fs-8);
+  font-weight: bold;
+  color: var(--white);
+
+  background: rgba(0, 0, 0, 0.55);
+  border: var(--size-1) solid var(--accent-40);
+  border-radius: var(--size-4);
+
+  pointer-events: none;
+}
+
 /* Tooltip nativo já funciona via title attribute */

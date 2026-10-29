@@ -97,6 +97,20 @@ type Props = {
 
 export function BattleScene(props: Props) {
   const { npcType, className, background, map, isAlfa = false } = props;
+
+  // Atalhos de teclado (teclas 1..9) para as habilidades do personagem. Cada
+  // botão renderizado em `.abilityButtons` ocupa um slot na ordem de render;
+  // a tecla numérica correspondente dispara a habilidade daquele slot.
+  type AbilitySlot = {
+    click?: () => void;
+    press?: () => void;
+    release?: () => void;
+    disabled: boolean;
+    hold: boolean;
+  };
+  const abilitySlotsRef = useRef<AbilitySlot[]>([]);
+  abilitySlotsRef.current = [];
+  const pressedAbilityKeysRef = useRef<Set<string>>(new Set());
   const { stopAll } = useSoundEffects();
   const { titlesData } = useTitles();
 
@@ -513,6 +527,53 @@ export function BattleScene(props: Props) {
     battleAudioRef,
   ]);
 
+  // Atalhos de teclado para as habilidades (teclas 1..9): disparam a habilidade
+  // do slot correspondente na ordem de render dos botões de `.abilityButtons`.
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (player.mode !== "battle") return;
+      if (controlsDisabled) return;
+      if (isBattleNavOpen) return;
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+      if (!/^[1-9]$/.test(e.key)) return;
+      const idx = Number(e.key) - 1;
+      const slot = abilitySlotsRef.current[idx];
+      if (!slot || slot.disabled) return;
+      if (slot.hold) {
+        if (pressedAbilityKeysRef.current.has(e.key)) return;
+        pressedAbilityKeysRef.current.add(e.key);
+        slot.press?.();
+      } else {
+        if (e.repeat) return;
+        slot.click?.();
+      }
+    }
+
+    function handleKeyUp(e: KeyboardEvent) {
+      if (!/^[1-9]$/.test(e.key)) return;
+      if (!pressedAbilityKeysRef.current.has(e.key)) return;
+      pressedAbilityKeysRef.current.delete(e.key);
+      const idx = Number(e.key) - 1;
+      const slot = abilitySlotsRef.current[idx];
+      slot?.release?.();
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [controlsDisabled, isBattleNavOpen, player.mode]);
+
   return (
     <div
       className={`Master ${className ?? ""}`}
@@ -799,110 +860,209 @@ export function BattleScene(props: Props) {
       <ComboAction />
 
       <div className="abilityButtons">
-        {petSkill && pet && (
-          <PetSkillButton
-            imageUrl={npcPath(`/${petSkill.definition.npcType}/face.svg`)}
-            skillName={petSkill.definition.skill.name}
-            ready={petSkill.ready}
-            remaining={petSkill.remaining}
-            cooldownMs={petSkill.definition.skill.cooldownMs}
-            disabled={controlsDisabled}
-            onClick={petSkill.trigger}
-          />
-        )}
+        {petSkill && pet && (() => {
+          abilitySlotsRef.current.push({
+            click: petSkill.trigger,
+            disabled: controlsDisabled,
+            hold: false,
+          });
+          return (
+            <PetSkillButton
+              imageUrl={npcPath(`/${petSkill.definition.npcType}/face.svg`)}
+              skillName={petSkill.definition.skill.name}
+              ready={petSkill.ready}
+              remaining={petSkill.remaining}
+              cooldownMs={petSkill.definition.skill.cooldownMs}
+              disabled={controlsDisabled}
+              onClick={petSkill.trigger}
+            />
+          );
+        })()}
 
-        {player.character === "yvel" && (
-          <WeaponSwitchButton
-            weapon={yvelWeapon}
-            disabled={
+        {player.character === "yvel" && (() => {
+          abilitySlotsRef.current.push({
+            click: switchWeapon,
+            disabled:
               controlsDisabled ||
               (battleMana != null &&
-                battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST)
-            }
-            onClick={switchWeapon}
-          />
-        )}
-
-        {player.character === "natsuki" && (
-          <>
-            <SphereJunction
-              blueActive={
-                sphere?.variant === "blue" && sphere.phase !== "dismissing"
-              }
-              blueDisabled={controlsDisabled || !blueUsable}
-              redDisabled={controlsDisabled || !redUsable}
-              purpleActive={sphere?.variant === "purple"}
-              purpleDisabled={controlsDisabled || !purpleUsable}
-              onBlue={bluePress}
-              onRed={redPress}
-              onPurple={purplePress}
-            />
-            <DivergentFistButton
-              energy={battleMana?.playerMana ?? 0}
-              active={divergentFistActive}
+                battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST),
+            hold: false,
+          });
+          return (
+            <WeaponSwitchButton
+              weapon={yvelWeapon}
               disabled={
                 controlsDisabled ||
-                (battleMana?.playerMana ?? 0) < DIVERGENT_FIST_COST
+                (battleMana != null &&
+                  battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST)
               }
-              onClick={activateDivergentFist}
+              onClick={switchWeapon}
             />
-          </>
-        )}
+          );
+        })()}
 
-        {player.character === "natsuki" &&
-          (honoredOneActive ? (
-            <BlinkButton
-              energy={battleMana?.playerMana ?? 0}
-              disabled={
-                controlsDisabled ||
+        {player.character === "natsuki" && (() => {
+          // Esferas: 1 ou 2 botões conforme a purple está em campo.
+          if (sphere?.variant === "purple") {
+            abilitySlotsRef.current.push({
+              click: purplePress,
+              disabled: controlsDisabled || !purpleUsable,
+              hold: false,
+            });
+          } else {
+            abilitySlotsRef.current.push({
+              click: bluePress,
+              disabled: controlsDisabled || !blueUsable,
+              hold: false,
+            });
+            abilitySlotsRef.current.push({
+              click: redPress,
+              disabled: controlsDisabled || !redUsable,
+              hold: false,
+            });
+          }
+          abilitySlotsRef.current.push({
+            click: activateDivergentFist,
+            disabled:
+              controlsDisabled ||
+              (battleMana?.playerMana ?? 0) < DIVERGENT_FIST_COST,
+            hold: false,
+          });
+          const blinkOrCursedDisabled =
+            honoredOneActive
+              ? controlsDisabled ||
                 ALL_PREDICATES.isNatsukiDomain(player.state) ||
                 (battleMana?.playerMana ?? 0) < BLINK_ENERGY_COST
-              }
-              onClick={blink}
-            />
-          ) : (
-            <CursedEnergyButton
-              energy={battleMana?.playerMana ?? 0}
-              energyMax={battleMana?.playerMaxMana ?? 100}
-              disabled={
-                controlsDisabled ||
+              : controlsDisabled ||
                 (battleMana?.playerMana ?? 0) < CURSED_ENERGY_HEAL_RATIO ||
-                battle.playerHP >= battle.playerMaxHp
-              }
-              onClick={convertCursedEnergy}
-            />
-          ))}
+                battle.playerHP >= battle.playerMaxHp;
+          abilitySlotsRef.current.push({
+            click: honoredOneActive ? blink : convertCursedEnergy,
+            disabled: blinkOrCursedDisabled,
+            hold: false,
+          });
+          return (
+            <>
+              <SphereJunction
+                blueActive={
+                  sphere?.variant === "blue" && sphere.phase !== "dismissing"
+                }
+                blueDisabled={controlsDisabled || !blueUsable}
+                redDisabled={controlsDisabled || !redUsable}
+                purpleActive={sphere?.variant === "purple"}
+                purpleDisabled={controlsDisabled || !purpleUsable}
+                onBlue={bluePress}
+                onRed={redPress}
+                onPurple={purplePress}
+              />
+              <DivergentFistButton
+                energy={battleMana?.playerMana ?? 0}
+                active={divergentFistActive}
+                disabled={
+                  controlsDisabled ||
+                  (battleMana?.playerMana ?? 0) < DIVERGENT_FIST_COST
+                }
+                onClick={activateDivergentFist}
+              />
+              {honoredOneActive ? (
+                <BlinkButton
+                  energy={battleMana?.playerMana ?? 0}
+                  disabled={
+                    controlsDisabled ||
+                    ALL_PREDICATES.isNatsukiDomain(player.state) ||
+                    (battleMana?.playerMana ?? 0) < BLINK_ENERGY_COST
+                  }
+                  onClick={blink}
+                />
+              ) : (
+                <CursedEnergyButton
+                  energy={battleMana?.playerMana ?? 0}
+                  energyMax={battleMana?.playerMaxMana ?? 100}
+                  disabled={
+                    controlsDisabled ||
+                    (battleMana?.playerMana ?? 0) < CURSED_ENERGY_HEAL_RATIO ||
+                    battle.playerHP >= battle.playerMaxHp
+                  }
+                  onClick={convertCursedEnergy}
+                />
+              )}
+            </>
+          );
+        })()}
 
-        {player.character === "ematron" && (
-          <>
-            <EmatronCloneButton
-              energy={battleMana?.playerMana ?? 0}
-              disabled={controlsDisabled || !cloneUsable}
-              onPress={clonePress}
-              onRelease={cloneRelease}
-            />
-            <EmatronKiChargeButton
-              energy={battleMana?.playerMana ?? 0}
-              energyMax={battleMana?.playerMaxMana ?? 100}
-              disabled={controlsDisabled || !kiChargeUsable}
-              onPress={kiChargePress}
-              onRelease={kiChargeRelease}
-            />
-            <EmatronGenkiDamaButton
-              energy={battleMana?.playerMana ?? 0}
-              disabled={controlsDisabled || !genkiDamaUsable}
-              onPress={genkiDamaPress}
-              onRelease={genkiDamaRelease}
-            />
-            <EmatronKamehamehaButton
-              disabled={controlsDisabled || !kamehamehaUsable}
-              onClick={kamehamehaPress}
-            />
-          </>
-        )}
+        {player.character === "ematron" && (() => {
+          abilitySlotsRef.current.push({
+            press: clonePress,
+            release: cloneRelease,
+            disabled: controlsDisabled || !cloneUsable,
+            hold: true,
+          });
+          abilitySlotsRef.current.push({
+            press: kiChargePress,
+            release: kiChargeRelease,
+            disabled: controlsDisabled || !kiChargeUsable,
+            hold: true,
+          });
+          abilitySlotsRef.current.push({
+            press: genkiDamaPress,
+            release: genkiDamaRelease,
+            disabled: controlsDisabled || !genkiDamaUsable,
+            hold: true,
+          });
+          abilitySlotsRef.current.push({
+            click: kamehamehaPress,
+            disabled: controlsDisabled || !kamehamehaUsable,
+            hold: false,
+          });
+          return (
+            <>
+              <EmatronCloneButton
+                energy={battleMana?.playerMana ?? 0}
+                disabled={controlsDisabled || !cloneUsable}
+                onPress={clonePress}
+                onRelease={cloneRelease}
+              />
+              <EmatronKiChargeButton
+                energy={battleMana?.playerMana ?? 0}
+                energyMax={battleMana?.playerMaxMana ?? 100}
+                disabled={controlsDisabled || !kiChargeUsable}
+                onPress={kiChargePress}
+                onRelease={kiChargeRelease}
+              />
+              <EmatronGenkiDamaButton
+                energy={battleMana?.playerMana ?? 0}
+                disabled={controlsDisabled || !genkiDamaUsable}
+                onPress={genkiDamaPress}
+                onRelease={genkiDamaRelease}
+              />
+              <EmatronKamehamehaButton
+                disabled={controlsDisabled || !kamehamehaUsable}
+                onClick={kamehamehaPress}
+              />
+            </>
+          );
+        })()}
 
-        {player.character === "marshadow" &&
-          (!vastolordActive ? (
+        {player.character === "marshadow" && (() => {
+          if (!vastolordActive) {
+            abilitySlotsRef.current.push({
+              click: atomicPress,
+              disabled: controlsDisabled,
+              hold: false,
+            });
+            abilitySlotsRef.current.push({
+              click: granReyCeroPress,
+              disabled: controlsDisabled,
+              hold: false,
+            });
+          } else {
+            abilitySlotsRef.current.push({
+              click: vastolordLaserPress,
+              disabled: !vastolordLaserUsable,
+              hold: false,
+            });
+          }
+          return !vastolordActive ? (
             <>
               <AtomicButton
                 ready={atomicUsable}
@@ -923,47 +1083,76 @@ export function BattleScene(props: Props) {
               disabled={!vastolordLaserUsable}
               onClick={vastolordLaserPress}
             />
-          ))}
+          );
+        })()}
 
-        {player.character === "srGuaxinim" && (
-          <KillerQueenButton
-            ready={activeAbilityUsable}
-            remaining={activeAbilityRemaining}
-            disabled={controlsDisabled}
-            onClick={activeAbilityPress}
-          />
-        )}
+        {player.character === "srGuaxinim" && (() => {
+          abilitySlotsRef.current.push({
+            click: activeAbilityPress,
+            disabled: controlsDisabled,
+            hold: false,
+          });
+          return (
+            <KillerQueenButton
+              ready={activeAbilityUsable}
+              remaining={activeAbilityRemaining}
+              disabled={controlsDisabled}
+              onClick={activeAbilityPress}
+            />
+          );
+        })()}
 
-        {player.character === "laricell" && (
-          <StackExplosionButton
-            ready={activeAbilityUsable}
-            remaining={activeAbilityRemaining}
-            disabled={controlsDisabled}
-            onClick={activeAbilityPress}
-          />
-        )}
+        {player.character === "laricell" && (() => {
+          abilitySlotsRef.current.push({
+            click: activeAbilityPress,
+            disabled: controlsDisabled,
+            hold: false,
+          });
+          return (
+            <StackExplosionButton
+              ready={activeAbilityUsable}
+              remaining={activeAbilityRemaining}
+              disabled={controlsDisabled}
+              onClick={activeAbilityPress}
+            />
+          );
+        })()}
 
-        {player.character === "babidi" && (
-          <BabidiPortalsButton
-            count={babidiPortalCount}
-            maxPortals={babidiPortalMaxPortals}
-            cost={babidiPortalCost}
-            disabled={controlsDisabled || !babidiPortalUsable}
-            onClick={babidiPortalClick}
-          />
-        )}
+        {player.character === "babidi" && (() => {
+          abilitySlotsRef.current.push({
+            click: babidiPortalClick,
+            disabled: controlsDisabled || !babidiPortalUsable,
+            hold: false,
+          });
+          return (
+            <BabidiPortalsButton
+              count={babidiPortalCount}
+              maxPortals={babidiPortalMaxPortals}
+              cost={babidiPortalCost}
+              disabled={controlsDisabled || !babidiPortalUsable}
+              onClick={babidiPortalClick}
+            />
+          );
+        })()}
 
-        {!vastolordActive && (
-          <DomainExpansionButton
-            name={domainConfig.name}
-            description={domainConfig.description}
-            accent={domainConfig.accent}
-            background={domainBackground}
-            ready={domainExpansionUsable}
-            disabled={controlsDisabled}
-            onClick={domainExpansionPress}
-          />
-        )}
+        {!vastolordActive && (() => {
+          abilitySlotsRef.current.push({
+            click: domainExpansionPress,
+            disabled: controlsDisabled,
+            hold: false,
+          });
+          return (
+            <DomainExpansionButton
+              name={domainConfig.name}
+              description={domainConfig.description}
+              accent={domainConfig.accent}
+              background={domainBackground}
+              ready={domainExpansionUsable}
+              disabled={controlsDisabled}
+              onClick={domainExpansionPress}
+            />
+          );
+        })()}
       </div>
 
       {isTraining && <TrainingOverlay onLeave={() => navigate(-1)} />}
