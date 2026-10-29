@@ -55,7 +55,7 @@ export const EMATRON_KAMEHAMEHA_DAMAGE_RATIO = 0.01;
 /** Distância (px no plano lógico) que o Kamehameha empurra o inimigo por tick. */
 export const EMATRON_KAMEHAMEHA_PUSH_PX = 1;
 /** Altura renderizada do sprite do efeito `kamehamehaEffect.svg` (500x178) em px lógicos. */
-export const EMATRON_KAMEHAMEHA_BEAM_HEIGHT = 178;
+export const EMATRON_KAMEHAMEHA_BEAM_HEIGHT = 166;
 
 // ── Habilidade Genki Dama ────────────────────────────────────────────────────
 /** Custo inicial (Ki) para iniciar a habilidade. */

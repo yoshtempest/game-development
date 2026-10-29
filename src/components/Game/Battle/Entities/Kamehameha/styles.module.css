@@ -1,4 +1,7 @@
 .beam {
+  width: 100%;
   height: 100%;
-  object-fit: fit-content;
+  object-fit: contain;
+  transform: scale(1.4);
+  transform-origin: center;
 }
