@@ -841,6 +841,9 @@ export function useBattleCombat({
 
   const babidiMissile = useBabidiMissile({
     PLAYER_SIZE,
+    npcType,
+    npcPhase: battle.npcPhase ?? 1,
+    isAlfa,
     timeRef: refs.timeRef,
     npc: { x: npc.x, y: npc.y },
     summons,

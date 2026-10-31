@@ -4,12 +4,17 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import { getTime, type TimeEffect } from "@/gameRules/battle/time";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 
+import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
+
 import type { BabidiMissileProjectile } from "@/utils/types/character/babidi";
 import type { BabidiTarget } from "@/utils/types/character/babidi";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 
 type Props = {
   PLAYER_SIZE: number;
+  npcType: string;
+  npcPhase: number;
+  isAlfa: boolean;
   timeRef: React.RefObject<TimeEffect[]>;
   npc: { x: number; y: number };
   summons: SummonedNpc[];
@@ -23,6 +28,9 @@ const TICK_MS = 20;
 
 export function useBabidiMissile({
   PLAYER_SIZE,
+  npcType,
+  npcPhase,
+  isAlfa,
   timeRef,
   npc,
   summons,
@@ -34,6 +42,9 @@ export function useBabidiMissile({
   const npcRef = useLatestRef(npc);
   const summonsRef = useLatestRef(summons);
   const playerSizeRef = useLatestRef(PLAYER_SIZE);
+  const npcTypeRef = useLatestRef(npcType);
+  const npcPhaseRef = useLatestRef(npcPhase);
+  const isAlfaRef = useLatestRef(isAlfa);
 
   const findNearestTarget = useCallback(
     (x: number, y: number): BabidiTarget | null => {
@@ -114,6 +125,9 @@ export function useBabidiMissile({
 
       const target = findNearestTarget(finalSpawnX, finalSpawnY);
 
+      const aims: Array<"feet" | "center" | "top"> = ["feet", "center", "top"];
+      const aim = aims[Math.floor(Math.random() * aims.length)]!;
+
       const missile: BabidiMissileProjectile = {
         id: `babidi-missile-${Date.now()}`,
         x: finalSpawnX,
@@ -126,6 +140,7 @@ export function useBabidiMissile({
         targetId: target?.id ?? null,
         dirX: 1,
         angle: 0,
+        aim,
       };
 
       setMissiles((prev) => [...prev, missile]);
@@ -188,13 +203,41 @@ export function useBabidiMissile({
             continue;
           }
 
-          const dx = target.x - m.x;
-          const dy = target.y - m.y;
+          // Altura da sprite do alvo (para mirar pés/centro/topo).
+          let height = 0;
+          if (target.id === "main") {
+            height =
+              getBossSizeMultiplier(
+                npcTypeRef.current,
+                npcPhaseRef.current,
+                isAlfaRef.current,
+              ) *
+              (playerSizeRef.current / 1.4);
+          } else {
+            const summon = aliveSummons.find((s) => s.id === target.id);
+            if (summon) {
+              height =
+                getBossSizeMultiplier(summon.npcType) *
+                (playerSizeRef.current / 1.4);
+            }
+          }
+
+          // Ponto de mira vertical conforme o aim escolhido.
+          let aimOffset = 0;
+          if (m.aim === "center") aimOffset = -height / 2;
+          else if (m.aim === "top") aimOffset = -height;
+          // feet: 0
+
+          const targetX = target.x;
+          const targetY = target.y + aimOffset;
+
+          const dx = targetX - m.x;
+          const dy = targetY - m.y;
           const dist = Math.hypot(dx, dy);
           const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
 
           if (dist <= HIT_RADIUS) {
-            // hit: atinge o centro da sprite do inimigo
+            // hit: atinge o ponto de mira da sprite do inimigo
             onProjectileHitRef.current({ id: target.id, x: target.x, y: target.y });
             next.push({
               ...m,

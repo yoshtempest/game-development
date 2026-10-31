@@ -122,6 +122,8 @@ export type BabidiMissileProjectile = {
   phase: "portal" | "flying" | "exploding";
   /** Ângulo (graus) da direção de voo atual, para rotação da imagem. */
   angle: number;
+  /** Ponto da imagem do alvo a atingir: pés, centro ou topo (aleatório). */
+  aim: "feet" | "center" | "top";
   /** Tempo (ms) decorrido desde o spawn (para a animação do portal). */
   age: number;
   /** Tempo (ms) restante na fase de explosão. */
