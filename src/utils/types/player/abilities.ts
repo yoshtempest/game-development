@@ -35,6 +35,21 @@ export type ActiveAbility = {
    * `true` ignora as duas.
    */
   damageType?: DamageKind;
+  /**
+   * Foco de câmera aplicado quando a habilidade é usada. Ausente = a habilidade
+   * não move a câmera (a maioria das habilidades). Quando presente, a câmera
+   * foca `entity` com zoom `zoom` por `durationMs` (default: 3000ms).
+   */
+  cameraFocus?: AbilityCameraFocus;
+};
+
+export type AbilityCameraFocus = {
+  /** Entidade que recebe o foco. */
+  entity: "player" | "npc";
+  /** Fator de zoom (1 = padrão, >1 = aproxima). */
+  zoom: number;
+  /** Duração do foco em ms. Ausente = CAMERA_FOCUS_MS. */
+  durationMs?: number;
 };
 
 export type PassiveAbility = {

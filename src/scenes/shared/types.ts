@@ -29,6 +29,7 @@ import type { useAtomic } from "@/hooks/battle/player/characters/marshadow/useAt
 import type { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/useMugetsuExpansion";
 import type { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
 import type { CameraFocus } from "@/hooks/battle/effects/useCameraSequence";
+import type { CharacterId } from "@/data/characters/list";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 import type { CharactersProgress } from "@/data/characters/defaultProgress";
 import type { ReplayData } from "@/utils/types/replay";
@@ -130,6 +131,7 @@ export type BattleSceneApi = {
     typeof useBlackFlashAnimation
   >["blackFlashVariant"];
   cameraFocus: CameraFocus;
+  triggerAbilityCameraFocus: (characterId: CharacterId, abilityId: string) => boolean;
   vastolordActive: boolean;
   vastolordRemainingMs: number;
   /** Quadro da transformação do marshadow (0=screamOne … 3=transformated) ou null. */

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useNavigate, useLocation } from "react-router";
 import { useBattleMana } from "@/contexts/BattleManaContext";
@@ -30,6 +30,8 @@ import { buildBattleSceneApi } from "@/hooks/battle/utilities/buildBattleSceneAp
 import { getCharacterPassive } from "@/data/characters/passives";
 import { aggregateRewards } from "@/gameRules/battle/loot/buildLootBags";
 import { CHARACTERS } from "@/data/characters/list";
+import type { CharacterId } from "@/data/characters/list";
+import { getAbilityCameraFocus } from "@/data/characters/abilities";
 import { saveGame } from "@/services/save/saveService";
 import { loadBestTime, saveBestTime } from "@/utils/bestTime";
 import { recordWin } from "@/utils/rewards";
@@ -264,12 +266,25 @@ export function useBattleScene({
       ? INVOCATION_MS
       : CAMERA_FOCUS_MS;
 
-  const cameraFocus = useCameraSequence({
+  const cameraFocusHook = useCameraSequence({
     npcPhase,
     vastolordActive,
     enabled: rewindFrames == null && !showVictory && !showDefeat,
     focusMs: cameraFocusMs,
   });
+  const cameraFocus = cameraFocusHook;
+
+  // Foco de câmera disparado pelo uso de uma habilidade: consulta a spec da
+  // habilidade e, se ela declarar foco, aplica na câmera.
+  const triggerAbilityCameraFocus = useCallback(
+    (characterId: CharacterId, abilityId: string) => {
+      const spec = getAbilityCameraFocus(characterId, abilityId);
+      if (!spec) return false;
+      cameraFocusHook.triggerFocus(spec);
+      return true;
+    },
+    [cameraFocusHook],
+  );
 
   // Enquanto a câmera está focada (troca de fase do boss / transformação
   // vastolord), o jogador fica travado: movimento, ataque e ações são
@@ -843,6 +858,7 @@ export function useBattleScene({
     blackFlashActive,
     blackFlashVariant,
     cameraFocus: cameraFocus.focus ?? alfaIntroFocus,
+    triggerAbilityCameraFocus,
     vastolordActive,
     vastolordRemainingMs,
     vastolordTransformationFrame: transformationFrame,

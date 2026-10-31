@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { THREE_THOUSAND_MS } from "@/data/ms";
+import type { AbilityCameraFocus } from "@/utils/types/player/abilities";
 
 export type CameraFocus = {
   entity: "npc" | "player";
   zoom: number;
 } | null;
+
+export type CameraFocusSpec = AbilityCameraFocus;
 
 type Props = {
   npcPhase: number;
@@ -35,13 +38,25 @@ export function useCameraSequence({
   const prevNpcPhaseRef = useRef(npcPhase);
   const prevVastolordRef = useRef(vastolordActive);
 
-  const scheduleEnd = useCallback(() => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      timerRef.current = null;
-      setFocus(null);
-    }, focusMs);
-  }, [focusMs]);
+  const scheduleEnd = useCallback(
+    (duration: number) => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        timerRef.current = null;
+        setFocus(null);
+      }, duration);
+    },
+    [],
+  );
+
+  const triggerFocus = useCallback(
+    (spec: CameraFocusSpec) => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      setFocus({ entity: spec.entity, zoom: spec.zoom });
+      scheduleEnd(spec.durationMs ?? focusMs);
+    },
+    [focusMs, scheduleEnd],
+  );
 
   useEffect(() => {
     if (!enabled) {
@@ -58,7 +73,7 @@ export function useCameraSequence({
     if (npcPhase > prevNpcPhaseRef.current && npcPhase > 1) {
       prevNpcPhaseRef.current = npcPhase;
       setFocus({ entity: "npc", zoom: 1 });
-      scheduleEnd();
+      scheduleEnd(focusMs);
       return;
     }
     prevNpcPhaseRef.current = npcPhase;
@@ -66,11 +81,11 @@ export function useCameraSequence({
     if (vastolordActive && !prevVastolordRef.current) {
       prevVastolordRef.current = vastolordActive;
       setFocus({ entity: "player", zoom: TRANSFORM_ZOOM });
-      scheduleEnd();
+      scheduleEnd(focusMs);
       return;
     }
     prevVastolordRef.current = vastolordActive;
-  }, [npcPhase, vastolordActive, enabled, scheduleEnd]);
+  }, [npcPhase, vastolordActive, enabled, focusMs, scheduleEnd]);
 
   useEffect(() => {
     return () => {
@@ -78,5 +93,24 @@ export function useCameraSequence({
     };
   }, []);
 
-  return { focus, isFrozen: focus != null } as const;
+  // Funções de consulta (detectar se aplicará foco, quanto e em quem) a partir
+  // de uma spec — expostas para que a camada de habilidades possa decidir.
+  const willApplyFocus = useCallback((spec: CameraFocusSpec | null) => spec !== null, []);
+  const getFocusAmount = useCallback(
+    (spec: CameraFocusSpec | null) => spec?.zoom ?? null,
+    [],
+  );
+  const getFocusEntity = useCallback(
+    (spec: CameraFocusSpec | null) => spec?.entity ?? null,
+    [],
+  );
+
+  return {
+    focus,
+    isFrozen: focus != null,
+    triggerFocus,
+    willApplyFocus,
+    getFocusAmount,
+    getFocusEntity,
+  } as const;
 }

@@ -4,6 +4,7 @@ import type {
   ActiveAbility,
   CharacterAbility,
   PassiveAbility,
+  AbilityCameraFocus,
 } from "@/utils/types/player/abilities";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 
@@ -109,4 +110,42 @@ const ABILITY_DAMAGE_TYPES: Record<string, DamageKind> = Object.fromEntries(
 
 export function getAbilityDamageType(abilityId: string): DamageKind {
   return ABILITY_DAMAGE_TYPES[abilityId] ?? "physical";
+}
+
+// ── Foco de câmera por habilidade ─────────────────────────────────────────────
+
+/**
+ * Busca a spec de foco de câmera de uma habilidade ativa, ou `null` quando a
+ * habilidade não move a câmera.
+ */
+export function getAbilityCameraFocus(
+  characterId: CharacterId,
+  abilityId: string,
+): AbilityCameraFocus | null {
+  const ability = getActiveAbility(characterId, abilityId);
+  return ability?.cameraFocus ?? null;
+}
+
+/** Detecta se a habilidade aplicará foco de câmera em alguma entidade. */
+export function willApplyAbilityCameraFocus(
+  characterId: CharacterId,
+  abilityId: string,
+): boolean {
+  return getAbilityCameraFocus(characterId, abilityId) !== null;
+}
+
+/** Quanto será o foco (zoom) aplicado; `null` quando não houver foco. */
+export function getAbilityCameraFocusAmount(
+  characterId: CharacterId,
+  abilityId: string,
+): number | null {
+  return getAbilityCameraFocus(characterId, abilityId)?.zoom ?? null;
+}
+
+/** Qual entidade receberá o foco; `null` quando não houver foco. */
+export function getAbilityCameraFocusEntity(
+  characterId: CharacterId,
+  abilityId: string,
+): "player" | "npc" | null {
+  return getAbilityCameraFocus(characterId, abilityId)?.entity ?? null;
 }

@@ -107,6 +107,7 @@ export function BattleScene(props: Props) {
     release?: () => void;
     disabled: boolean;
     hold: boolean;
+    abilityId?: string;
   };
   const abilitySlotsRef = useRef<AbilitySlot[]>([]);
   abilitySlotsRef.current = [];
@@ -186,6 +187,7 @@ export function BattleScene(props: Props) {
     blackFlashActive,
     blackFlashVariant,
     cameraFocus,
+    triggerAbilityCameraFocus,
     vastolordActive,
     vastolordRemainingMs,
     vastolordTransformationFrame: transformationFrame,
@@ -551,9 +553,15 @@ export function BattleScene(props: Props) {
         if (pressedAbilityKeysRef.current.has(e.key)) return;
         pressedAbilityKeysRef.current.add(e.key);
         slot.press?.();
+        if (slot.abilityId) {
+          triggerAbilityCameraFocus(player.character, slot.abilityId);
+        }
       } else {
         if (e.repeat) return;
         slot.click?.();
+        if (slot.abilityId) {
+          triggerAbilityCameraFocus(player.character, slot.abilityId);
+        }
       }
     }
 
@@ -572,7 +580,7 @@ export function BattleScene(props: Props) {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [controlsDisabled, isBattleNavOpen, player.mode]);
+  }, [controlsDisabled, isBattleNavOpen, player.mode, player.character, triggerAbilityCameraFocus]);
 
   return (
     <div
@@ -859,7 +867,33 @@ export function BattleScene(props: Props) {
 
       <ComboAction />
 
-      <div className="abilityButtons">
+      <div
+        className="abilityButtons"
+        onClick={(e) => {
+          const btn = (e.target as HTMLElement | null)?.closest(".abilityButton");
+          if (!btn) return;
+          const buttons = Array.from(
+            e.currentTarget.querySelectorAll(".abilityButton"),
+          );
+          const idx = buttons.indexOf(btn);
+          if (idx < 0) return;
+          const slot = abilitySlotsRef.current[idx];
+          if (!slot || slot.hold || slot.disabled || !slot.abilityId) return;
+          triggerAbilityCameraFocus(player.character, slot.abilityId);
+        }}
+        onPointerDown={(e) => {
+          const btn = (e.target as HTMLElement | null)?.closest(".abilityButton");
+          if (!btn) return;
+          const buttons = Array.from(
+            e.currentTarget.querySelectorAll(".abilityButton"),
+          );
+          const idx = buttons.indexOf(btn);
+          if (idx < 0) return;
+          const slot = abilitySlotsRef.current[idx];
+          if (!slot || !slot.hold || slot.disabled || !slot.abilityId) return;
+          triggerAbilityCameraFocus(player.character, slot.abilityId);
+        }}
+      >
         {petSkill && pet && (() => {
           abilitySlotsRef.current.push({
             click: petSkill.trigger,
@@ -887,6 +921,7 @@ export function BattleScene(props: Props) {
               (battleMana != null &&
                 battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST),
             hold: false,
+            abilityId: "weaponSwitch",
           });
           return (
             <WeaponSwitchButton
@@ -908,17 +943,20 @@ export function BattleScene(props: Props) {
               click: purplePress,
               disabled: controlsDisabled || !purpleUsable,
               hold: false,
+              abilityId: "purpleSphere",
             });
           } else {
             abilitySlotsRef.current.push({
               click: bluePress,
               disabled: controlsDisabled || !blueUsable,
               hold: false,
+              abilityId: "blueSphere",
             });
             abilitySlotsRef.current.push({
               click: redPress,
               disabled: controlsDisabled || !redUsable,
               hold: false,
+              abilityId: "redSphere",
             });
           }
           abilitySlotsRef.current.push({
@@ -927,6 +965,7 @@ export function BattleScene(props: Props) {
               controlsDisabled ||
               (battleMana?.playerMana ?? 0) < DIVERGENT_FIST_COST,
             hold: false,
+            abilityId: "divergentFist",
           });
           const blinkOrCursedDisabled =
             honoredOneActive
@@ -940,6 +979,7 @@ export function BattleScene(props: Props) {
             click: honoredOneActive ? blink : convertCursedEnergy,
             disabled: blinkOrCursedDisabled,
             hold: false,
+            abilityId: honoredOneActive ? "blink" : "cursedEnergyConversion",
           });
           return (
             <>
@@ -996,23 +1036,27 @@ export function BattleScene(props: Props) {
             release: cloneRelease,
             disabled: controlsDisabled || !cloneUsable,
             hold: true,
+            abilityId: "clone",
           });
           abilitySlotsRef.current.push({
             press: kiChargePress,
             release: kiChargeRelease,
             disabled: controlsDisabled || !kiChargeUsable,
             hold: true,
+            abilityId: "kiCharge",
           });
           abilitySlotsRef.current.push({
             press: genkiDamaPress,
             release: genkiDamaRelease,
             disabled: controlsDisabled || !genkiDamaUsable,
             hold: true,
+            abilityId: "genkiDama",
           });
           abilitySlotsRef.current.push({
             click: kamehamehaPress,
             disabled: controlsDisabled || !kamehamehaUsable,
             hold: false,
+            abilityId: "kamehameha",
           });
           return (
             <>
@@ -1049,17 +1093,20 @@ export function BattleScene(props: Props) {
               click: atomicPress,
               disabled: controlsDisabled,
               hold: false,
+              abilityId: "iAmAtomic",
             });
             abilitySlotsRef.current.push({
               click: granReyCeroPress,
               disabled: controlsDisabled,
               hold: false,
+              abilityId: "granReyCero",
             });
           } else {
             abilitySlotsRef.current.push({
               click: vastolordLaserPress,
               disabled: !vastolordLaserUsable,
               hold: false,
+              abilityId: "vastolordLaser",
             });
           }
           return !vastolordActive ? (
@@ -1091,6 +1138,7 @@ export function BattleScene(props: Props) {
             click: activeAbilityPress,
             disabled: controlsDisabled,
             hold: false,
+            abilityId: "killerQueen",
           });
           return (
             <KillerQueenButton
@@ -1107,6 +1155,7 @@ export function BattleScene(props: Props) {
             click: activeAbilityPress,
             disabled: controlsDisabled,
             hold: false,
+            abilityId: "stackExplosion",
           });
           return (
             <StackExplosionButton
@@ -1123,6 +1172,7 @@ export function BattleScene(props: Props) {
             click: babidiPortalClick,
             disabled: controlsDisabled || !babidiPortalUsable,
             hold: false,
+            abilityId: "dimensionalPortal",
           });
           return (
             <BabidiPortalsButton
@@ -1140,6 +1190,10 @@ export function BattleScene(props: Props) {
             click: domainExpansionPress,
             disabled: controlsDisabled,
             hold: false,
+            abilityId:
+              player.character === "marshadow"
+                ? "domainExpansion"
+                : "domainBurst",
           });
           return (
             <DomainExpansionButton
