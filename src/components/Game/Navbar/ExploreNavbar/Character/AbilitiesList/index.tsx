@@ -1,12 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import { Zap, ShieldCheck, Clock, Coins, Sparkles } from "lucide-react";
+import { useRef, useState } from "react";
+import { Zap, ShieldCheck } from "lucide-react";
 
 import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
 
 import { getCharacterAbilities } from "@/data/characters/abilities";
-import { getEnergyName } from "@/gameRules/battle/mana";
 import { useGameControlsLayer } from "@/hooks/game/useGameControlsLayer";
-import type { CharacterAbility } from "@/utils/types/player/abilities";
 import { PassiveSkills } from "@/components/Game/Battle/PassiveSkills";
 import { usePlayer } from "@/contexts/PlayerContext";
 import {
@@ -16,52 +14,10 @@ import {
 } from "@/utils/character/babidiAttackMode";
 
 import styles from "./styles.module.css";
-import { playerPath, playerProjectilePath } from "@/utils/paths";
+import { BabidiAttackCard, BABIDI_ATTACK_OPTIONS } from "./BabidiAttackCard";
+import { AbilityMeta } from "./AbilitieMeta";
+import { useAutoScrollSelectedItem } from "./useAutoScrollSelectedItem";
 
-function formatCooldown(cooldownMs: number) {
-  return `${cooldownMs / 1000}s`;
-}
-
-function AbilityMeta({
-  ability,
-  characterId,
-}: {
-  ability: CharacterAbility;
-  characterId: CharacterId;
-}) {
-  const energyName = getEnergyName(characterId);
-
-  if (ability.kind === "active") {
-    return (
-      <>
-        {ability.cost !== undefined && (
-          <span className={styles.meta}>
-            <Coins size={12} /> {ability.cost} de {energyName}
-          </span>
-        )}
-        {ability.cooldownMs !== undefined && (
-          <span className={styles.meta}>
-            <Clock size={12} /> Cooldown {formatCooldown(ability.cooldownMs)}
-          </span>
-        )}
-        {ability.requires && (
-          <span className={styles.meta}>
-            <Sparkles size={12} /> {ability.requires}
-          </span>
-        )}
-      </>
-    );
-  }
-
-  return (
-    <>
-      <span className={styles.meta}>Nv. {ability.unlockedAtLevel}</span>
-      {ability.oncePerBattle && (
-        <span className={styles.meta}>1x por batalha</span>
-      )}
-    </>
-  );
-}
 
 export function AbilitiesList({
   characterId,
@@ -74,40 +30,28 @@ export function AbilitiesList({
   const level = progress[characterId]?.level ?? 1;
   const { player } = usePlayer();
 
+  const isBabidi = characterId === "babidi";
+
+  const [babidiMode, setBabidiMode] = useState<BabidiAttackMode>(() =>
+    isBabidi ? getBabidiAttackMode() : "withGun",
+  );
+
   const abilities = getCharacterAbilities(characterId);
   const totalItems = abilities.length;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const isBabidi = characterId === "babidi";
-  const [babidiMode, setBabidiMode] = useState<BabidiAttackMode>(() =>
-    isBabidi ? getBabidiAttackMode() : "withGun",
-  );
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const el = containerRef.current.querySelector<HTMLElement>(
-      `[data-index="${selectedIndex}"]`,
-    );
-    if (!el) return;
-
-    const container = containerRef.current;
-    const elTop = el.offsetTop;
-    const elBottom = elTop + el.offsetHeight;
-    const { scrollTop, clientHeight } = container;
-
-    if (elTop < scrollTop) {
-      container.scrollTop = elTop;
-    } else if (elBottom > scrollTop + clientHeight) {
-      container.scrollTop = elBottom - clientHeight;
-    }
-  }, [selectedIndex]);
+  useAutoScrollSelectedItem({
+    containerRef,
+    selectedIndex,
+  });
 
   useGameControlsLayer(
     {
       onUp: () => setSelectedIndex((i) => Math.max(0, i - 1)),
-      onDown: () => setSelectedIndex((i) => Math.min(totalItems - 1, i + 1)),
+      onDown: () =>
+        setSelectedIndex((i) => Math.min(totalItems - 1, i + 1)),
       ...(isBabidi
         ? {
             onLeft: () =>
@@ -125,21 +69,6 @@ export function AbilitiesList({
     [totalItems, isBabidi, babidiMode],
   );
 
-  const attackConfig = {
-    withGun: {
-      image: "/babidi/inFight/withGun/attacks/bothSidesAttack.svg",
-      label: "Pistola",
-      projectile: "/energyAttack.svg",
-    },
-    withMissile: {
-      image: "/babidi/inFight/withMissile/attacks/attack.svg",
-      label: "Míssil",
-      projectile: "/missile.svg",
-    },
-  } as const;
-
-  const currentAttack = attackConfig[babidiMode];
-
   return (
     <div className="containerOfNavbar" style={{ overflow: "hidden" }}>
       <div className={styles.viewHeader}>
@@ -155,37 +84,29 @@ export function AbilitiesList({
           </p>
         )}
         {isBabidi && (
-          <div
-            className={styles.card}
-            style={{ marginBottom: 8, flexDirection: "row" }}
-          >
-            <div className={styles.imageContainer}>
-              <img
-                src={playerPath(currentAttack.image)}
-                className={styles.image}
-              />
-              <img
-                src={playerProjectilePath(currentAttack.projectile)}
-                className={styles.projectileImage}
-              />
+          <>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                gap: 8,
+                marginBottom: 8,
+              }}
+            >
+              {BABIDI_ATTACK_OPTIONS.map((mode) => (
+                <BabidiAttackCard
+                  key={mode.id}
+                  mode={mode}
+                  selected={babidiMode === mode.id}
+                  onSelect={() => setBabidiMode(mode.id)}
+                />
+              ))}
             </div>
-            <div className={styles.header}>
-              <Zap size={16} color="#fbbf24" />
-              <span className={styles.name}>Modo de ataque básico</span>
-              <span className={`${styles.badge} ${styles.badgeActive}`}>
-                {currentAttack.label}
-              </span>
-            </div>
+
             <p className={styles.description}>
-              Use ←/→ para alternar entre With Gun e With Missile e confirme com a
-              tecla de ação.
+              Use ←/→ para selecionar seu modo de ataque e confirme com a tecla de ação.
             </p>
-            <div className={styles.metaRow}>
-              <span className={styles.meta}>
-                Atual: {currentAttack.label}
-              </span>
-            </div>
-          </div>
+          </>
         )}
 
         {abilities.map((ability, i) => {
@@ -221,10 +142,6 @@ export function AbilitiesList({
           );
         })}
         <PassiveSkills characterId={player.character} startIndex={0} />
-        {/* <div className={styles.title}>
-          <span className={styles.titleMain}>Gran Rey</span>
-          <span className={styles.titleSub}>Cero</span>
-        </div> */}
       </div>
     </div>
   );
