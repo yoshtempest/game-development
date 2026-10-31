@@ -77,7 +77,9 @@ export function resolveBattleSprite(
   // (renderizado pelo `PlayerBattle`). O corpo fica parado no idle enquanto o
   // shield cobre o lado atacado — sem isso a imagem cairia em 404.
   if (state === "blocked" && character === "babidi") {
-    return playerPath(`/babidi/inFight/idle/idle.svg`);
+    return playerPath(
+      `/babidi/inFight/${getBabidiAttackMode()}/idle/idle.svg`,
+    );
   }
   // Habilidades do marshadow: os sprites da sequência ficam em pastas próprias
   // (`habilities/atomic/`, `habilities/domainExpansion/`,
@@ -133,6 +135,11 @@ export function resolveBattleSprite(
     if (character === "marshadow") {
       return playerPath(`/${character}/inFight/default/${state}.svg`);
     }
+    if (character === "babidi") {
+      return playerPath(
+        `/babidi/inFight/${getBabidiAttackMode()}/${state}.svg`,
+      );
+    }
     return playerPath(`/${character}/inFight/${state}.svg`);
   }
   // O ematron aninha TODO o movimento em `inFight/movement/` (idle/jump/run
@@ -149,7 +156,7 @@ export function resolveBattleSprite(
   if (character === "babidi" && folder === "attack") {
     if (getBabidiAttackMode() === "withMissile") {
       const file = state === "attack" ? "attack" : "preAttack";
-      return playerPath(`/babidi/inFight/attacks/withMissile/${file}.svg`);
+      return playerPath(`/babidi/inFight/withMissile/attacks/${file}.svg`);
     }
     const variant = babidiAttackVariant ?? "right";
     const file =
@@ -158,7 +165,7 @@ export function resolveBattleSprite(
         : variant === "both"
           ? "bothSidesAttack"
           : "rightHandAttack";
-    return playerPath(`/babidi/inFight/attacks/withGun/${file}.svg`);
+    return playerPath(`/babidi/inFight/withGun/attacks/${file}.svg`);
   }
   if (character === "yvel" && weapon) {
     return playerPath(
@@ -167,6 +174,11 @@ export function resolveBattleSprite(
   }
   if (character === "marshadow") {
     return playerPath(`/${character}/inFight/default/${resolved}/${state}.svg`);
+  }
+  if (character === "babidi") {
+    return playerPath(
+      `/babidi/inFight/${getBabidiAttackMode()}/${resolved}/${state}.svg`,
+    );
   }
   return playerPath(`/${character}/inFight/${resolved}/${state}.svg`);
 }
