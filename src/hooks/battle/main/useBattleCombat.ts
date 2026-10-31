@@ -14,6 +14,7 @@ import { useNpcAI } from "@/hooks/battle/npc/useAi";
 import { useBattleSystem } from "@/hooks/battle/main/useSystem";
 import { useNpcTargeting } from "@/hooks/battle/npc/useNpcTargeting";
 import { usePlayerBattleActions } from "@/hooks/battle/player/usePlayerActions";
+import { getBabidiAttackMode } from "@/utils/character/babidiAttackMode";
 import { useBabidiEnergyAttack } from "@/hooks/battle/player/characters/babidi/useEnergyAttack";
 import { useBabidiShield } from "@/hooks/battle/player/characters/babidi/useShield";
 import { useSummonAI } from "@/hooks/battle/summon/useAi";
@@ -815,6 +816,7 @@ export function useBattleCombat({
       ematronComboStepIndexRef,
       babidiFireRef,
       babidiOnHitRef,
+      babidiAttackMode: getBabidiAttackMode(),
     });
 
   const babidiEnergy = useBabidiEnergyAttack({

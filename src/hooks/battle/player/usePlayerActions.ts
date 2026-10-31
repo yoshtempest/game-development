@@ -86,6 +86,8 @@ type Props = {
   >;
   /** Colisão do projétil do babidi com um alvo (resolve o dano básico). */
   babidiOnHitRef?: React.RefObject<((target: BabidiTarget) => void) | null>;
+  /** Modo de ataque básico do babidi selecionado pelo jogador. */
+  babidiAttackMode?: "withGun" | "withMissile";
 };
 
 export function usePlayerBattleActions({
@@ -114,6 +116,7 @@ export function usePlayerBattleActions({
   onComboAdvance,
   babidiFireRef,
   babidiOnHitRef,
+  babidiAttackMode,
 }: Props) {
   const fallingAttackUsedRef = useRef(false);
 
@@ -279,8 +282,9 @@ export function usePlayerBattleActions({
     // Babidi: o básico é um disparo de energia — o press só gera o projétil
     // (ninguém leva dano na hora); o dano acontece na colisão, quando o
     // projétil some no primeiro alvo atingido. O cooldown é consumido no
-    // disparo para o mash não gerar saraivada.
-    if (player.character === "babidi") {
+    // disparo para o mash não gerar saraivada. Só no modo withGun; no modo
+    // withMissile o personagem usa o ataque padrão (preAttack -> attack).
+    if (player.character === "babidi" && babidiAttackMode !== "withMissile") {
       const fired = babidiFireRef?.current?.(player, targets) ?? false;
       if (fired) {
         playAttackSound(player.character);
@@ -384,6 +388,7 @@ export function usePlayerBattleActions({
     ematronComboStepIndexRef,
     onComboAdvance,
     babidiFireRef,
+    babidiAttackMode,
   ]);
 
   const handleExtraPunch = useCallback(

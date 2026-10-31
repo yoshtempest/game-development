@@ -9,6 +9,11 @@ import { useGameControlsLayer } from "@/hooks/game/useGameControlsLayer";
 import type { CharacterAbility } from "@/utils/types/player/abilities";
 import { PassiveSkills } from "@/components/Game/Battle/PassiveSkills";
 import { usePlayer } from "@/contexts/PlayerContext";
+import {
+  getBabidiAttackMode,
+  setBabidiAttackMode,
+  type BabidiAttackMode,
+} from "@/utils/character/babidiAttackMode";
 
 import styles from "./styles.module.css";
 
@@ -74,6 +79,11 @@ export function AbilitiesList({
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const isBabidi = characterId === "babidi";
+  const [babidiMode, setBabidiMode] = useState<BabidiAttackMode>(() =>
+    isBabidi ? getBabidiAttackMode() : "withGun",
+  );
+
   useEffect(() => {
     if (!containerRef.current) return;
     const el = containerRef.current.querySelector<HTMLElement>(
@@ -97,8 +107,21 @@ export function AbilitiesList({
     {
       onUp: () => setSelectedIndex((i) => Math.max(0, i - 1)),
       onDown: () => setSelectedIndex((i) => Math.min(totalItems - 1, i + 1)),
+      ...(isBabidi
+        ? {
+            onLeft: () =>
+              setBabidiMode((m) =>
+                m === "withGun" ? "withMissile" : "withGun",
+              ),
+            onRight: () =>
+              setBabidiMode((m) =>
+                m === "withGun" ? "withMissile" : "withGun",
+              ),
+            onConfirm: () => setBabidiAttackMode(babidiMode),
+          }
+        : {}),
     },
-    [totalItems],
+    [totalItems, isBabidi, babidiMode],
   );
 
   return (
@@ -109,6 +132,27 @@ export function AbilitiesList({
           Voltar
         </button>
       </div>
+      {isBabidi && (
+        <div className={styles.card} style={{ marginBottom: 8 }}>
+          <div className={styles.header}>
+            <Zap size={16} color="#fbbf24" />
+            <span className={styles.name}>Modo de ataque básico</span>
+            <span className={`${styles.badge} ${styles.badgeActive}`}>
+              {babidiMode === "withGun" ? "With Gun" : "With Missile"}
+            </span>
+          </div>
+          <p className={styles.description}>
+            Use ←/→ para alternar entre With Gun e With Missile e confirme com a
+            tecla de ação.
+          </p>
+          <div className={styles.metaRow}>
+            <span className={styles.meta}>
+              Atual: {babidiMode === "withGun" ? "With Gun" : "With Missile"}
+            </span>
+          </div>
+        </div>
+      )}
+
       <div ref={containerRef} className={styles.container}>
         {abilities.length === 0 && (
           <p className={styles.empty}>

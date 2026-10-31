@@ -157,6 +157,7 @@ export const GAME_STATE_KEYS = [
   "tombstones",
   "ground_items",
   "footballcourt_dog_spots",
+  "babidi_attack_mode",
 ] as const;
 
 export const slotManager = new SlotManager(lazilyResolvedDefaultStorage());

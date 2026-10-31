@@ -20,6 +20,7 @@ import {
 } from "@/utils/paths/index";
 import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/types";
 import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
+import { getBabidiAttackMode } from "@/utils/character/babidiAttackMode";
 
 export function resolveBattleSprite(
   character: string,
@@ -142,12 +143,14 @@ export function resolveBattleSprite(
     (folder === "attack" && ATTACK_FOLDER_ALT.has(character)
       ? "attacks"
       : folder);
-  // Babidi: o básico é um disparo de energia — os golpes não têm `attack.svg`,
-  // e sim as poses de mão (`leftHandAttack`/`rightHandAttack`, alternadas a
-  // cada golpe, e `bothSidesAttack` quando há inimigos dos dois lados). A
-  // variante chega da batalha; consumidores fora dela (menu de Status, combo,
-  // replay) caem no `rightHandAttack`.
+  // Babidi: o básico tem dois modos selecionáveis pelo jogador (withGun /
+  // withMissile). No modo withGun usa as poses de mão; no modo withMissile
+  // usa a animação padrão preAttack -> attack da pasta withMissile.
   if (character === "babidi" && folder === "attack") {
+    if (getBabidiAttackMode() === "withMissile") {
+      const file = state === "attack" ? "attack" : "preAttack";
+      return playerPath(`/babidi/inFight/attacks/withMissile/${file}.svg`);
+    }
     const variant = babidiAttackVariant ?? "right";
     const file =
       variant === "left"
@@ -155,7 +158,7 @@ export function resolveBattleSprite(
         : variant === "both"
           ? "bothSidesAttack"
           : "rightHandAttack";
-    return playerPath(`/babidi/inFight/attacks/${file}.svg`);
+    return playerPath(`/babidi/inFight/attacks/withGun/${file}.svg`);
   }
   if (character === "yvel" && weapon) {
     return playerPath(
