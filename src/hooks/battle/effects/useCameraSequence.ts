@@ -15,6 +15,12 @@ type Props = {
   enabled?: boolean;
   /** Duração do foco (default: CAMERA_FOCUS_MS). Some fases usam um tempo próprio. */
   focusMs?: number;
+  /** Batalha terminou (vitória/derrota): foca o jogador com 1.5x até o modal. */
+  battleEnded?: boolean;
+  /** Modal de vitória/derrota apareceu: libera o foco de fim de batalha. */
+  modalShown?: boolean;
+  /** Zoom do foco de fim de batalha (default 1.5). */
+  endZoom?: number;
 };
 
 export const CAMERA_FOCUS_MS = THREE_THOUSAND_MS;
@@ -32,6 +38,9 @@ export function useCameraSequence({
   vastolordActive,
   enabled = true,
   focusMs = CAMERA_FOCUS_MS,
+  battleEnded = false,
+  modalShown = false,
+  endZoom = 1.5,
 }: Props) {
   const [focus, setFocus] = useState<CameraFocus>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -59,6 +68,26 @@ export function useCameraSequence({
   );
 
   useEffect(() => {
+    // Modal apareceu: libera o foco de fim de batalha.
+    if (modalShown) {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      setFocus(null);
+      return;
+    }
+
+    // Batalha terminou: foca o jogador com endZoom até o modal aparecer.
+    if (battleEnded) {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      setFocus({ entity: "player", zoom: endZoom });
+      return;
+    }
+
     if (!enabled) {
       prevNpcPhaseRef.current = npcPhase;
       prevVastolordRef.current = vastolordActive;
@@ -85,7 +114,16 @@ export function useCameraSequence({
       return;
     }
     prevVastolordRef.current = vastolordActive;
-  }, [npcPhase, vastolordActive, enabled, focusMs, scheduleEnd]);
+  }, [
+    npcPhase,
+    vastolordActive,
+    enabled,
+    focusMs,
+    scheduleEnd,
+    battleEnded,
+    modalShown,
+    endZoom,
+  ]);
 
   useEffect(() => {
     return () => {

@@ -271,6 +271,9 @@ export function useBattleScene({
     vastolordActive,
     enabled: rewindFrames == null && !showVictory && !showDefeat,
     focusMs: cameraFocusMs,
+    battleEnded: showVictory || showDefeat,
+    modalShown:
+      (showVictory || showDefeat) && showOutro == null && !showHighlight,
   });
   const cameraFocus = cameraFocusHook;
 
