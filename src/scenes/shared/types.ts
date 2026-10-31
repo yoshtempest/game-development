@@ -223,6 +223,7 @@ export type BattleSceneApi = {
   granReyCeroRemaining: number;
   /** Projéteis de energia do ataque básico do babidi em voo. */
   babidiEnergyProjectiles: BabidiEnergyProjectile[];
+  babidiMissileProjectiles: import("@/utils/types/character/babidi").BabidiMissileProjectile[];
   /** Variante de mão do sprite do ataque básico do babidi (pose do golpe atual). */
   babidiAttackVariant: BabidiAttackVariant;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */

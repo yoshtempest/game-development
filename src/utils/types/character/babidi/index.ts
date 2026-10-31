@@ -109,3 +109,18 @@ export type BabidiPortalGhost = {
 
 /** Foco de câmera enquanto um portal voa até o destino (`null` = sem foco). */
 export type BabidiPortalFocus = { x: number; y: number } | null;
+
+/** Projétil missile do ataque básico do babidi no modo withMissile. */
+export type BabidiMissileProjectile = {
+  id: string;
+  x: number;
+  y: number;
+  /** Fase: portal de surgimento, voo teleguiado, ou explosão. */
+  phase: "portal" | "flying" | "exploding";
+  /** Tempo (ms) decorrido desde o spawn (para a animação do portal). */
+  age: number;
+  /** Tempo (ms) restante na fase de explosão. */
+  explosionRemaining: number;
+  /** Alvo atual (id do NPC principal ou summon). */
+  targetId: string | null;
+};

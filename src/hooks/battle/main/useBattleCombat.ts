@@ -16,6 +16,7 @@ import { useNpcTargeting } from "@/hooks/battle/npc/useNpcTargeting";
 import { usePlayerBattleActions } from "@/hooks/battle/player/usePlayerActions";
 import { getBabidiAttackMode } from "@/utils/character/babidiAttackMode";
 import { useBabidiEnergyAttack } from "@/hooks/battle/player/characters/babidi/useEnergyAttack";
+import { useBabidiMissile } from "@/hooks/battle/player/characters/babidi/useMissile";
 import { useBabidiShield } from "@/hooks/battle/player/characters/babidi/useShield";
 import { useSummonAI } from "@/hooks/battle/summon/useAi";
 import { useAllyAI } from "@/hooks/battle/summon/useAllyAI";
@@ -768,6 +769,12 @@ export function useBattleCombat({
     ((player: Player, targets: BabidiTarget[]) => boolean) | null
   >(null);
   const babidiOnHitRef = useRef<((target: BabidiTarget) => void) | null>(null);
+  const babidiMissileFireRef = useRef<
+    ((player: { x: number; y: number }) => boolean) | null
+  >(null);
+  const babidiMissileOnHitRef = useRef<((target: BabidiTarget) => void) | null>(
+    null,
+  );
 
   const { handlePlayerHit, handleSpecialHit, handleExtraPunch, hitTargetList } =
     usePlayerBattleActions({
@@ -816,6 +823,8 @@ export function useBattleCombat({
       ematronComboStepIndexRef,
       babidiFireRef,
       babidiOnHitRef,
+      babidiMissileFireRef,
+      babidiMissileOnHitRef,
       babidiAttackMode: getBabidiAttackMode(),
     });
 
@@ -829,6 +838,15 @@ export function useBattleCombat({
     portalWarpRef,
   });
   babidiFireRef.current = babidiEnergy.fire;
+
+  const babidiMissile = useBabidiMissile({
+    PLAYER_SIZE,
+    timeRef: refs.timeRef,
+    npc: { x: npc.x, y: npc.y },
+    summons,
+    onProjectileHit: (target) => babidiMissileOnHitRef.current?.(target),
+  });
+  babidiMissileFireRef.current = (player) => babidiMissile.fire(player);
 
   const freezeSummonsUntilRef = useRef(0);
 
@@ -1887,6 +1905,7 @@ export function useBattleCombat({
     granReyCeroRemaining,
     disintegrating,
     babidiEnergyProjectiles: babidiEnergy.projectiles,
+    babidiMissileProjectiles: babidiMissile.missiles,
     babidiAttackVariant: babidiEnergy.attackVariant,
     babidiShieldSides: babidiShield.sides,
     onBabidiShieldEnd: babidiShield.end,

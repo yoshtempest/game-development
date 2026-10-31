@@ -22,6 +22,7 @@ import { Bomb } from "./Bomb";
 import { ExtraPunch } from "./srGuaxinim/ExtraPunch";
 import { SpecialProjectile } from "./Projectiles/SpecialProjectile";
 import { EnergyProjectile } from "./Projectiles/EnergyProjectile";
+import { MissileProjectile } from "./Projectiles/MissileProjectile";
 import { LootBag } from "./LootBag";
 import { BlinkAfterimage } from "@/components/Game/Battle/Effects/Natsuki/BlinkAfterimage";
 import { DeiseDashAfterimage } from "@/components/Game/Battle/Effects/DeiseDashAfterimage";
@@ -52,6 +53,7 @@ import type {
 } from "@/utils/types/battle/mugetsu";
 import type {
   BabidiEnergyProjectile,
+  BabidiMissileProjectile,
   BabidiPortal,
   BabidiPortalGhost,
   BabidiShieldSide,
@@ -122,6 +124,7 @@ type Props = {
   disintegrating?: MugetsuDisintegrationTarget[];
   /** Projéteis de energia do ataque básico do babidi. */
   babidiEnergyProjectiles?: BabidiEnergyProjectile[];
+  babidiMissileProjectiles?: BabidiMissileProjectile[];
   /** Pose de mão do sprite do ataque básico do babidi. */
   babidiAttackVariant?: BabidiAttackVariant;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
@@ -183,6 +186,7 @@ export function BattleEntities({
   mugetsuBlink = null,
   disintegrating = [],
   babidiEnergyProjectiles = [],
+  babidiMissileProjectiles = [],
   babidiAttackVariant,
   babidiShieldSides,
   onBabidiShieldEnd,
@@ -322,6 +326,12 @@ export function BattleEntities({
 
       <EnergyProjectile
         projectiles={babidiEnergyProjectiles}
+        battleScaleX={battleScaleX}
+        battleScaleY={battleScaleY}
+      />
+
+      <MissileProjectile
+        projectiles={babidiMissileProjectiles}
         battleScaleX={battleScaleX}
         battleScaleY={battleScaleY}
       />

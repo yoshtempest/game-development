@@ -241,6 +241,7 @@ export function BattleScene(props: Props) {
     granReyCeroUsable,
     granReyCeroRemaining,
     babidiEnergyProjectiles,
+    babidiMissileProjectiles,
     babidiAttackVariant,
     babidiShieldSides,
     onBabidiShieldEnd,
@@ -731,6 +732,7 @@ export function BattleScene(props: Props) {
             mugetsuBlink={mugetsuBlink}
             disintegrating={disintegrating}
             babidiEnergyProjectiles={babidiEnergyProjectiles}
+            babidiMissileProjectiles={babidiMissileProjectiles}
             babidiAttackVariant={babidiAttackVariant}
             babidiShieldSides={babidiShieldSides}
             onBabidiShieldEnd={onBabidiShieldEnd}
