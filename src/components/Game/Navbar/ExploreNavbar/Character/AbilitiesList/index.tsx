@@ -16,6 +16,7 @@ import {
 } from "@/utils/character/babidiAttackMode";
 
 import styles from "./styles.module.css";
+import { playerPath, playerProjectilePath } from "@/utils/paths";
 
 function formatCooldown(cooldownMs: number) {
   return `${cooldownMs / 1000}s`;
@@ -124,6 +125,21 @@ export function AbilitiesList({
     [totalItems, isBabidi, babidiMode],
   );
 
+  const attackConfig = {
+    withGun: {
+      image: "/babidi/inFight/withGun/attacks/bothSidesAttack.svg",
+      label: "Pistola",
+      projectile: "/energyAttack.svg",
+    },
+    withMissile: {
+      image: "/babidi/inFight/withMissile/attacks/attack.svg",
+      label: "Míssil",
+      projectile: "/missile.svg",
+    },
+  } as const;
+
+  const currentAttack = attackConfig[babidiMode];
+
   return (
     <div className="containerOfNavbar" style={{ overflow: "hidden" }}>
       <div className={styles.viewHeader}>
@@ -132,32 +148,44 @@ export function AbilitiesList({
           Voltar
         </button>
       </div>
-      {isBabidi && (
-        <div className={styles.card} style={{ marginBottom: 8 }}>
-          <div className={styles.header}>
-            <Zap size={16} color="#fbbf24" />
-            <span className={styles.name}>Modo de ataque básico</span>
-            <span className={`${styles.badge} ${styles.badgeActive}`}>
-              {babidiMode === "withGun" ? "With Gun" : "With Missile"}
-            </span>
-          </div>
-          <p className={styles.description}>
-            Use ←/→ para alternar entre With Gun e With Missile e confirme com a
-            tecla de ação.
-          </p>
-          <div className={styles.metaRow}>
-            <span className={styles.meta}>
-              Atual: {babidiMode === "withGun" ? "With Gun" : "With Missile"}
-            </span>
-          </div>
-        </div>
-      )}
-
       <div ref={containerRef} className={styles.container}>
         {abilities.length === 0 && (
           <p className={styles.empty}>
             Este personagem ainda não tem habilidades definidas.
           </p>
+        )}
+        {isBabidi && (
+          <div
+            className={styles.card}
+            style={{ marginBottom: 8, flexDirection: "row" }}
+          >
+            <div className={styles.imageContainer}>
+              <img
+                src={playerPath(currentAttack.image)}
+                className={styles.image}
+              />
+              <img
+                src={playerProjectilePath(currentAttack.projectile)}
+                className={styles.projectileImage}
+              />
+            </div>
+            <div className={styles.header}>
+              <Zap size={16} color="#fbbf24" />
+              <span className={styles.name}>Modo de ataque básico</span>
+              <span className={`${styles.badge} ${styles.badgeActive}`}>
+                {currentAttack.label}
+              </span>
+            </div>
+            <p className={styles.description}>
+              Use ←/→ para alternar entre With Gun e With Missile e confirme com a
+              tecla de ação.
+            </p>
+            <div className={styles.metaRow}>
+              <span className={styles.meta}>
+                Atual: {currentAttack.label}
+              </span>
+            </div>
+          </div>
         )}
 
         {abilities.map((ability, i) => {

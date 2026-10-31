@@ -95,97 +95,19 @@
   border-radius: var(--size-6);
 }
 
-.title {
-  position: relative;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 0.8;
-  text-align: center;
+.image {
+  width: 10vw;
+  height: 10vw;
 }
 
-/* GRAN REY */
-.titleMain {
-  position: relative;
-
-  font-family: "Old English Text MT", "UnifrakturCook", fantasy;
-  font-size: clamp(60px, 8vw, 150px);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-
-  /* Interior dourado */
-  background: linear-gradient(
-    to bottom,
-    #fff3c4 0%,
-    #f8d982 15%,
-    #c98724 35%,
-    #fff0a6 48%,
-    #a75d12 65%,
-    #5d2607 85%,
-    #e2a83c 100%
-  );
-
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-
-  /* Contorno */
-  -webkit-text-stroke: 3px #351404;
-
-  /* Profundidade */
-  text-shadow:
-    0 2px 0 #f4c35f,
-    0 5px 0 #7b350b,
-    0 8px 12px rgba(0, 0, 0, 0.9),
-    0 0 4px #ffdc7a;
-  background-size: 200% 200%;
-
-  animation: goldShine 4s ease-in-out infinite;
+.projectileImage {
+  position: absolute;
+  height: 6vw;
+  width: 6vw;
+  right: 0;
 }
 
-@keyframes goldShine {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-/* CERO */
-.titleSub {
+.imageContainer {
+  display: flex;
   position: relative;
-  z-index: 2;
-
-  margin-top: 10px;
-
-  font-family: "Old English Text MT", "UnifrakturCook", fantasy;
-  font-size: clamp(55px, 7vw, 130px);
-  font-weight: 900;
-  letter-spacing: 0.02em;
-
-  background: linear-gradient(
-    to bottom,
-    #f8d8ff 0%,
-    #d879ff 20%,
-    #8b16d1 45%,
-    #e25cff 60%,
-    #5a008f 100%
-  );
-
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-
-  -webkit-text-stroke: 3px #25003d;
-
-  text-shadow:
-    0 2px 0 #bd48ed,
-    0 5px 0 #4a0072,
-    0 8px 15px rgba(0, 0, 0, 0.95),
-    0 0 15px rgba(190, 40, 255, 0.7);
 }
