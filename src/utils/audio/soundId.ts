@@ -48,6 +48,7 @@ export type SoundId =
   | "openPortal"
   | "portalTeleport"
   | "shot"
+  | "missile"
   | "domainBreak"
   | "blink"
   | "clap"

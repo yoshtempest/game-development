@@ -25,7 +25,10 @@ export const ATTACK_SOUNDS: Partial<
 
   babidi: {
     volume: 1,
-    sounds: [charactersSoundPath("babidi/shot.mp3")],
+    sounds: [
+      charactersSoundPath("babidi/shot.mp3"),
+      charactersSoundPath("babidi/missile.mp3"),
+    ],
   },
 
   srGuaxinim: {
