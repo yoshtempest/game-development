@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { useLatestRef } from "@/hooks/useLatestRef";
+import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { getTime, type TimeEffect } from "@/gameRules/battle/time";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 
@@ -36,6 +37,8 @@ export function useBabidiMissile({
   summons,
   onProjectileHit,
 }: Props) {
+  const { playSound } = useSoundEffects();
+  const playSoundRef = useLatestRef(playSound);
   const [missiles, setMissiles] = useState<BabidiMissileProjectile[]>([]);
 
   const onProjectileHitRef = useLatestRef(onProjectileHit);
@@ -239,6 +242,7 @@ export function useBabidiMissile({
           if (dist <= HIT_RADIUS) {
             // hit: atinge o ponto de mira da sprite do inimigo
             onProjectileHitRef.current({ id: target.id, x: target.x, y: target.y });
+            playSoundRef.current("explosion");
             next.push({
               ...m,
               targetId,
@@ -272,7 +276,7 @@ export function useBabidiMissile({
     }, TICK_MS);
 
     return () => clearInterval(interval);
-  }, [missiles.length, npcRef, summonsRef, timeRef, onProjectileHitRef]);
+  }, [missiles.length, npcRef, summonsRef, timeRef, onProjectileHitRef, isAlfaRef, npcPhaseRef, npcTypeRef, playSoundRef, playerSizeRef]);
 
   return { missiles, fire };
 }

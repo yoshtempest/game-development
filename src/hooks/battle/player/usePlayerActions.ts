@@ -5,6 +5,7 @@ import {
   PLAYER_SPECIAL_COOLDOWN,
 } from "@/data/cooldowns";
 import { playAttackSound } from "@/utils/audio/playAttackSound";
+import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { isPlayerInRange } from "@/gameRules/battle/range";
 import { NPC_CLASS_HITBOX_BONUS } from "@/gameRules/battle/range/config";
 import { isFacingTarget } from "@/gameRules/battle/direction";
@@ -126,6 +127,7 @@ export function usePlayerBattleActions({
   babidiMissileOnHitRef,
   babidiAttackMode,
 }: Props) {
+  const { playSound } = useSoundEffects();
   const fallingAttackUsedRef = useRef(false);
 
   useEffect(() => {
@@ -305,14 +307,14 @@ export function usePlayerBattleActions({
       if (babidiAttackMode === "withMissile") {
         const fired = babidiMissileFireRef?.current?.(player) ?? false;
         if (fired) {
-          playAttackSound(player.character);
+          playSound("missile");
           resetCooldownRef(PLAYER_BASIC_COOLDOWN, battle.playerCooldown);
         }
         return;
       }
       const fired = babidiFireRef?.current?.(player, targets) ?? false;
       if (fired) {
-        playAttackSound(player.character);
+        playSound("shot");
         resetCooldownRef(PLAYER_BASIC_COOLDOWN, battle.playerCooldown);
       }
       return;
@@ -415,6 +417,7 @@ export function usePlayerBattleActions({
     babidiFireRef,
     babidiMissileFireRef,
     babidiAttackMode,
+    playSound,
   ]);
 
   const handleExtraPunch = useCallback(
