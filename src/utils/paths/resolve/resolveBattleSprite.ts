@@ -1,6 +1,6 @@
 import { STATE_FOLDER } from "@/data/sprites/sprites";
 import { ALL_PREDICATES, stateData } from "@/gameRules/battle/playerStates";
-import { ATOMIC_SPRITES } from "@/utils/paths/player/constants";
+import { ATOMIC_SPRITES, NATSUKI_ATTACK_SPRITES, MARSHADOW_ATTACK_SPRITES } from "@/utils/paths/player/constants";
 import { ATTACK_FOLDER_ALT } from "@/utils/paths/player/constants";
 import { CHARACTER_STATE_FOLDER_ALT } from "@/utils/paths/player/constants";
 import { DOMAIN_EXPANSION_SPRITES } from "@/utils/paths/player/constants";
@@ -74,6 +74,22 @@ export function resolveBattleSprite(
 
     if (attackSprite) {
       return playerPath(`/ematron/inFight/attacks/${attackSprite}.svg`);
+    }
+  }
+
+  if (character === "natsuki") {
+    const attackSprite = stateData(NATSUKI_ATTACK_SPRITES, state);
+
+    if (attackSprite) {
+      return playerPath(`/natsuki/inFight/attacks/${attackSprite}.svg`);
+    }
+  }
+
+  if (character === "marshadow") {
+    const attackSprite = stateData(MARSHADOW_ATTACK_SPRITES, state);
+
+    if (attackSprite) {
+      return playerPath(`/marshadow/inFight/default/attacks/${attackSprite}.svg`);
     }
   }
   // Babidi não tem `blocked.svg`: o bloqueio dele é o overlay `shield.svg`

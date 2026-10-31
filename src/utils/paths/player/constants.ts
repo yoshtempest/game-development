@@ -91,6 +91,16 @@ export const EMATRON_ATTACK_SPRITES = {
   fallingAttack: "lowKick",
 } as const;
 
+export const NATSUKI_ATTACK_SPRITES = {
+  blockAttack: "punch",
+  fallingAttack: "kick",
+} as const;
+
+export const MARSHADOW_ATTACK_SPRITES = {
+  blockAttack: "dash",
+  fallingAttack: "attack",
+} as const;
+
 /**
  * Sequência de Setup das esferas do natsuki (blue/red), em `habilities/Setup/`:
  * `one.svg` é o surgimento com blink, `two.svg` o deslocamento/controle e
