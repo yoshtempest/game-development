@@ -3,7 +3,6 @@ import {
   useEffect,
   useRef,
   useState,
-  type RefObject,
 } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useGameControls } from "@/contexts/GameControlsContext";
@@ -12,9 +11,6 @@ import {
   getGroundAtX,
   isHorizontallyBlocked,
 } from "@/gameRules/battle/obstacles";
-import type { BattleManaApi } from "@/contexts/BattleManaContext";
-import type { SoundId } from "@/utils/audio/soundId";
-import type { BattleObstacle } from "@/utils/types/maps/battle";
 import type { EmatronCloneVisual } from "@/utils/types/character/ematron";
 import {
   EMATRON_CLONE_COLLISION_H,
@@ -27,23 +23,7 @@ import {
   EMATRON_CLONE_TIME_SCALE,
 } from "@/data/characters/ematron";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
-
-type Props = {
-  player: Player;
-  setPlayer: React.Dispatch<React.SetStateAction<Player>>;
-  battleManaRef: RefObject<BattleManaApi | null>;
-  obstacles?: BattleObstacle[];
-  freezeActionsUntilRef: RefObject<number>;
-  setTimeScale: (scale: number) => void;
-  resetTimeScale: () => void;
-  playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
-  /** Chamado quando o press inicia a instância (carga da Expansão de Domínio). */
-  onUsed?: () => void;
-  isPausedRef: RefObject<boolean>;
-  /** true quando os controles gerais de batalha estão desabilitados (pause, transição de fase, throw). */
-  disabledRef: RefObject<boolean>;
-  battleEndedRef: RefObject<boolean>;
-};
+import type { CloneProps } from "./types";
 
 /**
  * Instância do Ematron: segurar o botão cria uma segunda cópia em silhueta que
@@ -66,7 +46,7 @@ export function useEmatronClone({
   isPausedRef,
   disabledRef,
   battleEndedRef,
-}: Props) {
+}: CloneProps) {
   const { pushControls } = useGameControls();
 
   const [cloneVisual, setCloneVisual] = useState<EmatronCloneVisual | null>(

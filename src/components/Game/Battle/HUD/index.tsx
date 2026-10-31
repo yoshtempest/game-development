@@ -1,6 +1,5 @@
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
-import type { SummonedNpc } from "@/utils/types/npc/npc";
 import { getRank, srcRank } from "@/gameRules/rank";
 import { getCharacterElementTypes } from "@/data/types/characterElementTypes";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
@@ -9,41 +8,7 @@ import { PlayerHUDPanel } from "./PlayerPanel";
 import { NPCHUDPanel } from "./NpcPanel";
 import { SummonHUDList } from "./SummonList";
 import { AllyHUDList } from "./AllyList";
-
-type BattleHUDState = {
-  playerHP: number;
-  playerMaxHp: number;
-  playerShield: number;
-  npcHP: number;
-  delicia: number;
-  hitsToSpecial: number;
-  blockGauge: number;
-  blockLimit: number;
-  npcBlockGauge: number;
-  npcBlockLimit: number;
-  energy?: number;
-  mana?: number;
-  manaMax?: number;
-};
-
-type NpcStats = {
-  hp: number;
-  damage: number;
-};
-
-type Props = {
-  battle: BattleHUDState;
-  npcStats: NpcStats;
-  npcType?: string;
-  npcLevel?: number;
-  summons?: SummonedNpc[];
-  allies?: SummonedNpc[];
-  isAlfa?: boolean;
-  /** Gauge do special do NPC (alfas). undefined = sem special. */
-  npcSpecialGauge?: number;
-  /** Forma especial ativa (Forma Vastolord): troca a face do HUD do jogador. */
-  playerForm?: "vastolordForm";
-};
+import type { BattleHudProps } from "./types";
 
 export function BattleHUD({
   battle,
@@ -55,7 +20,7 @@ export function BattleHUD({
   isAlfa = false,
   npcSpecialGauge,
   playerForm,
-}: Props) {
+}: BattleHudProps) {
   const { player } = usePlayer();
   const { progress } = useCharacterProgress();
   const playerName = localStorage.getItem("playerName") || "Protagonista";

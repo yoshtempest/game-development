@@ -15,7 +15,7 @@ import {
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { TimeEffect } from "@/gameRules/battle/time";
 import type { useBattleRefs } from "@/hooks/battle/utilities/useRefs";
-import type { useBattleSystem } from "@/hooks/battle/main/useSystem";
+import type { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 import type { CharactersProgress } from "@/data/characters/defaultProgress";
 import type { SoundId } from "@/utils/audio/soundId";
 import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/types";

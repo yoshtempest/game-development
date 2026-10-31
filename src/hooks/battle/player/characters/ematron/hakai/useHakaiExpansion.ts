@@ -1,48 +1,12 @@
-import { useCallback, useEffect, useRef, useState, type Dispatch, type RefObject, type SetStateAction } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { applyTime, clearTime } from "@/gameRules/battle/time";
-import type { TimeEffect } from "@/gameRules/battle/time";
 import { ALL_TIME_KINDS } from "@/gameRules/battle/time/types";
 import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
-import type { BattleManaApi } from "@/contexts/BattleManaContext";
-import type { SoundId } from "@/utils/audio/soundId";
-import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/types";
-import type { SummonedNpc } from "@/utils/types/npc/npc";
 import type { EmatronCloneVisual } from "@/utils/types/character/ematron";
+import type { HakaiApi, HakaiProps } from "./types";
 
-type Props = {
-  player: Player;
-  setPlayer: Dispatch<SetStateAction<Player>>;
-  npc: { x: number; y: number };
-  npcHP: number;
-  npcMaxHp: number;
-  setNpcHP: Dispatch<SetStateAction<number>>;
-  summons: SummonedNpc[];
-  setSummons: Dispatch<SetStateAction<SummonedNpc[]>>;
-  spawnDamageNumber: (value: number, x: number, y: number, type: DamageType) => void;
-  freezeActionsUntilRef: RefObject<number>;
-  startSpecialIntro: (character: string, onActivate: () => void, ability?: string, form?: MarshadowBattleForm, onCancel?: () => void) => boolean;
-  battleManaRef: RefObject<BattleManaApi | null>;
-  timeRef: RefObject<TimeEffect[]>;
-  isPausedRef: RefObject<boolean>;
-  isMenuOpen: boolean;
-  battleEndedRef: RefObject<boolean>;
-  disabledRef: RefObject<boolean>;
-  playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
-  charges: number;
-  chargesMax: number;
-  setDelicia: Dispatch<SetStateAction<number>>;
-};
-
-type HakaiApi = {
-  active: boolean;
-  shattering: boolean;
-  press: () => void;
-  usable: boolean;
-  cloneVisual: EmatronCloneVisual | null;
-  hakai: boolean;
-};
 
 export function useHakaiExpansion({
   player,
@@ -60,7 +24,7 @@ export function useHakaiExpansion({
   charges,
   chargesMax,
   setDelicia,
-}: Props): HakaiApi {
+}: HakaiProps): HakaiApi {
   const [active, setActive] = useState(false);
   const [hakai, setHakai] = useState(false);
   const [cloneVisual, setCloneVisual] = useState<EmatronCloneVisual | null>(null);

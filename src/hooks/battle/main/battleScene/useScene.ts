@@ -12,7 +12,7 @@ import { useLootNotifications } from "@/hooks/battle/loot/useLootNotifications";
 import { useBattleRefs } from "@/hooks/battle/utilities/useRefs";
 import { useBattleOutro } from "@/hooks/battle/modals/useOutro";
 import { useBattleStageSetup } from "@/hooks/battle/useBattleStageSetup";
-import { useBattleCombat } from "@/hooks/battle/main/useBattleCombat";
+import { useBattleCombat } from "@/hooks/battle/main/battleCombat/useBattleCombat";
 import { useBattlePresentation } from "@/hooks/battle/utilities/useBattlePresentation";
 import { useMenuPause } from "@/hooks/battle/utilities/useMenuPause";
 import { VASTOLORD_TRANSFORM_MS } from "@/hooks/battle/player/characters/marshadow/useVastolordForm";
@@ -37,21 +37,8 @@ import { loadBestTime, saveBestTime } from "@/utils/bestTime";
 import { recordWin } from "@/utils/rewards";
 import { computeElapsedBattleTime } from "@/hooks/battle/time/computeElapsedBattleTime";
 import { INVOCATION_MS } from "@/services/npc/attacks/hungryKing/state";
-import type { BattleMapConfig } from "@/utils/types/maps/battle";
 import type { LootBagContents } from "@/utils/types/battle/loot";
-
-type Props = {
-  npcType: string;
-  redirectTo?: string;
-  audioSrc: string;
-  onVictory?: () => void;
-  map?: BattleMapConfig;
-  background?: string;
-  training?: boolean;
-  isAlfa?: boolean;
-  npcLevel?: number;
-  PLAYER_SIZE: number;
-};
+import type { BattleSceneProps } from "./types";
 
 export function useBattleScene({
   npcType,
@@ -64,7 +51,7 @@ export function useBattleScene({
   isAlfa = false,
   npcLevel: npcLevelProp,
   PLAYER_SIZE,
-}: Props) {
+}: BattleSceneProps) {
   const navigate = useNavigate();
   const location = useLocation();
 

@@ -10,7 +10,7 @@ export type TileRouteFunction = (
  * a cena é a camada que compõe os hooks, então a dependência fica aqui e
  * não em `utils/types/` (que é a base e não deve conhecer React).
  */
-import type { useBattleSystem } from "@/hooks/battle/main/useSystem";
+import type { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 import type { useNpcAI } from "@/hooks/battle/npc/useAi";
 import type { useChargeAttack } from "@/hooks/battle/charge/useAttack";
 import type { useSrGuaxinimOraPunch } from "@/hooks/battle/player/characters/srGuaxinim/useSrGuaxinimOraPunch";
@@ -21,10 +21,10 @@ import type { useSpecialIntro } from "@/hooks/battle/modals/useSpecialIntro";
 import type { usePlayerSpecialProjectile } from "@/hooks/battle/player/usePlayerSpecialProjectile";
 import type { useCoffinAnimation } from "@/hooks/battle/summon/useCoffinAnimation";
 import type { useNpcSetup } from "@/hooks/battle/npc/useSetup";
-import type { useEmatronClone } from "@/hooks/battle/player/characters/ematron/useClone";
-import type { useEmatronGenkiDama } from "@/hooks/battle/player/characters/ematron/useGenkiDama";
+import type { useEmatronClone } from "@/hooks/battle/player/characters/ematron/clone/useClone";
+import type { useEmatronGenkiDama } from "@/hooks/battle/player/characters/ematron/genkiDama/useGenkiDama";
 import type { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
-import type { useKamehameha } from "@/hooks/battle/player/characters/ematron/useKamehameha";
+import type { useKamehameha } from "@/hooks/battle/player/characters/ematron/kamehameha/useKamehameha";
 import type { useAtomic } from "@/hooks/battle/player/characters/marshadow/useAtomic";
 import type { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/useMugetsuExpansion";
 import type { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";

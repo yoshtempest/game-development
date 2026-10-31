@@ -2,7 +2,7 @@ import type { Dispatch, RefObject, SetStateAction } from "react";
 
 import type { CharactersProgress } from "@/data/characters/defaultProgress";
 import type { useBattleRefs } from "@/hooks/battle/utilities/useRefs";
-import type { useBattleSystem } from "@/hooks/battle/main/useSystem";
+import type { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 import type {
   NatsukiSphere,

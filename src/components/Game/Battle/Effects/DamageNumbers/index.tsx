@@ -1,45 +1,16 @@
 import styles from "./styles.module.css";
-import type { DamageNumber } from "@/hooks/battle/damage/useNumbers";
-import type { DamageTarget } from "@/utils/battle/findDamageTarget";
 import { findDamageTarget } from "@/utils/battle/findDamageTarget";
 import { titleBadgePath } from "@/utils/paths";
+import { type DamageNumbersProps, TYPE_CLASS } from "./constants";
 
 export type { DamageTarget } from "@/utils/battle/findDamageTarget";
-
-type Props = {
-  numbers: DamageNumber[];
-  scaleX: number;
-  scaleY: number;
-  targets: DamageTarget[];
-};
-
-const TYPE_CLASS: Record<string, string> = {
-  player: styles.player!,
-  npc: styles.npc!,
-  special: styles.special!,
-  pet: styles.pet!,
-  summon: styles.summon!,
-  projectile: styles.projectile!,
-  blocked: styles.blocked!,
-  parry: styles.parry!,
-  reflect: styles.reflect!,
-  crit: styles.crit!,
-  charge: styles.charge!,
-  miss: styles.miss!,
-  burn: styles.burn!,
-  poison: styles.poison!,
-  freeze: styles.freeze!,
-  confuse: styles.confuse!,
-  armor: styles.armor!,
-  heal: styles.heal!,
-};
 
 const HEAD_GAP = 8;
 /** Tipos que não pertencem a um personagem: ficam no ponto do projétil. */
 const NO_SNAP_TYPES = new Set<string>(["projectile"]);
 const NO_SNAP_OFFSET = 20;
 
-export function DamageNumbers({ numbers, scaleX, scaleY, targets }: Props) {
+export function DamageNumbers({ numbers, scaleX, scaleY, targets }: DamageNumbersProps) {
   return (
     <>
       {numbers.map((n) => {

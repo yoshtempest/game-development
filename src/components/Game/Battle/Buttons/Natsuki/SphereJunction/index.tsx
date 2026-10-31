@@ -9,28 +9,8 @@ import { BlueSphereButton } from "@/components/Game/Battle/Buttons/Natsuki/BlueS
 import { RedSphereButton } from "@/components/Game/Battle/Buttons/Natsuki/RedSphere";
 import { PurpleSphereButton } from "@/components/Game/Battle/Buttons/Natsuki/PurpleSphere";
 import styles from "./styles.module.css";
-
-type Props = {
-  blueActive: boolean;
-  blueDisabled: boolean;
-  redDisabled: boolean;
-  /** Fusão em curso (a purple está em campo): mostra só o botão roxo. */
-  purpleActive: boolean;
-  purpleDisabled: boolean;
-  onBlue: () => void;
-  onRed: () => void;
-  /** Soltou uma esfera sobre a outra: funde em purple. */
-  onPurple: () => void;
-};
-
-type Drag = {
-  node: HTMLElement;
-  other: HTMLElement | null;
-  startX: number;
-  startY: number;
-  moved: boolean;
-  pointerId: number;
-};
+import { centersCloseEnough } from "./centersCloseEnough";
+import type { SphereJunctionProps, Drag } from "./types";
 
 /** Distância (px) além da qual o gesto deixa de ser um clique e vira arraste. */
 const DRAG_THRESHOLD = 6;
@@ -41,15 +21,6 @@ const DRAG_THRESHOLD = 6;
  * para um leve tremor não fundir as duas.
  */
 const MERGE_REACH = 0.8;
-
-function centersCloseEnough(a: DOMRect, b: DOMRect, factor: number) {
-  const ax = a.left + a.width / 2;
-  const ay = a.top + a.height / 2;
-  const bx = b.left + b.width / 2;
-  const by = b.top + b.height / 2;
-  const reach = Math.max(b.width, b.height) * factor;
-  return Math.hypot(ax - bx, ay - by) <= reach;
-}
 
 /**
  * Botões blue/red do natsuki com o gesto de FUSÃO: arrastar uma esfera sobre a
@@ -69,7 +40,7 @@ export function SphereJunction({
   onBlue,
   onRed,
   onPurple,
-}: Props) {
+}: SphereJunctionProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const dragRef = useRef<Drag | null>(null);
   // Um arraste não pode virar clique ao soltar (o `click` vem logo depois).

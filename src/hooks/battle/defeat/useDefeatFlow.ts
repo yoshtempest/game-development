@@ -4,7 +4,7 @@ import { incrementDeath, recordDefeat } from "@/utils/rewards";
 import type { CharacterId } from "@/data/characters/list";
 import type { Enchantment } from "@/data/equipment/enchantments";
 import type { useChargeAttack } from "@/hooks/battle/charge/useAttack";
-import type { useBattleSystem } from "@/hooks/battle/main/useSystem";
+import type { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 import type { useNpcAI } from "@/hooks/battle/npc/useAi";
 
 type Props = {

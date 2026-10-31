@@ -22,7 +22,7 @@ import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/Gr
 import { GameMap } from "@/components/Game/Map/Game";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useGameLayout } from "@/hooks/game/useGameLayout";
-import { useBattleScene } from "@/hooks/battle/main/useScene";
+import { useBattleScene } from "@/hooks/battle/main/battleScene/useScene";
 import { BattleEntities } from "@/components/Game/Battle/Entities";
 import { BattleMap } from "@/components/Game/Map/Battle";
 import { DamageNumbers } from "@/components/Game/Battle/Effects/DamageNumbers";

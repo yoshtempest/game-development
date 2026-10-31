@@ -4,14 +4,13 @@ import {
   useMemo,
   useRef,
   useState,
-  type RefObject,
 } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useGrabThrow } from "@/hooks/battle/throw/useGrabThrow";
 import { useThrowAnimation } from "@/hooks/battle/throw/useThrowAnimation";
 import { useSpecialIntro } from "@/hooks/battle/modals/useSpecialIntro";
 import { useNpcAI } from "@/hooks/battle/npc/useAi";
-import { useBattleSystem } from "@/hooks/battle/main/useSystem";
+import { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 import { useNpcTargeting } from "@/hooks/battle/npc/useNpcTargeting";
 import { usePlayerBattleActions } from "@/hooks/battle/player/usePlayerActions";
 import { getBabidiAttackMode } from "@/utils/character/babidiAttackMode";
@@ -22,7 +21,6 @@ import { useSummonAI } from "@/hooks/battle/summon/useAi";
 import { useAllyAI } from "@/hooks/battle/summon/useAllyAI";
 import { useBattleControls } from "@/hooks/battle/useControls";
 import { useComboSystem } from "@/hooks/battle/effects/useComboSystem";
-import { useBattleRefs } from "@/hooks/battle/utilities/useRefs";
 import { useBattleKillCounter } from "@/hooks/battle/death/useKillCounter";
 import { useChargeAttack } from "@/hooks/battle/charge/useAttack";
 import { usePhaseTransition } from "@/hooks/battle/death/usePhaseTransition";
@@ -35,16 +33,16 @@ import { useActiveSkills } from "@/hooks/battle/utilities/useActiveSkills";
 import { useStatusDots } from "@/hooks/battle/effects/useStatusDots";
 import { useTrainingEffects } from "@/hooks/battle/effects/useTrainingEffects";
 import { useSrGuaxinimBattle } from "@/hooks/battle/player/characters/srGuaxinim/useSrGuaxinimBattle";
-import { useEmatronClone } from "@/hooks/battle/player/characters/ematron/useClone";
+import { useEmatronClone } from "@/hooks/battle/player/characters/ematron/clone/useClone";
 import { useEmatronKiCharge } from "@/hooks/battle/player/characters/ematron/useKiCharge";
-import { useEmatronGenkiDama } from "@/hooks/battle/player/characters/ematron/useGenkiDama";
+import { useEmatronGenkiDama } from "@/hooks/battle/player/characters/ematron/genkiDama/useGenkiDama";
 import { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
-import { useKamehameha } from "@/hooks/battle/player/characters/ematron/useKamehameha";
+import { useKamehameha } from "@/hooks/battle/player/characters/ematron/kamehameha/useKamehameha";
 import { useVastolordRoar } from "@/hooks/battle/player/characters/marshadow/useVastolordRoar";
 import { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
 import { useNatsukiSpheres } from "@/hooks/battle/player/characters/natsuki/spheres/useNatsukiSpheres";
 import { useMuryokushoExpansion } from "@/hooks/battle/player/characters/natsuki/useMuryokushoExpansion";
-import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/useHakaiExpansion";
+import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/hakai/useHakaiExpansion";
 import { useBabidiPortals } from "@/hooks/battle/player/characters/babidi/usePortals";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import {
@@ -100,59 +98,14 @@ import {
   BATTLE_LIMITS,
   BLOCK_ATTACK_PUSH_DISTANCE,
 } from "@/gameRules/movement/constants";
-import { useBattleStageSetup } from "@/hooks/battle/useBattleStageSetup";
 import { INTRO_MS } from "@/services/npc/attacks/hungryDog/state";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import { clampX } from "@/gameRules/movement/clampX";
-import type { BattleObstacle } from "@/utils/types/maps/battle";
-import type { BattleManaApi } from "@/contexts/BattleManaContext";
-import type { useBlinkAnimation } from "@/hooks/battle/player/characters/natsuki/useBlinkAnimation";
 import type {
   BabidiPortalWarpFn,
   BabidiTarget,
 } from "@/utils/types/character/babidi";
-
-type Props = {
-  setup: ReturnType<typeof useBattleStageSetup>;
-  refs: ReturnType<typeof useBattleRefs>;
-  npcType: string;
-  isAlfa: boolean;
-  training: boolean;
-  obstacles?: BattleObstacle[];
-  PLAYER_SIZE: number;
-  lootActiveRef: RefObject<boolean>;
-  onPlayerDeathRef: RefObject<() => void>;
-  onNpcDeathRef: RefObject<() => void>;
-  battleManaRef: RefObject<BattleManaApi | null>;
-  isPausedRef: RefObject<boolean>;
-  isMenuOpenRef: RefObject<boolean>;
-  /**
-   * Menu da batalha aberto (pausa dirigida pelo jogador), na forma booleana:
-   * os hooks de Expansão de Domínio e o intro usam para congelar os próprios
-   * timers e prazos, que precisam de reatividade (não de um ref).
-   */
-  isMenuOpen: boolean;
-  honoredOneActiveRef: RefObject<boolean>;
-  honoredFleeRef: RefObject<boolean>;
-  surviveLethalHitRef: RefObject<() => boolean>;
-  /** O Abençoado está na coreografia (gatilho → pouso): trava todo controle. */
-  honoredSequence: boolean;
-  honoredRegenActive: boolean;
-  vastolordMultiplierRef: RefObject<() => number>;
-  vastolordActive: boolean;
-  /** Quadro da transformação do marshadow (0=screamOne … 3=transformated) ou null. */
-  transformationFrame: number | null;
-  /** Aumenta a duração restante da Forma Vastolord (passiva do marshadow). */
-  extendVastolordRef: RefObject<(ms: number) => void>;
-  cursedEnergyEnabled: boolean;
-  onKokusenRef: RefObject<() => void>;
-  onBlackFlashRef: RefObject<() => void>;
-  onDivergentFistConsumedRef: RefObject<() => void>;
-  triggerBlink: ReturnType<typeof useBlinkAnimation>["triggerBlink"];
-  divergentFistActive: boolean;
-  divergentFistRef: RefObject<boolean>;
-  setDivergentFistActive: React.Dispatch<React.SetStateAction<boolean>>;
-};
+import type { BattleCombatProps } from "./types";
 
 export function useBattleCombat({
   setup,
@@ -186,7 +139,7 @@ export function useBattleCombat({
   divergentFistActive,
   divergentFistRef,
   setDivergentFistActive,
-}: Props) {
+}: BattleCombatProps) {
   const {
     player,
     setPlayer,

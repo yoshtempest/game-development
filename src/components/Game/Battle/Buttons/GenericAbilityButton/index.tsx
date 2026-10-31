@@ -1,37 +1,11 @@
 import type { CSSProperties } from "react";
 
 import { getActiveAbility } from "@/data/characters/abilities";
-import type { CharacterId } from "@/data/characters/list";
 
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
 
 import styles from "./styles.module.css";
-
-type Props = {
-  /** Dono da habilidade — o id sozinho não basta (`domainBurst` é compartilhado). */
-  characterId: CharacterId;
-  /** Id da ativa em `<char>/abilities.ts` (ex.: `killerQueen`, `blueSphere`). */
-  abilityId: string;
-  /** `standard` = clique com cooldown; `hold` = segurar/soltar com pointer capture. */
-  behavior?: "standard" | "hold";
-  /** Rótulo curto quando o nome do dado não cabe no botão (ex.: "EXPLOSÃO"). */
-  label?: string;
-  /** Cor da borda, rótulo e brilho. Ausente = accent do tema. */
-  accent?: string;
-  /** Arte de fundo opcional (path já resolvido por `asset()` no consumidor). */
-  background?: string;
-  ready?: boolean;
-  remaining?: number;
-  disabled?: boolean;
-  /** `hold` cheio (ex.: Ki no máximo): pinta o botão de verde. */
-  full?: boolean;
-  /** Valor exibido no `hold` (energia atual). */
-  energy?: number;
-  onClick?: () => void;
-  onPress?: () => void;
-  onRelease?: () => void;
-  className?: string;
-};
+import type { GenericButtonProps } from "./types";
 
 /**
  * Botão genérico de habilidade ativa: nome, descrição e custo vêm do registro
@@ -68,7 +42,7 @@ export function GenericAbilityButton({
   onPress,
   onRelease,
   className,
-}: Props) {
+}: GenericButtonProps) {
   const ability = getActiveAbility(characterId, abilityId);
   // Habilidade não registrada é erro de dado, não de render: sem botão é o
   // mesmo comportamento de um personagem sem ativa, e o import que faltou

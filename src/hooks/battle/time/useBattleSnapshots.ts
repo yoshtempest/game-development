@@ -1,7 +1,7 @@
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { getComboAction } from "@/data/battle/comboActions";
 import type { useNpcAI } from "@/hooks/battle/npc/useAi";
-import type { useBattleSystem } from "@/hooks/battle/main/useSystem";
+import type { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 import type { ComboRank } from "@/utils/types/battle/combo";
 import type { SummonedNpc } from "@/utils/types/npc/npc";
 import type {
