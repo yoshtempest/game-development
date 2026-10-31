@@ -74,6 +74,7 @@ export function useBabidiMissile({
         age: 0,
         explosionRemaining: 0,
         targetId: target?.id ?? null,
+        dirX: 1,
       };
 
       setMissiles((prev) => [...prev, missile]);
@@ -170,7 +171,13 @@ export function useBabidiMissile({
           const step = (SPEED_PER_TICK * speed) / (dist || 1);
           const newX = m.x + dx * step;
           const newY = m.y + dy * step;
-          next.push({ ...m, x: newX, y: newY, targetId });
+          next.push({
+            ...m,
+            x: newX,
+            y: newY,
+            targetId,
+            dirX: dx >= 0 ? 1 : -1,
+          });
         }
 
         return next;

@@ -123,4 +123,6 @@ export type BabidiMissileProjectile = {
   explosionRemaining: number;
   /** Alvo atual (id do NPC principal ou summon). */
   targetId: string | null;
+  /** Direção horizontal atual do voo: +1 direita (padrão), -1 esquerda (flip). */
+  dirX: number;
 };

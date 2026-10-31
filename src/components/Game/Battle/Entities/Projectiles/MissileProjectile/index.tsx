@@ -52,7 +52,7 @@ export function MissileProjectile({ projectiles, battleScaleX, battleScaleY }: P
                   top: p.y * battleScaleY,
                   width: 70,
                   height: 70,
-                  transform: "translate(-50%, -50%)",
+                  transform: `translate(-50%, -50%) scaleX(${p.dirX < 0 ? -1 : 1})`,
                   opacity: missileOpacity,
                   zIndex: 15,
                 }}
