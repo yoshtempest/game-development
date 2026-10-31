@@ -2,6 +2,7 @@ import { playerProjectilePath } from "@/utils/paths";
 import { npcPathProjectile } from "@/utils/paths";
 import { babidiPortalPath } from "@/utils/paths";
 import type { BabidiMissileProjectile } from "@/utils/types/character/babidi";
+import styles from "./styles.module.css"
 
 type Props = {
   projectiles: BabidiMissileProjectile[];
@@ -24,49 +25,40 @@ export function MissileProjectile({ projectiles, battleScaleX, battleScaleY }: P
             : 0;
 
         return (
-          <div key={p.id} style={{ position: "absolute", pointerEvents: "none" }}>
+          <div key={p.id} className={styles.container}>
             {p.phase !== "exploding" && (
-              <img
-                src={babidiPortalPath("default")}
+              <div className={styles.portal}
                 style={{
-                  position: "absolute",
                   left: p.spawnX * battleScaleX,
                   top: p.spawnY * battleScaleY,
-                  width: 90,
-                  height: 90,
-                  transform: "translate(-50%, -50%)",
                   opacity: 1,
-                  zIndex: 14,
-                }}
-              />
+                }}>
+                <img
+                  src={babidiPortalPath("default")}
+                  className={styles.portalFlip}
+                />
+              </div>
             )}
             {p.phase !== "exploding" && (
               <img
                 src={playerProjectilePath("/missile.svg")}
+                className={styles.missile}
                 style={{
-                  position: "absolute",
                   left: p.x * battleScaleX,
                   top: p.y * battleScaleY,
-                  width: 70,
-                  height: 70,
-                  transform: `translate(-50%, -50%) rotate(${p.angle}deg)`,
+                  transform: `rotate(${p.angle}deg)`,
                   opacity: missileOpacity,
-                  zIndex: 15,
                 }}
               />
             )}
             {p.phase === "exploding" && (
               <img
                 src={npcPathProjectile("/explosion.svg")}
+                className={styles.explosion}
                 style={{
-                  position: "absolute",
                   left: p.x * battleScaleX,
                   top: p.y * battleScaleY,
-                  width: 64,
-                  height: 64,
-                  transform: "translate(-50%, -50%)",
                   opacity: explosionOpacity,
-                  zIndex: 16,
                 }}
               />
             )}
