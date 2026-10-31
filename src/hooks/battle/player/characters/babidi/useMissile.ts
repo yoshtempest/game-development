@@ -37,8 +37,9 @@ export function useBabidiMissile({
   summons,
   onProjectileHit,
 }: Props) {
-  const { playSound } = useSoundEffects();
+  const { playSound, stopSound } = useSoundEffects();
   const playSoundRef = useLatestRef(playSound);
+  const stopSoundRef = useLatestRef(stopSound);
   const [missiles, setMissiles] = useState<BabidiMissileProjectile[]>([]);
 
   const onProjectileHitRef = useLatestRef(onProjectileHit);
@@ -242,7 +243,8 @@ export function useBabidiMissile({
           if (dist <= HIT_RADIUS) {
             // hit: atinge o ponto de mira da sprite do inimigo
             onProjectileHitRef.current({ id: target.id, x: target.x, y: target.y });
-            playSoundRef.current("explosion");
+            stopSoundRef.current("missile");
+            playSoundRef.current("explosion", false, 0.3);
             next.push({
               ...m,
               targetId,
@@ -276,7 +278,19 @@ export function useBabidiMissile({
     }, TICK_MS);
 
     return () => clearInterval(interval);
-  }, [missiles.length, npcRef, summonsRef, timeRef, onProjectileHitRef, isAlfaRef, npcPhaseRef, npcTypeRef, playSoundRef, playerSizeRef]);
+  }, [
+    missiles.length,
+    npcRef,
+    summonsRef,
+    timeRef,
+    onProjectileHitRef,
+    isAlfaRef,
+    npcPhaseRef,
+    npcTypeRef,
+    playSoundRef,
+    stopSoundRef,
+    playerSizeRef
+  ]);
 
   return { missiles, fire };
 }

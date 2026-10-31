@@ -26,6 +26,7 @@ import type { SummonedNpc } from "@/utils/types/npc/npc";
 import type { SpecialHitOptions } from "@/utils/types/battle/specialHitOptions";
 import type { CharactersProgress } from "@/data/characters/defaultProgress";
 import type { BabidiTarget } from "@/utils/types/character/babidi";
+import { useLatestRef } from "@/hooks/useLatestRef";
 
 type Props = {
   player: Player;
@@ -129,6 +130,7 @@ export function usePlayerBattleActions({
 }: Props) {
   const { playSound } = useSoundEffects();
   const fallingAttackUsedRef = useRef(false);
+  const playSoundRef = useLatestRef(playSound);
 
   useEffect(() => {
     if (player.y === player.groundY) {
@@ -307,14 +309,14 @@ export function usePlayerBattleActions({
       if (babidiAttackMode === "withMissile") {
         const fired = babidiMissileFireRef?.current?.(player) ?? false;
         if (fired) {
-          playSound("missile");
+          playSoundRef.current("missile");
           resetCooldownRef(PLAYER_BASIC_COOLDOWN, battle.playerCooldown);
         }
         return;
       }
       const fired = babidiFireRef?.current?.(player, targets) ?? false;
       if (fired) {
-        playSound("shot");
+        playSoundRef.current("shot");
         resetCooldownRef(PLAYER_BASIC_COOLDOWN, battle.playerCooldown);
       }
       return;
@@ -417,7 +419,7 @@ export function usePlayerBattleActions({
     babidiFireRef,
     babidiMissileFireRef,
     babidiAttackMode,
-    playSound,
+    playSoundRef,
   ]);
 
   const handleExtraPunch = useCallback(
