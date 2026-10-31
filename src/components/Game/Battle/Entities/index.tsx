@@ -22,6 +22,7 @@ import { Bomb } from "./Bomb";
 import { ExtraPunch } from "./srGuaxinim/ExtraPunch";
 import { SpecialProjectile } from "./Projectiles/SpecialProjectile";
 import { EnergyProjectile } from "./Projectiles/EnergyProjectile";
+import { FishingNet } from "./FishingNet";
 import { MissileProjectile } from "./Projectiles/MissileProjectile";
 import { LootBag } from "./LootBag";
 import { BlinkAfterimage } from "@/components/Game/Battle/Effects/Natsuki/BlinkAfterimage";
@@ -125,6 +126,7 @@ type Props = {
   /** Projéteis de energia do ataque básico do babidi. */
   babidiEnergyProjectiles?: BabidiEnergyProjectile[];
   babidiMissileProjectiles?: BabidiMissileProjectile[];
+  fishingNet?: { hp: number; maxHp: number; x: number; y: number } | null;
   /** Pose de mão do sprite do ataque básico do babidi. */
   babidiAttackVariant?: BabidiAttackVariant;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
@@ -187,6 +189,7 @@ export function BattleEntities({
   disintegrating = [],
   babidiEnergyProjectiles = [],
   babidiMissileProjectiles = [],
+  fishingNet = null,
   babidiAttackVariant,
   babidiShieldSides,
   onBabidiShieldEnd,
@@ -332,6 +335,12 @@ export function BattleEntities({
 
       <MissileProjectile
         projectiles={babidiMissileProjectiles}
+        battleScaleX={battleScaleX}
+        battleScaleY={battleScaleY}
+      />
+
+      <FishingNet
+        net={fishingNet}
         battleScaleX={battleScaleX}
         battleScaleY={battleScaleY}
       />

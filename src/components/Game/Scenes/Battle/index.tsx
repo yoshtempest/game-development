@@ -17,6 +17,7 @@ import { StackExplosionButton } from "@/components/Game/Battle/Buttons/Laricell/
 import { BabidiPortalsButton } from "@/components/Game/Battle/Buttons/Babidi/Portals";
 import { PortalSelect } from "@/components/Game/Battle/Modal/PortalSelect";
 import { DomainExpansionButton } from "@/components/Game/Battle/Buttons/DomainExpansion";
+import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
 import { GameMap } from "@/components/Game/Map/Game";
 import { useLatestRef } from "@/hooks/useLatestRef";
@@ -242,6 +243,8 @@ export function BattleScene(props: Props) {
     granReyCeroRemaining,
     babidiEnergyProjectiles,
     babidiMissileProjectiles,
+    fishingNet,
+    fishingNetPress,
     babidiAttackVariant,
     babidiShieldSides,
     onBabidiShieldEnd,
@@ -733,6 +736,7 @@ export function BattleScene(props: Props) {
             disintegrating={disintegrating}
             babidiEnergyProjectiles={babidiEnergyProjectiles}
             babidiMissileProjectiles={babidiMissileProjectiles}
+            fishingNet={fishingNet}
             babidiAttackVariant={babidiAttackVariant}
             babidiShieldSides={babidiShieldSides}
             onBabidiShieldEnd={onBabidiShieldEnd}
@@ -1176,14 +1180,29 @@ export function BattleScene(props: Props) {
             hold: false,
             abilityId: "dimensionalPortal",
           });
+          abilitySlotsRef.current.push({
+            click: fishingNetPress,
+            disabled: controlsDisabled,
+            hold: false,
+            abilityId: "fishingNet",
+          });
           return (
-            <BabidiPortalsButton
-              count={babidiPortalCount}
-              maxPortals={babidiPortalMaxPortals}
-              cost={babidiPortalCost}
-              disabled={controlsDisabled || !babidiPortalUsable}
-              onClick={babidiPortalClick}
-            />
+            <>
+              <BabidiPortalsButton
+                count={babidiPortalCount}
+                maxPortals={babidiPortalMaxPortals}
+                cost={babidiPortalCost}
+                disabled={controlsDisabled || !babidiPortalUsable}
+                onClick={babidiPortalClick}
+              />
+              <GenericAbilityButton
+                characterId="babidi"
+                abilityId="fishingNet"
+                ready={true}
+                disabled={controlsDisabled}
+                onClick={fishingNetPress}
+              />
+            </>
           );
         })()}
 

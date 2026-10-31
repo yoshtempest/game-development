@@ -104,6 +104,8 @@ type Props = {
   weapon?: YvelWeapon;
   /** Passiva O Abençoado: quando retorna true, o golpe letal reduz a vida a 1. */
   surviveLethalHitRef?: React.RefObject<() => boolean>;
+  fishingNetHpRef?: React.RefObject<{ hp: number; maxHp: number } | null>;
+  onFishingNetDamage?: (hp: number) => void;
 };
 
 export function useBattleSystem(props: Props) {
@@ -152,6 +154,8 @@ export function useBattleSystem(props: Props) {
     npcArmorBonus = 0,
     weapon,
     surviveLethalHitRef,
+    fishingNetHpRef,
+    onFishingNetDamage,
   } = props;
 
   const [npcPhase, setNpcPhase] = useState(1);
@@ -379,6 +383,8 @@ export function useBattleSystem(props: Props) {
     onParry,
     onDamageTaken: energy.consumeOnDamage,
     surviveLethalHitRef,
+    fishingNetHpRef,
+    onFishingNetDamage,
   });
 
   const { pet, setPet, resetPet, triggerJumpAttack, triggerTeleportBite } =

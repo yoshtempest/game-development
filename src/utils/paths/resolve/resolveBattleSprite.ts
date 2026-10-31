@@ -29,6 +29,9 @@ export function resolveBattleSprite(
   form?: MarshadowBattleForm,
   babidiAttackVariant?: BabidiAttackVariant,
 ): string {
+  if (character === "babidi" && (state === "preAbility" || state === "ability")) {
+    return playerPath("/babidi/inFight/habilities/fishingNet/pointing.svg");
+  }
   if (character === "srGuaxinim" && ALL_PREDICATES.isAbilityTrigger(state)) {
     return playerPathSrGuaxinimHabilities(`/bitesTheDust/srGuaxinimSeeing.svg`);
   }

@@ -28,6 +28,10 @@ type Props = {
   onDamageTaken?: () => void;
   /** Passiva O Abençoado: se retornar true, o golpe letal reduz a vida a 1. */
   surviveLethalHitRef?: React.RefObject<() => boolean>;
+  /** Rede de pesca do babidi: HP da rede (null = inativa). */
+  fishingNetHpRef?: React.RefObject<{ hp: number; maxHp: number } | null>;
+  /** Callback quando a rede sofre dano. */
+  onFishingNetDamage?: (hp: number) => void;
 };
 
 export function useExternalDamage({
@@ -50,6 +54,8 @@ export function useExternalDamage({
   onParry,
   onDamageTaken,
   surviveLethalHitRef,
+  fishingNetHpRef,
+  onFishingNetDamage,
 }: Props) {
   const playerShieldRef = useLatestRef(playerShield);
   const playerHPRef = useLatestRef(playerHP);
@@ -58,6 +64,12 @@ export function useExternalDamage({
   const damagePlayerHp = useCallback(
     (damage: number): boolean => {
       onDamageTakenRef.current?.();
+      const net = fishingNetHpRef?.current;
+      if (net && net.hp > 0) {
+        const newHp = Math.max(0, net.hp - damage);
+        onFishingNetDamage?.(newHp);
+        return false;
+      }
       if (oneHitShieldRef?.current) {
         oneHitShieldRef.current = false;
         spawnDamageRef.current?.(0, playerX, playerY - 40, "blocked");
@@ -91,6 +103,8 @@ export function useExternalDamage({
       playerY,
       onDamageTakenRef,
       surviveLethalHitRef,
+      fishingNetHpRef,
+      onFishingNetDamage,
     ],
   );
 

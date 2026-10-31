@@ -296,6 +296,38 @@ export function useBattleCombat({
 
   const npcRootedUntilRef = useRef(0);
   const rootedSummonsUntilRef = useRef<Record<string, number>>({});
+
+  const [fishingNet, setFishingNet] = useState<{
+    hp: number;
+    maxHp: number;
+    x: number;
+    y: number;
+  } | null>(null);
+  const fishingNetRef = useRef<{
+    hp: number;
+    maxHp: number;
+    x: number;
+    y: number;
+  } | null>(null);
+  useEffect(() => {
+    fishingNetRef.current = fishingNet;
+  }, [fishingNet]);
+
+  // Quando a rede zera o HP, ela se desfaz e libera o inimigo.
+  const onFishingNetDamage = useCallback((hp: number) => {
+    const net = fishingNetRef.current;
+    if (!net) return;
+    if (hp <= 0) {
+      setFishingNet(null);
+      fishingNetRef.current = null;
+      npcRootedUntilRef.current = 0;
+    } else {
+      const updated = { ...net, hp };
+      setFishingNet(updated);
+      fishingNetRef.current = updated;
+    }
+  }, [npcRootedUntilRef]);
+
   /** +1 stack de VastolordLaser ao derrotar um inimigo com a forma ativa. */
   const addVastolordLaserChargeRef = useRef<() => void>(() => {});
 
@@ -590,6 +622,8 @@ export function useBattleCombat({
     lastBlockPressRef,
     lastAttackPressRef,
     npcPhaseRef,
+    fishingNetHpRef: fishingNetRef,
+    onFishingNetDamage,
     onBeforeNpcHitRef: targeting.onBeforeNpcHitRef,
     onBlockRef,
     onDamageTakenRef,
@@ -768,6 +802,7 @@ export function useBattleCombat({
   const babidiFireRef = useRef<
     ((player: Player, targets: BabidiTarget[]) => boolean) | null
   >(null);
+
   const babidiOnHitRef = useRef<((target: BabidiTarget) => void) | null>(null);
   const babidiMissileFireRef = useRef<
     ((player: { x: number; y: number }) => boolean) | null
@@ -850,6 +885,22 @@ export function useBattleCombat({
     onProjectileHit: (target) => babidiMissileOnHitRef.current?.(target),
   });
   babidiMissileFireRef.current = (player) => babidiMissile.fire(player);
+
+  const fishingNetPress = useCallback(() => {
+    if (!battle.playerMaxHp) return;
+    startAbility();
+    const net = {
+      hp: battle.playerMaxHp,
+      maxHp: battle.playerMaxHp,
+      x: npc.x,
+      y: npc.y - 60,
+    };
+    setFishingNet(net);
+    fishingNetRef.current = net;
+    npcRootedUntilRef.current = Date.now() + 5000;
+  }, [battle.playerMaxHp, npc.x, npc.y, npcRootedUntilRef, startAbility]);
+
+
 
   const freezeSummonsUntilRef = useRef(0);
 
@@ -1909,6 +1960,8 @@ export function useBattleCombat({
     disintegrating,
     babidiEnergyProjectiles: babidiEnergy.projectiles,
     babidiMissileProjectiles: babidiMissile.missiles,
+    fishingNet,
+    fishingNetPress,
     babidiAttackVariant: babidiEnergy.attackVariant,
     babidiShieldSides: babidiShield.sides,
     onBabidiShieldEnd: babidiShield.end,

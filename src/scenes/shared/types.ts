@@ -224,6 +224,8 @@ export type BattleSceneApi = {
   /** Projéteis de energia do ataque básico do babidi em voo. */
   babidiEnergyProjectiles: BabidiEnergyProjectile[];
   babidiMissileProjectiles: import("@/utils/types/character/babidi").BabidiMissileProjectile[];
+  fishingNet: { hp: number; maxHp: number; x: number; y: number } | null;
+  fishingNetPress: () => void;
   /** Variante de mão do sprite do ataque básico do babidi (pose do golpe atual). */
   babidiAttackVariant: BabidiAttackVariant;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
