@@ -9,7 +9,6 @@ type Props = {
   battleScaleY: number;
 };
 
-const PORTAL_MS = 800;
 const EXPLOSION_MS = 400;
 
 export function MissileProjectile({ projectiles, battleScaleX, battleScaleY }: Props) {
@@ -18,9 +17,7 @@ export function MissileProjectile({ projectiles, battleScaleX, battleScaleY }: P
   return (
     <>
       {projectiles.map((p) => {
-        const portalOpacity =
-          p.phase === "portal" ? Math.min(1, p.age / PORTAL_MS) : 0;
-        const missileOpacity = p.phase === "portal" ? 0 : 1;
+        const missileOpacity = p.phase === "exploding" ? 0 : 1;
         const explosionOpacity =
           p.phase === "exploding"
             ? Math.max(0, p.explosionRemaining / EXPLOSION_MS)
@@ -28,22 +25,22 @@ export function MissileProjectile({ projectiles, battleScaleX, battleScaleY }: P
 
         return (
           <div key={p.id} style={{ position: "absolute", pointerEvents: "none" }}>
-            {p.phase === "portal" && (
+            {p.phase !== "exploding" && (
               <img
                 src={babidiPortalPath("default")}
                 style={{
                   position: "absolute",
-                  left: p.x * battleScaleX,
-                  top: p.y * battleScaleY,
+                  left: p.spawnX * battleScaleX,
+                  top: p.spawnY * battleScaleY,
                   width: 90,
                   height: 90,
                   transform: "translate(-50%, -50%)",
-                  opacity: portalOpacity,
+                  opacity: 1,
                   zIndex: 14,
                 }}
               />
             )}
-            {p.phase === "flying" && (
+            {p.phase !== "exploding" && (
               <img
                 src={playerProjectilePath("/missile.svg")}
                 style={{

@@ -16,7 +16,6 @@ type Props = {
   onProjectileHit: (target: BabidiTarget) => void;
 };
 
-const PORTAL_MS = 300;
 const SPEED_PER_TICK = 12;
 const HIT_RADIUS = 28;
 const EXPLOSION_MS = 400;
@@ -59,18 +58,50 @@ export function useBabidiMissile({
     [npcRef, summonsRef],
   );
 
+  const MAX_MISSILES = 3;
+  const PORTAL_OVERLAP_THRESHOLD = 20;
+
   const fire = useCallback(
     (player: { x: number; y: number }): boolean => {
       const spriteHeight = playerSizeRef.current / PLAYER_SPRITE_DIVISOR;
       const spawnY = player.y - spriteHeight * 1.6;
+      const spawnX = player.x;
 
-      const target = findNearestTarget(player.x, spawnY);
+      // Limite: até 3 mísseis simultâneos.
+      // (checado no estado atual via ref não disponível; verificamos abaixo no
+      // setMissiles com early return false quando já há 3 ativos)
+      let allowed = true;
+      setMissiles((prev) => {
+        const active = prev.filter((m) => m.phase === "flying");
+        if (active.length >= MAX_MISSILES) {
+          allowed = false;
+          return prev;
+        }
+        // Portal não pode ser posicionado no mesmo local de outro portal ativo.
+        const overlapping = prev.some(
+          (m) =>
+            m.phase === "flying" &&
+            Math.hypot(m.spawnX - spawnX, m.spawnY - spawnY) <
+              PORTAL_OVERLAP_THRESHOLD,
+        );
+        if (overlapping) {
+          allowed = false;
+          return prev;
+        }
+        return prev; // não adiciona aqui; adiciona abaixo
+      });
+
+      if (!allowed) return false;
+
+      const target = findNearestTarget(spawnX, spawnY);
 
       const missile: BabidiMissileProjectile = {
         id: `babidi-missile-${Date.now()}`,
-        x: player.x,
+        x: spawnX,
         y: spawnY,
-        phase: "portal",
+        spawnX,
+        spawnY,
+        phase: "flying",
         age: 0,
         explosionRemaining: 0,
         targetId: target?.id ?? null,
@@ -96,16 +127,6 @@ export function useBabidiMissile({
         for (const m of prev) {
           const time = getTime(timeRef.current, "projectile", m.id);
           const speed = time.speed;
-
-          if (m.phase === "portal") {
-            const age = m.age + TICK_MS;
-            if (age >= PORTAL_MS) {
-              next.push({ ...m, phase: "flying", age });
-            } else {
-              next.push({ ...m, age });
-            }
-            continue;
-          }
 
           if (m.phase === "exploding") {
             const remaining = m.explosionRemaining - TICK_MS;

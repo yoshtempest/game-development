@@ -115,6 +115,9 @@ export type BabidiMissileProjectile = {
   id: string;
   x: number;
   y: number;
+  /** Posição de surgimento do portal (fixa). */
+  spawnX: number;
+  spawnY: number;
   /** Fase: portal de surgimento, voo teleguiado, ou explosão. */
   phase: "portal" | "flying" | "exploding";
   /** Tempo (ms) decorrido desde o spawn (para a animação do portal). */
