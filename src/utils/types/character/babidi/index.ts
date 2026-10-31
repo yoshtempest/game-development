@@ -120,6 +120,8 @@ export type BabidiMissileProjectile = {
   spawnY: number;
   /** Fase: portal de surgimento, voo teleguiado, ou explosão. */
   phase: "portal" | "flying" | "exploding";
+  /** Ângulo (graus) da direção de voo atual, para rotação da imagem. */
+  angle: number;
   /** Tempo (ms) decorrido desde o spawn (para a animação do portal). */
   age: number;
   /** Tempo (ms) restante na fase de explosão. */

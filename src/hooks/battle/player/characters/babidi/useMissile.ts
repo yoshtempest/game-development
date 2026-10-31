@@ -17,7 +17,7 @@ type Props = {
 };
 
 const SPEED_PER_TICK = 12;
-const HIT_RADIUS = 28;
+const HIT_RADIUS = 10;
 const EXPLOSION_MS = 400;
 const TICK_MS = 20;
 
@@ -59,53 +59,73 @@ export function useBabidiMissile({
   );
 
   const MAX_MISSILES = 3;
-  const PORTAL_OVERLAP_THRESHOLD = 20;
+  const PORTAL_MIN_DISTANCE = 50;
 
   const fire = useCallback(
     (player: { x: number; y: number }): boolean => {
       const spriteHeight = playerSizeRef.current / PLAYER_SPRITE_DIVISOR;
-      const spawnY = player.y - spriteHeight * 1.6;
-      const spawnX = player.x;
+      const baseSpawnY = player.y - spriteHeight * 1.6;
+      const baseSpawnX = player.x;
 
-      // Limite: até 3 mísseis simultâneos.
-      // (checado no estado atual via ref não disponível; verificamos abaixo no
-      // setMissiles com early return false quando já há 3 ativos)
       let allowed = true;
+      let finalSpawnX = baseSpawnX;
+      let finalSpawnY = baseSpawnY;
+
       setMissiles((prev) => {
         const active = prev.filter((m) => m.phase === "flying");
         if (active.length >= MAX_MISSILES) {
           allowed = false;
           return prev;
         }
-        // Portal não pode ser posicionado no mesmo local de outro portal ativo.
-        const overlapping = prev.some(
-          (m) =>
-            m.phase === "flying" &&
-            Math.hypot(m.spawnX - spawnX, m.spawnY - spawnY) <
-              PORTAL_OVERLAP_THRESHOLD,
-        );
-        if (overlapping) {
+        // Encontra uma posição livre para o portal: mínimo de 50px de
+        // distância (euclidiana) em relação a qualquer portal ativo. Tenta
+        // offsets em triângulo para distribuir até 3 portais.
+        const offsets = [
+          { x: 0, y: 0 },
+          { x: 50, y: 0 },
+          { x: -25, y: 43 },
+          { x: 25, y: -43 },
+          { x: -50, y: 0 },
+          { x: 0, y: 50 },
+        ];
+        let found = false;
+        for (const off of offsets) {
+          const cx = baseSpawnX + off.x;
+          const cy = baseSpawnY + off.y;
+          const overlapping = active.some(
+            (m) =>
+              Math.hypot(m.spawnX - cx, m.spawnY - cy) < PORTAL_MIN_DISTANCE,
+          );
+          if (!overlapping) {
+            finalSpawnX = cx;
+            finalSpawnY = cy;
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
           allowed = false;
           return prev;
         }
-        return prev; // não adiciona aqui; adiciona abaixo
+        return prev;
       });
 
       if (!allowed) return false;
 
-      const target = findNearestTarget(spawnX, spawnY);
+      const target = findNearestTarget(finalSpawnX, finalSpawnY);
 
       const missile: BabidiMissileProjectile = {
         id: `babidi-missile-${Date.now()}`,
-        x: spawnX,
-        y: spawnY,
-        spawnX,
-        spawnY,
+        x: finalSpawnX,
+        y: finalSpawnY,
+        spawnX: finalSpawnX,
+        spawnY: finalSpawnY,
         phase: "flying",
         age: 0,
         explosionRemaining: 0,
         targetId: target?.id ?? null,
         dirX: 1,
+        angle: 0,
       };
 
       setMissiles((prev) => [...prev, missile]);
@@ -171,22 +191,24 @@ export function useBabidiMissile({
           const dx = target.x - m.x;
           const dy = target.y - m.y;
           const dist = Math.hypot(dx, dy);
+          const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
 
           if (dist <= HIT_RADIUS) {
-            // hit
+            // hit: atinge o centro da sprite do inimigo
             onProjectileHitRef.current({ id: target.id, x: target.x, y: target.y });
             next.push({
               ...m,
               targetId,
               phase: "exploding",
               explosionRemaining: EXPLOSION_MS,
+              angle,
             });
             continue;
           }
 
           // move
           if (speed === 0) {
-            next.push({ ...m, targetId });
+            next.push({ ...m, targetId, angle });
             continue;
           }
           const step = (SPEED_PER_TICK * speed) / (dist || 1);
@@ -198,6 +220,7 @@ export function useBabidiMissile({
             y: newY,
             targetId,
             dirX: dx >= 0 ? 1 : -1,
+            angle,
           });
         }
 
