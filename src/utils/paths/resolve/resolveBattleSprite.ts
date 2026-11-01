@@ -55,6 +55,12 @@ export function resolveBattleSprite(
     if (sphereSprite) {
       return playerPathNatsukiHabilities(`/Setup/${sphereSprite}.svg`);
     }
+
+    const attackSprite = stateData(NATSUKI_ATTACK_SPRITES, state);
+
+    if (attackSprite) {
+      return playerPath(`/natsuki/inFight/attacks/${attackSprite}.svg`);
+    }
   }
   // Genki Dama do ematron: a fase de subida usa o sprite `falling.svg` (não
   // existe `genkiDamaRising.svg`). O sprite está em `inFight/jump/`, não
@@ -74,14 +80,6 @@ export function resolveBattleSprite(
 
     if (attackSprite) {
       return playerPath(`/ematron/inFight/attacks/${attackSprite}.svg`);
-    }
-  }
-
-  if (character === "natsuki") {
-    const attackSprite = stateData(NATSUKI_ATTACK_SPRITES, state);
-
-    if (attackSprite) {
-      return playerPath(`/natsuki/inFight/attacks/${attackSprite}.svg`);
     }
   }
 
