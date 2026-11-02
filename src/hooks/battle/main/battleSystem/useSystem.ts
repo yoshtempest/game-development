@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useMemo } from "react";
+import type { SetStateAction } from "react";
 import { battleBehaviors } from "@/gameRules/battle/behaviors/player";
 import {
   getPetSkillDefinition,
@@ -215,7 +216,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     playerHP,
     setPlayerHP,
     npcHP,
-    setNpcHP,
+    setNpcHP: rawSetNpcHP,
     playerShield,
     setPlayerShield,
   } = useBattleHP(
@@ -225,6 +226,24 @@ export function useBattleSystem(props: BattleSystemProps) {
     savedPlayerHP,
     char.level,
     player.character,
+  );
+
+  // trueVandinha na 1ª fase é imune a dano: bloqueia reduções de HP, exceto
+  // a queda intencional a 0 (sprite fall) que dispara a cutscene.
+  const setNpcHP = useCallback(
+    (updater: SetStateAction<number>) => {
+      if (npcType === "trueVandinha" && npcPhase === 1) {
+        rawSetNpcHP((prev) => {
+          const next =
+            typeof updater === "function" ? updater(prev) : updater;
+          if (next < prev && next !== 0) return prev;
+          return next;
+        });
+        return;
+      }
+      rawSetNpcHP(updater);
+    },
+    [npcType, npcPhase, rawSetNpcHP],
   );
 
   const energy = useEnergy(player, playerMaxHp, setPlayerShield);

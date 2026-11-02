@@ -62,7 +62,9 @@ type Props = {
     | "invoking"
     | "dig"
     | "entering"
-    | "entered";
+    | "entered"
+    | "fall"
+    | "giveMeMyPower";
   direction: "left" | "right";
   piercings?: { id: number; x: number; y: number }[];
   isExploding?: boolean;

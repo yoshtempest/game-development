@@ -45,7 +45,9 @@ export type NPCBattleState = {
     | "invoking"
     | "dig"
     | "entering"
-    | "entered";
+    | "entered"
+    | "fall"
+    | "giveMeMyPower";
   direction: NPCDirection;
   jumpLandingX?: number;
   /** Oculta o NPC (ex: alfa cavando no subsolo). Persiste até ser limpo. */

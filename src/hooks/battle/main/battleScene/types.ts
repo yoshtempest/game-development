@@ -11,4 +11,5 @@ export type BattleSceneProps = {
   isAlfa?: boolean;
   npcLevel?: number;
   PLAYER_SIZE: number;
+  dialogueOpen?: boolean;
 };

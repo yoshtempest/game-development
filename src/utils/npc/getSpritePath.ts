@@ -74,6 +74,14 @@ export function getSpritePath(
     return npcPath(`/maurao/${state}.svg`);
   }
 
+  if (npcType === "trueVandinha") {
+    if (npcPhase === 2) {
+      const phase2State = state === "pitch" ? "idle" : state;
+      return npcPath(`/trueVandinha/phase2/${phase2State}.svg`);
+    }
+    return npcPath(`/trueVandinha/${state}.svg`);
+  }
+
   return npcPath(`/${npcType}/${state}.svg`);
 }
 

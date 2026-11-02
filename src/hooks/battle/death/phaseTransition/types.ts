@@ -11,4 +11,5 @@ export type Props = {
   clearSummons: () => void;
   clearAllies: () => void;
   setIsPhaseTransitioning: (v: boolean) => void;
+  disabled?: boolean;
 };

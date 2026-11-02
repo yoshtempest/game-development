@@ -10,12 +10,14 @@ export function usePhaseTransition({
   clearSummons,
   clearAllies,
   setIsPhaseTransitioning,
+  disabled = false,
 }: Props) {
   const phaseTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
 
   useEffect(() => {
+    if (disabled) return;
     if (npcPhase !== 2) return;
 
     clearSummons();

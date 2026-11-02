@@ -326,8 +326,15 @@ export function useBattleCombat({
     npcPhaseRef,
     onProjectileHit: (damageKind) =>
       refs.npcRangedAttackRef.current(damageKind),
-    onMeleeHit: (multiplier, damageKind) =>
-      refs.npcMeleeAttackRef.current(multiplier, damageKind),
+    onMeleeHit: (multiplier, damageKind) => {
+      if (
+        npcType === "trueVandinha" &&
+        (npcPhaseRef.current ?? 1) === 1
+      ) {
+        return;
+      }
+      refs.npcMeleeAttackRef.current(multiplier, damageKind);
+    },
     isPaused:
       isPausedRef.current || isPhaseTransitioning || lootActiveRef.current,
     onSummon: onSummonWrapperRef.current,
@@ -961,6 +968,7 @@ export function useBattleCombat({
     clearSummons,
     clearAllies,
     setIsPhaseTransitioning,
+    disabled: npcType === "trueVandinha",
   });
 
   const charge = useChargeAttack({

@@ -21,6 +21,9 @@ import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAb
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
 import { GameMap } from "@/components/Game/Map/Game";
 import { useLatestRef } from "@/hooks/useLatestRef";
+import { useCutscene } from "@/hooks/interaction/cutscene/useCutscene";
+import Talking from "@/components/Game/Interactions/Talking";
+import { trueVandinhaBattleDialogue } from "@/data/dialogues/trueVandinhaBattle/one";
 import { useGameLayout } from "@/hooks/game/useGameLayout";
 import { useBattleScene } from "@/hooks/battle/main/battleScene/useScene";
 import { BattleEntities } from "@/components/Game/Battle/Entities";
@@ -98,6 +101,25 @@ type Props = {
 
 export function BattleScene(props: Props) {
   const { npcType, className, background, map, isAlfa = false } = props;
+
+  const isTrueVandinha = npcType === "trueVandinha";
+
+  // Estado da cutscene da TrueVandinha.
+  const [tvCutsceneOpen, setTvCutsceneOpen] = useState(false);
+  const [tvFlash, setTvFlash] = useState(false);
+  const [tvBackground, setTvBackground] = useState<string | null>(null);
+  const [tvDialogueOpen, setTvDialogueOpen] = useState(false);
+  const tvTriggeredRef = useRef(false);
+  const tvPhase2Ref = useRef(false);
+
+  const tvCutscene = useCutscene({
+    dialogue: trueVandinhaBattleDialogue,
+    autoStart: false,
+    onFinish: () => {
+      setTvCutsceneOpen(false);
+      setTvDialogueOpen(false);
+    },
+  });
 
   // Atalhos de teclado (teclas 1..9) para as habilidades do personagem. Cada
   // botão renderizado em `.abilityButtons` ocupa um slot na ordem de render;
@@ -269,8 +291,56 @@ export function BattleScene(props: Props) {
     redUsable,
     purplePress,
     purpleUsable,
-  } = useBattleScene({ ...props, isAlfa, PLAYER_SIZE });
+  } = useBattleScene({
+    ...props,
+    isAlfa,
+    PLAYER_SIZE,
+    dialogueOpen: tvDialogueOpen,
+  });
 
+  // Cutscene da TrueVandinha: ao se aproximar na 1ª fase, dispara fall + flash +
+  // diálogo + transição para a 2ª fase.
+  useEffect(() => {
+    if (!isTrueVandinha) return;
+    if (tvTriggeredRef.current) return;
+    if ((battle.npcPhase ?? 1) !== 1) return;
+    const dist = Math.abs(npc.x - player.x);
+    if (dist > 90) return;
+
+    tvTriggeredRef.current = true;
+    // Bloqueia a IA e o lifecycle (que, para boss de 1ª fase, avançaria de
+    // fase sozinho ao zerar o HP). A cutscene assume o controle a partir daqui.
+    battle.isEnding.current = true;
+    npc.updateNpc({ state: "fall" });
+    battle.setNpcHP(0);
+
+    // Pausa a batalha imediatamente para a IA não sobrescrever o sprite.
+    setTvDialogueOpen(true);
+
+    setTvFlash(true);
+    window.setTimeout(() => setTvFlash(false), 500);
+
+    window.setTimeout(() => {
+      setTvBackground(npcPath("/trueVandinha/shenLong.svg"));
+      npc.updateNpc({ state: "giveMeMyPower" });
+      setTvCutsceneOpen(true);
+      tvCutscene.start();
+    }, 500);
+  }, [isTrueVandinha, npc.x, player.x, npc, battle, tvCutscene]);
+
+  useEffect(() => {
+    if (!isTrueVandinha) return;
+    if (!tvCutsceneOpen) return;
+    if (tvPhase2Ref.current) return;
+    // Terceiro diálogo (índice 2): "Muito bem, seu desejo..."
+    if (tvCutscene.index !== 2) return;
+
+    tvPhase2Ref.current = true;
+    battle.setNpcPhase(2);
+    battle.setNpcHP(battle.npcMaxHp);
+    battle.isEnding.current = false;
+    npc.updateNpc({ state: "giveMeMyPower" });
+  }, [isTrueVandinha, tvCutsceneOpen, tvCutscene.index, battle, npc]);
   // Domínio do personagem atual: nome/cor/efeito saem de DOMAIN_EXPANSIONS e
   // alimentam o botão universal e o overlay do burst.
   const domainConfig = DOMAIN_EXPANSIONS[player.character];
@@ -434,7 +504,7 @@ export function BattleScene(props: Props) {
   // Expansão de Domínio: o fundo da batalha permanece o original — quem cobre
   // a cena é o overlay `background.svg` (DomainExpansionBackground), surgindo
   // sendo renderizado de baixo para cima durante a habilidade inteira.
-  const effectiveBackground = background;
+  const effectiveBackground = tvBackground ?? background;
 
   const damageTargets = [
     {
@@ -1251,6 +1321,29 @@ export function BattleScene(props: Props) {
       </div>
 
       {isTraining && <TrainingOverlay onLeave={() => navigate(-1)} />}
+
+      {tvFlash && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "white",
+            opacity: 0.9,
+            zIndex: 99999999,
+            pointerEvents: "none",
+          }}
+        />
+      )}
+
+      {tvCutsceneOpen && tvCutscene.dialogue && (
+        <Talking
+          name={tvCutscene.dialogue.name}
+          message={tvCutscene.dialogue.message}
+          src={tvCutscene.dialogue.src}
+          soundSrc={tvCutscene.dialogue.soundSrc}
+          onNext={tvCutscene.next}
+        />
+      )}
 
       {props.children}
     </div>

@@ -51,6 +51,7 @@ export function useBattleScene({
   isAlfa = false,
   npcLevel: npcLevelProp,
   PLAYER_SIZE,
+  dialogueOpen = false,
 }: BattleSceneProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -300,7 +301,8 @@ export function useBattleScene({
     rewindFrames != null ||
     isMenuOpen ||
     cameraFocus.isFrozen ||
-    transformationFrame != null;
+    transformationFrame != null ||
+    dialogueOpen;
   isPausedRef.current = isPaused;
 
   const performRewindRef = useRef<() => boolean>(() => false);
@@ -371,6 +373,10 @@ export function useBattleScene({
   });
 
   const onNpcDeathRef = useLatestRef(() => {
+    if (npcType === "trueVandinha" && (battle.npcPhase ?? 1) === 1) {
+      battle.isEnding.current = false;
+      return;
+    }
     if (training) {
       battle.setNpcHP(battle.npcMaxHp);
       return;
