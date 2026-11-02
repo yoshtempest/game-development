@@ -256,6 +256,16 @@ export function useBattleCombat({
     x: number;
     y: number;
   } | null>(null);
+  const fishingNetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (fishingNetTimerRef.current) {
+        clearTimeout(fishingNetTimerRef.current);
+        fishingNetTimerRef.current = null;
+      }
+    };
+  }, []);
   useEffect(() => {
     fishingNetRef.current = fishingNet;
   }, [fishingNet]);
@@ -266,6 +276,10 @@ export function useBattleCombat({
       const net = fishingNetRef.current;
       if (!net) return;
       if (hp <= 0) {
+        if (fishingNetTimerRef.current) {
+          clearTimeout(fishingNetTimerRef.current);
+          fishingNetTimerRef.current = null;
+        }
         setFishingNet(null);
         fishingNetRef.current = null;
         npcRootedUntilRef.current = 0;
@@ -866,6 +880,10 @@ export function useBattleCombat({
   const fishingNetPress = useCallback(() => {
     if (!battle.playerMaxHp) return;
     startAbility();
+    if (fishingNetTimerRef.current) {
+      clearTimeout(fishingNetTimerRef.current);
+      fishingNetTimerRef.current = null;
+    }
     const net = {
       hp: battle.playerMaxHp,
       maxHp: battle.playerMaxHp,
@@ -875,6 +893,12 @@ export function useBattleCombat({
     setFishingNet(net);
     fishingNetRef.current = net;
     npcRootedUntilRef.current = Date.now() + 5000;
+    fishingNetTimerRef.current = setTimeout(() => {
+      setFishingNet(null);
+      fishingNetRef.current = null;
+      npcRootedUntilRef.current = 0;
+      fishingNetTimerRef.current = null;
+    }, 5000);
   }, [battle.playerMaxHp, npc.x, npc.y, npcRootedUntilRef, startAbility]);
 
   const freezeSummonsUntilRef = useRef(0);
