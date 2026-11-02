@@ -222,7 +222,11 @@ export function useBattleStageSetup({ npcType, npcLevelProp, isAlfa }: Props) {
   const xpNeeded = getXPToNextLevel(charProgress.level);
   const missingXp = xpNeeded - charProgress.xp;
 
-  const getReplayDataRef = useLatestRef<() => ReplayData | null>(() => null);
+  // useRef (e não useLatestRef): este ref é preenchido externamente pelo
+  // useBattleScene com o `getReplayData` da gravação. useLatestRef reatribuiria
+  // `() => null` a cada render e apagaria essa atribuição, fazendo o highlight
+  // nunca encontrar frames. useRef preserva a atribuição entre renders.
+  const getReplayDataRef = useRef<() => ReplayData | null>(() => null);
 
   return {
     player,
