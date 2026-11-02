@@ -145,6 +145,24 @@ export function NPCBattle({
       ? npcPath(`/hungryDeath/run${runFrame + 1}.svg`)
       : `${basePath}`;
 
+  // Alguns bosses não possuem o sprite resolvido (ex.: idle.svg na 2ª fase).
+  // Fazemos fallback em runtime: idle.svg → default.svg → walk.svg.
+  const [resolvedSrc, setResolvedSrc] = useState(src);
+  useEffect(() => {
+    setResolvedSrc(src);
+  }, [src]);
+
+  const handleSpriteError = () => {
+    setResolvedSrc((prev) => {
+      // Fallback genérico: qualquer sprite ausente → default.svg → walk.svg.
+      if (prev.endsWith("/walk.svg")) return prev;
+      if (prev.endsWith("/default.svg")) {
+        return prev.replace(/default\.svg$/, "walk.svg");
+      }
+      return prev.replace(/[^/]+$/, "default.svg");
+    });
+  };
+
   // ── Furo da esfera purple ─────────────────────────────────────────────────
   // Só aparece se a purple matou o NPC: em vez de sumir no fade, o sprite fica
   // visível e perde um pedaço circular no lado central-direito (o ponto do
@@ -187,7 +205,8 @@ export function NPCBattle({
         {/* 🧍 NPC (oculto quando vira alvo de bomba da killerQueen) */}
         {!isHidden && (
           <img
-            src={src}
+            src={resolvedSrc}
+            onError={handleSpriteError}
             style={{
               width: "100%",
               height: "100%",
@@ -290,7 +309,8 @@ export function NPCBattle({
           }}
         >
           <img
-            src={src}
+            src={resolvedSrc}
+            onError={handleSpriteError}
             style={{
               width: "100%",
               height: "100%",
