@@ -2,7 +2,6 @@ import type { BattleManaApi } from "@/contexts/BattleManaContext";
 
 import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/types";
 
-
 import type { Dispatch, RefObject, SetStateAction } from "react";
 import type { EmatronCloneVisual } from "@/utils/types/character/ematron";
 
@@ -15,9 +14,20 @@ export type HakaiProps = {
   setNpcHP: Dispatch<SetStateAction<number>>;
   summons: SummonedNpc[];
   setSummons: Dispatch<SetStateAction<SummonedNpc[]>>;
-  spawnDamageNumber: (value: number, x: number, y: number, type: DamageType) => void;
+  spawnDamageNumber: (
+    value: number,
+    x: number,
+    y: number,
+    type: DamageType,
+  ) => void;
   freezeActionsUntilRef: RefObject<number>;
-  startSpecialIntro: (character: string, onActivate: () => void, ability?: string, form?: MarshadowBattleForm, onCancel?: () => void) => boolean;
+  startSpecialIntro: (
+    character: string,
+    onActivate: () => void,
+    ability?: string,
+    form?: MarshadowBattleForm,
+    onCancel?: () => void,
+  ) => boolean;
   battleManaRef: RefObject<BattleManaApi | null>;
   timeRef: RefObject<TimeEffect[]>;
   isPausedRef: RefObject<boolean>;

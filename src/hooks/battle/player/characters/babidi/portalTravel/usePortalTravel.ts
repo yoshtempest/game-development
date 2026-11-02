@@ -26,8 +26,6 @@ import type {
   PortalWarp,
 } from "@/utils/types/character/babidi/portals";
 
-
-
 /**
  * Travessia dos portais: teleporte do player, quedas simuladas das demais
  * entidades e warp de projéteis.

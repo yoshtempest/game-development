@@ -5,7 +5,6 @@ import {
   BLINK_AFTERIMAGE_MS,
 } from "@/gameRules/battle/cursedEnergy";
 
-
 /**
  * Coreografia visual do blink do natsuki:
  * 1. Por `BLINK_UNTIL_TELEPORT_MS` o personagem não teleporta e vira silhueta

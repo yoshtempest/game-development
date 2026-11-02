@@ -1,16 +1,11 @@
-import {
-  type Dispatch,
-  type RefObject,
-  type SetStateAction,
-} from "react";
+import { type Dispatch, type RefObject, type SetStateAction } from "react";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 
 import type { useBattleRefs } from "@/hooks/battle/utilities/useRefs";
 import type { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 import type { CharactersProgress } from "@/data/characters/defaultProgress";
-import type { SphereNpc } from "../types";
+import type { SphereNpc } from "@/hooks/battle/player/characters/natsuki/spheres/types";
 import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/types";
-
 
 export type Props = {
   player: Player;

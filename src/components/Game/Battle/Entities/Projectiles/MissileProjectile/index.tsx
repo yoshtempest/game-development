@@ -2,7 +2,7 @@ import { playerProjectilePath } from "@/utils/paths";
 import { npcPathProjectile } from "@/utils/paths";
 import { babidiPortalPath } from "@/utils/paths";
 import type { BabidiMissileProjectile } from "@/utils/types/character/babidi";
-import styles from "./styles.module.css"
+import styles from "./styles.module.css";
 
 type Props = {
   projectiles: BabidiMissileProjectile[];
@@ -12,7 +12,11 @@ type Props = {
 
 const EXPLOSION_MS = 400;
 
-export function MissileProjectile({ projectiles, battleScaleX, battleScaleY }: Props) {
+export function MissileProjectile({
+  projectiles,
+  battleScaleX,
+  battleScaleY,
+}: Props) {
   if (projectiles.length === 0) return null;
 
   return (
@@ -27,12 +31,14 @@ export function MissileProjectile({ projectiles, battleScaleX, battleScaleY }: P
         return (
           <div key={p.id} className={styles.container}>
             {p.phase !== "exploding" && (
-              <div className={styles.portal}
+              <div
+                className={styles.portal}
                 style={{
                   left: p.spawnX * battleScaleX,
                   top: p.spawnY * battleScaleY,
                   opacity: 1,
-                }}>
+                }}
+              >
                 <img
                   src={babidiPortalPath("default")}
                   className={styles.portalFlip}

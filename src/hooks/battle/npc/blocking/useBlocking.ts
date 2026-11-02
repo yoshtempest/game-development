@@ -9,12 +9,11 @@ import {
   ONE_THOUSAND_FIVE_HUNDRED_MS,
   THREE_HUNDRED_MS,
 } from "@/data/ms";
-import { timeSinceParryInput } from "../timeSinceParryInput";
-import { applyGuardBreak } from "../apply/applyGuardBreak";
-import { applyDesperateBlock } from "../apply/applyDesperateBlock";
+import { timeSinceParryInput } from "@/hooks/battle/npc/timeSinceParryInput";
+import { applyGuardBreak } from "@/hooks/battle/npc/apply/applyGuardBreak";
+import { applyDesperateBlock } from "@/hooks/battle/npc/apply/applyDesperateBlock";
 import { applyHitstop } from "@/gameRules/battle/time";
 import { getShieldSide } from "@/gameRules/battle/characters/babidi/babidiShield";
-
 
 /**
  * Janela de time (ms) entre a entrada do jogador e sofrer o dano para o
@@ -39,8 +38,6 @@ export type NpcBlockResult =
  * do dano real do golpe (computado sob demanda) e decide se o NPC bloqueia.
  */
 export type OnBeforeNpcHit = (getDamage: () => number) => NpcBlockResult;
-
-
 
 export function handleNpcBlocking({
   dmg,

@@ -80,7 +80,6 @@ export type BattleTime = {
 
 /** Efeito de time ativo no mundo. */
 
-
 /** Efeito a aplicar; a duração é relativa e vira `until` no `applyTime`. */
 export type TimeSpec = Omit<TimeEffect, "until"> & { durationMs: number };
 

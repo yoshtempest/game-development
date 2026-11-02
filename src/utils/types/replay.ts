@@ -1,9 +1,6 @@
 import type { ComboRank } from "@/utils/types/battle/combo";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
-import type {
-  NPCBattleState,
-  NPCDirection,
-} from "@/utils/types/npc/npc";
+import type { NPCBattleState, NPCDirection } from "@/utils/types/npc/npc";
 
 export type ReplayFrame = {
   t: number;

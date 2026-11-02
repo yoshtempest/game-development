@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { isDead } from "@/gameRules/battle/death";
 
-
 export function useBattleLifecycle({
   playerHP,
   npcHP,

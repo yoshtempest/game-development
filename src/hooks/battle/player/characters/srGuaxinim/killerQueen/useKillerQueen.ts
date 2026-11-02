@@ -8,11 +8,7 @@ import {
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { getProjectileCenter } from "@/gameRules/npc/projectile/projectileDamage";
 import { isProjectileId } from "@/gameRules/npc/projectile/projectileId";
-import {
-  applyTime,
-  clearTime,
-  freezeWorldSpec,
-} from "@/gameRules/battle/time";
+import { applyTime, clearTime, freezeWorldSpec } from "@/gameRules/battle/time";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import type {
   KillerQueenOverlay,
@@ -26,8 +22,6 @@ import {
   KILLER_QUEEN_TIME_ID,
   KILLER_QUEEN_SPRITE_FILE,
 } from "@/data/characters/srGuaxinim/srGuaxinim";
-
-
 
 export function useSrGuaxinimKillerQueen({
   player,

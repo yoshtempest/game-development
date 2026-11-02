@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
@@ -33,7 +27,7 @@ import {
   type KamehamehaApi,
   type KamehamehaProps,
   KAMEHAMEHA_DAMAGE_KIND,
-  MAIN_TARGET_KEY
+  MAIN_TARGET_KEY,
 } from "./constants";
 
 /**

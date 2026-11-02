@@ -1,4 +1,3 @@
-
 import type { InventoryItem } from "@/utils/types/player/inventory";
 
 /** Slots reservados para moedas na mochila. */

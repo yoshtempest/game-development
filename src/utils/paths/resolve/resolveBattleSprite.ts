@@ -1,6 +1,10 @@
 import { STATE_FOLDER } from "@/data/sprites/sprites";
 import { ALL_PREDICATES, stateData } from "@/gameRules/battle/playerStates";
-import { ATOMIC_SPRITES, NATSUKI_ATTACK_SPRITES, MARSHADOW_ATTACK_SPRITES } from "@/utils/paths/player/constants";
+import {
+  ATOMIC_SPRITES,
+  NATSUKI_ATTACK_SPRITES,
+  MARSHADOW_ATTACK_SPRITES,
+} from "@/utils/paths/player/constants";
 import { ATTACK_FOLDER_ALT } from "@/utils/paths/player/constants";
 import { CHARACTER_STATE_FOLDER_ALT } from "@/utils/paths/player/constants";
 import { DOMAIN_EXPANSION_SPRITES } from "@/utils/paths/player/constants";
@@ -16,7 +20,7 @@ import {
   playerPathMarshadowHabilities,
   playerPathSrGuaxinimHabilities,
   playerPathNatsukiHabilities,
-  playerPathEmatronHabilities
+  playerPathEmatronHabilities,
 } from "@/utils/paths/index";
 import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/types";
 import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
@@ -29,7 +33,10 @@ export function resolveBattleSprite(
   form?: MarshadowBattleForm,
   babidiAttackVariant?: BabidiAttackVariant,
 ): string {
-  if (character === "babidi" && (state === "preAbility" || state === "ability")) {
+  if (
+    character === "babidi" &&
+    (state === "preAbility" || state === "ability")
+  ) {
     return playerPath("/babidi/inFight/habilities/fishingNet/pointing.svg");
   }
   if (character === "srGuaxinim" && ALL_PREDICATES.isAbilityTrigger(state)) {
@@ -87,16 +94,16 @@ export function resolveBattleSprite(
     const attackSprite = stateData(MARSHADOW_ATTACK_SPRITES, state);
 
     if (attackSprite) {
-      return playerPath(`/marshadow/inFight/default/attacks/${attackSprite}.svg`);
+      return playerPath(
+        `/marshadow/inFight/default/attacks/${attackSprite}.svg`,
+      );
     }
   }
   // Babidi não tem `blocked.svg`: o bloqueio dele é o overlay `shield.svg`
   // (renderizado pelo `PlayerBattle`). O corpo fica parado no idle enquanto o
   // shield cobre o lado atacado — sem isso a imagem cairia em 404.
   if (state === "blocked" && character === "babidi") {
-    return playerPath(
-      `/babidi/inFight/${getBabidiAttackMode()}/idle/idle.svg`,
-    );
+    return playerPath(`/babidi/inFight/${getBabidiAttackMode()}/idle/idle.svg`);
   }
   // Habilidades do marshadow: os sprites da sequência ficam em pastas próprias
   // (`habilities/atomic/`, `habilities/domainExpansion/`,

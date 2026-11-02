@@ -1,10 +1,5 @@
 import type { Props } from "./types";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
@@ -25,21 +20,18 @@ import {
   SPHERE_SPAWN_SCALE,
 } from "@/data/characters/natsuki/natsuki";
 
-
 import type {
   NatsukiSphere,
   NatsukiSphereVariant,
 } from "@/utils/types/character/natsuki";
-import { createSphereFrame } from "../createSphereFrame";
-import type { SphereCore } from "../types";
+import { createSphereFrame } from "@/hooks/battle/player/characters/natsuki/spheres/createSphereFrame";
+import type { SphereCore } from "@/hooks/battle/player/characters/natsuki/spheres/types";
 
 /** Id do efeito de time do Setup (congela o mundo enquanto a esfera se forma). */
 const SPHERE_TIME_ID = "natsuki:spheres";
 /** Congelamento do mundo durante o Setup da purple (junction + one + two). */
 const PURPLE_CAST_FREEZE_MS =
   PURPLE_JUNCTION_MS + PURPLE_FORM_MS + SPHERE_MOVE_MS;
-
-
 
 /**
  * Núcleo das esferas do natsuki: o estado da esfera em campo, as fases que as

@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useGrabThrow } from "@/hooks/battle/throw/useGrabThrow";
 import { useThrowAnimation } from "@/hooks/battle/throw/useThrowAnimation";
@@ -267,19 +261,22 @@ export function useBattleCombat({
   }, [fishingNet]);
 
   // Quando a rede zera o HP, ela se desfaz e libera o inimigo.
-  const onFishingNetDamage = useCallback((hp: number) => {
-    const net = fishingNetRef.current;
-    if (!net) return;
-    if (hp <= 0) {
-      setFishingNet(null);
-      fishingNetRef.current = null;
-      npcRootedUntilRef.current = 0;
-    } else {
-      const updated = { ...net, hp };
-      setFishingNet(updated);
-      fishingNetRef.current = updated;
-    }
-  }, [npcRootedUntilRef]);
+  const onFishingNetDamage = useCallback(
+    (hp: number) => {
+      const net = fishingNetRef.current;
+      if (!net) return;
+      if (hp <= 0) {
+        setFishingNet(null);
+        fishingNetRef.current = null;
+        npcRootedUntilRef.current = 0;
+      } else {
+        const updated = { ...net, hp };
+        setFishingNet(updated);
+        fishingNetRef.current = updated;
+      }
+    },
+    [npcRootedUntilRef],
+  );
 
   /** +1 stack de VastolordLaser ao derrotar um inimigo com a forma ativa. */
   const addVastolordLaserChargeRef = useRef<() => void>(() => {});
@@ -852,8 +849,6 @@ export function useBattleCombat({
     fishingNetRef.current = net;
     npcRootedUntilRef.current = Date.now() + 5000;
   }, [battle.playerMaxHp, npc.x, npc.y, npcRootedUntilRef, startAbility]);
-
-
 
   const freezeSummonsUntilRef = useRef(0);
 
@@ -1865,7 +1860,11 @@ export function useBattleCombat({
     killerQueenSprite,
     bombSprite,
     explosionSprite,
-    ematronClone: ematronHakai ? null : (ematronHakaiActive ? ematronHakaiClone : ematronClone),
+    ematronClone: ematronHakai
+      ? null
+      : ematronHakaiActive
+        ? ematronHakaiClone
+        : ematronClone,
     clonePress,
     cloneRelease,
     cloneUsable,
@@ -1918,6 +1917,6 @@ export function useBattleCombat({
     babidiAttackVariant: babidiEnergy.attackVariant,
     babidiShieldSides: babidiShield.sides,
     onBabidiShieldEnd: babidiShield.end,
-    hakai: ematronHakai
+    hakai: ematronHakai,
   };
 }

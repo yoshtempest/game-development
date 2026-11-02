@@ -1,10 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
-import {
-  ALL_TIME_KINDS,
-  applyTime,
-  clearTime,
-} from "@/gameRules/battle/time";
+import { ALL_TIME_KINDS, applyTime, clearTime } from "@/gameRules/battle/time";
 import type { TravelLockSpec } from "@/utils/types/character/babidi/portals";
 import { BabidiPortalConstants } from "@/data/characters/babidi";
 import { useStableCallback } from "@/hooks/useStableCallback";

@@ -1,6 +1,5 @@
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
 
-
 export type Props = {
   allies: SummonedNpc[];
   setAllies: React.Dispatch<React.SetStateAction<SummonedNpc[]>>;

@@ -1,4 +1,8 @@
-import type { RouteStep, FoodPlateEncounterReturn, RaparigaState } from "./types";
+import type {
+  RouteStep,
+  FoodPlateEncounterReturn,
+  RaparigaState,
+} from "./types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGroundItems } from "@/contexts/GroundItemContext";
 import { useInventory } from "@/contexts/InventoryContext";
@@ -18,7 +22,6 @@ const RAPARIGA_SPAWN_CHANCE = 0.05; // 100%
 const RAPARIGA_EAT_DURATION_MS = 60_000; // 1 minuto
 const STEP_MS = 300; // Igual ao Janderson
 const TURN_MS = 300;
-
 
 export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
   const { player } = usePlayer();

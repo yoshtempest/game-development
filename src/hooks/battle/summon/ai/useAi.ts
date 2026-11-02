@@ -7,17 +7,15 @@ import {
   HONORED_ONE_FLEE_STEP,
 } from "@/gameRules/battle/cursedEnergy";
 import { BATTLE_LIMITS } from "@/gameRules/movement/constants";
-import { computeSummonDamage, SUMMON_DAMAGE_KIND } from "../computeSummonDamage";
 import {
-  applyHitstop,
-  getTime,
-  scaleCooldown,
-} from "@/gameRules/battle/time";
+  computeSummonDamage,
+  SUMMON_DAMAGE_KIND,
+} from "@/hooks/battle/summon/computeSummonDamage";
+import { applyHitstop, getTime, scaleCooldown } from "@/gameRules/battle/time";
 
 import { clampX } from "@/gameRules/movement/clampX";
 /** Velocidade acima da qual o hungryDog é considerado correndo (usa run.svg). */
 const HUNGRY_DOG_RUN_SPEED = 1.5;
-
 
 export function useSummonAI({
   summons,

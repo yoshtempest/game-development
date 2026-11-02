@@ -1,11 +1,5 @@
 import type { Props, VastolordLaserApi } from "./types";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { SPECIAL_INTRO_DURATION } from "@/hooks/battle/modals/specialIntro/useSpecialIntro";
@@ -34,15 +28,11 @@ import {
   type VastolordLaserBeam,
 } from "@/gameRules/battle/characters/marshadow/vastolordLaser";
 
-
-
 /** Natureza do feixe pelo registro de habilidades (o GameData e o hook concordam). */
 const LASER_DAMAGE_KIND = getAbilityDamageType("vastolordLaser");
 
 /** Chave do NPC principal no acumulador de apresentação (summons usam o id). */
 const MAIN_TARGET_KEY = "main-npc";
-
-
 
 /**
  * Laser da Forma Vastolord do marshadow (uma vez por forma): o `press` consome o

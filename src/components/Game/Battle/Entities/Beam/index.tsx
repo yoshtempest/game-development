@@ -56,11 +56,7 @@ export function BattleBeam({
 
   return (
     <div
-      className={[
-        styles.container,
-        phaseClass,
-        className,
-      ]
+      className={[styles.container, phaseClass, className]
         .filter(Boolean)
         .join(" ")}
       style={

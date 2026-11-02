@@ -10,8 +10,6 @@ import type {
   PlayerSnap,
 } from "@/utils/types/replay";
 
-
-
 export function useBattleSnapshots({
   player,
   npc,

@@ -9,8 +9,6 @@ export const SPECIAL_INTRO_DURATION = ONE_THOUSAND_MS;
 export const DOMAIN_EXPANSION_INTRO_DURATION = THREE_THOUSAND_MS;
 export const SPECIAL_INTRO_TIME_SCALE = 0.1;
 
-
-
 /**
  * Animação de abertura do special: durante `SPECIAL_INTRO_DURATION` o tempo
  * da batalha fica em `SPECIAL_INTRO_TIME_SCALE` e o overlay do personagem é

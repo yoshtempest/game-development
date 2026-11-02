@@ -3,8 +3,6 @@ import { useCallback, useRef, useState } from "react";
 import { NPCS, isNpcType } from "@/data/npc";
 import { getNpcStats } from "@/gameRules/npc/npcStats";
 
-
-
 type Props = {
   npcLevel: number;
   difficulty: NpcDifficulty;

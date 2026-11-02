@@ -1,4 +1,7 @@
-import type { SphereBattle, SphereCore } from "../types";
+import type {
+  SphereBattle,
+  SphereCore,
+} from "@/hooks/battle/player/characters/natsuki/spheres/types";
 import type { RefObject } from "react";
 import type { NatsukiSphere } from "@/utils/types/character/natsuki";
 

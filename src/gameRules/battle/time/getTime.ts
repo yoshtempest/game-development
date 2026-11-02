@@ -1,8 +1,4 @@
-import {
-  type TimeKind,
-  type BattleTime,
-  NEUTRAL_TIME,
-} from "./types";
+import { type TimeKind, type BattleTime, NEUTRAL_TIME } from "./types";
 
 /**
  * Estado de tempo de uma entidade agora: o pior caso entre os efeitos ativos que

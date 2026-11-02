@@ -1,23 +1,17 @@
 import type { Props, DomainExpansionApi } from "./types";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
 import { getProjectileCenter } from "@/gameRules/npc/projectile/projectileDamage";
-import {
-  applyTime,
-  clearTime,
-  freezeWorldSpec,
-} from "@/gameRules/battle/time";
+import { applyTime, clearTime, freezeWorldSpec } from "@/gameRules/battle/time";
 import { BATTLE_LIMITS } from "@/gameRules/movement/constants";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
-import { usePausableTimers, type PausableTimerHandle } from "@/hooks/battle/utilities/pausableTimers/usePausableTimers";
+import {
+  usePausableTimers,
+  type PausableTimerHandle,
+} from "@/hooks/battle/utilities/pausableTimers/usePausableTimers";
 import { useMenuPauseShift } from "@/hooks/battle/utilities/useMenuPauseShift";
 import { DOMAIN_SHATTER_MS } from "@/data/characters/domainExpansions";
 import {
@@ -35,10 +29,6 @@ import type {
   MugetsuDisintegrationTarget,
   MugetsuSweep,
 } from "@/utils/types/battle/mugetsu";
-
-
-
-
 
 /**
  * Expansão de Domínio do marshadow: o jogador troca para preMugetsu.svg, dá um

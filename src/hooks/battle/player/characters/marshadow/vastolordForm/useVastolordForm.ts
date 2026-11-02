@@ -20,7 +20,6 @@ export const VASTOLORD_TRANSFORM_MS = FOUR_THOUSAND_MS;
 export const VASTOLORD_TRANSFORM_FRAME_MS = ONE_THOUSAND_MS;
 export const VASTOLORD_TRANSFORM_FRAME_COUNT = 4;
 
-
 /**
  * Passiva do marshadow: ao morrer, desperta a Forma Vastolord por `durationMs`.
  * A barra de vida volta a 100%, dano e armadura multiplicam por 4 e, se o

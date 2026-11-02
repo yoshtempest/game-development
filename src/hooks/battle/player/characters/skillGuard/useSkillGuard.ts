@@ -7,7 +7,6 @@ import {
   isPlayerParalyzed,
 } from "@/gameRules/battle/status/statusEffects";
 
-
 /**
  * Guarda de uso compartilhada pelas habilidades de personagem.
  *

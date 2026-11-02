@@ -8,12 +8,7 @@ import { getNpcElementTypes } from "@/data/types/npcElementTypes";
 import { combatService } from "@/services/combat";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
 
-
-import {
-  applyHitstop,
-  getTime,
-  scaleCooldown,
-} from "@/gameRules/battle/time";
+import { applyHitstop, getTime, scaleCooldown } from "@/gameRules/battle/time";
 
 type EnemyTarget = {
   id: string;
@@ -21,8 +16,6 @@ type EnemyTarget = {
   x: number;
   y: number;
 };
-
-
 
 const ALLY_ATTACK_COOLDOWN = 800;
 const ALLY_ATTACK_RANGE = 55;

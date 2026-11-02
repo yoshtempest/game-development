@@ -7,7 +7,6 @@ import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSk
 import type { EmatronCloneVisual } from "@/utils/types/character/ematron";
 import type { HakaiApi, HakaiProps } from "./types";
 
-
 export function useHakaiExpansion({
   player,
   setPlayer,
@@ -27,7 +26,9 @@ export function useHakaiExpansion({
 }: HakaiProps): HakaiApi {
   const [active, setActive] = useState(false);
   const [hakai, setHakai] = useState(false);
-  const [cloneVisual, setCloneVisual] = useState<EmatronCloneVisual | null>(null);
+  const [cloneVisual, setCloneVisual] = useState<EmatronCloneVisual | null>(
+    null,
+  );
   const activeRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -41,7 +42,7 @@ export function useHakaiExpansion({
   const chargesMaxRef = useLatestRef(chargesMax);
   const teleportTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const distance = 60;
-  
+
   const { usableRef } = useSkillGuard({
     player,
     character: "ematron",
@@ -49,7 +50,8 @@ export function useHakaiExpansion({
     disabledRef,
     isPausedRef,
     battleEndedRef,
-    extraCanUse: () => chargesRef.current >= chargesMaxRef.current && !activeRef.current,
+    extraCanUse: () =>
+      chargesRef.current >= chargesMaxRef.current && !activeRef.current,
     extraCancel: () => !activeRef.current,
   });
 
@@ -86,9 +88,20 @@ export function useHakaiExpansion({
       const n = npcRef.current;
       // 1) Sprite de teleporte + sombra (EmatronClone) atrás do inimigo.
       setPlayer((p) => (p.mode !== "battle" ? p : { ...p, state: "ability" }));
-      setCloneVisual({ x: n.x > player.x ? n.x + distance : n.x - distance, y: n.y, direction: n.x > player.x ? "left" : "right" });
+      setCloneVisual({
+        x: n.x > player.x ? n.x + distance : n.x - distance,
+        y: n.y,
+        direction: n.x > player.x ? "left" : "right",
+      });
       freezeActionsUntilRef.current = Date.now() + 4000;
-      timeRef.current = applyTime(timeRef.current ?? [], { id: "hakai", kinds: ALL_TIME_KINDS, exempt: [], speed: 0, cooldown: Infinity, durationMs: 4000 });
+      timeRef.current = applyTime(timeRef.current ?? [], {
+        id: "hakai",
+        kinds: ALL_TIME_KINDS,
+        exempt: [],
+        speed: 0,
+        cooldown: Infinity,
+        durationMs: 4000,
+      });
       playSoundRef.current("ematronTeleport");
       // 2) Após 500ms, teleporta para a sombra e troca para hakai.svg; inicia dano.
       teleportTimeoutRef.current = setTimeout(() => {
@@ -149,10 +162,17 @@ export function useHakaiExpansion({
     chargesRef,
     player.x,
     startSpecialIntro,
-    timeRef
+    timeRef,
   ]);
 
   useEffect(() => () => clear(), [clear]);
 
-  return { active, shattering: false, press, usable: usableRef.current, cloneVisual, hakai };
+  return {
+    active,
+    shattering: false,
+    press,
+    usable: usableRef.current,
+    cloneVisual,
+    hakai,
+  };
 }

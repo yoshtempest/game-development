@@ -11,7 +11,6 @@ import {
   isPlayerParalyzed,
 } from "@/gameRules/battle/status/statusEffects";
 
-
 export function useChargeAttack(props: Props) {
   const {
     player,

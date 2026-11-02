@@ -16,12 +16,11 @@ import type { VampirismSource } from "@/gameRules/battle/vampirism/applyVampiris
 import { BLOCK_ATTACK_PUSH_DISTANCE } from "@/gameRules/movement/constants";
 import { YVEL_WEAPON_RANGES } from "@/data/characters/yvel/yvelWeapons";
 import { PlayerSpecialConstants } from "@/data/projectile";
-import { useBuildTargetList } from "../usePlayerTargeting";
+import { useBuildTargetList } from "@/hooks/battle/player/usePlayerTargeting";
 import { resetCooldownRef } from "@/utils/battle/cooldown";
 import { EMATRON_COMBO_STEPS } from "@/data/characters/ematron";
 
 import { useLatestRef } from "@/hooks/useLatestRef";
-
 
 export function usePlayerBattleActions({
   player,

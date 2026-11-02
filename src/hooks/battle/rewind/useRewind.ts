@@ -13,7 +13,6 @@ import {
 import type { RewindSnapshot } from "@/utils/types/battle/rewind";
 import type { ReplayFrame } from "@/utils/types/replay";
 
-
 export function useRewind({
   character,
   rewindFrames,

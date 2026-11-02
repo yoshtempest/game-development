@@ -1,10 +1,5 @@
 import type { Props, NatsukiDomainApi } from "./types";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
@@ -20,7 +15,6 @@ import {
   NATSUKI_DOMAIN_MS,
   NATSUKI_DOMAIN_TIME_ID,
 } from "@/data/characters/natsuki/natsuki";
-
 
 /**
  * Expansão de Domínio do natsuki (Muryōkūsho): o personagem trava na pose

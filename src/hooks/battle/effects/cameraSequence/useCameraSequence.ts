@@ -34,16 +34,13 @@ export function useCameraSequence({
   const prevNpcPhaseRef = useRef(npcPhase);
   const prevVastolordRef = useRef(vastolordActive);
 
-  const scheduleEnd = useCallback(
-    (duration: number) => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
-        timerRef.current = null;
-        setFocus(null);
-      }, duration);
-    },
-    [],
-  );
+  const scheduleEnd = useCallback((duration: number) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      timerRef.current = null;
+      setFocus(null);
+    }, duration);
+  }, []);
 
   const triggerFocus = useCallback(
     (spec: CameraFocusSpec) => {
@@ -120,7 +117,10 @@ export function useCameraSequence({
 
   // Funções de consulta (detectar se aplicará foco, quanto e em quem) a partir
   // de uma spec — expostas para que a camada de habilidades possa decidir.
-  const willApplyFocus = useCallback((spec: CameraFocusSpec | null) => spec !== null, []);
+  const willApplyFocus = useCallback(
+    (spec: CameraFocusSpec | null) => spec !== null,
+    [],
+  );
   const getFocusAmount = useCallback(
     (spec: CameraFocusSpec | null) => spec?.zoom ?? null,
     [],

@@ -20,8 +20,6 @@ const ENERGY_PX_PER_PERCENT = 30;
 /** Escudo concedido ao receber dano em % da vida máxima quando a barra está cheia. */
 const ENERGY_SHIELD_PERCENT = 5;
 
-
-
 export function useEnergy(
   player: Player,
   playerMaxHp: number,

@@ -17,8 +17,6 @@ import {
  */
 const NO_AUTO_REPEAT_ACTIONS = new Set(["onConfirm", "onCancel"]);
 
-
-
 export function useGameKeyboard({
   controlsRef,
   playerModeRef,

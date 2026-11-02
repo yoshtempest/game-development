@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useGameControls } from "@/contexts/GameControlsContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
 
-
 export function useItemControls({
   filterFocused,
   chestFocused,

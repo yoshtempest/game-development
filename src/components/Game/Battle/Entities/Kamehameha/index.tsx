@@ -13,11 +13,7 @@ type Props = BattleEntityPositioning & {
   effect: KamehamehaEffect | null;
 };
 
-export function Kamehameha({
-  effect,
-  battleScaleX,
-  battleScaleY,
-}: Props) {
+export function Kamehameha({ effect, battleScaleX, battleScaleY }: Props) {
   if (!effect) return null;
 
   const width = Math.abs(effect.toX - effect.fromX) * battleScaleX;

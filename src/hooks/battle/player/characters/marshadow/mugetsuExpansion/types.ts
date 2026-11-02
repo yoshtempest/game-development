@@ -1,9 +1,5 @@
 import type { VampirismStats } from "@/gameRules/battle/vampirism/applyVampirism";
-import type {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-} from "react";
+import type { Dispatch, RefObject, SetStateAction } from "react";
 
 import type { NPCBattleState } from "@/utils/types/npc/npc";
 import type {

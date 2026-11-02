@@ -11,7 +11,6 @@ import { clampX } from "@/gameRules/movement/clampX";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { gainAbilityCharge } from "@/gameRules/battle/special";
 
-
 export function useActiveSkills({
   cursedEnergyEnabled,
   battle,

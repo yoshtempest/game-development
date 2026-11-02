@@ -3,7 +3,6 @@ import { npcPath } from "@/utils/paths";
 import { getNpcDisplayName } from "@/data/npc";
 import styles from "@/components/Game/Battle/HUD/styles.module.css";
 
-
 type Props = {
   summons: SummonedNpc[];
   npcType?: string;

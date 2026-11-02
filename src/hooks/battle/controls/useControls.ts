@@ -13,7 +13,6 @@ import { getComboAction } from "@/data/battle/comboActions";
  * ter `onOpen` próprio — a checagem vem antes do fallback de batalha.
  */
 
-
 const HOLD_DISCRIMINATOR = 150;
 
 export function useBattleControls({

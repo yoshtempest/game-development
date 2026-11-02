@@ -1,8 +1,6 @@
 import type { DamageNumber } from "./types";
 import { useState, useCallback, useRef, useEffect } from "react";
 
-
-
 export function useDamageNumbers() {
   const [damageNumbers, setDamageNumbers] = useState<DamageNumber[]>([]);
   const idRef = useRef(0);

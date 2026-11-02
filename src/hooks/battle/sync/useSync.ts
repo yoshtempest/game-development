@@ -2,7 +2,6 @@ import type { SyncProps } from "./types";
 import { useEffect } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 
-
 export function useBattleSync({
   battle,
   npcAiHpRef,

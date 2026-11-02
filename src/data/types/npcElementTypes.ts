@@ -2,7 +2,7 @@ import type { ElementType } from "@/utils/types/battle/element";
 
 /** Pets têm elementos mas não são NPCs de batalha. */
 export type PetElementKey =
-  "turkey"
+  | "turkey"
   | "rapariga"
   | "zecaUrubu"
   | "mosquito"

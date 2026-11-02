@@ -11,7 +11,6 @@ import { useAudio } from "@/hooks/audio/useAudio";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { createSounds } from "@/utils/soundEffects";
 
-
 type SoundEffectsContextType = {
   playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
   stopSound: (sound: SoundId) => void;

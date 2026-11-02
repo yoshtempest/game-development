@@ -3,7 +3,6 @@ import { npcPath } from "@/utils/paths";
 import { getNpcDisplayName } from "@/data/npc";
 import styles from "./styles.module.css";
 
-
 type Props = {
   allies: SummonedNpc[];
 };

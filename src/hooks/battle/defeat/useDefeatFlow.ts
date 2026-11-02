@@ -3,7 +3,6 @@ import { useCallback, useState } from "react";
 import { computeElapsedBattleTime } from "@/hooks/battle/time/computeElapsedBattleTime";
 import { incrementDeath, recordDefeat } from "@/utils/rewards";
 
-
 export function useDefeatFlow({
   player,
   setBattleHP,

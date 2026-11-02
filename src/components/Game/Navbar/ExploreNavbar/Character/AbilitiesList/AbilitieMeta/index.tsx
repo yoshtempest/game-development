@@ -1,8 +1,7 @@
 import type { CharacterAbility } from "@/utils/types/player/abilities";
-import styles from "../styles.module.css"
+import styles from "@/components/Game/Navbar/ExploreNavbar/Character/AbilitiesList/styles.module.css";
 import { getEnergyName } from "@/gameRules/battle/mana";
 import { Clock, Coins, Sparkles } from "lucide-react";
-
 
 function formatCooldown(cooldownMs: number) {
   return `${cooldownMs / 1000}s`;

@@ -55,7 +55,6 @@ export type MainNpcState = NPCBattleState & {
   laser: LaserBeam | null;
 };
 
-
 export type Props = {
   npc: MainNpcState;
   player: Player;

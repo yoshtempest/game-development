@@ -8,11 +8,7 @@ type Props = BattleEntityPositioning & {
   laser: LaserBeam | null;
 };
 
-export function Laser({
-  laser,
-  battleScaleX,
-  battleScaleY,
-}: Props) {
+export function Laser({ laser, battleScaleX, battleScaleY }: Props) {
   if (!laser || !laser.active) return null;
 
   const left = Math.min(laser.fromX, laser.toX) * battleScaleX;

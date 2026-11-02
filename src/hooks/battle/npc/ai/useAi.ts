@@ -1,7 +1,7 @@
 import type { Props } from "./types";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { getNpcAttack } from "@/services/npc";
-import { useProjectile } from "../useProjectile";
+import { useProjectile } from "@/hooks/battle/npc/useProjectile";
 import { isParryPress } from "@/hooks/battle/npc/isParryPress";
 import {
   getNpcDirection,
@@ -19,11 +19,10 @@ import {
   HONORED_ONE_FLEE_STEP,
 } from "@/gameRules/battle/cursedEnergy";
 import { ProjectileHpConstants } from "@/data/projectile";
-import { useProximityLoopSound } from "../useProximityLoopSound";
+import { useProximityLoopSound } from "@/hooks/battle/npc/useProximityLoopSound";
 import { getTime, NPC_TIME_ID } from "@/gameRules/battle/time";
 
 import { clampX } from "@/gameRules/movement/clampX";
-
 
 export function useNpcAI({
   playerX,

@@ -1,6 +1,4 @@
-
 import type { BabidiTarget } from "@/utils/types/character/babidi";
-
 
 export type Props = {
   PLAYER_SIZE: number;

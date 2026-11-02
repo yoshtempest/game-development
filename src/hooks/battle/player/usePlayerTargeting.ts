@@ -3,7 +3,6 @@ import { isPlayerInRange } from "@/gameRules/battle/range";
 import { isFacingTarget } from "@/gameRules/battle/direction";
 import { YVEL_WEAPON_RANGES } from "@/data/characters/yvel/yvelWeapons";
 
-
 type Target = { id: string; x: number; y: number };
 
 export function useBuildTargetList(

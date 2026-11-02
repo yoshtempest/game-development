@@ -9,7 +9,6 @@ import { useCompressedStorage } from "@/hooks/useCompressedStorage";
 
 import type { ContainerSlots } from "@/utils/types/container";
 
-
 export function useContainer({
   storageKey,
   defaultSlots,

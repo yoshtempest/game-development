@@ -112,7 +112,6 @@
   color: var(--white);
 
   background: rgba(0, 0, 0, 0.55);
-  border: var(--size-1) solid var(--accent-40);
   border-radius: var(--size-4);
 
   pointer-events: none;

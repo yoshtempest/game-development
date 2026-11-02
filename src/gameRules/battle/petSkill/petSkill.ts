@@ -1,6 +1,5 @@
 import type { RefObject } from "react";
 
-
 import { PET_STAR_MULTIPLIER } from "@/data/characters/pets/petProgress";
 import { getPetBaseDamage } from "@/data/characters/pets/petProgress";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";

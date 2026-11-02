@@ -1,7 +1,5 @@
 import type { EquipmentRank } from "@/utils/types/player/equipment";
-import {
-  type PetRole,
-} from "@/data/characters/pets/petSkills";
+import { type PetRole } from "@/data/characters/pets/petSkills";
 
 export type PetEntry = {
   id: EquipmentId;

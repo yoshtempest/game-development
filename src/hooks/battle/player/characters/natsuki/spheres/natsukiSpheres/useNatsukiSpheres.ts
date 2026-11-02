@@ -8,16 +8,13 @@ import {
   SPHERE_TICK_MS,
 } from "@/data/characters/natsuki/natsuki";
 
-
 import type { NatsukiSphereFocus } from "@/utils/types/character/natsuki";
 
-import { useBlueSphere } from "../blueSphere/useBlueSphere";
-import { usePurpleSphere } from "../purpleSphere/usePurpleSphere";
-import { useRedSphere } from "../redSphere/useRedSphere";
-import { useSphereCore } from "../sphereCore/useSphereCore";
-import type { SphereBattle } from "../types";
-
-
+import { useBlueSphere } from "@/hooks/battle/player/characters/natsuki/spheres/blueSphere/useBlueSphere";
+import { usePurpleSphere } from "@/hooks/battle/player/characters/natsuki/spheres/purpleSphere/usePurpleSphere";
+import { useRedSphere } from "@/hooks/battle/player/characters/natsuki/spheres/redSphere/useRedSphere";
+import { useSphereCore } from "@/hooks/battle/player/characters/natsuki/spheres/sphereCore/useSphereCore";
+import type { SphereBattle } from "@/hooks/battle/player/characters/natsuki/spheres/types";
 
 /**
  * Esferas do natsuki (habilidades "blue"/"red"/"purple").

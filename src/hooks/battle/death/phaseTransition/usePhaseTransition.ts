@@ -2,7 +2,6 @@ import type { Props } from "./types";
 import { useEffect, useRef } from "react";
 import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 
-
 export function usePhaseTransition({
   npcPhase,
   player,

@@ -3,8 +3,8 @@ import { useCallback } from "react";
 import { NPC_MELEE_COOLDOWN } from "@/data/cooldowns";
 import { getNpcStats } from "@/gameRules/npc/npcStats";
 
-import { handleNpcBlocking } from "../blocking/useBlocking";
-import { isParryPress } from "../isParryPress";
+import { handleNpcBlocking } from "@/hooks/battle/npc/blocking/useBlocking";
+import { isParryPress } from "@/hooks/battle/npc/isParryPress";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { logPlay } from "@/utils/replay/audioEventLog";
@@ -14,9 +14,9 @@ import { combatService } from "@/services/combat";
 import { getBabidiBlockReflect } from "@/gameRules/battle/characters/babidi/babidiBlock";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
-import { checkBlocked } from "../checkBlocked";
-import { rollNpcDamage } from "../rollNpcDamage";
-import { applyBleed } from "../apply/applyBleed";
+import { checkBlocked } from "@/hooks/battle/npc/checkBlocked";
+import { rollNpcDamage } from "@/hooks/battle/npc/rollNpcDamage";
+import { applyBleed } from "@/hooks/battle/npc/apply/applyBleed";
 import {
   applyHitstop,
   getTime,
@@ -26,7 +26,6 @@ import {
 
 import { clampX } from "@/gameRules/movement/clampX";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
-
 
 export function useNpcBattle({
   npcLevel,

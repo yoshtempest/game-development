@@ -3,7 +3,6 @@ import type { SlotScopedKey } from "@/services/save/slotManager";
 import type { ContainerSlots } from "@/utils/types/container";
 import type { RespawnConfig } from "@/utils/types/container";
 
-
 export type Params = {
   storageKey: SlotScopedKey;
   defaultSlots: ContainerSlots;

@@ -1,6 +1,5 @@
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 
-
 export type Props = {
   summons: SummonedNpc[];
   setSummons: React.Dispatch<React.SetStateAction<SummonedNpc[]>>;

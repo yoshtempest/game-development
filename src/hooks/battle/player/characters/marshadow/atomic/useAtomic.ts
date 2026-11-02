@@ -1,10 +1,5 @@
 import type { Props, AtomicApi } from "./types";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { ATOMIC_COOLDOWN_MS } from "@/data/characters/marshadow/marshadow";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
@@ -20,10 +15,7 @@ import {
   ABILITY_COOLDOWN_TICK_MS,
   useCooldownPauseTick,
 } from "@/hooks/battle/utilities/useCooldowns";
-import type {
-  AtomicCut,
-  AtomicExplosion,
-} from "@/utils/types/battle/atomic";
+import type { AtomicCut, AtomicExplosion } from "@/utils/types/battle/atomic";
 
 /** Raio da explosão (px lógicos) a partir do inimigo com maior vida máxima. */
 export const ATOMIC_RADIUS = 300;
@@ -41,10 +33,6 @@ export const ATOMIC_TOTAL_DURATION_MS = ONE_THOUSAND_MS;
 export const ATOMIC_TARGET_MULTIPLIER = 2;
 /** Multiplicador do dano especial nos demais inimigos dentro do raio. */
 export const ATOMIC_AREA_MULTIPLIER = 1;
-
-
-
-
 
 /**
  * "I Am Atomic" do marshadow: o jogador dispara a sequência starting.svg →

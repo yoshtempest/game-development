@@ -5,7 +5,6 @@ import type { SpawnDamageFn } from "@/utils/types/battle/spawnDamageFn";
 import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
 
-
 export type Props = {
   playerX: number;
   playerY: number;

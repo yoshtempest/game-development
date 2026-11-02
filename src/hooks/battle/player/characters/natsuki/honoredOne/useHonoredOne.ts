@@ -1,10 +1,5 @@
 import type { Props } from "./types";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import {
   HONORED_ONE_DURATION_MS,

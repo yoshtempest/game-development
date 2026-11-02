@@ -1,16 +1,10 @@
 import type { Props } from "./types";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
 import { usePausableTimers } from "@/hooks/battle/utilities/pausableTimers/usePausableTimers";
 import { useMenuPauseShift } from "@/hooks/battle/utilities/useMenuPauseShift";
 import { ONE_THOUSAND_MS, SIX_HUNDRED_MS } from "@/data/ms";
-
 
 /** Lock de ação do player durante o flash do domínio. */
 export const DOMAIN_BURST_LOCK_MS = SIX_HUNDRED_MS;
@@ -20,8 +14,6 @@ export const DOMAIN_BURST_MS = ONE_THOUSAND_MS;
 export const DOMAIN_BURST_MAIN_MULTIPLIER = 2;
 /** Dano especial em cada summon (fator × proporção especial/básico). */
 export const DOMAIN_BURST_SUMMON_MULTIPLIER = 1;
-
-
 
 type DomainBurstApi = {
   /** Overlay ativo (o nome/cor do domínio é montado pela Scene). */

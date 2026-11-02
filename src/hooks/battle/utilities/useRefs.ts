@@ -6,7 +6,6 @@ import { ProjectileHpConstants } from "@/data/projectile";
 import type { SpawnDamageFn } from "@/utils/types/battle/spawnDamageFn";
 import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
 
-
 export function useBattleRefs() {
   // A natureza do golpe viaja junto: melee e projétil declaram no registry de
   // attacks e o funil precisa dela para escolher a coluna de armadura.

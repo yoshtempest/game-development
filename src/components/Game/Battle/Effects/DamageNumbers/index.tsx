@@ -10,7 +10,12 @@ const HEAD_GAP = 8;
 const NO_SNAP_TYPES = new Set<string>(["projectile"]);
 const NO_SNAP_OFFSET = 20;
 
-export function DamageNumbers({ numbers, scaleX, scaleY, targets }: DamageNumbersProps) {
+export function DamageNumbers({
+  numbers,
+  scaleX,
+  scaleY,
+  targets,
+}: DamageNumbersProps) {
   return (
     <>
       {numbers.map((n) => {

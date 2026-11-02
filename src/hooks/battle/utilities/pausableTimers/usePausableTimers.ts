@@ -5,7 +5,6 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 /** Identidade de um timer agendado — serve para cancelar um só depois. */
 export type PausableTimerHandle = number;
 
-
 /**
  * `setTimeout` consciente de pausa: enquanto a pausa está ativa, cada timer
  * pendente congela com o tempo restante EXATO e rearma de onde parou quando

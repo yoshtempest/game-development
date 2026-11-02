@@ -9,7 +9,6 @@ import {
   VASTOLORD_ROAR_TICK_MS,
 } from "@/data/characters/marshadow/vastolordForm";
 
-
 /** Distância horizontal até a origem e direção para longe dela. */
 function awayFrom(
   originX: number,

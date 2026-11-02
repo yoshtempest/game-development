@@ -18,7 +18,7 @@ import {
   BABIDI_PORTAL_KINDS,
   BabidiPortalConstants,
 } from "@/data/characters/babidi";
-import { PORTAL_TIME_ID } from "../usePortalLocks";
+import { PORTAL_TIME_ID } from "@/hooks/battle/player/characters/babidi/usePortalLocks";
 
 import type { GameControlLayer } from "@/utils/types/player/controls";
 import type {

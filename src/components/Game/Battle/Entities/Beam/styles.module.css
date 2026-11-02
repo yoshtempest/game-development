@@ -62,13 +62,13 @@
 }
 
 @keyframes beamPulse {
-    0% {
-        transform: scaleY(1);
-    }
+  0% {
+    transform: scaleY(1);
+  }
 
-    100% {
-        transform: scaleY(0.95);
-    }
+  100% {
+    transform: scaleY(0.95);
+  }
 }
 
 @keyframes beamShrinkLeft {

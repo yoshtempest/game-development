@@ -1,5 +1,3 @@
-
-
 type BattleHUDState = {
   playerHP: number;
   playerMaxHp: number;

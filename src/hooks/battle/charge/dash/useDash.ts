@@ -20,7 +20,6 @@ import { applyHitstop } from "@/gameRules/battle/time";
 
 import { clampX } from "@/gameRules/movement/clampX";
 
-
 export function useChargeDash(props: Props) {
   const {
     char,

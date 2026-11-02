@@ -1,9 +1,5 @@
 import type { MarshadowBattleForm } from "@/utils/paths";
-import type {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-} from "react";
+import type { Dispatch, RefObject, SetStateAction } from "react";
 import type { VampirismStats } from "@/gameRules/battle/vampirism/applyVampirism";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
 

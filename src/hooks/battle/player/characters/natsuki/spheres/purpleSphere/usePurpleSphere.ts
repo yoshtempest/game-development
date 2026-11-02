@@ -12,14 +12,9 @@ import {
 } from "@/data/characters/natsuki/natsuki";
 import type { NatsukiSphere } from "@/utils/types/character/natsuki";
 
-
 /** Id estável do projétil da purple (colisão com projéteis inimigos). */
 const PURPLE_PROJECTILE_ID = "natsuki:purpleSphere";
 const PURPLE_DAMAGE_KIND = getAbilityDamageType("purpleSphere");
-
-
-
-
 
 /**
  * Purple do natsuki: a fusão da blue com a red.

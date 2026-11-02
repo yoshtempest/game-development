@@ -11,7 +11,6 @@ import {
 
 import type { BabidiShieldSide } from "@/utils/types/character/babidi";
 
-
 export function useStatCallbacks({
   playerCharacter,
   incrementBlockCounter,

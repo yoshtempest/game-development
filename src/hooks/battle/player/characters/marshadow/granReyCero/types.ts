@@ -4,11 +4,7 @@ import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import type { NPCBattleState } from "@/utils/types/npc/npc";
 import type { VampirismStats } from "@/gameRules/battle/vampirism/applyVampirism";
 import type { GranReyCeroEffect } from "@/gameRules/battle/characters/marshadow/granReyCero";
-import type {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-} from "react";
+import type { Dispatch, RefObject, SetStateAction } from "react";
 
 export type Props = {
   player: Player;

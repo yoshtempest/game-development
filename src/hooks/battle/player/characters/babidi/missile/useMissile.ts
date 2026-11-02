@@ -231,7 +231,11 @@ export function useBabidiMissile({
 
           if (dist <= HIT_RADIUS) {
             // hit: atinge o ponto de mira da sprite do inimigo
-            onProjectileHitRef.current({ id: target.id, x: target.x, y: target.y });
+            onProjectileHitRef.current({
+              id: target.id,
+              x: target.x,
+              y: target.y,
+            });
             stopSoundRef.current("missile");
             playSoundRef.current("explosion", false, 0.3);
             next.push({
@@ -278,7 +282,7 @@ export function useBabidiMissile({
     npcTypeRef,
     playSoundRef,
     stopSoundRef,
-    playerSizeRef
+    playerSizeRef,
   ]);
 
   return { missiles, fire };

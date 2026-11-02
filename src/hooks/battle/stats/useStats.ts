@@ -17,9 +17,7 @@ import { getMaxSpecial } from "@/gameRules/battle/special";
 import { getRankMultiplier } from "@/gameRules/rank";
 import { combatService } from "@/services/combat";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
-import { buildCharacterStats } from "../buildCharacterStats";
-
-
+import { buildCharacterStats } from "@/hooks/battle/buildCharacterStats";
 
 /**
  * Consolida os stats usados na batalha: personagem, equipamento, título,

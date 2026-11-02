@@ -1,9 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import {
   GENKI_DAMA_BASE_RADIUS,
@@ -22,7 +17,6 @@ import {
 import type { GenkiDamaVisual } from "@/utils/types/character/ematron";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
 import type { GenkiDamaProps } from "./types";
-
 
 /**
  * Genki Dama do Ematron: segurar o botão faz o personagem flutuar 300px em y

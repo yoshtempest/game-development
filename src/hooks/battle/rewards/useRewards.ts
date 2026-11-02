@@ -41,8 +41,6 @@ function rollMultiple<T>(rollFn: () => T, rolls: number): T[] {
 
 export type { EquipmentDropInfo };
 
-
-
 export function useBattleRewards({
   npcClass,
   npcLevel,

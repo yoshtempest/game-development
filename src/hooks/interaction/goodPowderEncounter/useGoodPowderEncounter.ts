@@ -1,9 +1,6 @@
 import type { Props } from "./types";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  useLocation,
-  useNavigate,
-} from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useTombstones } from "@/contexts/TombstoneContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
@@ -16,7 +13,6 @@ export type GoodPowderEncounter = {
   npcType: string;
   route: string;
 };
-
 
 export function useGoodPowderEncounter({
   map,

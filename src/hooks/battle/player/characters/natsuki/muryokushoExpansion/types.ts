@@ -1,12 +1,7 @@
-import type {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-} from "react";
+import type { Dispatch, RefObject, SetStateAction } from "react";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 
 import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/types";
-
 
 export type Props = {
   player: Player;

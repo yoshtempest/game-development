@@ -32,7 +32,6 @@ import type {
 import type { SpecialHitOptions } from "@/utils/types/battle/specialHitOptions";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 
-
 /**
  * Setter no-op passado ao `behavior` quando o golpe não rende carga da Expansão
  * (`grantCharge: false`): o comportamento é quem escreve na barra, então negar o

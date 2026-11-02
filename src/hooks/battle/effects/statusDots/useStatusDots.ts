@@ -11,7 +11,6 @@ import {
 import { DOT_TICK_INTERVAL_MS } from "@/gameRules/battle/status/statusEffects";
 import { HONORED_ONE_REGEN_PER_SECOND } from "@/gameRules/battle/cursedEnergy";
 
-
 export function useStatusDots({
   honoredRegenActive,
   battleManaRef,

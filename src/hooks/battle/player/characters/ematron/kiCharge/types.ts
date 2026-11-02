@@ -1,4 +1,3 @@
-
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { RefObject } from "react";
 

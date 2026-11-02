@@ -1,11 +1,5 @@
 import type { Props, GranReyCeroApi } from "./types";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
@@ -42,7 +36,6 @@ import {
 
 /** Natureza do corte pelo registro de habilidades (o GameData e o hook concordam). */
 const GRAN_REY_CERO_DAMAGE_KIND = getAbilityDamageType("granReyCero");
-
 
 /**
  * "Gran Rey Cero" do marshadow: o `press` abre o `SpecialIntro` (background

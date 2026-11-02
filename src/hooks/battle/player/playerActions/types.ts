@@ -1,4 +1,3 @@
-
 import type { SpecialHitOptions } from "@/utils/types/battle/specialHitOptions";
 import type { CharactersProgress } from "@/data/characters/defaultProgress";
 import type { BabidiTarget } from "@/utils/types/character/babidi";
@@ -69,7 +68,9 @@ export type Props = {
     ((player: { x: number; y: number }) => boolean) | null
   >;
   /** Colisão do missile do babidi com um alvo. */
-  babidiMissileOnHitRef?: React.RefObject<((target: BabidiTarget) => void) | null>;
+  babidiMissileOnHitRef?: React.RefObject<
+    ((target: BabidiTarget) => void) | null
+  >;
   /** Modo de ataque básico do babidi selecionado pelo jogador. */
   babidiAttackMode?: "withGun" | "withMissile";
 };

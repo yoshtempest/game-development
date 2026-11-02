@@ -194,10 +194,6 @@
   counter-reset: ability-slot;
 }
 
-.abilityButton {
-  counter-increment: ability-slot;
-}
-
 .abilityButton::before {
   content: counter(ability-slot);
 
@@ -218,7 +214,6 @@
   color: var(--white);
 
   background: rgba(0, 0, 0, 0.55);
-  border: var(--size-1) solid var(--border-medium, var(--accent-40));
   border-radius: var(--size-4);
 
   pointer-events: none;
@@ -250,6 +245,7 @@
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
+  counter-increment: ability-slot;
 }
 
 .abilityButton:disabled {

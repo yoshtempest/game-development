@@ -1,11 +1,10 @@
+import type { Dispatch, RefObject, SetStateAction } from "react";
+
 import type {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-} from "react";
-
-
-import type { AtomicBoomPayload, AtomicCut, AtomicExplosion } from "@/utils/types/battle/atomic";
+  AtomicBoomPayload,
+  AtomicCut,
+  AtomicExplosion,
+} from "@/utils/types/battle/atomic";
 
 export type Props = {
   player: Player;

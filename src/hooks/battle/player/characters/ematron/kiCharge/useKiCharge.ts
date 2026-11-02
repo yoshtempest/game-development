@@ -8,8 +8,6 @@ import {
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
 
-
-
 /**
  * Carga de Ki do Ematron: segurar o botão deixa o personagem parado no sprite
  * `chargingKi.svg` e restaura +1 de Ki a cada 100ms. Enquanto segurado, todas

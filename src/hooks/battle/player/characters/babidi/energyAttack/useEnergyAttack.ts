@@ -20,7 +20,6 @@ import type {
 } from "@/utils/types/character/babidi";
 import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
 
-
 /**
  * Ataque básico do babidi: dispara o projétil `energyAttack.svg` a cada golpe.
  *

@@ -18,7 +18,6 @@ import { BabidiAttackCard, BABIDI_ATTACK_OPTIONS } from "./BabidiAttackCard";
 import { AbilityMeta } from "./AbilitieMeta";
 import { useAutoScrollSelectedItem } from "./useAutoScrollSelectedItem";
 
-
 export function AbilitiesList({
   characterId,
   onClose,
@@ -50,8 +49,7 @@ export function AbilitiesList({
   useGameControlsLayer(
     {
       onUp: () => setSelectedIndex((i) => Math.max(0, i - 1)),
-      onDown: () =>
-        setSelectedIndex((i) => Math.min(totalItems - 1, i + 1)),
+      onDown: () => setSelectedIndex((i) => Math.min(totalItems - 1, i + 1)),
       ...(isBabidi
         ? {
             onLeft: () =>
@@ -104,7 +102,8 @@ export function AbilitiesList({
             </div>
 
             <p className={styles.description}>
-              Use ←/→ para selecionar seu modo de ataque e confirme com a tecla de ação.
+              Use ←/→ para selecionar seu modo de ataque e confirme com a tecla
+              de ação.
             </p>
           </>
         )}

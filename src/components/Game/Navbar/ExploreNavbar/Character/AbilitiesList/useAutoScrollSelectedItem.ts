@@ -1,4 +1,3 @@
-
 import { useEffect, type RefObject } from "react";
 
 type UseAutoScrollSelectedItemProps = {

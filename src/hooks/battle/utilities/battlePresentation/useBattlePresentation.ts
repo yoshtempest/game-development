@@ -1,10 +1,5 @@
 import type { Props } from "./types";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useGameAudio } from "@/hooks/game/useGameAudio";
 import {
@@ -20,7 +15,6 @@ import {
 import { useBlinkAnimation } from "@/hooks/battle/player/characters/natsuki/blinkAnimation/useBlinkAnimation";
 import { useDivergentFistAnimation } from "@/hooks/battle/player/characters/natsuki/useDivergentFistAnimation";
 import { getCharacterPassive } from "@/data/characters/passives";
-
 
 export function useBattlePresentation({
   setup,

@@ -4,7 +4,6 @@ import { useGameControls } from "@/contexts/GameControlsContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { circularNext, circularPrev } from "@/gameRules/menu/navigation";
 
-
 export function useRewardsControls({
   chestRewardsVisible,
   rewardOptionCount,

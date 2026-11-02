@@ -131,7 +131,10 @@ export type BattleSceneApi = {
     typeof useBlackFlashAnimation
   >["blackFlashVariant"];
   cameraFocus: CameraFocus;
-  triggerAbilityCameraFocus: (characterId: CharacterId, abilityId: string) => boolean;
+  triggerAbilityCameraFocus: (
+    characterId: CharacterId,
+    abilityId: string,
+  ) => boolean;
   vastolordActive: boolean;
   vastolordRemainingMs: number;
   /** Quadro da transformação do marshadow (0=screamOne … 3=transformated) ou null. */

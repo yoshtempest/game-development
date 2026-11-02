@@ -11,7 +11,10 @@ import {
 } from "@/data/characters/natsuki/natsuki";
 
 import type { NatsukiSphere } from "@/utils/types/character/natsuki";
-import type { SphereBattle, SphereCore } from "../types";
+import type {
+  SphereBattle,
+  SphereCore,
+} from "@/hooks/battle/player/characters/natsuki/spheres/types";
 
 const RED_DAMAGE_KIND = getAbilityDamageType("redSphere");
 /** Altura do ponto de mira: acima dos pés do NPC (na altura do corpo). */
@@ -21,8 +24,6 @@ type Props = {
   core: SphereCore;
   battle: SphereBattle;
 };
-
-
 
 /**
  * Red do natsuki: a esfera de arremesso.

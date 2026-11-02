@@ -11,8 +11,6 @@ const FIRE_DURATION = PlayerSpecialConstants.FIRE_DURATION;
 const MERGE_TIME_SCALE = PlayerSpecialConstants.MERGE_TIME_SCALE;
 const MOVE_TIME_SCALE = PlayerSpecialConstants.MOVE_TIME_SCALE;
 
-
-
 export function usePlayerSpecialProjectile({
   player,
   PLAYER_SIZE,

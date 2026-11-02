@@ -1,7 +1,6 @@
 import type { CoffinState } from "./types";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-
 export function useCoffinAnimation() {
   const [coffins, setCoffins] = useState<CoffinState[]>([]);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);

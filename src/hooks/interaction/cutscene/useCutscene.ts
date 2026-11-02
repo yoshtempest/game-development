@@ -9,8 +9,6 @@ import { THREE_THOUSAND_MS } from "@/data/ms";
 /** Tempo de `L` pressionado que abre o prompt de pular a cutscene. */
 export const CUTSCENE_SKIP_HOLD_MS = THREE_THOUSAND_MS;
 
-
-
 export function useCutscene({
   dialogue,
   autoStart = true,

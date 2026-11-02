@@ -6,7 +6,6 @@ import { combatService } from "@/services/combat";
 import { getShieldSide } from "@/gameRules/battle/characters/babidi/babidiShield";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 
-
 export function useExternalDamage({
   playerX,
   playerY,

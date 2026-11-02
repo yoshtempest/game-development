@@ -1,4 +1,3 @@
-
 import type { SpawnDamageFn } from "@/utils/types/battle/spawnDamageFn";
 import type { BabidiShieldSide } from "@/utils/types/character/babidi";
 

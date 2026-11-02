@@ -12,7 +12,6 @@ import {
 
 import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
 
-
 function parseCollectionKey(key: string): { id: string; enhance: number } {
   const i = key.lastIndexOf("+");
   if (i > 0) {

@@ -19,7 +19,10 @@ import type { RefObject } from "react";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 
 import type { NatsukiSphere } from "@/utils/types/character/natsuki";
-import type { SphereBattle, SphereCore } from "../types";
+import type {
+  SphereBattle,
+  SphereCore,
+} from "@/hooks/battle/player/characters/natsuki/spheres/types";
 
 const BLUE_DAMAGE_KIND = getAbilityDamageType("blueSphere");
 
@@ -29,8 +32,6 @@ type Props = {
   battleManaRef: RefObject<BattleManaApi | null>;
   playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
 };
-
-
 
 /**
  * Blue do natsuki: a esfera persistente.

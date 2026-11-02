@@ -3,7 +3,6 @@ import { useRef } from "react";
 import { DASH_THRESHOLD, DASH_COOLDOWN } from "@/data/cooldowns";
 import { getSkillTree } from "@/data/passiveSkills";
 
-
 export function useDashDetection(refs: DashRefs) {
   const tryDashRef = useRef<
     (

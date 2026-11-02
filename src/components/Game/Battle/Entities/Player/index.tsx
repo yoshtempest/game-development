@@ -38,7 +38,7 @@ type Props = {
   babidiPortalLanding?: boolean;
   /** Travessia em andamento por um portal terrestre (sprite dividido). */
   babidiPortalCross?: BabidiPortalCross | null;
-  hakai?: boolean
+  hakai?: boolean;
 };
 
 export function Player({

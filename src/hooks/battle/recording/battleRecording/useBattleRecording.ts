@@ -1,12 +1,8 @@
 import type { Props } from "./types";
 import { useRef, useCallback, useState, useEffect } from "react";
-import type {
-  ReplayFrame,
-  ReplayData,
-} from "@/utils/types/replay";
+import type { ReplayFrame, ReplayData } from "@/utils/types/replay";
 import { initAudioLog, getAudioEvents } from "@/utils/replay/audioEventLog";
-import { buildFrame } from "../buildFrame";
-
+import { buildFrame } from "@/hooks/battle/recording/buildFrame";
 
 export function useBattleRecording({
   playerRef,
