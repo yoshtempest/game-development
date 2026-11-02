@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { usePetDetail } from "@/hooks/menu/pets/usePetDetail";
-import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
+import type { PetEntry } from "@/hooks/menu/pets/menu/types";
 import { FusionOverlay } from "@/components/Game/Navbar/ExploreNavbar/Pets/FusionOverlay";
 import styles from "./styles.module.css";
 import { PetDetailHeader } from "./Header";

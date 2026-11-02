@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import type { OnBeforeNpcHit } from "@/hooks/battle/npc/useBlocking";
+import type { OnBeforeNpcHit } from "@/hooks/battle/npc/blocking/useBlocking";
 
 export function useNpcTargeting() {
   const npcAiHpRef = useRef(0);

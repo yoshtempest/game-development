@@ -1,5 +1,5 @@
 import { PlayerBattle } from "@/components/Game/Entities/Player/Battle";
-import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/useBlinkAnimation";
+import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/blinkAnimation/types";
 import type {
   BabidiPortalCross,
   BabidiShieldSide,

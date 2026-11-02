@@ -1,4 +1,4 @@
-import type { NPCBattleState, SummonedNpc } from "@/utils/types/npc/npc";
+import type { NPCBattleState } from "@/utils/types/npc/npc";
 
 export type RewindSnapshot = {
   at: number;

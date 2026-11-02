@@ -1,5 +1,5 @@
 import type { BATTLE_NAVBAR_OPTIONS } from "@/data/options/battleNavbar";
-import type { SoundId } from "@/utils/audio/soundId";
+
 
 export type BattleNavScreen = (typeof BATTLE_NAVBAR_OPTIONS)[number]["screen"];
 

@@ -1,6 +1,6 @@
 import { NPCBattle } from "@/components/Game/Entities/Npc/Battle";
 import { getPortalCross } from "@/gameRules/battle/characters/babidi/babidiPortal";
-import type { SummonedNpc } from "@/utils/types/npc/npc";
+
 import type { BabidiPortal } from "@/utils/types/character/babidi";
 
 type Props = {

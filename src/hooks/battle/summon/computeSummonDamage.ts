@@ -2,7 +2,7 @@ import { NPCS } from "@/data/npc";
 import { getNpcStats } from "@/gameRules/npc/npcStats";
 import { getNpcVsPlayerMultiplier } from "@/gameRules/battle/npcVsPlayerDamage";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
-import type { SummonedNpc } from "@/utils/types/npc/npc";
+
 import { combatService } from "@/services/combat";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 

@@ -1,3 +1,4 @@
+import type { Params } from "./types";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useGameControls } from "@/contexts/GameControlsContext";
@@ -6,29 +7,8 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import { useMenuSFX } from "@/hooks/menu/useMenuSFX";
 import { useCompressedStorage } from "@/hooks/useCompressedStorage";
 
-import type { SlotScopedKey } from "@/services/save/slotManager";
 import type { ContainerSlots } from "@/utils/types/container";
-import type { InventoryItem } from "@/utils/types/player/inventory";
 
-type RespawnConfig = {
-  /** Intervalo em milissegundos para o item reaparecer. */
-  intervalMs: number;
-  /** Índice do slot que deve ter o item respawnado. */
-  slot: number;
-  /** Item que será colocado no slot quando fizer respawn. */
-  item: InventoryItem;
-};
-
-type Params = {
-  storageKey: SlotScopedKey;
-  defaultSlots: ContainerSlots;
-  size: number;
-  cols?: number;
-  onPickup?: (index: number, slot: InventoryItem) => boolean;
-  onClose?: () => void;
-  /** Configuração opcional de respawn do item. */
-  respawn?: RespawnConfig;
-};
 
 export function useContainer({
   storageKey,

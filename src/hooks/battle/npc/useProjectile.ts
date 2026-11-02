@@ -21,7 +21,7 @@ import type {
   ProjectileHitResolveOptions,
   ProjectileStrike,
 } from "@/utils/types/battle/projectileHit";
-import { getTime, type TimeEffect } from "@/gameRules/battle/time";
+import { getTime } from "@/gameRules/battle/time";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
 import type { BabidiPortalWarpFn } from "@/utils/types/character/babidi";

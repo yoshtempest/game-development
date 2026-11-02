@@ -3,7 +3,6 @@ import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import type {
   NPCBattleState,
   NPCDirection,
-  SummonedNpc,
 } from "@/utils/types/npc/npc";
 
 export type ReplayFrame = {

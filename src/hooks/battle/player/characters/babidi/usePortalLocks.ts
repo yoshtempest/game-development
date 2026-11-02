@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
 import {
-  type TimeEffect,
   ALL_TIME_KINDS,
   applyTime,
   clearTime,

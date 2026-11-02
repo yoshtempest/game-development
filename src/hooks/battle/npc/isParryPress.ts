@@ -1,5 +1,5 @@
 import { timeSinceParryInput } from "./timeSinceParryInput";
-import { PARRY_WINDOW_MS } from "./useBlocking";
+import { PARRY_WINDOW_MS } from "./blocking/useBlocking";
 
 export function isParryPress(
   ...pressRefs: (React.RefObject<number> | undefined)[]

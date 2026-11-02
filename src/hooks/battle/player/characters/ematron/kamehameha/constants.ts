@@ -1,8 +1,8 @@
 import type { VampirismStats } from "@/gameRules/battle/vampirism/applyVampirism";
 import { getAbilityDamageType } from "@/data/characters/abilities";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
-import type { SoundId } from "@/utils/audio/soundId";
-import type { NPCBattleState, SummonedNpc } from "@/utils/types/npc/npc";
+
+import type { NPCBattleState } from "@/utils/types/npc/npc";
 import type { Dispatch, RefObject, SetStateAction } from "react";
 import { type KamehamehaEffect } from "@/gameRules/battle/characters/ematron/kamehameha";
 

@@ -6,7 +6,7 @@ import type {
   VampirismSource,
   VampirismStats,
 } from "@/gameRules/battle/vampirism/applyVampirism";
-import type { OnBeforeNpcHit } from "@/hooks/battle/npc/useBlocking";
+import type { OnBeforeNpcHit } from "@/hooks/battle/npc/blocking/useBlocking";
 import type { ElementType } from "@/utils/types/battle/element";
 
 /** Cooldown que este golpe consome e o que precisa ser rearmado ao abortar. */

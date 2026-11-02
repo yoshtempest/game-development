@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useCombatTasks } from "@/hooks/tutorial/useCombatTasks";
-import { useCutscene } from "@/hooks/interaction/useCutscene";
+import { useCutscene } from "@/hooks/interaction/cutscene/useCutscene";
 import { npcPath } from "@/utils/paths";
 import Talking from "@/components/Game/Interactions/Talking";
 import { ChoiceBox } from "@/components/Game/Interactions/ChoiceBox";

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { DamageNumber } from "@/hooks/battle/damage/useNumbers";
+import type { DamageNumber } from "@/hooks/battle/damage/numbers/types";
 
 const MAX_INTENSITY = 50;
 const MAX_DAMAGE_FOR_INTENSITY = 200;

@@ -4,7 +4,7 @@ import {
 } from "@/utils/rewards";
 import { BLOCK_ATTACK_PUSH_DISTANCE } from "@/gameRules/movement/constants";
 import { clampX } from "@/gameRules/movement/clampX";
-import type { SummonedNpc } from "@/utils/types/npc/npc";
+
 import type { CharactersProgress } from "@/data/characters/defaultProgress";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import { getCharacterElementTypes } from "@/data/types/characterElementTypes";

@@ -1,5 +1,4 @@
 import {
-  type TimeEffect,
   type TimeKind,
   type BattleTime,
   NEUTRAL_TIME,

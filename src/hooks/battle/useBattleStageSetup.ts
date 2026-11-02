@@ -18,7 +18,7 @@ import { getNpcLevel } from "@/data/npc";
 import { useBattleRewards } from "@/hooks/battle/rewards/useRewards";
 import { useSummons } from "@/hooks/battle/summon/useSummons";
 import { useAllies } from "@/hooks/battle/summon/useAllies";
-import { useCoffinAnimation } from "@/hooks/battle/summon/useCoffinAnimation";
+import { useCoffinAnimation } from "@/hooks/battle/summon/coffinAnimation/useCoffinAnimation";
 import { getPetSkillDefinition } from "@/data/characters/pets/petSkills";
 import { getEquipmentStatsBonus } from "@/gameRules/battle/equipment";
 import { combatService } from "@/services/combat";

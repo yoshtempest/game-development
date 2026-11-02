@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { isPlayerInRange } from "@/gameRules/battle/range";
 import { isFacingTarget } from "@/gameRules/battle/direction";
 import { YVEL_WEAPON_RANGES } from "@/data/characters/yvel/yvelWeapons";
-import type { SummonedNpc } from "@/utils/types/npc/npc";
+
 
 type Target = { id: string; x: number; y: number };
 

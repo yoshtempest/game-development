@@ -7,25 +7,25 @@ import {
   pauseAttackSounds,
   resumeAttackSounds,
 } from "@/utils/audio/playAttackSound";
-import { useBattleLoot } from "@/hooks/battle/loot/useBattleLoot";
+import { useBattleLoot } from "@/hooks/battle/loot/battleLoot/useBattleLoot";
 import { useLootNotifications } from "@/hooks/battle/loot/useLootNotifications";
 import { useBattleRefs } from "@/hooks/battle/utilities/useRefs";
 import { useBattleOutro } from "@/hooks/battle/modals/useOutro";
 import { useBattleStageSetup } from "@/hooks/battle/useBattleStageSetup";
 import { useBattleCombat } from "@/hooks/battle/main/battleCombat/useBattleCombat";
-import { useBattlePresentation } from "@/hooks/battle/utilities/useBattlePresentation";
+import { useBattlePresentation } from "@/hooks/battle/utilities/battlePresentation/useBattlePresentation";
 import { useMenuPause } from "@/hooks/battle/utilities/useMenuPause";
-import { VASTOLORD_TRANSFORM_MS } from "@/hooks/battle/player/characters/marshadow/useVastolordForm";
-import { useBattleRecording } from "@/hooks/battle/recording/useBattleRecording";
+import { VASTOLORD_TRANSFORM_MS } from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
+import { useBattleRecording } from "@/hooks/battle/recording/battleRecording/useBattleRecording";
 import { useRewind } from "@/hooks/battle/rewind/useRewind";
-import { useBattleSnapshots } from "@/hooks/battle/time/useBattleSnapshots";
-import { useHonoredOne } from "@/hooks/battle/player/characters/natsuki/useHonoredOne";
+import { useBattleSnapshots } from "@/hooks/battle/time/battleSnapshots/useBattleSnapshots";
+import { useHonoredOne } from "@/hooks/battle/player/characters/natsuki/honoredOne/useHonoredOne";
 import { useDefeatFlow } from "@/hooks/battle/defeat/useDefeatFlow";
 import {
   useCameraSequence,
   CAMERA_FOCUS_MS,
   type CameraFocus,
-} from "@/hooks/battle/effects/useCameraSequence";
+} from "@/hooks/battle/effects/cameraSequence/useCameraSequence";
 import { buildBattleSceneApi } from "@/hooks/battle/utilities/buildBattleSceneApi";
 import { getCharacterPassive } from "@/data/characters/passives";
 import { aggregateRewards } from "@/gameRules/battle/loot/buildLootBags";

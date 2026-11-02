@@ -1,6 +1,6 @@
 import type { BattleObstacle } from "@/utils/types/maps/battle";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
-import type { useBlinkAnimation } from "@/hooks/battle/player/characters/natsuki/useBlinkAnimation";
+import type { useBlinkAnimation } from "@/hooks/battle/player/characters/natsuki/blinkAnimation/useBlinkAnimation";
 import { useBattleStageSetup } from "@/hooks/battle/useBattleStageSetup";
 import { useBattleRefs } from "@/hooks/battle/utilities/useRefs";
 import { type RefObject } from "react";

@@ -8,59 +8,59 @@ import {
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useGrabThrow } from "@/hooks/battle/throw/useGrabThrow";
 import { useThrowAnimation } from "@/hooks/battle/throw/useThrowAnimation";
-import { useSpecialIntro } from "@/hooks/battle/modals/useSpecialIntro";
-import { useNpcAI } from "@/hooks/battle/npc/useAi";
+import { useSpecialIntro } from "@/hooks/battle/modals/specialIntro/useSpecialIntro";
+import { useNpcAI } from "@/hooks/battle/npc/ai/useAi";
 import { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 import { useNpcTargeting } from "@/hooks/battle/npc/useNpcTargeting";
-import { usePlayerBattleActions } from "@/hooks/battle/player/usePlayerActions";
+import { usePlayerBattleActions } from "@/hooks/battle/player/playerActions/usePlayerActions";
 import { getBabidiAttackMode } from "@/utils/character/babidiAttackMode";
-import { useBabidiEnergyAttack } from "@/hooks/battle/player/characters/babidi/useEnergyAttack";
-import { useBabidiMissile } from "@/hooks/battle/player/characters/babidi/useMissile";
+import { useBabidiEnergyAttack } from "@/hooks/battle/player/characters/babidi/energyAttack/useEnergyAttack";
+import { useBabidiMissile } from "@/hooks/battle/player/characters/babidi/missile/useMissile";
 import { useBabidiShield } from "@/hooks/battle/player/characters/babidi/useShield";
-import { useSummonAI } from "@/hooks/battle/summon/useAi";
-import { useAllyAI } from "@/hooks/battle/summon/useAllyAI";
-import { useBattleControls } from "@/hooks/battle/useControls";
+import { useSummonAI } from "@/hooks/battle/summon/ai/useAi";
+import { useAllyAI } from "@/hooks/battle/summon/allyAI/useAllyAI";
+import { useBattleControls } from "@/hooks/battle/controls/useControls";
 import { useComboSystem } from "@/hooks/battle/effects/useComboSystem";
 import { useBattleKillCounter } from "@/hooks/battle/death/useKillCounter";
-import { useChargeAttack } from "@/hooks/battle/charge/useAttack";
-import { usePhaseTransition } from "@/hooks/battle/death/usePhaseTransition";
-import { usePlayerSpecialProjectile } from "@/hooks/battle/player/usePlayerSpecialProjectile";
+import { useChargeAttack } from "@/hooks/battle/charge/attack/useAttack";
+import { usePhaseTransition } from "@/hooks/battle/death/phaseTransition/usePhaseTransition";
+import { usePlayerSpecialProjectile } from "@/hooks/battle/player/playerSpecialProjectile/usePlayerSpecialProjectile";
 import { useYvelWeaponSwitch } from "@/hooks/battle/player/characters/yvel/useYvelWeaponSwitch";
-import { useBattleSync } from "@/hooks/battle/useSync";
+import { useBattleSync } from "@/hooks/battle/sync/useSync";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
-import { useStatCallbacks } from "@/hooks/battle/effects/useStatCallbacks";
-import { useActiveSkills } from "@/hooks/battle/utilities/useActiveSkills";
-import { useStatusDots } from "@/hooks/battle/effects/useStatusDots";
+import { useStatCallbacks } from "@/hooks/battle/effects/statCallbacks/useStatCallbacks";
+import { useActiveSkills } from "@/hooks/battle/utilities/activeSkills/useActiveSkills";
+import { useStatusDots } from "@/hooks/battle/effects/statusDots/useStatusDots";
 import { useTrainingEffects } from "@/hooks/battle/effects/useTrainingEffects";
-import { useSrGuaxinimBattle } from "@/hooks/battle/player/characters/srGuaxinim/useSrGuaxinimBattle";
+import { useSrGuaxinimBattle } from "@/hooks/battle/player/characters/srGuaxinim/battle/useSrGuaxinimBattle";
 import { useEmatronClone } from "@/hooks/battle/player/characters/ematron/clone/useClone";
-import { useEmatronKiCharge } from "@/hooks/battle/player/characters/ematron/useKiCharge";
+import { useEmatronKiCharge } from "@/hooks/battle/player/characters/ematron/kiCharge/useKiCharge";
 import { useEmatronGenkiDama } from "@/hooks/battle/player/characters/ematron/genkiDama/useGenkiDama";
-import { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
+import { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/vastolordLaser/useVastolordLaser";
 import { useKamehameha } from "@/hooks/battle/player/characters/ematron/kamehameha/useKamehameha";
-import { useVastolordRoar } from "@/hooks/battle/player/characters/marshadow/useVastolordRoar";
-import { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
-import { useNatsukiSpheres } from "@/hooks/battle/player/characters/natsuki/spheres/useNatsukiSpheres";
-import { useMuryokushoExpansion } from "@/hooks/battle/player/characters/natsuki/useMuryokushoExpansion";
-import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/hakai/useHakaiExpansion";
-import { useBabidiPortals } from "@/hooks/battle/player/characters/babidi/usePortals";
+import { useVastolordRoar } from "@/hooks/battle/player/characters/marshadow/vastolordRoar/useVastolordRoar";
+import { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/granReyCero/useGranReyCero";
+import { useNatsukiSpheres } from "@/hooks/battle/player/characters/natsuki/spheres/natsukiSpheres/useNatsukiSpheres";
+import { useMuryokushoExpansion } from "@/hooks/battle/player/characters/natsuki/muryokushoExpansion/useMuryokushoExpansion";
+import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/hakaiExpansion/useHakaiExpansion";
+import { useBabidiPortals } from "@/hooks/battle/player/characters/babidi/portals/usePortals";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import {
   useAtomic,
   ATOMIC_TARGET_MULTIPLIER,
   ATOMIC_AREA_MULTIPLIER,
-} from "@/hooks/battle/player/characters/marshadow/useAtomic";
-import { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/useMugetsuExpansion";
+} from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
+import { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/mugetsuExpansion/useMugetsuExpansion";
 import {
   DOMAIN_BURST_MAIN_MULTIPLIER,
   DOMAIN_BURST_SUMMON_MULTIPLIER,
   useDomainExpansionBurst,
-} from "@/hooks/battle/utilities/useDomainExpansionBurst";
+} from "@/hooks/battle/utilities/domainExpansionBurst/useDomainExpansionBurst";
 import {
   VASTOLORD_DAMAGE_EXTEND_MS,
   VASTOLORD_DAMAGE_EXTEND_RATIO,
   VASTOLORD_KILL_EXTEND_MS,
-} from "@/hooks/battle/player/characters/marshadow/useVastolordForm";
+} from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
 import { getAbilityDamageType } from "@/data/characters/abilities";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
@@ -70,7 +70,7 @@ import { ProjectileHpConstants } from "@/data/projectile";
 import {
   NPC_BLOCK_HOLD_MS,
   NPC_BLOCK_MIN_PCT,
-} from "@/hooks/battle/npc/useBlocking";
+} from "@/hooks/battle/npc/blocking/useBlocking";
 import { damageSummon } from "@/gameRules/battle/damageSummon";
 import { gainAbilityCharge } from "@/gameRules/battle/special";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";

@@ -5,7 +5,7 @@ import { ProjectileHpConstants } from "@/data/projectile";
 
 import type { SpawnDamageFn } from "@/utils/types/battle/spawnDamageFn";
 import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
-import type { TimeEffect } from "@/gameRules/battle/time";
+
 
 export function useBattleRefs() {
   // A natureza do golpe viaja junto: melee e projétil declaram no registry de

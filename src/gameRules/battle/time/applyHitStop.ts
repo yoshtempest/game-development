@@ -1,4 +1,4 @@
-import { type TimeEffect, HITSTOP_ID, ALL_TIME_KINDS } from "./types";
+import { HITSTOP_ID, ALL_TIME_KINDS } from "./types";
 import { applyTime } from "./applyTime";
 
 /**

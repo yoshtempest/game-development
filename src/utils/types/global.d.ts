@@ -707,4 +707,124 @@ declare global {
     wrap?: string;
     container?: string;
   };
+
+  type TimeEffect = {
+    /** Identidade do efeito — `applyTime` faz upsert por este id. */
+    id: string;
+    /** Classes de entidade atingidas. */
+    kinds: TimeKind[];
+    /** Ids de entidade isentos (o caster, ou o projétil dele). */
+    exempt: string[];
+    /** Timestamp de expiração. */
+    until: number;
+    /** Multiplicador de movimento (0 = congelado). */
+    speed: number;
+    /** Multiplicador do time de recarga de ataque. */
+    cooldown: number;
+  };
+
+  type SummonedNpc = {
+    id: string;
+    npcType: NpcType;
+    x: number;
+    y: number;
+    direction: NPCDirection;
+    state: "idle" | "walk" | "run" | "attack";
+    hp: number;
+    maxHp: number;
+    isDying: boolean;
+    /** Nível efetivo do summon (pet hungryKing usa o nível do personagem). */
+    level?: number;
+    /** Multiplicador de stats (pet hungryKing escala com as estrelas). */
+    statMultiplier?: number;
+    /**
+     * Armadura nas duas colunas, resolvida no spawn a partir do `npcType`/`level`.
+     * Fica no próprio summon (e não é derivado na hora do golpe) para que todo
+     * caminho de dano leia a mesma defesa — inclusive o funil que era o único a
+     * não reduzir, e os golpes de área que varrem summons.
+     */
+    armor: DamageArmor;
+  };
+
+  export type SoundId =
+    | "win"
+    | "defeat"
+    | "run"
+    | "cantMove"
+    | "tryAgain"
+    | "receivedItem"
+    | "usedItem"
+    | "deliciometroIsFull"
+    | "questUpdated"
+    | "levelUp"
+    | "loading"
+    | "moveMenu"
+    | "selectMenu"
+    | "chargeAttack"
+    | "chargingAttack"
+    | "closeMenu"
+    | "swordDeflected"
+    | "jhowsimarVemCa"
+    | "statusLevelUp"
+    | "getsugaTenshou"
+    | "preAtomic"
+    | "atomic"
+    | "mugetsu"
+    | "vastolordTransformation"
+    | "ematronTeleport"
+    | "chargingKi"
+    | "throwGenkiDama"
+    | "returningTime"
+    | "honoredOne"
+    | "writing"
+    | "stupid"
+    | "whooshWind"
+    | "paperPreExplode"
+    | "groundPaperPreExplode"
+    | "chapterSuspense"
+    | "laser"
+    | "kamehameha"
+    | "throwPaper"
+    | "slap"
+    | "shieldStack"
+    | "ORA"
+    | "hollowPurple"
+    | "natsukiRioiki"
+    | "domainInitiate"
+    | "natsukiOpenedDomain"
+    | "reversalRed"
+    | "openPortal"
+    | "portalTeleport"
+    | "shot"
+    | "missile"
+    | "domainBreak"
+    | "blink"
+    | "clap"
+    | "srGuaxinimDefeat"
+    | "prePalm"
+    | "kokusen"
+    | "nahIdWin"
+    | "impact"
+    | "slimitaJump"
+    | "equip"
+    | "unequip"
+    | "unlockedTitle"
+    | "eating"
+    | "drinkingPotion"
+    | "jhowsimarJooj"
+    | "gainXp"
+    | "boom"
+    | "explosion"
+    | "bite"
+    | "vandinhaPunch"
+    | "breakDish"
+    | "summon"
+    | "hulk"
+    | "goatJump"
+    | "smash"
+    | "chestOpening"
+    | "knifeAttack"
+    | "knifeCut"
+    | "chooseYourCharacter"
+    | "hungryDeath";
 }

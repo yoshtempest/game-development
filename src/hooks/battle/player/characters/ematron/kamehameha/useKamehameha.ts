@@ -12,8 +12,8 @@ import { clampX } from "@/gameRules/movement/clampX";
 import { combatService } from "@/services/combat";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
-import type { SummonedNpc } from "@/utils/types/npc/npc";
-import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
+
+import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
 import { ProjectileConstants } from "@/data/projectile";
 import {
   EMATRON_KAMEHAMEHA_DAMAGE_RATIO,

@@ -19,7 +19,7 @@ import { useContainer } from "@/hooks/container/useContainer";
 import { Container } from "@/components/Game/Map/Container";
 import Talking from "@/components/Game/Interactions/Talking";
 import { INTERACTION_LABELS } from "@/data/messages";
-import { useFoodPlateEncounter } from "@/hooks/scene/useFoodPlateEncounter";
+import { useFoodPlateEncounter } from "@/hooks/scene/foodPlateEncounter/useFoodPlateEncounter";
 import type { DialogueSystem } from "@/utils/types/sceneHooks";
 import { RaparigaEncounter } from "@/components/Game/SceneObjects/RaparigaEncounter";
 

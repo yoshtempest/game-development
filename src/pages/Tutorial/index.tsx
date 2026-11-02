@@ -6,7 +6,7 @@ import styles from "./styles.module.css";
 import SOS from "/assets/songs/background/battle/SOSFromEarth.m4a";
 import { useBackgroundAudio } from "@/hooks/audio/useBackgroundAudio";
 import { useNavigate } from "react-router";
-import { useCutscene } from "@/hooks/interaction/useCutscene";
+import { useCutscene } from "@/hooks/interaction/cutscene/useCutscene";
 import { useSansTalking } from "@/hooks/interaction/useSansTalking";
 import { tutorialDialogue } from "@/data/dialogues/tutorial";
 

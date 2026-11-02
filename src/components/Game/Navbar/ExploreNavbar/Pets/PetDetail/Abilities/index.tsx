@@ -1,4 +1,4 @@
-import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
+import type { PetEntry } from "@/hooks/menu/pets/menu/types";
 import shared from "@/components/Game/Navbar/ExploreNavbar/Pets/PetDetail/styles.module.css";
 import styles from "./styles.module.css";
 

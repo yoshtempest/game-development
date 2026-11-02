@@ -1,4 +1,4 @@
-import type { SummonedNpc } from "@/utils/types/npc/npc";
+
 
 type BattleHUDState = {
   playerHP: number;

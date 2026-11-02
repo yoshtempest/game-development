@@ -9,7 +9,7 @@ import {
   PET_STAR_MAX,
   enhanceFromPetStars,
 } from "@/data/characters/pets/petProgress";
-import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
+import type { PetEntry } from "@/hooks/menu/pets/menu/types";
 import type { EquippedItemInfo } from "@/utils/types/player/equipment";
 
 type Props = {

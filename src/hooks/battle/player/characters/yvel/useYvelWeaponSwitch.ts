@@ -4,7 +4,7 @@ import {
   rollNextYvelWeapon,
   type YvelWeapon,
 } from "@/data/characters/yvel/yvelWeapons";
-import { applyHitstop, type TimeEffect } from "@/gameRules/battle/time";
+import { applyHitstop } from "@/gameRules/battle/time";
 
 export const YVEL_WEAPON_SWITCH_DURATION_MS = 600;
 

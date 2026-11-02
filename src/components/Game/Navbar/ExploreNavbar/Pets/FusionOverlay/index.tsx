@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Star } from "lucide-react";
 import styles from "./styles.module.css";
-import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
+import type { PetEntry } from "@/hooks/menu/pets/menu/types";
 import {
   petNpcType,
   petImagePath,

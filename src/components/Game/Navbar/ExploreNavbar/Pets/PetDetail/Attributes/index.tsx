@@ -1,7 +1,7 @@
 import { elementBadgePath } from "@/utils/paths";
 import { PET_ROLE_LABELS } from "@/data/characters/pets/petSkills";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
-import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
+import type { PetEntry } from "@/hooks/menu/pets/menu/types";
 import styles from "./styles.module.css";
 import { PetExperience } from "@/components/Game/Navbar/ExploreNavbar/Pets/PetDetail/Experience";
 import type { PetStats } from "@/components/Game/Navbar/ExploreNavbar/Pets/PetDetail/Experience";

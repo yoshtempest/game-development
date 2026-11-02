@@ -5,7 +5,7 @@ import { ChoiceBox } from "@/components/Game/Interactions/ChoiceBox";
 import STFDialogue from "/assets/songs/background/STFDialogue.mp3";
 import { useBackgroundAudio } from "@/hooks/audio/useBackgroundAudio";
 import { useNavigate } from "react-router";
-import { useCutscene } from "@/hooks/interaction/useCutscene";
+import { useCutscene } from "@/hooks/interaction/cutscene/useCutscene";
 import { useSansTalking } from "@/hooks/interaction/useSansTalking";
 import { firstCutsceneDialogue } from "@/data/dialogues/firstCutscene";
 

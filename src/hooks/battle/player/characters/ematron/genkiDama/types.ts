@@ -1,5 +1,5 @@
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
-import type { SoundId } from "@/utils/audio/soundId";
+
 import type { RefObject } from "react";
 
 export type GenkiDamaProps = {

@@ -3,7 +3,7 @@ import { ProjectileConstants } from "@/data/projectile";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { getViewportSize } from "@/utils/viewport";
 import { BLINK_AFTERIMAGE_MS } from "@/gameRules/battle/cursedEnergy";
-import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/useBlinkAnimation";
+import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/blinkAnimation/types";
 import styles from "./styles.module.css";
 
 type Props = {

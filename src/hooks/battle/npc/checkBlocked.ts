@@ -1,7 +1,6 @@
 import { isFacingTarget } from "@/gameRules/battle/direction";
 import { blocksOmnidirectionally } from "@/gameRules/battle/characters/babidi/babidiShield";
-import { handleNpcBlocking } from "./useBlocking";
-import { type TimeEffect } from "@/gameRules/battle/time";
+import { handleNpcBlocking } from "./blocking/useBlocking";
 
 import type { BabidiShieldSide } from "@/utils/types/character/babidi";
 

@@ -15,7 +15,7 @@ import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 
 import { shouldConsumeInput } from "@/gameRules/movement/input";
 import { useLatestRef } from "@/hooks/useLatestRef";
-import { useGameKeyboard } from "@/hooks/game/useGameKeyboard";
+import { useGameKeyboard } from "@/hooks/game/gameKeyboard/useGameKeyboard";
 
 type Props = {
   children: ReactNode;

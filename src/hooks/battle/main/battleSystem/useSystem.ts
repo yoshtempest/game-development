@@ -5,21 +5,21 @@ import {
   PET_SKILL_COOLDOWN_MS,
 } from "@/data/characters/pets/petSkills";
 import { useLatestRef } from "@/hooks/useLatestRef";
-import { usePetSkillCooldown } from "@/hooks/battle/player/pets/usePetSkill";
+import { usePetSkillCooldown } from "@/hooks/battle/player/pets/petSkill/usePetSkill";
 import { usePetPassive } from "@/hooks/battle/player/pets/usePetPassive";
 
-import { useBattleStats } from "@/hooks/battle/useStats";
-import { VASTOLORD_MULTIPLIER } from "@/hooks/battle/player/characters/marshadow/useVastolordForm";
+import { useBattleStats } from "@/hooks/battle/stats/useStats";
+import { VASTOLORD_MULTIPLIER } from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
 import { VASTOLORD_UNIVERSAL_VAMPIRISM } from "@/data/characters/marshadow/vastolordForm";
 import { useBattleHP } from "@/hooks/battle/death/useHP";
 import { useBattleCooldowns } from "@/hooks/battle/utilities/useCooldowns";
 import { useBattleEffects } from "@/hooks/battle/effects/useEffects";
-import { usePlayerBattle } from "@/hooks/battle/player/usePlayer";
-import { useNpcBattle } from "@/hooks/battle/npc/useNpc";
-import { useBattleLifecycle } from "@/hooks/battle/death/useLifecycle";
-import { usePetBattle } from "@/hooks/battle/player/pets/usePet";
-import { useDamageNumbers } from "@/hooks/battle/damage/useNumbers";
-import { useExternalDamage } from "@/hooks/battle/damage/useExternal";
+import { usePlayerBattle } from "@/hooks/battle/player/player/usePlayer";
+import { useNpcBattle } from "@/hooks/battle/npc/npc/useNpc";
+import { useBattleLifecycle } from "@/hooks/battle/death/lifeCycle/useLifecycle";
+import { usePetBattle } from "@/hooks/battle/player/pets/pet/usePet";
+import { useDamageNumbers } from "@/hooks/battle/damage/numbers/useNumbers";
+import { useExternalDamage } from "@/hooks/battle/damage/external/useExternal";
 import { useBlockGauge } from "@/hooks/battle/effects/useBlockGauge";
 import { getBlockArmor, scaleArmor } from "@/gameRules/battle/damage/armor";
 import {
@@ -31,7 +31,7 @@ import {
 } from "@/gameRules/battle/equipment";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
 import { getProfessionWeaponDamageMultiplier } from "@/gameRules/professions/weapon";
-import { useEnergy } from "@/hooks/battle/effects/useEnergy";
+import { useEnergy } from "@/hooks/battle/effects/energy/useEnergy";
 import { useBattleMana } from "@/contexts/BattleManaContext";
 import { gainSpecial } from "@/gameRules/battle/special";
 import {

@@ -1,4 +1,4 @@
-import type { TimeEffect, TimeKind } from "./types";
+import type { TimeKind } from "./types";
 import { getTime } from "./getTime";
 
 /** A entidade está congelada (speed 0)? Atalho para o gate `return` do tick. */

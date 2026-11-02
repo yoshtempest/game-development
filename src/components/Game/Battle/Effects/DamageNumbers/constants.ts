@@ -1,4 +1,4 @@
-import type { DamageNumber } from "@/hooks/battle/damage/useNumbers";
+import type { DamageNumber } from "@/hooks/battle/damage/numbers/types";
 import type { DamageTarget } from "@/utils/battle/findDamageTarget";
 import styles from "./styles.module.css";
 

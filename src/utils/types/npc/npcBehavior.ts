@@ -1,5 +1,5 @@
 import type { NPCBattleState } from "@/utils/types/npc/npc";
-import type { SoundId } from "@/utils/audio/soundId";
+
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 

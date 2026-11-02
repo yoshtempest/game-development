@@ -79,20 +79,7 @@ export type BattleTime = {
 };
 
 /** Efeito de time ativo no mundo. */
-export type TimeEffect = {
-  /** Identidade do efeito — `applyTime` faz upsert por este id. */
-  id: string;
-  /** Classes de entidade atingidas. */
-  kinds: TimeKind[];
-  /** Ids de entidade isentos (o caster, ou o projétil dele). */
-  exempt: string[];
-  /** Timestamp de expiração. */
-  until: number;
-  /** Multiplicador de movimento (0 = congelado). */
-  speed: number;
-  /** Multiplicador do time de recarga de ataque. */
-  cooldown: number;
-};
+
 
 /** Efeito a aplicar; a duração é relativa e vira `until` no `applyTime`. */
 export type TimeSpec = Omit<TimeEffect, "until"> & { durationMs: number };

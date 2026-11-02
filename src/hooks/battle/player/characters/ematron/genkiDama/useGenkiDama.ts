@@ -20,7 +20,7 @@ import {
   GENKI_DAMA_THROW_MS,
 } from "@/data/characters/ematron";
 import type { GenkiDamaVisual } from "@/utils/types/character/ematron";
-import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
+import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
 import type { GenkiDamaProps } from "./types";
 
 

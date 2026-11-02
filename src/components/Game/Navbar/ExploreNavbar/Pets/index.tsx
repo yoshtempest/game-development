@@ -4,7 +4,7 @@ import { elementBadgePath, rankBadgePath } from "@/utils/paths";
 import { RANK_COLORS } from "@/data/equipment/definitions";
 import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
-import { usePetsMenu } from "@/hooks/menu/pets/usePetsMenu";
+import { usePetsMenu } from "@/hooks/menu/pets/menu/usePetsMenu";
 import { useGameControls } from "@/contexts/GameControlsContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useMenuSFX } from "@/hooks/menu/useMenuSFX";

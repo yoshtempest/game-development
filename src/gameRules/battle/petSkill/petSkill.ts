@@ -1,5 +1,5 @@
 import type { RefObject } from "react";
-import type { SoundId } from "@/utils/audio/soundId";
+
 
 import { PET_STAR_MULTIPLIER } from "@/data/characters/pets/petProgress";
 import { getPetBaseDamage } from "@/data/characters/pets/petProgress";
@@ -8,7 +8,7 @@ import { combatService } from "@/services/combat";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
 import { NO_ARMOR } from "@/gameRules/battle/damage/armor";
 import type { PetSkillDefinition } from "@/data/characters/pets/petSkills";
-import type { SummonedNpc } from "@/utils/types/npc/npc";
+
 import type { SpawnDamageFn } from "@/utils/types/battle/spawnDamageFn";
 import type { DamageArmor, DamageKind } from "@/utils/types/battle/damageKind";
 

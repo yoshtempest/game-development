@@ -33,4 +33,4 @@ export {
   PLAYER_SPHERE_TIME_ID,
 } from "./types";
 
-export type { BattleTime, TimeEffect, TimeKind, TimeSpec } from "./types";
+export type { BattleTime, TimeKind, TimeSpec } from "./types";

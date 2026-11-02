@@ -2,7 +2,6 @@ import type { BattleBehavior } from "@/utils/types/player/behavior";
 import type { CharacterProgress } from "@/data/characters/defaultProgress";
 import type { ElementType } from "@/utils/types/battle/element";
 import type { DamageArmor, DamageKind } from "@/utils/types/battle/damageKind";
-import type { TimeEffect } from "@/gameRules/battle/time";
 import type { VampirismStats } from "@/gameRules/battle/vampirism/applyVampirism";
 
 export type BaseHitParams = {

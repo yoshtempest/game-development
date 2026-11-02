@@ -6,7 +6,7 @@ import { isMovementLocked } from "@/gameRules/movement/state";
 import { isPlayerRestrained } from "@/gameRules/battle/playerStates";
 import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
-import { useDashDetection } from "./useDashDetection";
+import { useDashDetection } from "./dashDetection/useDashDetection";
 
 type Dir = "up" | "down" | "left" | "right";
 

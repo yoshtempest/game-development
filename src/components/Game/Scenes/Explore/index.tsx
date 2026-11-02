@@ -20,16 +20,16 @@ import {
 import Talking from "@/components/Game/Interactions/Talking";
 import { useDialogue } from "@/hooks/interaction/useDialogue";
 import { useSceneDialogue } from "@/hooks/interaction/useSceneDialogue";
-import { useGoodPowderEncounter } from "@/hooks/interaction/useGoodPowderEncounter";
+import { useGoodPowderEncounter } from "@/hooks/interaction/goodPowderEncounter/useGoodPowderEncounter";
 import { useSansTalking } from "@/hooks/interaction/useSansTalking";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useSceneNavigation } from "@/hooks/scene/useNavigation";
-import { useSceneSetup } from "@/hooks/scene/useSetup";
+import { useSceneSetup } from "@/hooks/scene/setup/useSetup";
 import { useSceneControls } from "@/hooks/scene/useControls";
-import { useSceneInteraction } from "@/hooks/scene/useInteraction";
+import { useSceneInteraction } from "@/hooks/scene/interaction/useInteraction";
 import { useSceneAudio } from "@/hooks/scene/useAudio";
-import { useSceneLayers } from "@/hooks/scene/useSceneLayers";
+import { useSceneLayers } from "@/hooks/scene/sceneLayers/useSceneLayers";
 import { useSceneTombstones } from "@/hooks/tombstone/useSceneTombstones";
 import { useLocation } from "react-router";
 import { useTransitionCtx } from "@/contexts/Transition/TransitionContext";
@@ -53,7 +53,7 @@ import {
   SCENE_MEMORY_WALKS,
   type SceneMemoryWalkTarget,
 } from "@/data/dialogues/sceneMemories";
-import { useAutoWalk } from "@/hooks/scene/useAutoWalk";
+import { useAutoWalk } from "@/hooks/scene/autoWalk/useAutoWalk";
 
 type QuestHighlightTile = { x: number; y: number };
 type QuestNpcPosition = { gridX: number; gridY: number };

@@ -4,7 +4,7 @@ import {
   petStarStyle,
 } from "@/utils/character/petVisuals";
 import styles from "./styles.module.css";
-import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
+import type { PetEntry } from "@/hooks/menu/pets/menu/types";
 import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
 
 interface PetArtworkProps {

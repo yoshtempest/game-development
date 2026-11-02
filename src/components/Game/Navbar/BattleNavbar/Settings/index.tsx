@@ -36,7 +36,7 @@ import {
 } from "@/gameRules/battle/damage/armor";
 
 import Talking from "@/components/Game/Interactions/Talking";
-import { useCutscene } from "@/hooks/interaction/useCutscene";
+import { useCutscene } from "@/hooks/interaction/cutscene/useCutscene";
 
 export function Settings() {
   const battleInfoCtx = useBattleInfo();

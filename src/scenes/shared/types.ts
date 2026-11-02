@@ -11,26 +11,26 @@ export type TileRouteFunction = (
  * não em `utils/types/` (que é a base e não deve conhecer React).
  */
 import type { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
-import type { useNpcAI } from "@/hooks/battle/npc/useAi";
-import type { useChargeAttack } from "@/hooks/battle/charge/useAttack";
-import type { useSrGuaxinimOraPunch } from "@/hooks/battle/player/characters/srGuaxinim/useSrGuaxinimOraPunch";
-import type { useSrGuaxinimKillerQueen } from "@/hooks/battle/player/characters/srGuaxinim/useSrGuaxinimKillerQueen";
+import type { useNpcAI } from "@/hooks/battle/npc/ai/useAi";
+import type { useChargeAttack } from "@/hooks/battle/charge/attack/useAttack";
+import type { useSrGuaxinimOraPunch } from "@/hooks/battle/player/characters/srGuaxinim/oraPunch/useOraPunch";
+import type { useSrGuaxinimKillerQueen } from "@/hooks/battle/player/characters/srGuaxinim/killerQueen/useKillerQueen";
 import type { useKokusenAnimation } from "@/hooks/battle/player/characters/natsuki/useKokusenAnimation";
 import type { useBlackFlashAnimation } from "@/hooks/battle/player/characters/natsuki/useBlackFlashAnimation";
-import type { useSpecialIntro } from "@/hooks/battle/modals/useSpecialIntro";
-import type { usePlayerSpecialProjectile } from "@/hooks/battle/player/usePlayerSpecialProjectile";
-import type { useCoffinAnimation } from "@/hooks/battle/summon/useCoffinAnimation";
+import type { useSpecialIntro } from "@/hooks/battle/modals/specialIntro/useSpecialIntro";
+import type { usePlayerSpecialProjectile } from "@/hooks/battle/player/playerSpecialProjectile/usePlayerSpecialProjectile";
+import type { useCoffinAnimation } from "@/hooks/battle/summon/coffinAnimation/useCoffinAnimation";
 import type { useNpcSetup } from "@/hooks/battle/npc/useSetup";
 import type { useEmatronClone } from "@/hooks/battle/player/characters/ematron/clone/useClone";
 import type { useEmatronGenkiDama } from "@/hooks/battle/player/characters/ematron/genkiDama/useGenkiDama";
-import type { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/useVastolordLaser";
+import type { useVastolordLaser } from "@/hooks/battle/player/characters/marshadow/vastolordLaser/useVastolordLaser";
 import type { useKamehameha } from "@/hooks/battle/player/characters/ematron/kamehameha/useKamehameha";
-import type { useAtomic } from "@/hooks/battle/player/characters/marshadow/useAtomic";
-import type { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/useMugetsuExpansion";
-import type { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/useGranReyCero";
-import type { CameraFocus } from "@/hooks/battle/effects/useCameraSequence";
+import type { useAtomic } from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
+import type { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/mugetsuExpansion/useMugetsuExpansion";
+import type { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/granReyCero/useGranReyCero";
+import type { CameraFocus } from "@/hooks/battle/effects/cameraSequence/useCameraSequence";
 import type { CharacterId } from "@/data/characters/list";
-import type { SummonedNpc } from "@/utils/types/npc/npc";
+
 import type { CharactersProgress } from "@/data/characters/defaultProgress";
 import type { ReplayData } from "@/utils/types/replay";
 import type { NavigateFunction } from "react-router";
@@ -116,7 +116,7 @@ export type BattleSceneApi = {
   skipVastolordTransform: () => void;
   skipHonoredOne: () => void;
   blinkVisual:
-    | import("@/hooks/battle/player/characters/natsuki/useBlinkAnimation").BlinkVisual
+    | import("@/hooks/battle/player/characters/natsuki/blinkAnimation/types").BlinkVisual
     | null;
   divergentFistActive: boolean;
   activateDivergentFist: () => void;

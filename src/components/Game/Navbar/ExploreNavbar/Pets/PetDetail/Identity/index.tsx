@@ -1,7 +1,7 @@
 import { RANK_COLORS, RANK_LABELS } from "@/data/equipment/definitions";
 import { RANKS } from "@/gameRules/rank";
 import { rankBadgePath } from "@/utils/paths";
-import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
+import type { PetEntry } from "@/hooks/menu/pets/menu/types";
 import styles from "./styles.module.css";
 import shared from "@/components/Game/Navbar/ExploreNavbar/Pets/PetDetail/styles.module.css";
 

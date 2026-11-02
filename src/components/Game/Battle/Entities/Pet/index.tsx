@@ -1,6 +1,6 @@
 import { NPCBattle } from "@/components/Game/Entities/Npc/Battle";
 import { getPortalCross } from "@/gameRules/battle/characters/babidi/babidiPortal";
-import type { PetState } from "@/hooks/battle/player/pets/usePet";
+import type { PetState } from "@/hooks/battle/player/pets/pet/types";
 import type { BabidiPortal } from "@/utils/types/character/babidi";
 
 type Props = {

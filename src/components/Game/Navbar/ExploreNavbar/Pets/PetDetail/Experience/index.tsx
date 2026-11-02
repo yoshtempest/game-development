@@ -3,7 +3,7 @@ import {
   getPetXPToNextLevel,
   getPetClass,
 } from "@/utils/character/petProgress";
-import type { PetEntry } from "@/hooks/menu/pets/usePetsMenu";
+import type { PetEntry } from "@/hooks/menu/pets/menu/types";
 import styles from "./styles.module.css";
 
 export type PetStats = {

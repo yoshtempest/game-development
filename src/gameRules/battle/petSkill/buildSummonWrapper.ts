@@ -1,6 +1,6 @@
 import { logPlay } from "@/utils/replay/audioEventLog";
 import type { RefObject } from "react";
-import type { SoundId } from "@/utils/audio/soundId";
+
 import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { BATTLE_LIMITS } from "@/gameRules/movement/constants";
 

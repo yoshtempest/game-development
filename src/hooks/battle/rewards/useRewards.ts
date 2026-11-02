@@ -1,3 +1,4 @@
+import type { Props } from "./types";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
 import { usePetProgress } from "@/contexts/PetProgressContext";
@@ -40,13 +41,7 @@ function rollMultiple<T>(rollFn: () => T, rolls: number): T[] {
 
 export type { EquipmentDropInfo };
 
-type Props = {
-  npcClass: NPCClass;
-  npcLevel: number;
-  npcType: string;
-  luckBonus: number;
-  isAlfa?: boolean;
-};
+
 
 export function useBattleRewards({
   npcClass,

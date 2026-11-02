@@ -13,7 +13,7 @@ import type {
 } from "@/utils/types/player/inventory";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { useToast } from "@/contexts/ToastContext";
-import type { SoundId } from "@/utils/audio/soundId";
+
 import { INVENTORY_KEY } from "@/data/storageKeys";
 import { ITEMS } from "@/data/items";
 import { itemPath } from "@/utils/paths";

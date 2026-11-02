@@ -1,4 +1,4 @@
-import type { SoundId } from "@/utils/audio/soundId";
+
 import type { InventoryItem } from "@/utils/types/player/inventory";
 
 /** Slots reservados para moedas na mochila. */

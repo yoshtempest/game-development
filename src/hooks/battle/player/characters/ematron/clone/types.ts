@@ -1,5 +1,5 @@
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
-import type { SoundId } from "@/utils/audio/soundId";
+
 import type { BattleObstacle } from "@/utils/types/maps/battle";
 import type { RefObject } from "react";
 

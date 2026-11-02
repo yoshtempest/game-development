@@ -1,7 +1,7 @@
-import type { TimeEffect } from "@/gameRules/battle/time";
+
 import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
 import type { BabidiShieldSide } from "@/utils/types/character/babidi";
-import type { OnBeforeNpcHit } from "@/hooks/battle/npc/useBlocking";
+import type { OnBeforeNpcHit } from "@/hooks/battle/npc/blocking/useBlocking";
 
 export type BattleSystemProps = {
   playerX: number;

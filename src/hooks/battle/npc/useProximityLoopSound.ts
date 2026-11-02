@@ -1,5 +1,5 @@
 import { useRef, useCallback } from "react";
-import type { SoundId } from "@/utils/audio/soundId";
+
 import { logPlay, logStop } from "@/utils/replay/audioEventLog";
 
 export function useProximityLoopSound(

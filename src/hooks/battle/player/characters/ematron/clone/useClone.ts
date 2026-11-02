@@ -22,7 +22,7 @@ import {
   EMATRON_CLONE_MOVE_TICK_MS,
   EMATRON_CLONE_TIME_SCALE,
 } from "@/data/characters/ematron";
-import { useSkillGuard } from "@/hooks/battle/player/characters/useSkillGuard";
+import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
 import type { CloneProps } from "./types";
 
 /**
