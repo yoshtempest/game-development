@@ -527,6 +527,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     setNpcHP,
     npcMaxHp,
     npcPhase,
+    setNpcPhase,
     delicia: playerBattle.delicia,
     setDelicia: playerBattle.setDelicia,
     hitsToSpecial: HITS_TO_SPECIAL,

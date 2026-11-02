@@ -1514,8 +1514,13 @@ export function useBattleCombat({
     if (npcData.class === "boss" && battle.npcPhase === 1) {
       // Destrava o lifecycle (o hook setou o isEnding no início da varredura) e
       // avança para a fase 2, reposicionando os personagens no `usePhaseTransition`.
+      // Atualiza TAMBÉM o npcPhase do sistema de batalha (fonte de verdade da
+      // fase) e o ref correspondente — caso contrário `battle.npcPhase` segue 1
+      // e a próxima varredura (fase 2) é tratada como fase 1, resetando o boss
+      // com vida cheia em vez de encerrar a batalha.
       battle.isEnding.current = false;
-      setNpcPhase(2);
+      battle.setNpcPhase(2);
+      npcPhaseRef.current = 2;
       battle.setNpcHP(battle.npcMaxHp);
       npc.updateNpc({ hidden: false });
       return;
@@ -1528,8 +1533,8 @@ export function useBattleCombat({
     extendVastolordRef,
     npc,
     npcData.class,
+    npcPhaseRef,
     onNpcDeathRef,
-    setNpcPhase,
     vastolordActive,
   ]);
 
