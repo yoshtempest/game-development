@@ -458,3 +458,25 @@ droppável → `ITEM_ACTIONS` (`services/items/itemEffects.ts`) se consumível �
 - `TEMPEST_SDK_PLAN.md` — plano de migração do SDK/PWA (histórico).
 - `README.md` — template do Vite, **desatualizado**; não use como referência.
 - `server/` — backend Express + better-sqlite3, `tsconfig` próprio sem DOM.
+
+## Regras do agente (operacionais)
+
+- **Git — nunca volte commits atrás**: não execute `git revert`, `git reset`,
+  `git checkout --`, `git restore`, `git stash pop`/`drop` que descarte trabalho,
+  nem qualquer comando que reescreva histórico (`rebase`, `reset --hard`,
+  `commit --amend` sobre commits já publicados). Se precisar desfazer algo,
+  faça por edição de código, não por reversão de histórico. Em caso de dúvida,
+  pergunte antes.
+- **Git — sem commits autônomos**: não crie commits por conta própria. Só faça
+  `git commit` quando o usuário pedir explicitamente. Até lá, deixe as mudanças
+  unstaged/staged conforme o usuário preferir.
+- **Git — sem push**: nunca execute `git push` (nem `--force`, nem para
+  branches, nem tags). Publicação é decisão do usuário.
+- **Assets de imagem — não criar**: não gerar, editar, converter ou criar
+  arquivos de imagem (SVG/PNG/JPG/WebP/GIF/ICO) nem assets visuais novos em
+  `public/` ou `src/`. Sprites, ícones, backgrounds, ilustrações e qualquer
+  recurso gráfico são de responsabilidade do usuário; o agente pode apenas
+  referenciá-los via os helpers de `utils/paths.ts` e registrar seu uso em
+  dados/configuração. Se uma feature precisar de imagem nova, pare e peça ao
+  usuário que a adicione (informando caminho esperado e dimensões), em vez de
+  tentar produzir um placeholder.
