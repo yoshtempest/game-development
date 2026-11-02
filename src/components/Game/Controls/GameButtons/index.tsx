@@ -7,6 +7,7 @@ import { useGameControls } from "@/contexts/GameControlsContext";
 import { useNavbar } from "@/contexts/NavbarContext";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { usePlayer } from "@/contexts/PlayerContext";
+import { useCombatTutorial } from "@/contexts/CombatTutorialContext";
 
 function useUiButtonCooldowns() {
   const [cooldowns, setCooldowns] = useState<Record<UIButtonType, boolean>>({
@@ -41,6 +42,7 @@ function useUiButtonCooldowns() {
 
 export function GameButtons() {
   const { activeControls, closeAllMenus } = useGameControls();
+  const { highlightedControl } = useCombatTutorial();
   const { openNavbar } = useNavbar();
   const { isBattleNavOpen, toggleBattleNavbar } = useBattleNavbar();
   const { player } = usePlayer();
@@ -110,6 +112,7 @@ export function GameButtons() {
       <div className={styles.row}>
         <button
           className={`${styles.button} ${cooldowns.cancel ? styles.cooldown : ""}`}
+          style={highlightedControl === "cancel" ? { border: "3px solid white" } : undefined}
           onPointerDown={handleCancelDown}
           onPointerUp={handleCancelUp}
           onPointerLeave={handleCancelUp}
@@ -119,6 +122,7 @@ export function GameButtons() {
 
         <button
           className={`${styles.button} ${cooldowns.confirm ? styles.cooldown : ""}`}
+          style={highlightedControl === "confirm" ? { border: "3px solid white" } : undefined}
           onPointerDown={handleConfirmDown}
           onPointerUp={handleConfirmUp}
           onPointerLeave={handleConfirmUp}

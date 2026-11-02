@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCombatTasks } from "@/hooks/tutorial/useCombatTasks";
+import { useCombatTutorial } from "@/contexts/CombatTutorialContext";
 import { useCutscene } from "@/hooks/interaction/cutscene/useCutscene";
 import { npcPath } from "@/utils/paths";
 import Talking from "@/components/Game/Interactions/Talking";
@@ -64,10 +65,27 @@ export default function CombatTutorial() {
 }
 
 function CombatTutorialTasks() {
-  const { instruction, getTaskStatus } = useCombatTasks();
+  const { instruction, getTaskStatus, currentTask } = useCombatTasks();
+  const { setHighlightedControl } = useCombatTutorial();
+
+  useEffect(() => {
+    const map: Record<string, string | null> = {
+      moveLeft: "left",
+      moveRight: "right",
+      jump: "up",
+      attack: "confirm",
+      crounch: "down",
+      block: "cancel",
+      done: null,
+    };
+    setHighlightedControl(map[currentTask] ?? null);
+    return () => setHighlightedControl(null);
+  }, [currentTask, setHighlightedControl]);
 
   return (
-    <div className={styles.overlay}>
+    <>
+      <div className={styles.backdrop} />
+      <div className={styles.overlay}>
       <div className={styles.taskBox}>
         <img className={styles.image} src={npcPath("/surica/default.svg")} />
         <p className={styles.taskText}>{instruction.text}</p>
@@ -85,5 +103,6 @@ function CombatTutorialTasks() {
         })}
       </div>
     </div>
+    </>
   );
 }

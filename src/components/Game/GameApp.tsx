@@ -36,6 +36,7 @@ import { useHungerTimer } from "@/hooks/hunger/useHungerTimer";
 import { useSleepTimer } from "@/hooks/sleep/useSleepTimer";
 import { useRegenTimer } from "@/hooks/player/useRegenTimer";
 import { useExploreLocation } from "@/hooks/scene/useExploreLocation";
+import { CombatTutorialProvider } from "@/contexts/CombatTutorialContext";
 
 export function GameApp() {
   const { isOpen } = useInventory();
@@ -147,9 +148,11 @@ export function GameApp() {
 
   return (
     <div className="app">
-      <Movement />
-      <Outlet />
-      <GameButtons />
+      <CombatTutorialProvider>
+        <Movement />
+        <Outlet />
+        <GameButtons />
+      </CombatTutorialProvider>
       <XPBarNotification />
       <HungerBarNotification />
       <SleepBarNotification />

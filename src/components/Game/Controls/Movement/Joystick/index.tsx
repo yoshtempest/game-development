@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import type { GameControlLayer } from "@/utils/types/player/controls";
+import { useCombatTutorial } from "@/contexts/CombatTutorialContext";
 
 type Dir = Direction;
 
@@ -17,6 +18,7 @@ export function JoystickMovement({
   onPressDir,
   onReleaseDir,
 }: Props) {
+  const { highlightedControl } = useCombatTutorial();
   const activeDir = useRef<Set<Dir>>(new Set());
 
   const isDragging = useRef(false);
@@ -179,6 +181,14 @@ export function JoystickMovement({
     <div
       ref={centerRef}
       className="dpad"
+      style={
+        highlightedControl === "up" ||
+        highlightedControl === "down" ||
+        highlightedControl === "left" ||
+        highlightedControl === "right"
+          ? { border: "3px solid white" }
+          : undefined
+      }
       onPointerDown={handleStart}
       onPointerMove={handleMove}
       onPointerUp={handleEnd}
