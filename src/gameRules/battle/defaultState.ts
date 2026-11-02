@@ -18,6 +18,7 @@ export const BATTLE_DEFAULT_STATE = {
   pullFromX: 0,
   pullToX: 0,
   pullStartTime: 0,
+  pullDuration: 300,
   throwStartTime: 0,
   throwFromX: 0,
   throwToX: 0,

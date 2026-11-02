@@ -362,6 +362,25 @@ export function useBattleCombat({
       }),
     onPushPlayer: (npcX: number) =>
       setPlayer((p) => {
+        if (npcType === "trueVandinha") {
+          const direction = npcX > p.x ? -1 : 1;
+          const pushToX = clampX(p.x + direction * 100);
+          window.setTimeout(() => {
+            setPlayer((pp) =>
+              pp.pullStartTime === 0
+                ? { ...pp, state: pp.state === "blocked" ? "idle" : pp.state }
+                : pp,
+            );
+          }, 500);
+          return {
+            ...p,
+            state: "blocked",
+            pullFromX: p.x,
+            pullToX: pushToX,
+            pullStartTime: Date.now(),
+            pullDuration: 500,
+          };
+        }
         const direction = npcX > p.x ? -1 : 1;
         const pushToX = clampX(p.x + direction * 200);
         return {
@@ -369,6 +388,7 @@ export function useBattleCombat({
           pullFromX: p.x,
           pullToX: pushToX,
           pullStartTime: Date.now(),
+          pullDuration: 300,
         };
       }),
     onRamPushPlayer: (direction: "left" | "right", toX: number) =>

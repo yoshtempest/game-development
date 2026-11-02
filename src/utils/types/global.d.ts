@@ -559,6 +559,7 @@ declare global {
     pullFromX: number;
     pullToX: number;
     pullStartTime: number;
+    pullDuration: number;
     throwStartTime: number;
     throwFromX: number;
     throwToX: number;

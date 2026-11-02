@@ -67,7 +67,7 @@ export const npcAttacks = {
   jhowsimar: new JhowsimarAttack(),
   goat: new GoatAttack(),
   vandinhaFragment: new VandinhaFragmentAttack(),
-  trueVandinha: new TrueVandinhaAttack("trueVandinha"),
+  trueVandinha: new TrueVandinhaAttack(),
   deise: new DeiseAttack(),
   necromancer: new NecromancerAttack("necromancer"),
   slimita: new SlimitaAttack(),

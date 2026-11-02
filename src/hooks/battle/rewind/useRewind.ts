@@ -52,6 +52,7 @@ export function useRewind({
       pullFromX: 0,
       pullToX: 0,
       pullStartTime: 0,
+      pullDuration: 300,
     }));
     npc.setNpc((n) => ({
       ...n,

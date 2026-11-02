@@ -504,6 +504,7 @@ export function useBattleSystem(props: BattleSystemProps) {
       pullFromX: 0,
       pullToX: 0,
       pullStartTime: 0,
+      pullDuration: 300,
       grabbedUntil: 0,
     }));
   };
