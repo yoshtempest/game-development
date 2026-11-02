@@ -2,6 +2,7 @@ type NpcCategory = "ally" | "enemies" | "pets" | "professionals" | "characters";
 
 export const NPC_CATEGORY: Record<string, NpcCategory> = {
   blackao: "ally",
+  shenlong: "ally",
   brothers: "ally",
   brothers1: "ally",
   brothers2: "ally",
