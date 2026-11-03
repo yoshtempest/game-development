@@ -19,6 +19,8 @@ export const spriteMap: Record<string, string> = {
   redSphere: playerProjectilePath("/redSphere.svg"),
   purpleSphere: playerProjectilePath("/purpleSphere.svg"),
   energyAttack: playerProjectilePath("/energyAttack.svg"),
+  yellowDog: playerProjectilePath("/yellowDog.svg"),
+  blueDog: playerProjectilePath("/blueDog.svg"),
   // Genki Dama do Ematron: projétil e effect ficam em player/projectiles/
   genkiDama: playerProjectilePath("/genkiDama.svg"),
   genkiDamaChargeEffect: playerProjectilePath("/chargeEffect.svg"),

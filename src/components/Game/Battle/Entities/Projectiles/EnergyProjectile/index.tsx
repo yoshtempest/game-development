@@ -29,7 +29,7 @@ export function EnergyProjectile({
         return (
           <img
             key={p.id}
-            src={spriteMap.energyAttack}
+            src={spriteMap.yellowDog}
             style={{
               position: "absolute",
               left: p.x * battleScaleX,

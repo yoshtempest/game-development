@@ -7,7 +7,7 @@ export const BABIDI_ATTACK_OPTIONS = [
     id: "withGun",
     image: "/babidi/inFight/withGun/attacks/leftHandAttack.svg",
     label: "Pistola",
-    projectile: "/energyAttack.svg",
+    projectile: "/yellowDog.svg",
     description: "Dispara ataques de energia contra o inimigo.",
   },
   {
