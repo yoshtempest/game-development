@@ -29,7 +29,6 @@ type Props = {
     | "attack"
     | "pitch"
     | "inAir"
-    | "falling"
     | "airAttack"
     | "preAttack"
     | "preJump"
