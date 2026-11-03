@@ -1,3 +1,5 @@
+import type { BabidiAttackProjectileSprite } from "./attack";
+
 /** Lado do shield de bloqueio do babidi: espelha o lado de quem ataca. */
 export type BabidiShieldSide = "left" | "right";
 
@@ -20,6 +22,8 @@ export type BabidiEnergyProjectile = {
   id: string;
   x: number;
   y: number;
+  /** Sprite do disparo: alterna entre `yellowDog` e `blueDog` a cada golpe. */
+  sprite: BabidiAttackProjectileSprite;
   /**
    * Componente horizontal do voo: nasce `±1` (tiro reto) e vira `0` quando o
    * projétil sai de um portal vertical. O sprite espelha quando é negativo.

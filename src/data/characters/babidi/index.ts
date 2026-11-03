@@ -9,9 +9,10 @@ import {
 import type { BabidiPortalKind } from "@/utils/types/character/babidi";
 
 /**
- * Constantes do ataque básico do babidi: projétil de energia (`energyAttack.svg`)
- * disparado da mão a cada golpe — uma mão por vez (alternando entre ataques),
- * ou as duas quando há inimigos nos dois lados do player.
+ * Constantes do ataque básico do babidi: projétil de energia (sprite alterna
+ * entre `yellowDog` e `blueDog`) disparado da mão a cada golpe — uma mão por
+ * vez (alternando entre ataques), ou as duas quando há inimigos nos dois lados
+ * do player.
  */
 export const BabidiEnergyConstants = {
   /** Velocidade horizontal do projétil (px lógicos por tick de 20ms). */

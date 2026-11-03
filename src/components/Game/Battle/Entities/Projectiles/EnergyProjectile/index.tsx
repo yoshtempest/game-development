@@ -9,7 +9,7 @@ type Props = {
   battleScaleY: number;
 };
 
-/** Projéteis de energia do ataque básico do babidi (`energyAttack.svg`). */
+/** Projéteis de energia do ataque básico do babidi (alterna `yellowDog`/`blueDog`). */
 export function EnergyProjectile({
   projectiles,
   battleScaleX,
@@ -29,12 +29,12 @@ export function EnergyProjectile({
         return (
           <img
             key={p.id}
-            src={spriteMap.yellowDog}
+            src={spriteMap[p.sprite]}
             style={{
               position: "absolute",
               left: p.x * battleScaleX,
               top: p.y * battleScaleY,
-              width: BabidiEnergyConstants.SPRITE_WIDTH,
+              width: BabidiEnergyConstants.SPRITE_WIDTH / 2,
               transform: `translate(-50%, -50%) rotate(${angle}deg)${flip}`,
               zIndex: 15,
               pointerEvents: "none",

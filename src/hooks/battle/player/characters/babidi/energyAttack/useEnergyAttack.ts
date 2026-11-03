@@ -18,10 +18,14 @@ import type {
   BabidiEnergyProjectile,
   BabidiTarget,
 } from "@/utils/types/character/babidi";
-import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
+import type {
+  BabidiAttackProjectileSprite,
+  BabidiAttackVariant,
+} from "@/utils/types/character/babidi/attack";
 
 /**
- * Ataque básico do babidi: dispara o projétil `energyAttack.svg` a cada golpe.
+ * Ataque básico do babidi: dispara o projétil de energia a cada golpe,
+ * alternando o sprite entre `yellowDog` e `blueDog`.
  *
  * O press consome o cooldown e gera o projétil; o dano só acontece na colisão
  * (via `onProjectileHit`, preenchido pelo `usePlayerBattleActions`). A variante
@@ -51,10 +55,19 @@ export function useBabidiEnergyAttack({
   // (left → right → left …), como pede a sequência das poses.
   const handRef = useRef<"left" | "right">("right");
 
+  // Sprite do projétil: alterna a cada golpe (yellowDog → blueDog → …). Todos os
+  // disparos de um mesmo golpe (ex.: bothSidesAttack) usam a mesma cor.
+  const projectileSpriteRef =
+    useRef<BabidiAttackProjectileSprite>("yellowDog");
+
   const fire = useCallback(
     (player: Player, targets: BabidiTarget[]): boolean => {
       const hand = handRef.current;
       handRef.current = hand === "left" ? "right" : "left";
+
+      const sprite = projectileSpriteRef.current;
+      projectileSpriteRef.current =
+        sprite === "yellowDog" ? "blueDog" : "yellowDog";
 
       const spriteHeight = playerSizeRef.current / PLAYER_SPRITE_DIVISOR;
       const spawnY =
@@ -77,6 +90,7 @@ export function useBabidiEnergyAttack({
           id: `babidi-energy-${now}-${index}`,
           x: shot.spawnX,
           y: shot.spawnY,
+          sprite,
           dirX: shot.dirX,
           dirY: 0,
         })),

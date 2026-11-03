@@ -1,12 +1,15 @@
 /**
- * Tipos do ataque básico do babidi: o golpe é um projétil de energia
- * (`energyAttack.svg`) disparado da mão — uma mão por vez (alternando entre
- * `leftHandAttack`/`rightHandAttack`) ou as duas (`bothSidesAttack`) quando há
- * inimigos dos dois lados do player.
+ * Tipos do ataque básico do babidi: o golpe é um projétil de energia (sprite
+ * alternando entre `yellowDog`/`blueDog`) disparado da mão — uma mão por vez
+ * (alternando entre `leftHandAttack`/`rightHandAttack`) ou as duas
+ * (`bothSidesAttack`) quando há inimigos dos dois lados do player.
  */
 
 /** Variante do básico do babidi: pose da mão do sprite de ataque. */
 export type BabidiAttackVariant = "left" | "right" | "both";
+
+/** Sprite do projétil de energia: alterna entre golpes (amarelo → azul → …). */
+export type BabidiAttackProjectileSprite = "yellowDog" | "blueDog";
 
 /** Um disparo do plano: direção e posição de spawn no mapa da batalha. */
 export type BabidiAttackShot = {
