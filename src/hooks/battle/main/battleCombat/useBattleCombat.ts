@@ -444,6 +444,7 @@ export function useBattleCombat({
     timeRef: refs.timeRef,
     npcStaggerRef: refs.npcStaggerRef,
     rootedUntilRef: npcRootedUntilRef,
+    fishingNetRef: fishingNetRef,
     honoredFleeRef,
     npcHpRef: targeting.npcAiHpRef,
     npcMaxHpRef: targeting.npcAiMaxHpRef,
@@ -876,6 +877,32 @@ export function useBattleCombat({
     onProjectileHit: (target) => babidiMissileOnHitRef.current?.(target),
   });
   babidiMissileFireRef.current = (player) => babidiMissile.fire(player);
+
+  // Mísseis automáticos enquanto o NPC está preso pela fishingNet: surgem ao
+  // redor do NPC (de dentro de um portal) e voam em sua direção, causando 20%
+  // do dano mágico do personagem, independentemente do uso manual do míssil.
+  const fishingNetMissile = useBabidiMissile({
+    PLAYER_SIZE,
+    npcType,
+    npcPhase: battle.npcPhase ?? 1,
+    isAlfa,
+    timeRef: refs.timeRef,
+    npc: { x: npc.x, y: npc.y },
+    summons,
+    onProjectileHit: (target) => {
+      if (target.id === "main") {
+        battle.playerHit(0.2, true, true, "magical");
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (!fishingNet) return;
+    const interval = setInterval(() => {
+      fishingNetMissile.fire({ x: npc.x, y: npc.y });
+    }, 100);
+    return () => clearInterval(interval);
+  }, [fishingNet, npc.x, npc.y, fishingNetMissile]);
 
   const fishingNetPress = useCallback(() => {
     if (!battle.playerMaxHp) return;
@@ -1968,7 +1995,10 @@ export function useBattleCombat({
     granReyCeroRemaining,
     disintegrating,
     babidiEnergyProjectiles: babidiEnergy.projectiles,
-    babidiMissileProjectiles: babidiMissile.missiles,
+    babidiMissileProjectiles: [
+      ...babidiMissile.missiles,
+      ...fishingNetMissile.missiles,
+    ],
     fishingNet,
     fishingNetPress,
     babidiAttackVariant: babidiEnergy.attackVariant,

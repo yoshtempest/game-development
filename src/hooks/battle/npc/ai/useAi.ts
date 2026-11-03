@@ -45,6 +45,7 @@ export function useNpcAI({
   timeRef,
   npcStaggerRef,
   rootedUntilRef,
+  fishingNetRef,
   honoredFleeRef,
   npcHpRef,
   npcMaxHpRef,
@@ -300,8 +301,12 @@ export function useNpcAI({
 
       const attack = getNpcAttack(npcTypeRef.current);
 
-      const targetX = playerXRef.current;
-      const targetY = playerYRef.current;
+      // Enquanto preso pela fishingNet, o NPC direciona seus ataques à rede
+      // (que absorve o dano no lugar do jogador) para tentar se libertar.
+      const net = fishingNetRef?.current ?? null;
+      const caught = (rootedUntilRef?.current ?? 0) > Date.now() && !!net;
+      const targetX = caught && net ? net.x : playerXRef.current;
+      const targetY = caught && net ? net.y : playerYRef.current;
 
       // Snapshot antes do `execute`: os ataques mutam `state`/`ai` no próprio
       // objeto, então a comparação do commit precisa dos valores originais.
@@ -309,8 +314,8 @@ export function useNpcAI({
 
       const result = attack.execute({
         npc: n,
-        playerX: playerXRef.current,
-        playerY: playerYRef.current,
+        playerX: targetX,
+        playerY: targetY,
         playerState: playerStateRef.current,
         playerDirection: playerDirectionRef.current,
         targetX,
@@ -394,6 +399,7 @@ export function useNpcAI({
     timeRef,
     npcStaggerRef,
     rootedUntilRef,
+    fishingNetRef,
     honoredFleeRef,
     npcPhaseRef,
     npcBlockedRef,

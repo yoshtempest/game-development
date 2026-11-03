@@ -28,6 +28,12 @@ export type Props = {
   timeRef: React.RefObject<TimeEffect[]>;
   npcStaggerRef: React.RefObject<number>;
   rootedUntilRef?: React.RefObject<number>;
+  fishingNetRef?: React.RefObject<{
+    hp: number;
+    maxHp: number;
+    x: number;
+    y: number;
+  } | null>;
   honoredFleeRef?: React.RefObject<boolean>;
   npcHpRef?: React.RefObject<number>;
   npcMaxHpRef?: React.RefObject<number>;

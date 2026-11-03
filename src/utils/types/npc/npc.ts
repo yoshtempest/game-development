@@ -49,7 +49,6 @@ export type NPCBattleState = {
     | "fall"
     | "giveMeMyPower"
     | "jump"
-    | "falling"
     | "prePunch"
     | "punch"
     | "preKick"
