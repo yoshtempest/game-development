@@ -4,6 +4,7 @@ import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { clampX } from "@/gameRules/movement/clampX";
 import { combatService } from "@/services/combat";
+import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
 
@@ -235,7 +236,7 @@ export function useKamehameha({
         }
         changed = true;
         const dmg = atLeastMinDamage(
-          combatService.applyArmor(rawTick, KAMEHAMEHA_DAMAGE_KIND, s.armor),
+          combatService.applyArmor(rawTick, KAMEHAMEHA_DAMAGE_KIND, s.armor as DamageArmor),
         );
         const newHp = Math.max(0, s.hp - dmg);
         applyVampirism({

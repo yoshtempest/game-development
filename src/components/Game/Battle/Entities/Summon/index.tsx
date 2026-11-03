@@ -27,7 +27,7 @@ export function Summon({
           TILE_SIZE={TILE_SIZE}
           npcType={s.npcType}
           state={s.state}
-          direction={s.direction}
+          direction={s.direction as "left" | "right"}
           isHidden={hiddenIds.has(s.id)}
           isDying={s.isDying}
           babidiPortalCross={getPortalCross(babidiPortals, s.x, s.y)}

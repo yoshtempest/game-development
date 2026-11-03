@@ -8,6 +8,7 @@ import { useSettings } from "@/hooks/settings/useSetting";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { clampX } from "@/gameRules/movement/clampX";
 import { combatService } from "@/services/combat";
+import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import { getAbilityDamageType } from "@/data/characters/abilities";
 
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
@@ -225,7 +226,7 @@ export function useGranReyCero({
       const dmg = combatService.applyArmor(
         applied,
         GRAN_REY_CERO_DAMAGE_KIND,
-        s.armor,
+        s.armor as DamageArmor,
       );
       const newHp = Math.max(0, s.hp - dmg);
       spawnDamageNumber(dmg, s.x, s.y, "summon");

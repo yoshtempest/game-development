@@ -1,97 +1,11 @@
-import type { RefObject } from "react";
-
 import { PET_STAR_MULTIPLIER } from "@/data/characters/pets/petProgress";
 import { getPetBaseDamage } from "@/data/characters/pets/petProgress";
-import { getNpcElementTypes } from "@/data/types/npcElementTypes";
-import { combatService } from "@/services/combat";
-import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
 import { NO_ARMOR } from "@/gameRules/battle/damage/armor";
 import type { PetSkillDefinition } from "@/data/characters/pets/petSkills";
 
-import type { SpawnDamageFn } from "@/utils/types/battle/spawnDamageFn";
-import type { DamageArmor, DamageKind } from "@/utils/types/battle/damageKind";
-
-/**
- * Dano de um golpe de pet: armadura pela natureza do golpe primeiro (mesma
- * ordem do funil player → NPC) e só depois a tabela elemental. Sem isto o pet
- * ignoraria a armadura mágica de um alvo elemental.
- */
-function calcPetDamage(opts: {
-  baseDamage: number;
-  multiplier: number;
-  damageType?: DamageKind;
-  armor: DamageArmor;
-  petNpcType: string;
-  targetNpcType: string;
-}): number {
-  const {
-    baseDamage,
-    multiplier,
-    damageType,
-    armor,
-    petNpcType,
-    targetNpcType,
-  } = opts;
-
-  const elementMultiplier = combatService.getElementMultiplier(
-    getNpcElementTypes(petNpcType),
-    getNpcElementTypes(targetNpcType),
-  );
-
-  return atLeastMinDamage(
-    combatService.calculateDamageToNpc(
-      baseDamage * multiplier,
-      damageType ?? "physical",
-      armor,
-    ) * elementMultiplier,
-  );
-}
-
-export type PetSkillRunDeps = {
-  petLevel: number;
-  petStars: number;
-  playerLevel: number;
-  groundY: number;
-  beginCoffinSequence: (
-    spawnPositions: number[],
-    groundY: number,
-    npcType: string,
-    onSpawn: (npcType: string, x: number) => void,
-  ) => void;
-  npcType: string;
-  playerX: number;
-  playerY: number;
-  battle: {
-    npcArmor: DamageArmor;
-    npcHP: number;
-    npcMaxHp: number;
-    setNpcHP: React.Dispatch<React.SetStateAction<number>>;
-    playerMaxHp: number;
-    setPlayerHP: React.Dispatch<React.SetStateAction<number>>;
-    setPlayerShield: React.Dispatch<React.SetStateAction<number>>;
-  };
-  spawnDamageRef: RefObject<SpawnDamageFn>;
-  npc: { x: number; y: number };
-  summonAlly: (
-    npcType: string,
-    overrideX?: number,
-    options?: { level?: number; statMultiplier?: number },
-  ) => void;
-  triggerJumpAttack: (npcY: number, cb: (damage: number) => void) => void;
-  triggerTeleportBite: (
-    targetX: number,
-    targetY: number,
-    cb: (damage: number) => void,
-  ) => void;
-  applyNpcBleed: (durationMs: number) => void;
-  summons: SummonedNpc[];
-  setSummons: React.Dispatch<React.SetStateAction<SummonedNpc[]>>;
-  summonsBleedUntilRef: RefObject<Record<string, number>>;
-  npcRootedUntilRef: RefObject<number>;
-  rootedSummonsUntilRef: RefObject<Record<string, number>>;
-  rootDurationMs: number;
-  playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
-};
+import type { DamageArmor } from "@/utils/types/battle/damageKind";
+import type { PetSkillRunDeps } from "@/gameRules/battle/petSkill/types";
+import { calcPetDamage } from "@/gameRules/battle/petSkill/calcPetDamage";
 
 export function runPetSkill(
   def: PetSkillDefinition,
@@ -189,10 +103,11 @@ export function runPetSkill(
 
       // O alvo pode ser um summon: a armadura dele é a resolvida no spawn,
       // não a do NPC principal.
-      const targetArmor =
+      const targetArmor = (
         target.id === "main"
           ? battle.npcArmor
-          : (summons.find((s) => s.id === target.id)?.armor ?? NO_ARMOR);
+          : (summons.find((s) => s.id === target.id)?.armor ?? NO_ARMOR)
+      ) as DamageArmor;
 
       const dmg = calcPetDamage({
         baseDamage,

@@ -11,6 +11,8 @@ import { getCharacterElementTypes } from "@/data/types/characterElementTypes";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
 import { combatService } from "@/services/combat";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
+import { NO_ARMOR } from "@/gameRules/battle/damage/armor";
+import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
 import type {
   VampirismSource,
@@ -96,7 +98,7 @@ export function damageSummon({
   const armorReduced = combatService.applyArmor(
     berserkRaw,
     damageKind,
-    targetSummon?.armor,
+    (targetSummon?.armor ?? NO_ARMOR) as DamageArmor,
   );
   const dmg = atLeastMinDamage(armorReduced * multiplier * elementMultiplier);
 
