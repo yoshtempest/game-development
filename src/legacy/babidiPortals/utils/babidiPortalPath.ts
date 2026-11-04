@@ -1,6 +1,6 @@
-import { playerAbilityPath } from "./playerAbilityBackgroundPath";
+import { playerAbilityPath } from "@/utils/paths/player/playerAbilityBackgroundPath";
 
-import type { BabidiPortalKind } from "@/utils/types/character/babidi";
+import type { BabidiPortalKind } from "@/legacy/babidiPortals/types";
 
 const PORTAL_FILE: Record<BabidiPortalKind, string> = {
   ground: "groundPortal.svg",

@@ -15,7 +15,6 @@ export function MainNpc({
   cutInEnemie = null,
   npcBleeding = false,
   purpleHole = false,
-  babidiPortalCross = null,
 }: MainNpcProps) {
   return (
     <NPCBattle
@@ -35,7 +34,6 @@ export function MainNpc({
       cutInEnemie={cutInEnemie}
       npcBleeding={npcBleeding}
       purpleHole={purpleHole}
-      babidiPortalCross={babidiPortalCross}
     />
   );
 }

@@ -1,6 +1,5 @@
+import { npcPathProjectile, playerAbilityPath } from "@/utils/paths";
 import { playerProjectilePath } from "@/utils/paths";
-import { npcPathProjectile } from "@/utils/paths";
-import { babidiPortalPath } from "@/utils/paths";
 import type { BabidiMissileProjectile } from "@/utils/types/character/babidi";
 import styles from "./styles.module.css";
 
@@ -40,7 +39,7 @@ export function MissileProjectile({
                 }}
               >
                 <img
-                  src={babidiPortalPath("default")}
+                  src={playerAbilityPath("babidi", "portals", "defaultPortal.svg")}
                   className={styles.portalFlip}
                 />
               </div>

@@ -5,9 +5,9 @@ import type {
   PickWarpResult,
   PickProjectileResult,
   TravelLockSpec,
-} from "@/utils/types/character/babidi/portals";
-import type { BabidiPortal } from "@/utils/types/character/babidi";
-import { BabidiPortalConstants } from "@/data/characters/babidi";
+} from "@/legacy/babidiPortals/portals";
+import type { BabidiPortal } from "@/legacy/babidiPortals/types";
+import { BabidiPortalConstants } from "@/legacy/babidiPortals/constants";
 import { overlapsPortal } from "./portalGeometry";
 
 /**

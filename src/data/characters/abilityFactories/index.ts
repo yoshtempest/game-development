@@ -8,7 +8,7 @@ import {
 } from "@/data/characters/srGuaxinim/srGuaxinim";
 import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/laricell/laricell";
 import { YVEL_WEAPONS } from "@/data/characters/yvel/yvelWeapons";
-import { BabidiPortalConstants } from "@/data/characters/babidi";
+import { BabidiBombDropConstants } from "@/data/characters/babidi";
 import {
   BLINK_ENERGY_COST,
   CURSED_ENERGY_HEAL_RATIO,
@@ -179,11 +179,17 @@ export function purpleSphereAbility(): ActiveAbility {
   });
 }
 
-/** Portal Dimensional do Babidi: cria até dois portais ligados entre si. */
+/**
+ * Energia Dimensional do Babidi: um portal aéreo abre acima do inimigo
+ * principal e uma bomba cai de lá, explodindo no alvo. A mecânica antiga de
+ * dois portais + teletransporte está arquivada em `src/legacy/babidiPortals`.
+ */
 export function dimensionalPortalAbility(): ActiveAbility {
   return createActiveAbility({
     id: "dimensionalPortal",
     name: "Energia Dimensional",
-    description: `Clique para escolher o tipo (chão/frontal/aéreo), posicione com o joystick e confirme para fincar. Cada portal custa ${BabidiPortalConstants.COST_RATIO * 100}% da energia máxima e até ${BabidiPortalConstants.MAX_PORTALS} ficam no mapa — quem entra num sai no outro. Com os dois em campo, clicar o botão desfaz o último e devolve a energia.`,
+    description: `Abre um portal aéreo sobre o inimigo principal e derruba uma bomba que explode no alvo. Custa ${BabidiBombDropConstants.COST_RATIO * 100}% da energia máxima e tem ${BabidiBombDropConstants.COOLDOWN_MS / 1000}s de recarga.`,
+    cooldownMs: BabidiBombDropConstants.COOLDOWN_MS,
+    damageType: "magical",
   });
 }

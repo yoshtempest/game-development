@@ -1,8 +1,9 @@
-import { playerAbilityBackgroundPath, babidiPortalPath } from "@/utils/paths";
-import { BABIDI_PORTAL_KINDS } from "@/data/characters/babidi";
+import { playerAbilityBackgroundPath } from "@/utils/paths";
+import { babidiPortalPath } from "@/legacy/babidiPortals/utils/babidiPortalPath";
+import { BABIDI_PORTAL_KINDS } from "@/legacy/babidiPortals/constants";
 import styles from "./styles.module.css";
 
-import type { BabidiPortalKind } from "@/utils/types/character/babidi";
+import type { BabidiPortalKind } from "@/legacy/babidiPortals/types";
 
 type Props = {
   /** Índice do tipo destacado em `BABIDI_PORTAL_KINDS`. */

@@ -7,16 +7,16 @@ import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSk
 import {
   advancePortalFlight,
   findFlyingPortal,
-} from "@/gameRules/battle/characters/babidi/portalFlight";
-import { buildTravelLockSpec } from "@/gameRules/battle/characters/babidi/portalWarpRules";
-import { BabidiPortalConstants } from "@/data/characters/babidi";
-import { usePortalFlow } from "@/hooks/battle/player/characters/babidi/portalFlow/usePortalFlow";
-import { usePortalLocks } from "@/hooks/battle/player/characters/babidi/usePortalLocks";
-import { usePortalTravel } from "@/hooks/battle/player/characters/babidi/portalTravel/usePortalTravel";
+} from "@/legacy/babidiPortals/gameRules/portalFlight";
+import { buildTravelLockSpec } from "@/legacy/babidiPortals/gameRules/portalWarpRules";
+import { BabidiPortalConstants } from "@/legacy/babidiPortals/constants";
+import { usePortalFlow } from "@/legacy/babidiPortals/hooks/portalFlow/usePortalFlow";
+import { usePortalLocks } from "@/legacy/babidiPortals/hooks/usePortalLocks";
+import { usePortalTravel } from "@/legacy/babidiPortals/hooks/portalTravel/usePortalTravel";
 import type {
   BabidiPortal,
   BabidiPortalFocus,
-} from "@/utils/types/character/babidi";
+} from "@/legacy/babidiPortals/types";
 
 /**
  * "Energia Dimensional" — portais do babidi.

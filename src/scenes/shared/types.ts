@@ -35,10 +35,8 @@ import type { CharactersProgress } from "@/data/characters/defaultProgress";
 import type { ReplayData } from "@/utils/types/replay";
 import type { NavigateFunction } from "react-router";
 import type {
+  BabidiBombDropVisual,
   BabidiEnergyProjectile,
-  BabidiPortal,
-  BabidiPortalFocus,
-  BabidiPortalGhost,
   BabidiShieldSide,
   BabidiShieldSides,
 } from "@/utils/types/character/babidi";
@@ -227,34 +225,17 @@ export type BattleSceneApi = {
   /** Projéteis de energia do ataque básico do babidi em voo. */
   babidiEnergyProjectiles: BabidiEnergyProjectile[];
   babidiMissileProjectiles: import("@/utils/types/character/babidi").BabidiMissileProjectile[];
-  fishingNet: { hp: number; maxHp: number; x: number; y: number } | null;
+  fishingNet: { x: number; y: number } | null;
   fishingNetPress: () => void;
+  /** Portal/bomba/explosão da Energia Dimensional do babidi. */
+  babidiBombDrop: BabidiBombDropVisual | null;
+  babidiBombDropPress: () => void;
+  babidiBombDropUsable: boolean;
+  babidiBombDropRemaining: number;
   /** Variante de mão do sprite do ataque básico do babidi (pose do golpe atual). */
   babidiAttackVariant: BabidiAttackVariant;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
   babidiShieldSides: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onBabidiShieldEnd: (side: BabidiShieldSide, nonce: number) => void;
-  /** Portais fincados no mapa (Energia Dimensional do babidi). */
-  babidiPortals: BabidiPortal[];
-  /** Fantasma do posicionamento (antes de soltar o botão) ou `null`. */
-  babidiPortalGhost: BabidiPortalGhost | null;
-  /** Índice do tipo destacado no seletor, ou `null` se o seletor está fechado. */
-  babidiPortalSelection: number | null;
-  /** Player no "voo do portal" (override de sprite pós-teletransporte). */
-  babidiPortalLanding: boolean;
-  /** Foco de câmera durante o voo do portal. */
-  babidiPortalFocus: BabidiPortalFocus;
-  /** Clique no botão: abre o seletor (ou desfaz o último portal se cheio). */
-  babidiPortalClick: () => void;
-  /** Escolha do tipo pelo card do modal (entra no posicionamento). */
-  babidiPortalPick: (index: number) => void;
-  /** Se a habilidade pode ser usada agora (portais cheios ou guard + energia). */
-  babidiPortalUsable: boolean;
-  /** Quantidade de portais fincados. */
-  babidiPortalCount: number;
-  /** Custo em energia de cada portal (25% da energia máxima). */
-  babidiPortalCost: number;
-  /** Teto de portais simultâneos. */
-  babidiPortalMaxPortals: number;
 };

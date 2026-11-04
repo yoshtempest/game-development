@@ -2,7 +2,7 @@ import type { RefObject } from "react";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { PlaySound } from "@/utils/types/audio";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
-import type { BabidiPortal } from "@/utils/types/character/babidi";
+import type { BabidiPortal } from "@/legacy/babidiPortals/types";
 
 export type Props = {
   player: Player;

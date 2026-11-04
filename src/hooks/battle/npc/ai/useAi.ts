@@ -70,7 +70,6 @@ export function useNpcAI({
   spawnDamageRef,
   playerCooldownRef,
   playerHitDamageRef,
-  portalWarpRef,
 }: Props) {
   const [npc, setNpc] = useState<NPCBattleState>({
     x: BATTLE_SPAWN.npc.x,
@@ -208,7 +207,6 @@ export function useNpcAI({
     spawnDamageRef,
     playerCooldownRef,
     playerHitDamageRef,
-    portalWarpRef,
   );
 
   const resetNpc = (stateOverride?: NPCBattleState["state"]) => {

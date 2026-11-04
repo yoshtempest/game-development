@@ -1,11 +1,11 @@
-import { BabidiPortalConstants } from "@/data/characters/babidi";
-import { groundUnder } from "@/gameRules/battle/characters/babidi/portalGeometry";
-import type { BabidiPortal } from "@/utils/types/character/babidi";
+import { BabidiPortalConstants } from "@/legacy/babidiPortals/constants";
+import { groundUnder } from "@/legacy/babidiPortals/gameRules/portalGeometry";
+import type { BabidiPortal } from "@/legacy/babidiPortals/types";
 import type {
   EntityTravel,
   PlayerTravel,
   TravelAdvance,
-} from "@/utils/types/character/babidi/portals";
+} from "@/legacy/babidiPortals/portals";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
 
 /**

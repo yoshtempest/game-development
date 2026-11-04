@@ -42,8 +42,6 @@ export function PlayerBattle(props: PlayerBattleProps) {
     babidiAttackVariant,
     babidiShieldSides = NO_BABIDI_SHIELD,
     onBabidiShieldEnd,
-    babidiPortalLanding = false,
-    babidiPortalCross = null,
     hakai = false,
   } = props;
 
@@ -67,7 +65,6 @@ export function PlayerBattle(props: PlayerBattleProps) {
     preAtomic,
     outroExpression,
     babidiAttackVariant,
-    babidiPortalLanding,
     hakai,
   });
 
@@ -113,23 +110,6 @@ export function PlayerBattle(props: PlayerBattleProps) {
     />
   );
 
-  // ── Portal terrestre: sprite dividido entre os dois portais ───────────────
-  // Enquanto o corpo afunda na linha do portal de origem, a parte que já passou
-  // some daqui e reaparece saindo do portal par. O corte é medido na mesma
-  // escala do render (`scaleY`), então o pedaço "de dentro" casa com a arte.
-  const inside = babidiPortalCross
-    ? Math.min(
-        Math.max(babidiPortalCross.depth * dimensions.scaleY, 0),
-        dimensions.height,
-      )
-    : 0;
-  const sourceMask = babidiPortalCross
-    ? `linear-gradient(to top, transparent 0 ${inside}px, #000 ${inside}px)`
-    : undefined;
-  const destMask = babidiPortalCross
-    ? `linear-gradient(to bottom, transparent 0 ${dimensions.height - inside}px, #000 ${dimensions.height - inside}px)`
-    : undefined;
-
   return (
     <>
       <div
@@ -142,9 +122,6 @@ export function PlayerBattle(props: PlayerBattleProps) {
           transform: "translate(-50%, -100%)",
           zIndex: 10,
           overflow: "visible",
-          maskImage: sourceMask,
-          WebkitMaskImage: sourceMask,
-          maskRepeat: "no-repeat",
         }}
       >
         {isChargingKi && (
@@ -186,29 +163,6 @@ export function PlayerBattle(props: PlayerBattleProps) {
           />
         )}
       </div>
-
-      {/* Portal par: só o pedaço que está "dentro" da origem, saindo do destino.
-          Fora do container mascarado para o corte da origem não vazá-lo também. */}
-      {babidiPortalCross && inside > 0 && (
-        <div
-          style={{
-            position: "absolute",
-            width: dimensions.width,
-            height: dimensions.height,
-            left: babidiPortalCross.destX * dimensions.scaleX,
-            top: babidiPortalCross.destY * dimensions.scaleY,
-            transform: "translate(-50%, -100%)",
-            zIndex: 10,
-            overflow: "visible",
-            maskImage: destMask,
-            WebkitMaskImage: destMask,
-            maskRepeat: "no-repeat",
-            pointerEvents: "none",
-          }}
-        >
-          {sprite}
-        </div>
-      )}
     </>
   );
 }

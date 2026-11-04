@@ -25,10 +25,9 @@ import type {
   MugetsuDisintegrationTarget,
 } from "@/utils/types/battle/mugetsu";
 import type {
+  BabidiBombDropVisual,
   BabidiEnergyProjectile,
   BabidiMissileProjectile,
-  BabidiPortal,
-  BabidiPortalGhost,
   BabidiShieldSide,
   BabidiShieldSides,
 } from "@/utils/types/character/babidi";
@@ -119,19 +118,15 @@ export type Props = {
   /** Projéteis de energia do ataque básico do babidi. */
   babidiEnergyProjectiles?: BabidiEnergyProjectile[];
   babidiMissileProjectiles?: BabidiMissileProjectile[];
-  fishingNet?: { hp: number; maxHp: number; x: number; y: number } | null;
+  fishingNet?: { x: number; y: number } | null;
+  /** Portal/bomba/explosão da Energia Dimensional do babidi. */
+  babidiBombDrop?: BabidiBombDropVisual | null;
   /** Pose de mão do sprite do ataque básico do babidi. */
   babidiAttackVariant?: BabidiAttackVariant;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
   babidiShieldSides?: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onBabidiShieldEnd?: (side: BabidiShieldSide, nonce: number) => void;
-  /** Portais fincados no mapa (Energia Dimensional do babidi). */
-  babidiPortals?: BabidiPortal[];
-  /** Fantasma do posicionamento do portal (antes de soltar o botão). */
-  babidiPortalGhost?: BabidiPortalGhost | null;
-  /** Player no "voo do portal" (override de sprite pós-teletransporte). */
-  babidiPortalLanding?: boolean;
   /** Furo no sprite do NPC quando a purple o mata (junto com `isDying`). */
   purpleHole?: boolean;
   hakai?: boolean;

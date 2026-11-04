@@ -1,6 +1,5 @@
 import type { BattleEntitiesBattle } from "@/components/Game/Battle/Entities/types";
 import type { CutInEnemieOverlay } from "@/hooks/battle/player/characters/marshadow/useMarshadowCutInEnemie";
-import type { BabidiPortalCross } from "@/utils/types/character/babidi";
 import { NPCBattle } from "@/components/Game/Entities/Npc/Battle";
 
 export type MainNpcProps = {
@@ -17,6 +16,4 @@ export type MainNpcProps = {
   cutInEnemie?: CutInEnemieOverlay | null;
   npcBleeding?: boolean;
   purpleHole?: boolean;
-  /** Travessia em andamento por um portal terrestre (sprite dividido). */
-  babidiPortalCross?: BabidiPortalCross | null;
 };

@@ -19,8 +19,6 @@ interface ResolvePlayerSpriteParams {
   preAtomic: boolean;
   outroExpression?: "victory" | "defeat" | null;
   babidiAttackVariant?: BabidiAttackVariant;
-  /** Player saindo de um portal do babidi (voo/decolagem). */
-  babidiPortalLanding?: boolean;
 }
 
 export function resolvePlayerSprite({
@@ -32,7 +30,6 @@ export function resolvePlayerSprite({
   teleportSprite,
   outroExpression = null,
   babidiAttackVariant,
-  babidiPortalLanding = false,
   hakai = false,
 }: ResolvePlayerSpriteParams): string {
   const resolvedState = resolveSpriteState(state);
@@ -42,12 +39,6 @@ export function resolvePlayerSprite({
   // porque, com o resultado definido, nada mais está em andamento.
   if (outroExpression) {
     return playerPath(`/${character}/expressions/${outroExpression}.svg`);
-  }
-
-  // Voo do portal do babidi: sprite de decolagem enquanto o player atravessa
-  // (ou cai de) um portal aéreo.
-  if (babidiPortalLanding && character === "babidi") {
-    return playerPath("/babidi/inFight/landing.svg");
   }
 
   // Não trocar o sprite do Marshadow para `starting.svg` quando qualquer habilidade

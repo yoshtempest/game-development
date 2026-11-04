@@ -1,4 +1,4 @@
-import type { BabidiPortal } from ".";
+import type { BabidiPortal } from "./types";
 import type { TimeKind } from "@/gameRules/battle/time";
 
 /** Direção que o joystick pode empurrar o fantasma/seletor. */

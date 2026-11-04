@@ -9,7 +9,6 @@ import {
 } from "@/gameRules/battle/range/config";
 import { getTime } from "@/gameRules/battle/time";
 import { planBabidiAttack } from "@/gameRules/battle/characters/babidi/babidiAttack";
-import { getPortalExitDirection } from "@/gameRules/battle/characters/babidi/babidiPortal";
 import { BabidiEnergyConstants } from "@/data/characters/babidi";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { ProjectileConstants } from "@/data/projectile";
@@ -39,7 +38,6 @@ export function useBabidiEnergyAttack({
   npcClass,
   summons,
   onProjectileHit,
-  portalWarpRef,
 }: Props) {
   const [projectiles, setProjectiles] = useState<BabidiEnergyProjectile[]>([]);
   const [attackVariant, setAttackVariant] =
@@ -142,28 +140,12 @@ export function useBabidiEnergyAttack({
           const time = getTime(timeRef.current, "projectile", p.id);
           if (time.speed === 0) return p;
 
-          let x =
+          const x =
             p.x + p.dirX * BabidiEnergyConstants.SPEED_PER_TICK * time.speed;
-          let y =
+          const y =
             p.y + p.dirY * BabidiEnergyConstants.SPEED_PER_TICK * time.speed;
-          let dirX = p.dirX;
-          let dirY = p.dirY;
-
-          // Portais do babidi: cruza a zona e reaparece no par. Quem sai decide
-          // a nova direção — frontal mantém o rumo, terrestre cospe para cima e
-          // aéreo para baixo (`getPortalExitDirection`); a colisão passa a valer
-          // já na saída.
-          const warp = portalWarpRef?.current;
-          if (warp) {
-            const dest = warp(p.id, x, y);
-            if (dest) {
-              x = dest.x;
-              y = dest.y;
-              const exit = getPortalExitDirection(dest.kind, p.dirX, p.dirY);
-              dirX = exit.dirX;
-              dirY = exit.dirY;
-            }
-          }
+          const dirX = p.dirX;
+          const dirY = p.dirY;
 
           if (
             x < -BabidiEnergyConstants.OFFSCREEN_MARGIN ||
@@ -208,7 +190,6 @@ export function useBabidiEnergyAttack({
     summonsRef,
     timeRef,
     onProjectileHitRef,
-    portalWarpRef,
   ]);
 
   return { projectiles, attackVariant, fire };

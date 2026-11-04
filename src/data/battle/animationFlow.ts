@@ -47,6 +47,9 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
   preAbility: { next: "ability", duration: TWO_HUNDRED_MS },
   preAbility2: { next: "idle", duration: 0 },
   ability: { next: "idle", duration: FIVE_HUNDRED_MS },
+  // Energia Dimensional do babidi: a sequência (portal, queda e explosão) é
+  // conduzida pelo hook; o estado não avança sozinho.
+  babidiPortalAttack: null,
 
   dash: { next: "idle", duration: THREE_HUNDRED_MS },
 

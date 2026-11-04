@@ -17,8 +17,6 @@ interface UseBattleSpriteParams {
   preAtomic: boolean;
   outroExpression?: "victory" | "defeat" | null;
   babidiAttackVariant?: BabidiAttackVariant;
-  /** Player saindo de um portal do babidi (voo/decolagem). */
-  babidiPortalLanding?: boolean;
   hakai?: boolean;
 }
 
@@ -32,7 +30,6 @@ export function useBattleSprite({
   preAtomic,
   outroExpression = null,
   babidiAttackVariant,
-  babidiPortalLanding = false,
   hakai = false,
 }: UseBattleSpriteParams) {
   const resolvedState = resolveSpriteState(state);
@@ -47,7 +44,6 @@ export function useBattleSprite({
     preAtomic,
     outroExpression,
     babidiAttackVariant,
-    babidiPortalLanding,
     hakai,
   });
 

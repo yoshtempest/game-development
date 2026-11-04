@@ -1,6 +1,6 @@
-import { BabidiPortalConstants } from "@/data/characters/babidi";
+import { BabidiPortalConstants } from "@/legacy/babidiPortals/constants";
 import { BATTLE_LIMITS } from "@/gameRules/movement/constants";
-import type { BabidiPortalKind } from "@/utils/types/character/babidi";
+import type { BabidiPortalKind } from "@/legacy/babidiPortals/types";
 
 /** Limita o X do portal/fantasma às bordas jogáveis do campo de batalha. */
 export function clampPortalX(x: number): number {

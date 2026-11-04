@@ -55,8 +55,6 @@ export type BattleSystemProps = {
   weapon?: YvelWeapon;
   /** Passiva O Abençoado: quando retorna true, o golpe letal reduz a vida a 1. */
   surviveLethalHitRef?: React.RefObject<() => boolean>;
-  fishingNetHpRef?: React.RefObject<{ hp: number; maxHp: number } | null>;
-  onFishingNetDamage?: (hp: number) => void;
   machineGamaShieldRef?: React.RefObject<number>;
   onMachineGamaBreak?: () => void;
 };

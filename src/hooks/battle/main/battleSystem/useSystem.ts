@@ -95,8 +95,6 @@ export function useBattleSystem(props: BattleSystemProps) {
     npcArmorBonus = 0,
     weapon,
     surviveLethalHitRef,
-    fishingNetHpRef,
-    onFishingNetDamage,
     machineGamaShieldRef,
     onMachineGamaBreak,
   } = props;
@@ -343,8 +341,6 @@ export function useBattleSystem(props: BattleSystemProps) {
     onParry,
     onDamageTaken: energy.consumeOnDamage,
     surviveLethalHitRef,
-    fishingNetHpRef,
-    onFishingNetDamage,
     machineGamaShieldRef,
     onMachineGamaBreak,
   });

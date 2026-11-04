@@ -1,12 +1,12 @@
-import { babidiPortalPath } from "@/utils/paths";
-import { BabidiPortalConstants } from "@/data/characters/babidi";
+import { babidiPortalPath } from "@/legacy/babidiPortals/utils/babidiPortalPath";
+import { BabidiPortalConstants } from "@/legacy/babidiPortals/constants";
 import styles from "./styles.module.css";
 
 import type {
   BabidiPortal,
   BabidiPortalGhost,
   BabidiPortalKind,
-} from "@/utils/types/character/babidi";
+} from "@/legacy/babidiPortals/types";
 
 type Props = {
   portals: BabidiPortal[];

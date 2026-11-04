@@ -33,6 +33,9 @@ export function resolveBattleSprite(
   form?: MarshadowBattleForm,
   babidiAttackVariant?: BabidiAttackVariant,
 ): string {
+  if (character === "babidi" && state === "babidiPortalAttack") {
+    return playerPath("/babidi/inFight/habilities/portals/upAttack.svg");
+  }
   if (
     character === "babidi" &&
     (state === "preAbility" || state === "ability")

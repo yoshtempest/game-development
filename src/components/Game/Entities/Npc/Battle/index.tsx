@@ -13,7 +13,6 @@ import {
   BLOOD_ICON_SRC,
 } from "@/data/characters/marshadow/marshadowCutIn";
 import type { CutInEnemieOverlay } from "@/utils/types/battle/cutInEnemie";
-import type { BabidiPortalCross } from "@/utils/types/character/babidi";
 
 type Props = {
   x: number;
@@ -88,8 +87,6 @@ type Props = {
    * central-direito no ponto do impacto (em vez de só sumir no fade).
    */
   purpleHole?: boolean;
-  /** Travessia em andamento por um portal terrestre (sprite dividido). */
-  babidiPortalCross?: BabidiPortalCross | null;
 };
 
 export function NPCBattle({
@@ -109,7 +106,6 @@ export function NPCBattle({
   cutInEnemie = null,
   npcBleeding = false,
   purpleHole = false,
-  babidiPortalCross = null,
 }: Props) {
   const { playSound } = useSoundEffects();
   const prevIsExplodingRef = useRef(isExploding);
@@ -177,23 +173,6 @@ export function NPCBattle({
   const holeX = direction === "right" ? 28 : 72;
   const holeMask = `radial-gradient(circle at ${holeX}% 47%, transparent 0 22%, #000 23%)`;
 
-  // ── Portal terrestre: sprite dividido entre os dois portais ───────────────
-  // O NPC que entrou no buraco some da parte de baixo aqui e reaparece saindo do
-  // portal par. O corte respeita o `yOffset` (a fração do container que fica
-  // abaixo dos pés) para a linha cair nos pés, não na borda da caixa.
-  const tilePx = TILE_SIZE * sizeMultiplier;
-  const crossInside = babidiPortalCross
-    ? Math.min(Math.max(babidiPortalCross.depth * scaleY, 0), tilePx)
-    : 0;
-  const crossBottom = crossInside + yOffset * tilePx;
-  const sourceMask = babidiPortalCross
-    ? `linear-gradient(to top, transparent 0 ${crossBottom}px, #000 ${crossBottom}px)`
-    : undefined;
-  const crossTop = Math.max(0, tilePx - yOffset * tilePx - crossInside);
-  const destMask = babidiPortalCross
-    ? `linear-gradient(to bottom, transparent 0 ${crossTop}px, #000 ${crossTop}px)`
-    : undefined;
-
   return (
     <>
       <div
@@ -228,13 +207,7 @@ export function NPCBattle({
                     maskSize: "100% 100%",
                     WebkitMaskSize: "100% 100%",
                   }
-                : sourceMask
-                  ? {
-                      maskImage: sourceMask,
-                      WebkitMaskImage: sourceMask,
-                      maskRepeat: "no-repeat",
-                    }
-                  : {}),
+                : {}),
               transition: isUnderground
                 ? "opacity 0.4s linear"
                 : "opacity 1s linear, filter 1s linear",
@@ -294,37 +267,6 @@ export function NPCBattle({
         )}
       </div>
 
-      {/* Portal par: só o pedaço que está "dentro" da origem, saindo do
-          destino. Irmão do sprite de origem (mask própria) para o corte de um
-          não vazar no outro. */}
-      {babidiPortalCross && crossInside > 0 && !isHidden && (
-        <div
-          style={{
-            position: "absolute",
-            width: tilePx,
-            height: tilePx,
-            left: babidiPortalCross.destX * scaleX,
-            top: babidiPortalCross.destY * scaleY,
-            transform: `translate(-50%, calc(-100% + ${yOffset * 100}%))`,
-            zIndex: 9,
-            maskImage: destMask,
-            WebkitMaskImage: destMask,
-            maskRepeat: "no-repeat",
-            pointerEvents: "none",
-          }}
-        >
-          <img
-            src={resolvedSrc}
-            onError={handleSpriteError}
-            style={{
-              width: "100%",
-              height: "100%",
-              transform: `scaleX(${direction === "right" ? -1 : 1})`,
-              position: "absolute",
-            }}
-          />
-        </div>
-      )}
     </>
   );
 }

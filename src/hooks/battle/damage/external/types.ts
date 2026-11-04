@@ -23,10 +23,6 @@ export type Props = {
   onDamageTaken?: () => void;
   /** Passiva O Abençoado: se retornar true, o golpe letal reduz a vida a 1. */
   surviveLethalHitRef?: React.RefObject<() => boolean>;
-  /** Rede de pesca do babidi: HP da rede (null = inativa). */
-  fishingNetHpRef?: React.RefObject<{ hp: number; maxHp: number } | null>;
-  /** Callback quando a rede sofre dano. */
-  onFishingNetDamage?: (hp: number) => void;
   /** Escudo Machine Gama: HP extra (ref). */
   machineGamaShieldRef?: React.RefObject<number>;
   /** Callback quando o escudo quebra. */

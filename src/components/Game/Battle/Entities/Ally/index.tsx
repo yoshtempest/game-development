@@ -1,16 +1,11 @@
 import { NPCBattle } from "@/components/Game/Entities/Npc/Battle";
-import { getPortalCross } from "@/gameRules/battle/characters/babidi/babidiPortal";
-
-import type { BabidiPortal } from "@/utils/types/character/babidi";
 
 type Props = {
   allies: SummonedNpc[];
   TILE_SIZE: number;
-  /** Portais do babidi, para dividir o sprite de quem afunda num deles. */
-  babidiPortals?: BabidiPortal[];
 };
 
-export function Ally({ allies, TILE_SIZE, babidiPortals = [] }: Props) {
+export function Ally({ allies, TILE_SIZE }: Props) {
   return (
     <>
       {allies.map((a) => (
@@ -24,7 +19,6 @@ export function Ally({ allies, TILE_SIZE, babidiPortals = [] }: Props) {
           direction={a.direction as "left" | "right"}
           isHidden={false}
           isDying={a.isDying}
-          babidiPortalCross={getPortalCross(babidiPortals, a.x, a.y)}
         />
       ))}
     </>

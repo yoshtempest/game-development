@@ -1,5 +1,4 @@
 import type {
-  BabidiPortalCross,
   BabidiShieldSide,
   BabidiShieldSides,
 } from "@/utils/types/character/babidi";
@@ -32,12 +31,5 @@ export interface PlayerBattleProps {
   babidiShieldSides?: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onBabidiShieldEnd?: (side: BabidiShieldSide, nonce: number) => void;
-  /** Player saindo de um portal do babidi (voo/decolagem). */
-  babidiPortalLanding?: boolean;
-  /**
-   * Travessia em andamento por um portal terrestre: a parte do sprite abaixo da
-   * linha do portal some de um lado e reaparece saindo do outro.
-   */
-  babidiPortalCross?: BabidiPortalCross | null;
   hakai?: boolean;
 }

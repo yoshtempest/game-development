@@ -1,7 +1,6 @@
 import { PlayerBattle } from "@/components/Game/Entities/Player/Battle";
 import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/blinkAnimation/types";
 import type {
-  BabidiPortalCross,
   BabidiShieldSide,
   BabidiShieldSides,
 } from "@/utils/types/character/babidi";
@@ -34,10 +33,6 @@ type Props = {
   babidiShieldSides?: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onBabidiShieldEnd?: (side: BabidiShieldSide, nonce: number) => void;
-  /** Player saindo de um portal do babidi (voo/decolagem). */
-  babidiPortalLanding?: boolean;
-  /** Travessia em andamento por um portal terrestre (sprite dividido). */
-  babidiPortalCross?: BabidiPortalCross | null;
   hakai?: boolean;
 };
 
@@ -58,8 +53,6 @@ export function Player({
   babidiAttackVariant,
   babidiShieldSides,
   onBabidiShieldEnd,
-  babidiPortalLanding = false,
-  babidiPortalCross = null,
   hakai = false,
 }: Props) {
   const blinkSilhouette =
@@ -92,8 +85,6 @@ export function Player({
       babidiAttackVariant={babidiAttackVariant}
       babidiShieldSides={babidiShieldSides}
       onBabidiShieldEnd={onBabidiShieldEnd}
-      babidiPortalLanding={babidiPortalLanding}
-      babidiPortalCross={babidiPortalCross}
       levelUpParticles
       hakai={hakai}
     />

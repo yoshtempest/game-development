@@ -1,10 +1,10 @@
-import { BabidiPortalConstants } from "@/data/characters/babidi";
+import { BabidiPortalConstants } from "@/legacy/babidiPortals/constants";
 
 import type {
   BabidiPortal,
   BabidiPortalCross,
   BabidiPortalKind,
-} from "@/utils/types/character/babidi";
+} from "@/legacy/babidiPortals/types";
 
 /**
  * Direção que um projétil adota ao **sair** de um portal. A boca do portal

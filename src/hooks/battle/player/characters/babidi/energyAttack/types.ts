@@ -1,7 +1,4 @@
-import type {
-  BabidiPortalWarpFn,
-  BabidiTarget,
-} from "@/utils/types/character/babidi";
+import type { BabidiTarget } from "@/utils/types/character/babidi";
 
 export type Props = {
   PLAYER_SIZE: number;
@@ -11,6 +8,4 @@ export type Props = {
   summons: SummonedNpc[];
   /** Colisão do projétil com um alvo: resolve o dano básico (main ou summon). */
   onProjectileHit: (target: BabidiTarget) => void;
-  /** Portais do babidi: faz o projétil de energia atravessar de um ao outro. */
-  portalWarpRef?: React.RefObject<BabidiPortalWarpFn | null>;
 };

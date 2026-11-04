@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
 import { ALL_TIME_KINDS, applyTime, clearTime } from "@/gameRules/battle/time";
-import type { TravelLockSpec } from "@/utils/types/character/babidi/portals";
-import { BabidiPortalConstants } from "@/data/characters/babidi";
+import type { TravelLockSpec } from "@/legacy/babidiPortals/portals";
+import { BabidiPortalConstants } from "@/legacy/babidiPortals/constants";
 import { useStableCallback } from "@/hooks/useStableCallback";
 
 /** Id do efeito de time do congelamento — único por habilidade. */

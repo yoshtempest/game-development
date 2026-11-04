@@ -1,5 +1,4 @@
 import type { DamageKind } from "@/utils/types/battle/damageKind";
-import type { BabidiPortalWarpFn } from "@/utils/types/character/babidi";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import type { SpawnDamageFn } from "@/utils/types/battle/spawnDamageFn";
 import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
@@ -64,7 +63,5 @@ export type Props = {
   playerCooldownRef?: React.RefObject<boolean>;
   /** Dano real do golpe ativo (básico ou special) aplicado nos projéteis. */
   playerHitDamageRef?: React.RefObject<ProjectileHitDamageFn>;
-  /** Portais do babidi: faz o projétil do NPC atravessar de um portal ao outro. */
-  portalWarpRef?: React.RefObject<BabidiPortalWarpFn | null>;
   /** Timestamp até onde os projéteis ficam congelados (Killer Queen). */
 };

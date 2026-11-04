@@ -1,0 +1,61 @@
+.portal {
+  position: absolute;
+  z-index: 14;
+  width: var(--portal-size);
+  height: var(--portal-size);
+  transform: translate(-50%, -50%);
+  animation: portalSpawn 0.12s ease-out both;
+}
+
+.portal img {
+  width: 100%;
+  height: 100%;
+}
+
+.bomb {
+  position: absolute;
+  z-index: 15;
+  width: var(--bomb-size);
+  height: var(--bomb-size);
+  animation: bombFall 0.5s linear both;
+}
+
+.explosion {
+  position: absolute;
+  z-index: 16;
+  width: var(--explosion-size);
+  height: var(--explosion-size);
+  transform: translate(-50%, -50%);
+  animation: explosionFade 0.2s linear both;
+}
+
+@keyframes portalSpawn {
+  from {
+    transform: translate(-50%, -50%) scaleY(0);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bombFall {
+  from {
+    transform: translate(-50%, calc(-50% - var(--fall-distance)));
+  }
+  to {
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes explosionFade {
+  from {
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 0;
+  }
+}

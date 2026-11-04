@@ -2,9 +2,9 @@ import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import type {
   BabidiPortal,
   BabidiPortalKind,
-} from "@/utils/types/character/babidi";
+} from "@/legacy/babidiPortals/types";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
-import { BabidiPortalConstants } from "@/data/characters/babidi";
+import { BabidiPortalConstants } from "@/legacy/babidiPortals/constants";
 import { getGroundAtX } from "@/gameRules/battle/obstacles";
 
 export const NO_OBSTACLES: BattleObstacle[] = [];

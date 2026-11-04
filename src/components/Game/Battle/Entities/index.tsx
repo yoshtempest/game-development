@@ -1,7 +1,6 @@
 import { ProjectileConstants } from "@/data/projectile";
 import { getViewportSize } from "@/utils/viewport";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
-import { getPortalCross } from "@/gameRules/battle/characters/babidi/babidiPortal";
 import { MainNpc } from "./MainNpc";
 import { NpcProjectile } from "./Projectiles/NpcProjectile";
 import { GroundPaper } from "./Maugrelo/GroundPaper";
@@ -31,7 +30,7 @@ import { AtomicEffects } from "@/components/Game/Battle/Effects/Marshadow/Atomic
 import { DomainExpansionEffects } from "@/components/Game/Battle/Effects/Domain/DomainExpansion";
 import { MugetsuDisintegration } from "@/components/Game/Battle/Effects/Marshadow/MugetsuDisintegration";
 import { NatsukiSphere } from "@/components/Game/Battle/Entities/Projectiles/NatsukiSphere";
-import { BabidiPortals } from "@/components/Game/Battle/Entities/BabidiPortals";
+import { BabidiBombDrop } from "./Projectiles/BabidiBombDrop";
 import type { Props } from "./types";
 
 export function BattleEntities({
@@ -80,12 +79,10 @@ export function BattleEntities({
   babidiEnergyProjectiles = [],
   babidiMissileProjectiles = [],
   fishingNet = null,
+  babidiBombDrop = null,
   babidiAttackVariant,
   babidiShieldSides,
   onBabidiShieldEnd,
-  babidiPortals = [],
-  babidiPortalGhost = null,
-  babidiPortalLanding = false,
   sphere = null,
   purpleHole = false,
   hakai = false,
@@ -103,12 +100,6 @@ export function BattleEntities({
     isAlfa,
   );
 
-  // Travessia em andamento pelos portais terrestres: a parte do sprite que já
-  // passou da linha de um portal tem de reaparecer saindo do par (o hook só
-  // mexe na posição — o recorte é reconstruído aqui a partir dela).
-  const playerPortalCross = getPortalCross(babidiPortals, player.x, player.y);
-  const npcPortalCross = getPortalCross(babidiPortals, npc.x, npc.y);
-
   return (
     <>
       <MainNpc
@@ -125,7 +116,6 @@ export function BattleEntities({
         cutInEnemie={cutInEnemie}
         npcBleeding={npcBleeding}
         purpleHole={purpleHole}
-        babidiPortalCross={npcPortalCross}
       />
 
       <NpcProjectile
@@ -173,27 +163,11 @@ export function BattleEntities({
         battleScaleY={battleScaleY}
       />
 
-      <Summon
-        summons={summons}
-        hiddenIds={activeBombIds}
-        TILE_SIZE={TILE_SIZE}
-        babidiPortals={babidiPortals}
-      />
+      <Summon summons={summons} hiddenIds={activeBombIds} TILE_SIZE={TILE_SIZE} />
 
-      <Ally
-        allies={allies}
-        TILE_SIZE={TILE_SIZE}
-        babidiPortals={babidiPortals}
-      />
+      <Ally allies={allies} TILE_SIZE={TILE_SIZE} />
 
-      <Pet pet={pet} TILE_SIZE={TILE_SIZE} babidiPortals={babidiPortals} />
-
-      <BabidiPortals
-        portals={babidiPortals}
-        ghost={babidiPortalGhost}
-        battleScaleX={battleScaleX}
-        battleScaleY={battleScaleY}
-      />
+      <Pet pet={pet} TILE_SIZE={TILE_SIZE} />
 
       <Player
         player={player}
@@ -212,8 +186,6 @@ export function BattleEntities({
         babidiAttackVariant={babidiAttackVariant}
         babidiShieldSides={babidiShieldSides}
         onBabidiShieldEnd={onBabidiShieldEnd}
-        babidiPortalLanding={babidiPortalLanding}
-        babidiPortalCross={playerPortalCross}
         hakai={hakai}
       />
 
@@ -225,6 +197,12 @@ export function BattleEntities({
 
       <MissileProjectile
         projectiles={babidiMissileProjectiles}
+        battleScaleX={battleScaleX}
+        battleScaleY={battleScaleY}
+      />
+
+      <BabidiBombDrop
+        visual={babidiBombDrop}
         battleScaleX={battleScaleX}
         battleScaleY={battleScaleY}
       />

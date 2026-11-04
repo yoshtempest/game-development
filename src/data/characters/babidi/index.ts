@@ -1,12 +1,13 @@
 import {
-  EIGHT_HUNDRED_MS,
   FIVE_HUNDRED_MS,
-  FOUR_HUNDRED_MS,
   ONE_HUNDRED_TWENTY_MS,
-  SIXTEEN_MS,
+  ONE_HUNDRED_MS,
+  TEN_THOUSAND_MS,
+  THREE_HUNDRED_MS,
+  THREE_THOUSAND_MS,
+  TWO_HUNDRED_MS,
   TWO_HUNDRED_TWENTY_MS,
 } from "@/data/ms";
-import type { BabidiPortalKind } from "@/utils/types/character/babidi";
 
 /**
  * Constantes do ataque básico do babidi: projétil de energia (sprite alterna
@@ -45,69 +46,47 @@ export const BabidiShieldConstants = {
   BLINK_MS: ONE_HUNDRED_TWENTY_MS,
 } as const;
 
-/**
- * Habilidade "Energia Dimensional" (portais do babidi).
- *
- * O custo é uma fração da energia MÁXIMA (não do valor atual), então o teto de
- * portais é o que limita o uso — e o toque no botão com o par completo vira o
- * undo do último (devolvendo exatamente o que foi pago).
- */
-export const BabidiPortalConstants = {
-  /** Fração da energia máxima consumida por portal (25%). */
-  COST_RATIO: 0.25,
-  /** Máximo de portais no mapa; acima disso o toque desfaz o último. */
-  MAX_PORTALS: 2,
-  /** Altura do portal aéreo acima do chão (o player precisa pular para entrar). */
-  AIR_HEIGHT: 400,
-  /**
-   * Passo do fantasma por tick do joystick (px lógicos). O tick é de 16ms, então
-   * 5px ≈ 312px/s — o mesmo ritmo do passo de caminhada do player
-   * (`BATTLE_STEP` 10px a cada 30ms), o que dá precisão para mirar o portal.
-   */
-  MOVE_PX: 5,
-  /** Intervalo do tick de posicionamento/voo/teleporte. */
-  TICK_MS: SIXTEEN_MS,
-  /** Duração do voo da mão até o destino (com a câmera seguindo o portal). */
-  FLIGHT_MS: FOUR_HUNDRED_MS,
-  /** Largura renderizada do portal (a altura segue o aspect da arte). */
-  SPRITE_WIDTH: 130,
-  /** Meia-largura da zona de travessia. */
-  TRIGGER_HALF_X: 55,
-  /**
-   * Meia-altura da zona de travessia, medida a partir dos **pés** da entidade.
-   * Alto o bastante para o ápice do pulo duplo (~256px) alcançar o portal
-   * aéreo (400px acima do chão) e baixo o suficiente para o pulo simples
-   * (~136px) não alcançar.
-   */
-  TRIGGER_HALF_Y: 160,
-  /**
-   * Margem **acima** da linha do portal terrestre em que os pés ainda contam
-   * como "dentro". O portal deitado abre um buraco no chão: quem anda (pés na
-   * linha) ou cai entra, mas pular por cima escapa — o ápice do pulo simples
-   * passa de 128px, então uma margem pequena basta para dar essa saída.
-   */
-  GROUND_ENTER_MARGIN: 24,
-  /** Beat mínimo do sprite de queda depois de atravessar um portal aéreo. */
-  LANDING_MS: FOUR_HUNDRED_MS,
-  /**
-   * Quanto abaixo do portal terrestre a entidade afunda antes de atravessar
-   * (px lógicos). O portal deitado "abre um buraco": primeiro a entidade cai
-   * esses 200px, só então sai no outro portal.
-   */
-  GROUND_FALL_DEPTH: 200,
-  /** Aceleração da queda simulada (px/tick²), igual à gravidade do player. */
-  FALL_GRAVITY: 1,
-  /**
-   * Teto de tempo da queda: se a física não chegar ao alvo (ex.: o chão
-   * intercepta o trajeto), a travessia dispara sozinha para não prender a
-   * entidade na zona do portal.
-   */
-  FALL_MAX_MS: EIGHT_HUNDRED_MS,
+/** Rede de pesca do babidi: root curto, inquebrável e com custo/cooldown. */
+export const BabidiFishingNetConstants = {
+  /** Fração da energia MÁXIMA consumida ao lançar a rede (10%). */
+  COST_RATIO: 0.1,
+  /** Recarga base entre lançamentos (10s, antes do CDR). */
+  COOLDOWN_MS: TEN_THOUSAND_MS,
+  /** Tempo que o inimigo principal fica imobilizado. */
+  ROOT_MS: THREE_THOUSAND_MS,
 } as const;
 
-/** Ordem dos tipos no seletor de portal (o índice inicial é o `default`). */
-export const BABIDI_PORTAL_KINDS: readonly BabidiPortalKind[] = [
-  "ground",
-  "default",
-  "air",
-];
+/** Expansão de Domínio do babidi (Machine Gama). */
+export const BabidiDomainConstants = {
+  /** Vida do Machine Gama como múltiplo da vida máxima do jogador. */
+  MACHINE_GAMA_HP_MULTIPLIER: 10,
+} as const;
+
+/**
+ * "Energia Dimensional" simples: o portal aéreo abre acima do inimigo principal
+ * e a bomba cai de lá. Sem par de portais e sem teletransporte.
+ */
+export const BabidiBombDropConstants = {
+  /** Fração da energia MÁXIMA consumida (10%). */
+  COST_RATIO: 0.1,
+  /** Recarga base entre usos (10s, antes do CDR). */
+  COOLDOWN_MS: TEN_THOUSAND_MS,
+  /** Tempo do sprite `upAttack` antes de o portal abrir. */
+  WINDUP_MS: THREE_HUNDRED_MS,
+  /** Tempo do portal aberto antes de a bomba começar a cair. */
+  PORTAL_MS: TWO_HUNDRED_MS,
+  /** Duração da queda da bomba até o alvo. */
+  FALL_MS: FIVE_HUNDRED_MS,
+  /** Duração da explosão no alvo. */
+  EXPLOSION_MS: TWO_HUNDRED_MS,
+  /** Altura lógica do portal acima dos pés do inimigo principal. */
+  PORTAL_HEIGHT: 200,
+  /** Passo do tick da queda/explosão. */
+  TICK_MS: ONE_HUNDRED_MS,
+  /** Largura renderizada da bomba. */
+  BOMB_SIZE: 70,
+  /** Largura renderizada do portal aéreo. */
+  PORTAL_SIZE: 90,
+  /** Largura renderizada da explosão. */
+  EXPLOSION_SIZE: 64,
+} as const;

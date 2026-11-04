@@ -4,31 +4,31 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useGameControls } from "@/contexts/GameControlsContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
 
-import { findFlyingPortal } from "@/gameRules/battle/characters/babidi/portalFlight";
+import { findFlyingPortal } from "@/legacy/babidiPortals/gameRules/portalFlight";
 import {
   bodyHeight,
   resolvePortalY,
-} from "@/gameRules/battle/characters/babidi/portalGeometry";
+} from "@/legacy/babidiPortals/gameRules/portalGeometry";
 import {
   clampPortalX,
   cyclePortalSelection,
   freeGhostY,
-} from "@/gameRules/battle/characters/babidi/portalPlacementRules";
+} from "@/legacy/babidiPortals/gameRules/portalPlacementRules";
 import {
   BABIDI_PORTAL_KINDS,
   BabidiPortalConstants,
-} from "@/data/characters/babidi";
-import { PORTAL_TIME_ID } from "@/hooks/battle/player/characters/babidi/usePortalLocks";
+} from "@/legacy/babidiPortals/constants";
+import { PORTAL_TIME_ID } from "@/legacy/babidiPortals/hooks/usePortalLocks";
 
 import type { GameControlLayer } from "@/utils/types/player/controls";
 import type {
   BabidiPortal,
   BabidiPortalGhost,
-} from "@/utils/types/character/babidi";
+} from "@/legacy/babidiPortals/types";
 import type {
   PortalDirection,
   PortalFlowPhase,
-} from "@/utils/types/character/babidi/portals";
+} from "@/legacy/babidiPortals/portals";
 
 /**
  * Fluxo de colocação do portal (Energia Dimensional): o toque no botão abre o

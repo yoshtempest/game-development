@@ -1,5 +1,5 @@
-import { BabidiPortalConstants } from "@/data/characters/babidi";
-import type { BabidiPortal } from "@/utils/types/character/babidi";
+import { BabidiPortalConstants } from "@/legacy/babidiPortals/constants";
+import type { BabidiPortal } from "@/legacy/babidiPortals/types";
 
 /** Portal em voo da mão até o destino, se houver algum na lista. */
 export function findFlyingPortal(

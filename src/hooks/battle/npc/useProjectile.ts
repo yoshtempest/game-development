@@ -9,7 +9,6 @@ import {
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { resetCooldownRef } from "@/utils/battle/cooldown";
 import { getProjectileCenter } from "@/gameRules/npc/projectile/projectileDamage";
-import { getPortalExitDirection } from "@/gameRules/battle/characters/babidi/babidiPortal";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { applyPlayerStrike } from "./apply/applyPlayerStrike";
 import { handleGroundProjectile } from "./handle/handleGroundProjectile";
@@ -24,7 +23,6 @@ import type {
 import { getTime } from "@/gameRules/battle/time";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
-import type { BabidiPortalWarpFn } from "@/utils/types/character/babidi";
 
 export function useProjectile(
   projectiles: Projectile[],
@@ -48,7 +46,6 @@ export function useProjectile(
   spawnDamageRef?: React.RefObject<SpawnDamageFn>,
   playerCooldownRef?: React.RefObject<boolean>,
   playerHitDamageRef?: React.RefObject<ProjectileHitDamageFn>,
-  portalWarpRef?: React.RefObject<BabidiPortalWarpFn | null>,
 ) {
   const onHitRef = useLatestRef(onHit);
   const onPullPlayerRef = useLatestRef(onPullPlayer);
@@ -251,31 +248,7 @@ export function useProjectile(
       if (stick) onStickRef.current?.();
       for (const x of misses) onMissRef.current?.(x);
 
-      // Portais do babidi: o projétil que cruza a zona reaparece no outro portal
-      // (o deslocamento leva o **centro** ao destino) e o portal de saída decide
-      // a nova direção. Só `common`/`pull` têm rumo próprio para obedecer —
-      // `ground`, `rain` e `cut` seguem o movimento deles e só mudam de posição.
-      const warp = portalWarpRef?.current;
-      const moved =
-        warp == null
-          ? next
-          : next.map((p) => {
-              const center = getProjectileCenter(p);
-              const dest = warp(p.id, center.x, center.y);
-              if (!dest) return p;
-              const exit =
-                p.variant === "common" || p.variant === "pull"
-                  ? getPortalExitDirection(dest.kind, p.dirX, p.dirY)
-                  : null;
-              return {
-                ...p,
-                x: p.x + (dest.x - center.x),
-                y: p.y + (dest.y - center.y),
-                ...(exit ? { dirX: exit.dirX, dirY: exit.dirY } : {}),
-              };
-            });
-
-      setProjectiles(moved);
+      setProjectiles(next);
     }, 20);
 
     return () => clearInterval(interval);
@@ -297,7 +270,6 @@ export function useProjectile(
     npcXRef,
     npcYRef,
     playerProjectileRef,
-    portalWarpRef,
     strike,
     destroy,
   ]);

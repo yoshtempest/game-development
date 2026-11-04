@@ -6,25 +6,25 @@ import {
   groundFallTargetY,
   isPlayerTravelDone,
   landingGround,
-} from "@/gameRules/battle/characters/babidi/portalTravelRules";
-import { groundUnder } from "@/gameRules/battle/characters/babidi/portalGeometry";
+} from "@/legacy/babidiPortals/gameRules/portalTravelRules";
+import { groundUnder } from "@/legacy/babidiPortals/gameRules/portalGeometry";
 import {
   pickProjectileWarp,
   pickWarpDecision,
   projectileWarpKey,
-} from "@/gameRules/battle/characters/babidi/portalWarpRules";
-import { BabidiPortalConstants } from "@/data/characters/babidi";
+} from "@/legacy/babidiPortals/gameRules/portalWarpRules";
+import { BabidiPortalConstants } from "@/legacy/babidiPortals/constants";
 
 import type {
   BabidiPortal,
   BabidiPortalKind,
-} from "@/utils/types/character/babidi";
+} from "@/legacy/babidiPortals/types";
 import type {
   EntityTravel,
   PlayerTravel,
   PortalTravelGroup,
   PortalWarp,
-} from "@/utils/types/character/babidi/portals";
+} from "@/legacy/babidiPortals/portals";
 
 /**
  * Travessia dos portais: teleporte do player, quedas simuladas das demais

@@ -26,8 +26,6 @@ export function useExternalDamage({
   onParry,
   onDamageTaken,
   surviveLethalHitRef,
-  fishingNetHpRef,
-  onFishingNetDamage,
   machineGamaShieldRef,
   onMachineGamaBreak,
 }: Props) {
@@ -46,12 +44,6 @@ export function useExternalDamage({
         if (newShield <= 0) {
           onMachineGamaBreak?.();
         }
-        return false;
-      }
-      const net = fishingNetHpRef?.current;
-      if (net && net.hp > 0) {
-        const newHp = Math.max(0, net.hp - damage);
-        onFishingNetDamage?.(newHp);
         return false;
       }
       if (oneHitShieldRef?.current) {
@@ -87,8 +79,6 @@ export function useExternalDamage({
       playerY,
       onDamageTakenRef,
       surviveLethalHitRef,
-      fishingNetHpRef,
-      onFishingNetDamage,
       machineGamaShieldRef,
       onMachineGamaBreak,
     ],

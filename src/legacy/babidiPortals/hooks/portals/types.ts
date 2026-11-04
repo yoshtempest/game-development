@@ -5,7 +5,7 @@ import type { PlaySound } from "@/utils/types/audio";
 import type { NPCBattleState } from "@/utils/types/npc/npc";
 import type { PetState } from "@/hooks/battle/player/pets/pet/types";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
-import type { BabidiPortalWarpFn } from "@/utils/types/character/babidi";
+import type { BabidiPortalWarpFn } from "@/legacy/babidiPortals/types";
 
 export type Props = {
   player: Player;

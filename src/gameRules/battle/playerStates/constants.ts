@@ -122,6 +122,9 @@ export const KAMEHAMEHA_STATES = stateSet<PlayerKamehamehaState>(
   "chargingKamehameha",
   "kamehameha",
 );
+/** Energia Dimensional do babidi: pose `upAttack` durante o portal/bomba. */
+export const BABIDI_PORTAL_STATES =
+  stateSet<PlayerBabidiPortalState>("babidiPortalAttack");
 /**
  * Esferas do natsuki (blue/red) e a fusão delas na purple: a sequência é
  * conduzida pelo hook `useNatsukiSpheres`; `purpleJunction` é a fusão (blue +
@@ -164,6 +167,7 @@ export const ACTION_LOCK_STATES = unionOf(
   ),
   SPHERE_STATES,
   NATSUKI_DOMAIN_STATES,
+  BABIDI_PORTAL_STATES,
 );
 /** O jogador não age: trava de ação, defesa ou reação a dano. */
 export const CANNOT_ACT_STATES = unionOf(

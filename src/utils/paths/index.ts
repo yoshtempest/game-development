@@ -35,7 +35,6 @@ export {
   playerAbilityBackgroundPath,
   playerAbilityPath,
 } from "./player/playerAbilityBackgroundPath";
-export { babidiPortalPath } from "./player/babidiPortalPath";
 export { npcPath } from "./npc/npcPath";
 export { npcPathAlly } from "./npc/npcPathAlly";
 export { npcPathPets } from "./npc/npcPathPets";

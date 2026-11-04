@@ -458,6 +458,8 @@ declare global {
    * `kamehameha.svg` + o efeito `kamehamehaEffect`, que dura 2s).
    */
   type PlayerKamehamehaState = "chargingKamehameha" | "kamehameha";
+  /** Energia Dimensional do babidi: pose `upAttack` enquanto a bomba cai. */
+  type PlayerBabidiPortalState = "babidiPortalAttack";
   /**
    * Esferas do natsuki (habilidades "blue"/"red") e a fusão delas na purple:
    * a sequência é conduzida pelo hook `useNatsukiSpheres`, não pelo
@@ -495,7 +497,8 @@ declare global {
     | PlayerGranReyCeroState
     | PlayerSphereState
     | PlayerNatsukiDomainState
-    | PlayerKamehamehaState;
+    | PlayerKamehamehaState
+    | PlayerBabidiPortalState;
 
   /** O jogador não age: trava de ação, defesa ou reação a dano. */
   type PlayerCantActState =
