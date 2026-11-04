@@ -37,6 +37,7 @@ import { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/granR
 import { useNatsukiSpheres } from "@/hooks/battle/player/characters/natsuki/spheres/natsukiSpheres/useNatsukiSpheres";
 import { useMuryokushoExpansion } from "@/hooks/battle/player/characters/natsuki/muryokushoExpansion/useMuryokushoExpansion";
 import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/hakaiExpansion/useHakaiExpansion";
+import { useBabidiDomainExpansion } from "@/hooks/battle/player/characters/babidi/domainExpansion/useBabidiDomainExpansion";
 import { useBabidiPortals } from "@/hooks/battle/player/characters/babidi/portals/usePortals";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import {
@@ -1806,15 +1807,37 @@ export function useBattleCombat({
     setDelicia: battle.setDelicia,
   });
 
+  const {
+    domainExpansionActive: babidiDomainActive,
+    domainExpansionShattering: babidiDomainShattering,
+    press: babidiDomainPress,
+    usable: babidiDomainUsable,
+  } = useBabidiDomainExpansion({
+    player,
+    npc: { x: npc.x, y: npc.y },
+    freezeActionsUntilRef,
+    disabledRef: cloneDisabledRef,
+    isPausedRef,
+    battleEndedRef: battle.isEnding,
+    startSpecialIntro,
+    setDelicia: battle.setDelicia,
+    charges: battle.delicia,
+    chargesMax: battle.hitsToSpecial,
+  });
+
   // Preenchimento (`expansion.svg`) e quebra do vidro são um só para toda
   // Expansão de Domínio: o marshadow mostra durante a varredura, o natsuki
   // durante os 5s do dreno.
   const domainBackgroundActive =
-    domainExpansionActive || natsukiDomainActive || ematronHakaiActive;
+    domainExpansionActive ||
+    natsukiDomainActive ||
+    ematronHakaiActive ||
+    babidiDomainActive;
   const domainShattering =
     domainExpansionShattering ||
     natsukiDomainShattering ||
-    ematronHakaiShattering;
+    ematronHakaiShattering ||
+    babidiDomainShattering;
 
   // "Gran Rey Cero" do marshadow ------------------------------------------------
   // Lâmina de 500px que corre por quadro; disponível na forma normal (os
@@ -1912,6 +1935,10 @@ export function useBattleCombat({
     hakai: {
       press: hakaiPress,
       usable: hakaiUsable,
+    },
+    machineGama: {
+      press: babidiDomainPress,
+      usable: babidiDomainUsable,
     },
   } as const;
 

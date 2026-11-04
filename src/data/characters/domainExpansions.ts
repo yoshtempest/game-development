@@ -23,7 +23,7 @@ export type DomainExpansionDefinition = {
   description: string;
   /** Cor do efeito (borda, rótulo e brilho do botão). */
   accent: string;
-  kind: "mugetsu" | "muryokusho" | "hakai" | "burst";
+  kind: "mugetsu" | "muryokusho" | "hakai" | "burst" | "machineGama";
   /**
    * Tem a arte do domínio em `abilities/domainExpansion/`: a intro
    * (`background.svg`) no `SpecialIntro` e o preenchimento (`expansion.svg`)
@@ -87,11 +87,11 @@ export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
       kind: "burst",
     },
     babidi: {
-      name: "Engrenagem Etérea",
+      name: "Machine Gama",
       description:
-        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial.",
+        "Invoca a Machine Gama: o jogador assume a entidade, que dispara mísseis teleguiados ao inimigo.",
       accent: "#d946ef",
-      kind: "burst",
+      kind: "machineGama",
       hasBackgroundArt: true,
     },
     natsuki: {
