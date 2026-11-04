@@ -103,13 +103,7 @@ type Props = {
 };
 
 export function BattleScene(props: Props) {
-  const {
-    npcType,
-    className,
-    background,
-    map,
-    isAlfa = false,
-  } = props;
+  const { npcType, className, background, map, isAlfa = false } = props;
 
   const isTrueVandinha = npcType === "trueVandinha";
 
@@ -711,7 +705,7 @@ export function BattleScene(props: Props) {
         shattering={domainShattering}
         paused={battlePaused}
       />
-      
+
       <BattleHUD
         battle={battle}
         npcStats={npcStats}
@@ -1357,6 +1351,7 @@ export function BattleScene(props: Props) {
             75% { transform: translate(-50%, -100%) translate(2px,2px); }
             100% { transform: translate(-50%, -100%) translate(-2px,-2px); }
           }
+           @keyframes mg-fade { 0% { opacity: 0.8; } 100% { opacity: 0; } }
         `}</style>
       )}
       {babidiMachineGama && (
@@ -1391,8 +1386,10 @@ export function BattleScene(props: Props) {
                 src={npcPathProjectile("/explosion.svg")}
                 style={{
                   position: "absolute",
-                  left: babidiMachineGama.x + Math.cos((i / 8) * Math.PI * 2) * 60,
-                  top: babidiMachineGama.y + Math.sin((i / 8) * Math.PI * 2) * 60,
+                  left:
+                    babidiMachineGama.x + Math.cos((i / 8) * Math.PI * 2) * 60,
+                  top:
+                    babidiMachineGama.y + Math.sin((i / 8) * Math.PI * 2) * 60,
                   width: 60,
                   height: 60,
                   zIndex: 16,

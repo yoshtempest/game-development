@@ -86,23 +86,23 @@ function CombatTutorialTasks() {
     <>
       <div className={styles.backdrop} />
       <div className={styles.overlay}>
-      <div className={styles.taskBox}>
-        <img className={styles.image} src={npcPath("/surica/default.svg")} />
-        <p className={styles.taskText}>{instruction.text}</p>
-      </div>
+        <div className={styles.taskBox}>
+          <img className={styles.image} src={npcPath("/surica/default.svg")} />
+          <p className={styles.taskText}>{instruction.text}</p>
+        </div>
 
-      <div className={styles.steps}>
-        {TASKS.map((t) => {
-          const status = getTaskStatus(t);
-          return (
-            <div
-              key={t}
-              className={`${styles.dot} ${status === "done" ? styles.dotDone : ""} ${status === "active" ? styles.dotActive : ""}`}
-            />
-          );
-        })}
+        <div className={styles.steps}>
+          {TASKS.map((t) => {
+            const status = getTaskStatus(t);
+            return (
+              <div
+                key={t}
+                className={`${styles.dot} ${status === "done" ? styles.dotDone : ""} ${status === "active" ? styles.dotActive : ""}`}
+              />
+            );
+          })}
+        </div>
       </div>
-    </div>
     </>
   );
 }

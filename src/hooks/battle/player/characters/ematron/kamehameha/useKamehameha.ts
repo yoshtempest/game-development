@@ -236,7 +236,11 @@ export function useKamehameha({
         }
         changed = true;
         const dmg = atLeastMinDamage(
-          combatService.applyArmor(rawTick, KAMEHAMEHA_DAMAGE_KIND, s.armor as DamageArmor),
+          combatService.applyArmor(
+            rawTick,
+            KAMEHAMEHA_DAMAGE_KIND,
+            s.armor as DamageArmor,
+          ),
         );
         const newHp = Math.max(0, s.hp - dmg);
         applyVampirism({

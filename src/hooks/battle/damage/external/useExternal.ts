@@ -41,7 +41,8 @@ export function useExternalDamage({
       const shield = machineGamaShieldRef?.current ?? 0;
       if (shield > 0) {
         const newShield = shield - damage;
-        if (machineGamaShieldRef) machineGamaShieldRef.current = Math.max(0, newShield);
+        if (machineGamaShieldRef)
+          machineGamaShieldRef.current = Math.max(0, newShield);
         if (newShield <= 0) {
           onMachineGamaBreak?.();
         }

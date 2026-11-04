@@ -44,6 +44,7 @@
   height: 100dvh;
   background-size: cover;
   background-repeat: no-repeat;
+  isolation: isolate;
 }
 
 .containerOfNavbar {
@@ -94,11 +95,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.Master {
-  position: relative;
-  isolation: isolate;
 }
 
 .BackgroundLayer {

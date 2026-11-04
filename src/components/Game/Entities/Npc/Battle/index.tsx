@@ -64,12 +64,12 @@ type Props = {
     | "entered"
     | "fall"
     | "giveMeMyPower"
-     | "jump"
-     | "falling"
-     | "prePunch"
-     | "punch"
-     | "preKick"
-     | "kick";
+    | "jump"
+    | "falling"
+    | "prePunch"
+    | "punch"
+    | "preKick"
+    | "kick";
   direction: "left" | "right";
   piercings?: { id: number; x: number; y: number }[];
   isExploding?: boolean;

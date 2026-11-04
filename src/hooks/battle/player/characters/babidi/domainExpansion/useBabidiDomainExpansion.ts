@@ -7,13 +7,7 @@ export type MachineGamaState = {
   x: number;
   y: number;
   state:
-    | "walk"
-    | "entering"
-    | "idle"
-    | "attack"
-    | "run"
-    | "falling"
-    | "exploding";
+    "walk" | "entering" | "idle" | "attack" | "run" | "falling" | "exploding";
 } | null;
 
 export type BabidiDomainExpansionApi = {
@@ -86,9 +80,7 @@ export function useBabidiDomainExpansion({
       clearInterval(animRef.current);
       animRef.current = null;
     }
-    setMachineGama((prev) =>
-      prev ? { ...prev, state: "exploding" } : prev,
-    );
+    setMachineGama((prev) => (prev ? { ...prev, state: "exploding" } : prev));
     shieldRef.current = 0;
     setMachineGamaShield(0);
     // Jogador pula saindo de cima do Machine Gama.
@@ -129,9 +121,13 @@ export function useBabidiDomainExpansion({
     // Bloqueia controles durante a animação de entrada.
     freezeActionsUntilRef.current = Date.now() + 4000;
 
-    startSpecialIntro("babidi", () => {
-      // playSound("domainExpansion");
-    }, "domainExpansion");
+    startSpecialIntro(
+      "babidi",
+      () => {
+        // playSound("domainExpansion");
+      },
+      "domainExpansion",
+    );
 
     // Machine Gama surge da esquerda em walk e se aproxima do jogador.
     const groundY = player.groundY;
@@ -154,9 +150,7 @@ export function useBabidiDomainExpansion({
         if (prev.state === "entering") {
           // Após a animação de entrada, fica idle.
           setTimeout(() => {
-            setMachineGama((p) =>
-              p ? { ...p, state: "idle" } : p,
-            );
+            setMachineGama((p) => (p ? { ...p, state: "idle" } : p));
           }, 800);
           return prev;
         }

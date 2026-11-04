@@ -58,7 +58,11 @@ export function ButtonsMovement({
     <div className={styles.movement}>
       <button
         className={btnClass("up")}
-        style={highlightedControl === "up" ? { border: "3px solid white" } : undefined}
+        style={
+          highlightedControl === "up"
+            ? { border: "3px solid white" }
+            : undefined
+        }
         onPointerDown={() => startHold("up", activeControls?.onUp)}
         onPointerUp={() => stopHold("up", activeControls?.onUpRelease)}
         onPointerLeave={() => stopHold("up", activeControls?.onUpRelease)}
@@ -68,7 +72,11 @@ export function ButtonsMovement({
 
       <button
         className={btnClass("left")}
-        style={highlightedControl === "left" ? { border: "3px solid white" } : undefined}
+        style={
+          highlightedControl === "left"
+            ? { border: "3px solid white" }
+            : undefined
+        }
         onPointerDown={() => startHold("left", activeControls?.onLeft)}
         onPointerUp={() => stopHold("left", activeControls?.onLeftRelease)}
         onPointerLeave={() => stopHold("left", activeControls?.onLeftRelease)}
@@ -78,7 +86,11 @@ export function ButtonsMovement({
 
       <button
         className={btnClass("right")}
-        style={highlightedControl === "right" ? { border: "3px solid white" } : undefined}
+        style={
+          highlightedControl === "right"
+            ? { border: "3px solid white" }
+            : undefined
+        }
         onPointerDown={() => startHold("right", activeControls?.onRight)}
         onPointerUp={() => stopHold("right", activeControls?.onRightRelease)}
         onPointerLeave={() => stopHold("right", activeControls?.onRightRelease)}
@@ -88,7 +100,11 @@ export function ButtonsMovement({
 
       <button
         className={btnClass("down")}
-        style={highlightedControl === "down" ? { border: "3px solid white" } : undefined}
+        style={
+          highlightedControl === "down"
+            ? { border: "3px solid white" }
+            : undefined
+        }
         onPointerDown={() => startHold("down", activeControls?.onDown)}
         onPointerUp={() => stopHold("down", activeControls?.onDownRelease)}
         onPointerLeave={() => stopHold("down", activeControls?.onDownRelease)}

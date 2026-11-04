@@ -253,7 +253,6 @@ export function useBattleCombat({
     y: number;
   } | null>(null);
 
-
   const fishingNetRef = useRef<{
     hp: number;
     maxHp: number;
@@ -347,10 +346,7 @@ export function useBattleCombat({
     onProjectileHit: (damageKind) =>
       refs.npcRangedAttackRef.current(damageKind),
     onMeleeHit: (multiplier, damageKind) => {
-      if (
-        npcType === "trueVandinha" &&
-        (npcPhaseRef.current ?? 1) === 1
-      ) {
+      if (npcType === "trueVandinha" && (npcPhaseRef.current ?? 1) === 1) {
         return;
       }
       refs.npcMeleeAttackRef.current(multiplier, damageKind);
@@ -920,8 +916,6 @@ export function useBattleCombat({
     }, 100);
     return () => clearInterval(interval);
   }, [fishingNet, npc.x, npc.y, PLAYER_SIZE]);
-
-
 
   const fishingNetPress = useCallback(() => {
     if (!battle.playerMaxHp) return;

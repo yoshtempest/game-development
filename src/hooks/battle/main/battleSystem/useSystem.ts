@@ -236,8 +236,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     (updater: SetStateAction<number>) => {
       if (npcType === "trueVandinha" && npcPhase === 1) {
         rawSetNpcHP((prev) => {
-          const next =
-            typeof updater === "function" ? updater(prev) : updater;
+          const next = typeof updater === "function" ? updater(prev) : updater;
           if (next < prev && next !== 0) return prev;
           return next;
         });

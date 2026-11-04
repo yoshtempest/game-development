@@ -1,11 +1,7 @@
 import { NpcAttack } from "@/services/npc/npcAttack";
 import { chasePlayer } from "@/gameRules/npc/movement";
 import { clampX } from "@/gameRules/movement/clampX";
-import {
-  TWO_HUNDRED_MS,
-  FOUR_HUNDRED_MS,
-  SIX_HUNDRED_MS,
-} from "@/data/ms";
+import { TWO_HUNDRED_MS, FOUR_HUNDRED_MS, SIX_HUNDRED_MS } from "@/data/ms";
 import type {
   BehaviorContext,
   BehaviorResult,
@@ -34,14 +30,7 @@ export class TrueVandinhaAttack extends NpcAttack {
   }
 
   execute(ctx: BehaviorContext): BehaviorResult {
-    const {
-      npc,
-      targetX,
-      targetY,
-      onMeleeHit,
-      onPushPlayer,
-      npcPhase,
-    } = ctx;
+    const { npc, targetX, targetY, onMeleeHit, onPushPlayer, npcPhase } = ctx;
 
     // Primeira fase: persegue o jogador mas não causa dano (sem melee).
     if (npcPhase === 1) {
@@ -89,8 +78,7 @@ export class TrueVandinhaAttack extends NpcAttack {
       const x = ai.jumpFromX + (ai.jumpToX - ai.jumpFromX) * t;
       const height = Math.sin(t * Math.PI) * 128;
       const y = ai.jumpGroundY - height;
-      let state: "jump" | "falling" | "default" =
-        t < 0.5 ? "jump" : "falling";
+      let state: "jump" | "falling" | "default" = t < 0.5 ? "jump" : "falling";
       if (elapsed >= dur) {
         ai.jumping = false;
         ai.landingStart = now;

@@ -112,7 +112,11 @@ export function GameButtons() {
       <div className={styles.row}>
         <button
           className={`${styles.button} ${cooldowns.cancel ? styles.cooldown : ""}`}
-          style={highlightedControl === "cancel" ? { border: "3px solid white" } : undefined}
+          style={
+            highlightedControl === "cancel"
+              ? { border: "3px solid white" }
+              : undefined
+          }
           onPointerDown={handleCancelDown}
           onPointerUp={handleCancelUp}
           onPointerLeave={handleCancelUp}
@@ -122,7 +126,11 @@ export function GameButtons() {
 
         <button
           className={`${styles.button} ${cooldowns.confirm ? styles.cooldown : ""}`}
-          style={highlightedControl === "confirm" ? { border: "3px solid white" } : undefined}
+          style={
+            highlightedControl === "confirm"
+              ? { border: "3px solid white" }
+              : undefined
+          }
           onPointerDown={handleConfirmDown}
           onPointerUp={handleConfirmUp}
           onPointerLeave={handleConfirmUp}

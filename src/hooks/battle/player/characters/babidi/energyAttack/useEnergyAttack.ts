@@ -57,8 +57,7 @@ export function useBabidiEnergyAttack({
 
   // Sprite do projétil: alterna a cada golpe (yellowDog → blueDog → …). Todos os
   // disparos de um mesmo golpe (ex.: bothSidesAttack) usam a mesma cor.
-  const projectileSpriteRef =
-    useRef<BabidiAttackProjectileSprite>("yellowDog");
+  const projectileSpriteRef = useRef<BabidiAttackProjectileSprite>("yellowDog");
 
   const fire = useCallback(
     (player: Player, targets: BabidiTarget[]): boolean => {

@@ -89,17 +89,19 @@ export function PlayerHUDPanel({
                 />
               </div>
             )}
-            {machineGamaShield != null && machineGamaShieldMax != null && machineGamaShieldMax > 0 && (
-              <div className="shieldTrack" style={{ marginTop: 4 }}>
-                <div
-                  className="shieldFill"
-                  style={{
-                    width: `${Math.min(100, (machineGamaShield / machineGamaShieldMax) * 100)}%`,
-                    background: "#d946ef",
-                  }}
-                />
-              </div>
-            )}
+            {machineGamaShield != null &&
+              machineGamaShieldMax != null &&
+              machineGamaShieldMax > 0 && (
+                <div className="shieldTrack" style={{ marginTop: 4 }}>
+                  <div
+                    className="shieldFill"
+                    style={{
+                      width: `${Math.min(100, (machineGamaShield / machineGamaShieldMax) * 100)}%`,
+                      background: "#d946ef",
+                    }}
+                  />
+                </div>
+              )}
 
             {energy != null && <EnergyBar label="REIRYOKU" value={energy} />}
             {hasManaBar(character) && mana != null && maxMana != null && (

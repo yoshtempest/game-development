@@ -53,7 +53,11 @@ export const SPEAKERS = {
     pose: "right",
   },
   blackao: { name: "Negão do Ferro Velho", base: "/blackao", pose: "right" },
-  trueVandinha: { name: "Vandinha, a Própria", base: "/trueVandinha", pose: "giveMeMyPower" },
+  trueVandinha: {
+    name: "Vandinha, a Própria",
+    base: "/trueVandinha",
+    pose: "giveMeMyPower",
+  },
   shenlong: { name: "Shenlong", base: "/shenlong", pose: "default" },
   leo: { name: "Léo", base: "/leo", pose: "right" },
   maurao: { name: "Maurão", base: "/maurao", pose: "default" },
