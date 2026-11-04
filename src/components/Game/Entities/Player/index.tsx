@@ -79,7 +79,7 @@ export const Player = memo(function Player({
           top: 0,
           filter: "brightness(0)",
           opacity: shadow.opacity,
-          transform: `scaleX(${direction === "left" ? -1 : 1}) translate(${shadow.offsetX}px, ${shadow.offsetY}px) scaleX(${shadow.scaleX}) scaleY(${shadow.scaleY}) skewX(${shadow.skewX}deg)`,
+          transform: `translate(${shadow.offsetX}px, ${shadow.offsetY}px) scaleX(${shadow.scaleX}) scaleY(${shadow.scaleY}) skewX(${shadow.skewX}deg)`,
           transformOrigin: "bottom center",
           pointerEvents: "none",
           zIndex: -1,
