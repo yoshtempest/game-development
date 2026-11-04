@@ -3,6 +3,8 @@ import { playerPath } from "@/utils/paths";
 import { EXPLORE_MOVE_INTERVAL } from "@/gameRules/movement/explore";
 import { HEIGHT_STEP_OFFSET } from "@/gameRules/movement/levels";
 import { getEntityZIndex } from "@/utils/entityDepth";
+import { MAP_GRID_COLS, MAP_GRID_ROWS } from "@/data/grid";
+import { computeEntityShadow } from "@/utils/shadow/entityShadow";
 import { LevelUpParticles } from "@/components/Game/LevelUpParticles";
 import { ProfessionBadge } from "@/components/Game/ProfessionBadge";
 import { motion } from "motion/react";
@@ -46,6 +48,12 @@ export const Player = memo(function Player({
 
   const src = playerPath(spritePath);
 
+  const mapWidth = TILE_SIZE * MAP_GRID_COLS;
+  const mapHeight = TILE_SIZE * MAP_GRID_ROWS;
+  const entityX = gridX * TILE_SIZE;
+  const entityY = gridY * TILE_SIZE - height * TILE_SIZE * HEIGHT_STEP_OFFSET;
+  const shadow = computeEntityShadow(entityX, entityY, mapWidth, mapHeight);
+
   return (
     <div
       style={{
@@ -59,6 +67,24 @@ export const Player = memo(function Player({
         transition: `left ${EXPLORE_MOVE_INTERVAL}ms, top ${EXPLORE_MOVE_INTERVAL}ms`,
       }}
     >
+      {/* 🌑 Sombra projetada (puro visual) */}
+      <img
+        src={src}
+        aria-hidden
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          left: 0,
+          top: 0,
+          filter: "brightness(0)",
+          opacity: shadow.opacity,
+          transform: `scaleX(${direction === "left" ? -1 : 1}) translate(${shadow.offsetX}px, ${shadow.offsetY}px) scaleX(${shadow.scaleX}) scaleY(${shadow.scaleY}) skewX(${shadow.skewX}deg)`,
+          transformOrigin: "bottom center",
+          pointerEvents: "none",
+          zIndex: -1,
+        }}
+      />
       <motion.img
         src={src}
         animate={

@@ -12,6 +12,8 @@ import { AtomicHalo } from "./AtomicHalo";
 import { BabidiShield } from "./BabidiShield";
 import { LevelUpParticles } from "@/components/Game/LevelUpParticles";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
+import { ProjectileConstants } from "@/data/projectile";
+import { computeEntityShadow } from "@/utils/shadow/entityShadow";
 
 import type { BabidiShieldSides } from "@/utils/types/character/babidi";
 
@@ -86,6 +88,13 @@ export function PlayerBattle(props: PlayerBattleProps) {
     isFallen,
   });
 
+  const shadow = computeEntityShadow(
+    x,
+    y,
+    ProjectileConstants.MAP_WIDTH,
+    ProjectileConstants.MAP_HEIGHT,
+  );
+
   const transformOrigin =
     isCrouching || showFlipped || isMostHonored ? "bottom center" : undefined;
 
@@ -130,6 +139,25 @@ export function PlayerBattle(props: PlayerBattleProps) {
             height={dimensions.chargingEffectHeight}
           />
         )}
+
+        {/* 🌑 Sombra projetada (puro visual) */}
+        <img
+          src={src}
+          aria-hidden
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            left: 0,
+            top: 0,
+            filter: "brightness(0)",
+            opacity: shadow.opacity,
+            transform: `scaleX(${direction === "right" ? -1 : 1}) translate(${shadow.offsetX}px, ${shadow.offsetY}px) scaleX(${shadow.scaleX}) scaleY(${shadow.scaleY}) skewX(${shadow.skewX}deg)`,
+            transformOrigin: "bottom center",
+            pointerEvents: "none",
+            zIndex: -1,
+          }}
+        />
 
         {sprite}
 

@@ -6,6 +6,7 @@ import {
   getNpcSpriteYOffset,
 } from "@/utils/npc/getSpritePath";
 import { ProjectileConstants } from "@/data/projectile";
+import { computeEntityShadow } from "@/utils/shadow/entityShadow";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { getViewportSize } from "@/utils/viewport";
 import {
@@ -135,6 +136,13 @@ export function NPCBattle({
   const scaleX = getViewportSize().width / ProjectileConstants.MAP_WIDTH;
   const scaleY = getViewportSize().height / ProjectileConstants.MAP_HEIGHT;
 
+  const shadow = computeEntityShadow(
+    x,
+    y,
+    ProjectileConstants.MAP_WIDTH,
+    ProjectileConstants.MAP_HEIGHT,
+  );
+
   const sizeMultiplier = getBossSizeMultiplier(npcType, npcPhase, isAlfa);
   const yOffset = getNpcSpriteYOffset(npcType);
 
@@ -186,6 +194,27 @@ export function NPCBattle({
           zIndex: 9,
         }}
       >
+        {/* 🌑 Sombra projetada (puro visual) */}
+        {!isHidden && (
+          <img
+            src={resolvedSrc}
+            aria-hidden
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              left: 0,
+              top: 0,
+              filter: "brightness(0)",
+              opacity: shadow.opacity,
+              transform: `scaleX(${direction === "right" ? -1 : 1}) translate(${shadow.offsetX}px, ${shadow.offsetY}px) scaleX(${shadow.scaleX}) scaleY(${shadow.scaleY}) skewX(${shadow.skewX}deg)`,
+              transformOrigin: "bottom center",
+              pointerEvents: "none",
+              zIndex: -1,
+            }}
+          />
+        )}
+
         {/* 🧍 NPC (oculto quando vira alvo de bomba da killerQueen) */}
         {!isHidden && (
           <img
