@@ -6,7 +6,14 @@ import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSk
 export type MachineGamaState = {
   x: number;
   y: number;
-  state: "walk" | "entering" | "idle" | "attack" | "run" | "falling";
+  state:
+    | "walk"
+    | "entering"
+    | "idle"
+    | "attack"
+    | "run"
+    | "falling"
+    | "exploding";
 } | null;
 
 export type BabidiDomainExpansionApi = {
@@ -15,11 +22,16 @@ export type BabidiDomainExpansionApi = {
   press: () => void;
   usable: boolean;
   machineGama: MachineGamaState;
+  machineGamaShield: number;
+  machineGamaShieldRef: React.RefObject<number>;
+  breakMachineGama: () => void;
 };
 
 export type BabidiDomainExpansionProps = {
   player: Player;
   setPlayer: (fn: (p: Player) => Player) => void;
+  playerMaxHp: number;
+  shieldRef: React.RefObject<number>;
   npc: { x: number; y: number };
   freezeActionsUntilRef: React.RefObject<number>;
   disabledRef: React.RefObject<boolean>;
@@ -34,6 +46,8 @@ export type BabidiDomainExpansionProps = {
 export function useBabidiDomainExpansion({
   player,
   setPlayer,
+  playerMaxHp,
+  shieldRef,
   freezeActionsUntilRef,
   disabledRef,
   isPausedRef,
@@ -46,6 +60,7 @@ export function useBabidiDomainExpansion({
   const [active, setActive] = useState(false);
   const [shattering, setShattering] = useState(false);
   const [machineGama, setMachineGama] = useState<MachineGamaState>(null);
+  const [machineGamaShield, setMachineGamaShield] = useState(0);
   const activeRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const animRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -65,6 +80,24 @@ export function useBabidiDomainExpansion({
       chargesRef.current >= chargesMaxRef.current && !activeRef.current,
     extraCancel: () => !activeRef.current,
   });
+
+  const breakMachineGama = useCallback(() => {
+    if (animRef.current) {
+      clearInterval(animRef.current);
+      animRef.current = null;
+    }
+    setMachineGama((prev) =>
+      prev ? { ...prev, state: "exploding" } : prev,
+    );
+    shieldRef.current = 0;
+    setMachineGamaShield(0);
+    // Jogador pula saindo de cima do Machine Gama.
+    setPlayer((p) => ({ ...p, state: "jump" }));
+    // Após a explosão, fade-out e remoção.
+    setTimeout(() => {
+      setMachineGama(null);
+    }, 1200);
+  }, [setPlayer, shieldRef]);
 
   const clear = useCallback(() => {
     if (timerRef.current) {
@@ -90,6 +123,8 @@ export function useBabidiDomainExpansion({
     activeRef.current = true;
     setActive(true);
     setShattering(false);
+    setMachineGamaShield(playerMaxHp);
+    shieldRef.current = playerMaxHp;
 
     // Bloqueia controles durante a animação de entrada.
     freezeActionsUntilRef.current = Date.now() + 4000;
@@ -146,6 +181,8 @@ export function useBabidiDomainExpansion({
     freezeActionsUntilRef,
     player,
     setPlayer,
+    playerMaxHp,
+    shieldRef,
     clear,
   ]);
 
@@ -161,5 +198,8 @@ export function useBabidiDomainExpansion({
     press,
     usable: usableRef.current,
     machineGama,
+    machineGamaShield,
+    machineGamaShieldRef: shieldRef,
+    breakMachineGama,
   };
 }

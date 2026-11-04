@@ -28,6 +28,8 @@ export function useExternalDamage({
   surviveLethalHitRef,
   fishingNetHpRef,
   onFishingNetDamage,
+  machineGamaShieldRef,
+  onMachineGamaBreak,
 }: Props) {
   const playerShieldRef = useLatestRef(playerShield);
   const playerHPRef = useLatestRef(playerHP);
@@ -36,6 +38,15 @@ export function useExternalDamage({
   const damagePlayerHp = useCallback(
     (damage: number): boolean => {
       onDamageTakenRef.current?.();
+      const shield = machineGamaShieldRef?.current ?? 0;
+      if (shield > 0) {
+        const newShield = shield - damage;
+        if (machineGamaShieldRef) machineGamaShieldRef.current = Math.max(0, newShield);
+        if (newShield <= 0) {
+          onMachineGamaBreak?.();
+        }
+        return false;
+      }
       const net = fishingNetHpRef?.current;
       if (net && net.hp > 0) {
         const newHp = Math.max(0, net.hp - damage);
@@ -47,13 +58,13 @@ export function useExternalDamage({
         spawnDamageRef.current?.(0, playerX, playerY - 40, "blocked");
         return false;
       }
-      const shield = playerShieldRef.current;
-      if (shield >= damage) {
+      const playerShieldVal = playerShieldRef.current;
+      if (playerShieldVal >= damage) {
         setPlayerShield((s) => s - damage);
         return false;
       }
       setPlayerShield(0);
-      const remaining = damage - shield;
+      const remaining = damage - playerShieldVal;
       if (
         playerHPRef.current - remaining <= 0 &&
         surviveLethalHitRef?.current?.()
@@ -77,6 +88,8 @@ export function useExternalDamage({
       surviveLethalHitRef,
       fishingNetHpRef,
       onFishingNetDamage,
+      machineGamaShieldRef,
+      onMachineGamaBreak,
     ],
   );
 

@@ -27,4 +27,8 @@ export type Props = {
   fishingNetHpRef?: React.RefObject<{ hp: number; maxHp: number } | null>;
   /** Callback quando a rede sofre dano. */
   onFishingNetDamage?: (hp: number) => void;
+  /** Escudo Machine Gama: HP extra (ref). */
+  machineGamaShieldRef?: React.RefObject<number>;
+  /** Callback quando o escudo quebra. */
+  onMachineGamaBreak?: () => void;
 };

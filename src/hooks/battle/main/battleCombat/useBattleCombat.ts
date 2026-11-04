@@ -261,6 +261,8 @@ export function useBattleCombat({
     y: number;
   } | null>(null);
   const fishingNetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const machineGamaShieldRef = useRef(0);
+  const machineGamaBreakRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     return () => {
@@ -620,6 +622,8 @@ export function useBattleCombat({
     npcPhaseRef,
     fishingNetHpRef: fishingNetRef,
     onFishingNetDamage,
+    machineGamaShieldRef,
+    onMachineGamaBreak: () => machineGamaBreakRef.current(),
     onBeforeNpcHitRef: targeting.onBeforeNpcHitRef,
     onBlockRef,
     onDamageTakenRef,
@@ -1815,9 +1819,12 @@ export function useBattleCombat({
     press: babidiDomainPress,
     usable: babidiDomainUsable,
     machineGama: babidiMachineGama,
+    breakMachineGama: babidiBreakMachineGama,
   } = useBabidiDomainExpansion({
     player,
     setPlayer,
+    playerMaxHp: battle.playerMaxHp,
+    shieldRef: machineGamaShieldRef,
     npc: { x: npc.x, y: npc.y },
     freezeActionsUntilRef,
     disabledRef: cloneDisabledRef,
@@ -1828,6 +1835,8 @@ export function useBattleCombat({
     charges: battle.delicia,
     chargesMax: battle.hitsToSpecial,
   });
+
+  machineGamaBreakRef.current = babidiBreakMachineGama;
 
   // Domínio Machine Gama: dispara 8 mísseis (1 a cada 500ms) ao ativar.
   useEffect(() => {

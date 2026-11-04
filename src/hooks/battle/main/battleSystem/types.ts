@@ -57,4 +57,6 @@ export type BattleSystemProps = {
   surviveLethalHitRef?: React.RefObject<() => boolean>;
   fishingNetHpRef?: React.RefObject<{ hp: number; maxHp: number } | null>;
   onFishingNetDamage?: (hp: number) => void;
+  machineGamaShieldRef?: React.RefObject<number>;
+  onMachineGamaBreak?: () => void;
 };

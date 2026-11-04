@@ -97,6 +97,8 @@ export function useBattleSystem(props: BattleSystemProps) {
     surviveLethalHitRef,
     fishingNetHpRef,
     onFishingNetDamage,
+    machineGamaShieldRef,
+    onMachineGamaBreak,
   } = props;
 
   const [npcPhase, setNpcPhase] = useState(1);
@@ -344,6 +346,8 @@ export function useBattleSystem(props: BattleSystemProps) {
     surviveLethalHitRef,
     fishingNetHpRef,
     onFishingNetDamage,
+    machineGamaShieldRef,
+    onMachineGamaBreak,
   });
 
   const { pet, setPet, resetPet, triggerJumpAttack, triggerTeleportBite } =
