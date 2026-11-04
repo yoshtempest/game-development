@@ -29,30 +29,31 @@ export function HudPlayer({
 
   return (
     <div className={styles.container}>
-      <img
-        src={playerPath(`/${pchar}/face.svg`)}
-        alt="Player HUD"
-        className="hudImage"
-      />
+      <div className="hudFlexColumn">
+        <img
+          src={playerPath(`/${pchar}/face.svg`)}
+          alt="Player HUD"
+          className="hudImage"
+        />
+        <BlockGauge blockGauge={blockGauge} blockLimit={blockLimit} />
+      </div>
+      
       <div className={styles.info}>
         <h2 className={`${"hudName"} ${styles.name}`}>{playerName}</h2>
         <div className="hudFlexRow">
-          <div>
-            <HealthBar hp={php} maxHp={pmaxhp} />
-            {pshield > 0 && (
-              <div className="shieldTrack">
-                <div
-                  className="shieldFill"
-                  style={{
-                    width: `${Math.min(100, (pshield / pmaxhp) * 100)}%`,
-                  }}
-                />
-              </div>
-            )}
-            <BlockGauge blockGauge={blockGauge} blockLimit={blockLimit} />
-          </div>
-          <Deliciometro delicia={del} hitsToSpecial={hits} />
+          <HealthBar hp={php} maxHp={pmaxhp} />
+          {pshield > 0 && (
+            <div className="shieldTrack">
+              <div
+                className="shieldFill"
+                style={{
+                  width: `${Math.min(100, (pshield / pmaxhp) * 100)}%`,
+                }}
+              />
+            </div>
+          )}   
         </div>
+        <Deliciometro delicia={del} hitsToSpecial={hits} />
       </div>
     </div>
   );
