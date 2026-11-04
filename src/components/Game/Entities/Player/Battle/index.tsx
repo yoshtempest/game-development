@@ -13,6 +13,7 @@ import { BabidiShield } from "./BabidiShield";
 import { LevelUpParticles } from "@/components/Game/LevelUpParticles";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { ProjectileConstants } from "@/data/projectile";
+import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { computeEntityShadow } from "@/utils/shadow/entityShadow";
 
 import type { BabidiShieldSides } from "@/utils/types/character/babidi";
@@ -119,8 +120,35 @@ export function PlayerBattle(props: PlayerBattleProps) {
     />
   );
 
+  const groundY = BATTLE_SPAWN.player.y;
+
   return (
     <>
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          width: dimensions.width,
+          height: dimensions.height,
+          left: x * dimensions.scaleX,
+          top: groundY * dimensions.scaleY,
+          transform: "translate(-50%, -100%)",
+          zIndex: 9,
+          pointerEvents: "none",
+        }}
+      >
+        <img
+          src={src}
+          style={{
+            width: "100%",
+            height: "100%",
+            filter: "brightness(0)",
+            opacity: shadow.opacity,
+            transform: `scaleX(${direction === "left" ? -1 : 1}) translate(${shadow.offsetX}px, ${shadow.offsetY}px) scaleX(${shadow.scaleX}) scaleY(${shadow.scaleY}) skewX(${shadow.skewX}deg)`,
+            transformOrigin: "bottom center",
+          }}
+        />
+      </div>
       <div
         style={{
           position: "absolute",
@@ -139,25 +167,6 @@ export function PlayerBattle(props: PlayerBattleProps) {
             height={dimensions.chargingEffectHeight}
           />
         )}
-
-        {/* 🌑 Sombra projetada (puro visual) */}
-        <img
-          src={src}
-          aria-hidden
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            left: 0,
-            top: 0,
-            filter: "brightness(0)",
-            opacity: shadow.opacity,
-            transform: `scaleX(${direction === "right" ? -1 : 1}) translate(${shadow.offsetX}px, ${shadow.offsetY}px) scaleX(${shadow.scaleX}) scaleY(${shadow.scaleY}) skewX(${shadow.skewX}deg)`,
-            transformOrigin: "bottom center",
-            pointerEvents: "none",
-            zIndex: -1,
-          }}
-        />
 
         {sprite}
 

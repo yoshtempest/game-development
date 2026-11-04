@@ -55,36 +55,45 @@ export const Player = memo(function Player({
   const shadow = computeEntityShadow(entityX, entityY, mapWidth, mapHeight);
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        width: PLAYER_SIZE,
-        height: PLAYER_SIZE,
-        left: gridX * TILE_SIZE - 11,
-        top: gridY * TILE_SIZE - height * TILE_SIZE * HEIGHT_STEP_OFFSET,
-        transform: `translate(-10%, -20%) scaleX(${direction === "left" ? -1 : 1})`,
-        zIndex: getEntityZIndex(gridY),
-        transition: `left ${EXPLORE_MOVE_INTERVAL}ms, top ${EXPLORE_MOVE_INTERVAL}ms`,
-      }}
-    >
-      {/* 🌑 Sombra projetada (puro visual) */}
-      <img
-        src={src}
+    <>
+      <div
         aria-hidden
         style={{
           position: "absolute",
-          width: "100%",
-          height: "100%",
-          left: 0,
-          top: 0,
-          filter: "brightness(0)",
-          opacity: shadow.opacity,
-          transform: `translate(${shadow.offsetX}px, ${shadow.offsetY}px) scaleX(${shadow.scaleX}) scaleY(${shadow.scaleY}) skewX(${shadow.skewX}deg)`,
-          transformOrigin: "bottom center",
+          width: PLAYER_SIZE,
+          height: PLAYER_SIZE,
+          left: gridX * TILE_SIZE - 11,
+          top: gridY * TILE_SIZE,
+          transform: `translate(-10%, -20%) scaleX(${direction === "left" ? -1 : 1})`,
+          zIndex: getEntityZIndex(gridY) - 1,
+          transition: `left ${EXPLORE_MOVE_INTERVAL}ms, top ${EXPLORE_MOVE_INTERVAL}ms`,
           pointerEvents: "none",
-          zIndex: -1,
         }}
-      />
+      >
+        <img
+          src={src}
+          style={{
+            width: "100%",
+            height: "100%",
+            filter: "brightness(0)",
+            opacity: shadow.opacity,
+            transform: `translate(${shadow.offsetX}px, ${shadow.offsetY}px) scaleX(${shadow.scaleX}) scaleY(${shadow.scaleY}) skewX(${shadow.skewX}deg)`,
+            transformOrigin: "bottom center",
+          }}
+        />
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          width: PLAYER_SIZE,
+          height: PLAYER_SIZE,
+          left: gridX * TILE_SIZE - 11,
+          top: gridY * TILE_SIZE - height * TILE_SIZE * HEIGHT_STEP_OFFSET,
+          transform: `translate(-10%, -20%) scaleX(${direction === "left" ? -1 : 1})`,
+          zIndex: getEntityZIndex(gridY),
+          transition: `left ${EXPLORE_MOVE_INTERVAL}ms, top ${EXPLORE_MOVE_INTERVAL}ms`,
+        }}
+      >
       <motion.img
         src={src}
         animate={
@@ -118,5 +127,6 @@ export const Player = memo(function Player({
       <LevelUpParticles character={character} size={PLAYER_SIZE} />
       <ProfessionBadge />
     </div>
+    </>
   );
 });

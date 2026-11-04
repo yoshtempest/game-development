@@ -181,8 +181,37 @@ export function NPCBattle({
   const holeX = direction === "right" ? 28 : 72;
   const holeMask = `radial-gradient(circle at ${holeX}% 47%, transparent 0 22%, #000 23%)`;
 
+  const groundY = 550;
+
   return (
     <>
+      {!isHidden && (
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            width: TILE_SIZE * sizeMultiplier,
+            height: TILE_SIZE * sizeMultiplier,
+            left: x * scaleX,
+            top: groundY * scaleY,
+            transform: "translate(-50%, -100%)",
+            zIndex: 8,
+            pointerEvents: "none",
+          }}
+        >
+          <img
+            src={resolvedSrc}
+            style={{
+              width: "100%",
+              height: "100%",
+              filter: "brightness(0)",
+              opacity: shadow.opacity,
+              transform: `scaleX(${direction === "right" ? -1 : 1}) translate(${shadow.offsetX}px, ${shadow.offsetY}px) scaleX(${shadow.scaleX}) scaleY(${shadow.scaleY}) skewX(${shadow.skewX}deg)`,
+              transformOrigin: "bottom center",
+            }}
+          />
+        </div>
+      )}
       <div
         style={{
           position: "absolute",
@@ -194,27 +223,6 @@ export function NPCBattle({
           zIndex: 9,
         }}
       >
-        {/* 🌑 Sombra projetada (puro visual) */}
-        {!isHidden && (
-          <img
-            src={resolvedSrc}
-            aria-hidden
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              left: 0,
-              top: 0,
-              filter: "brightness(0)",
-              opacity: shadow.opacity,
-              transform: `scaleX(${direction === "right" ? -1 : 1}) translate(${shadow.offsetX}px, ${shadow.offsetY}px) scaleX(${shadow.scaleX}) scaleY(${shadow.scaleY}) skewX(${shadow.skewX}deg)`,
-              transformOrigin: "bottom center",
-              pointerEvents: "none",
-              zIndex: -1,
-            }}
-          />
-        )}
-
         {/* 🧍 NPC (oculto quando vira alvo de bomba da killerQueen) */}
         {!isHidden && (
           <img
