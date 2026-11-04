@@ -677,6 +677,20 @@ export function BattleScene(props: Props) {
           : undefined
       }
     >
+        <div className="BackgroundLayer">
+    {effectiveBackground && (
+      <div
+        className="BackgroundImage"
+        style={{
+          backgroundImage: `url(${effectiveBackground})`,
+          backgroundSize: `calc(150% * ${zoom})`,
+          backgroundPosition: `calc(${adjustedBgX}% + ${shake.x}px) calc(${adjustedBgY}% + ${shake.y}px)`,
+        }}
+      />
+    )}
+
+    {tvFlash && <div className="tvFlash" />}
+  </div>
       {/* Preenchimento do domínio: PRIMEIRO filho do `.Master`, para pintar
           como o `backgroundImage` da batalha — acima do fundo, abaixo de todo
           o resto (HUD do jogador e do NPC, ComboDisplay, SceneMap, intros) por
@@ -688,6 +702,7 @@ export function BattleScene(props: Props) {
         shattering={domainShattering}
         paused={battlePaused}
       />
+      
       <BattleHUD
         battle={battle}
         npcStats={npcStats}
@@ -1378,19 +1393,6 @@ export function BattleScene(props: Props) {
         </>
       )}
       {isTraining && <TrainingOverlay onLeave={() => navigate(-1)} />}
-
-      {tvFlash && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "white",
-            opacity: 0.9,
-            zIndex: 99999999,
-            pointerEvents: "none",
-          }}
-        />
-      )}
 
       {tvCutsceneOpen && tvCutscene.dialogue && (
         <Talking

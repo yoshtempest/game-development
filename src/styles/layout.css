@@ -95,3 +95,29 @@
   align-items: center;
   justify-content: space-between;
 }
+
+.Master {
+  position: relative;
+  isolation: isolate;
+}
+
+.BackgroundLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.BackgroundImage {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+}
+
+.tvFlash {
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0.9;
+}
