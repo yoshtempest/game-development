@@ -9,4 +9,6 @@ export type Props = {
   npc: { x: number; y: number };
   summons: SummonedNpc[];
   onProjectileHit: (target: BabidiTarget) => void;
+  maxMissiles?: number;
+  randomSpawn?: boolean;
 };

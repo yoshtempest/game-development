@@ -61,6 +61,7 @@ import type { DamageKind } from "@/utils/types/battle/damageKind";
 import { combatService } from "@/services/combat";
 import { getProjectileDestructionHpByKind } from "@/gameRules/npc/projectile/projectileHp";
 import { ProjectileHpConstants } from "@/data/projectile";
+import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import {
   NPC_BLOCK_HOLD_MS,
   NPC_BLOCK_MIN_PCT,
@@ -250,6 +251,8 @@ export function useBattleCombat({
     x: number;
     y: number;
   } | null>(null);
+
+
   const fishingNetRef = useRef<{
     hp: number;
     maxHp: number;
@@ -894,15 +897,24 @@ export function useBattleCombat({
         battle.playerHit(0.2, true, true, "magical");
       }
     },
+    maxMissiles: 10,
+    randomSpawn: true,
   });
+
+  const fishingNetMissileRef = useRef(fishingNetMissile);
+  fishingNetMissileRef.current = fishingNetMissile;
 
   useEffect(() => {
     if (!fishingNet) return;
     const interval = setInterval(() => {
-      fishingNetMissile.fire({ x: npc.x, y: npc.y });
+      const spriteHeight = PLAYER_SIZE / PLAYER_SPRITE_DIVISOR;
+      fishingNetMissileRef.current.fire({
+        x: npc.x,
+        y: npc.y + spriteHeight * 1.6,
+      });
     }, 100);
     return () => clearInterval(interval);
-  }, [fishingNet, npc.x, npc.y, fishingNetMissile]);
+  }, [fishingNet, npc.x, npc.y, PLAYER_SIZE]);
 
   const fishingNetPress = useCallback(() => {
     if (!battle.playerMaxHp) return;

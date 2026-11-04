@@ -25,6 +25,8 @@ export function useBabidiMissile({
   npc,
   summons,
   onProjectileHit,
+  maxMissiles,
+  randomSpawn = false,
 }: Props) {
   const { playSound, stopSound } = useSoundEffects();
   const playSoundRef = useLatestRef(playSound);
@@ -62,7 +64,7 @@ export function useBabidiMissile({
     [npcRef, summonsRef],
   );
 
-  const MAX_MISSILES = 3;
+  const MAX_MISSILES = maxMissiles ?? 3;
   const PORTAL_MIN_DISTANCE = 50;
 
   const fire = useCallback(
@@ -81,6 +83,17 @@ export function useBabidiMissile({
           allowed = false;
           return prev;
         }
+        if (randomSpawn) {
+          // Surgimento em direção aleatória ao redor do alvo: o portal aparece
+          // num ponto da circunferência (raio fixo) em torno do ponto base,
+          // garantindo mísseis vindos de todas as direções.
+          const angle = Math.random() * Math.PI * 2;
+          const radius = 180;
+          finalSpawnX = baseSpawnX + Math.cos(angle) * radius;
+          finalSpawnY = baseSpawnY + Math.sin(angle) * radius;
+          return prev;
+        }
+
         // Encontra uma posição livre para o portal: mínimo de 50px de
         // distância (euclidiana) em relação a qualquer portal ativo. Tenta
         // offsets em triângulo para distribuir até 3 portais.
@@ -139,7 +152,7 @@ export function useBabidiMissile({
       setMissiles((prev) => [...prev, missile]);
       return true;
     },
-    [playerSizeRef, findNearestTarget],
+    [playerSizeRef, findNearestTarget, MAX_MISSILES, randomSpawn],
   );
 
   useEffect(() => {
