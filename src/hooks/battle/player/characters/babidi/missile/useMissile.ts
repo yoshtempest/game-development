@@ -70,7 +70,7 @@ export function useBabidiMissile({
   const fire = useCallback(
     (player: { x: number; y: number }): boolean => {
       const spriteHeight = playerSizeRef.current / PLAYER_SPRITE_DIVISOR;
-      const baseSpawnY = player.y - spriteHeight * 1.6;
+      const baseSpawnY = player.y - spriteHeight * 3;
       const baseSpawnX = player.x;
 
       let allowed = true;
