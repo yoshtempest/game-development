@@ -27,4 +27,12 @@ Após o diálogo da brodiClassOne adicionar cutscene na livraria de neimito fala
 
 criar animação de craft de ferramentas
 
-adicionar imagem dos profissionais de cada profissão (O jogador têrá que dialogar com eles para evoluir suas ferramentas de ranque)
+O robôzão terá 2 habilidades
+-> Laser pelos olhos
+-> Autodestruição que arranca 80% da vida de todos os inimigos próximos
+
+Retirar barra de vida e sistema de quebra da rede pesca
+
+Robozão tem 10x a vida do jogador.
+
+Adicionar sombras ao jogo
