@@ -65,7 +65,8 @@ export function useBabidiMissile({
   );
 
   const MAX_MISSILES = maxMissiles ?? 3;
-  const PORTAL_MIN_DISTANCE = 50;
+  const PORTAL_MIN_DISTANCE = 60;
+  const MIN_AXIS_DISTANCE = 40;
 
   const fire = useCallback(
     (player: { x: number; y: number }): boolean => {
@@ -86,11 +87,35 @@ export function useBabidiMissile({
         if (randomSpawn) {
           // Surgimento em direção aleatória ao redor do alvo: o portal aparece
           // num ponto da circunferência (raio fixo) em torno do ponto base,
-          // garantindo mísseis vindos de todas as direções.
-          const angle = Math.random() * Math.PI * 2;
+          // garantindo mísseis vindos de todas as direções. Tenta vários ângulos
+          // até encontrar um local que não sobreponha outro portal ativo (distância
+          // mínima em X e em Y, além da euclidiana).
           const radius = 180;
-          finalSpawnX = baseSpawnX + Math.cos(angle) * radius;
-          finalSpawnY = baseSpawnY + Math.sin(angle) * radius;
+          const isTooClose = (cx: number, cy: number) =>
+            active.some((m) => {
+              const dx = Math.abs(m.spawnX - cx);
+              const dy = Math.abs(m.spawnY - cy);
+              return (
+                Math.hypot(dx, dy) < PORTAL_MIN_DISTANCE ||
+                (dx < MIN_AXIS_DISTANCE && dy < MIN_AXIS_DISTANCE)
+              );
+            });
+          let foundSpot = false;
+          for (let i = 0; i < 20; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const cx = baseSpawnX + Math.cos(angle) * radius;
+            const cy = baseSpawnY + Math.sin(angle) * radius;
+            if (!isTooClose(cx, cy)) {
+              finalSpawnX = cx;
+              finalSpawnY = cy;
+              foundSpot = true;
+              break;
+            }
+          }
+          if (!foundSpot) {
+            allowed = false;
+            return prev;
+          }
           return prev;
         }
 
@@ -109,10 +134,14 @@ export function useBabidiMissile({
         for (const off of offsets) {
           const cx = baseSpawnX + off.x;
           const cy = baseSpawnY + off.y;
-          const overlapping = active.some(
-            (m) =>
-              Math.hypot(m.spawnX - cx, m.spawnY - cy) < PORTAL_MIN_DISTANCE,
-          );
+          const overlapping = active.some((m) => {
+            const dx = Math.abs(m.spawnX - cx);
+            const dy = Math.abs(m.spawnY - cy);
+            return (
+              Math.hypot(dx, dy) < PORTAL_MIN_DISTANCE ||
+              (dx < MIN_AXIS_DISTANCE && dy < MIN_AXIS_DISTANCE)
+            );
+          });
           if (!overlapping) {
             finalSpawnX = cx;
             finalSpawnY = cy;
