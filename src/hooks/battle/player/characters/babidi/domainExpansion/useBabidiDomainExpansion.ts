@@ -3,15 +3,23 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
 
+export type MachineGamaState = {
+  x: number;
+  y: number;
+  state: "walk" | "entering" | "idle" | "attack" | "run" | "falling";
+} | null;
+
 export type BabidiDomainExpansionApi = {
   domainExpansionActive: boolean;
   domainExpansionShattering: boolean;
   press: () => void;
   usable: boolean;
+  machineGama: MachineGamaState;
 };
 
 export type BabidiDomainExpansionProps = {
   player: Player;
+  setPlayer: (fn: (p: Player) => Player) => void;
   npc: { x: number; y: number };
   freezeActionsUntilRef: React.RefObject<number>;
   disabledRef: React.RefObject<boolean>;
@@ -25,6 +33,7 @@ export type BabidiDomainExpansionProps = {
 
 export function useBabidiDomainExpansion({
   player,
+  setPlayer,
   freezeActionsUntilRef,
   disabledRef,
   isPausedRef,
@@ -36,8 +45,10 @@ export function useBabidiDomainExpansion({
 }: BabidiDomainExpansionProps): BabidiDomainExpansionApi {
   const [active, setActive] = useState(false);
   const [shattering, setShattering] = useState(false);
+  const [machineGama, setMachineGama] = useState<MachineGamaState>(null);
   const activeRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const animRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const chargesRef = useLatestRef(charges);
   const chargesMaxRef = useLatestRef(chargesMax);
@@ -60,9 +71,14 @@ export function useBabidiDomainExpansion({
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
+    if (animRef.current) {
+      clearInterval(animRef.current);
+      animRef.current = null;
+    }
     activeRef.current = false;
     setActive(false);
     setShattering(false);
+    setMachineGama(null);
   }, []);
 
   const press = useCallback(() => {
@@ -75,15 +91,50 @@ export function useBabidiDomainExpansion({
     setActive(true);
     setShattering(false);
 
+    // Bloqueia controles durante a animação de entrada.
+    freezeActionsUntilRef.current = Date.now() + 4000;
+
     startSpecialIntro("babidi", () => {
       // playSound("domainExpansion");
     }, "domainExpansion");
+
+    // Machine Gama surge da esquerda em walk e se aproxima do jogador.
+    const groundY = player.groundY;
+    const targetX = player.x;
+    setMachineGama({ x: -120, y: groundY, state: "walk" });
+
+    if (animRef.current) clearInterval(animRef.current);
+    animRef.current = setInterval(() => {
+      setMachineGama((prev) => {
+        if (!prev) return prev;
+        if (prev.state === "walk") {
+          const nextX = prev.x + 6;
+          if (nextX >= targetX - 60) {
+            // Ao chegar perto, troca para entering e faz o jogador pular.
+            setPlayer((p) => ({ ...p, state: "jump" }));
+            return { ...prev, x: targetX - 60, state: "entering" };
+          }
+          return { ...prev, x: nextX };
+        }
+        if (prev.state === "entering") {
+          // Após a animação de entrada, fica idle.
+          setTimeout(() => {
+            setMachineGama((p) =>
+              p ? { ...p, state: "idle" } : p,
+            );
+          }, 800);
+          return prev;
+        }
+        return prev;
+      });
+    }, 50);
 
     // Duração do domínio: 8s
     timerRef.current = setTimeout(() => {
       setShattering(true);
       setTimeout(() => {
         clear();
+        setMachineGama(null);
       }, 1500);
     }, 8000);
   }, [
@@ -92,6 +143,9 @@ export function useBabidiDomainExpansion({
     chargesMaxRef,
     setDeliciaRef,
     startSpecialIntro,
+    freezeActionsUntilRef,
+    player,
+    setPlayer,
     clear,
   ]);
 
@@ -106,5 +160,6 @@ export function useBabidiDomainExpansion({
     domainExpansionShattering: shattering,
     press,
     usable: usableRef.current,
+    machineGama,
   };
 }

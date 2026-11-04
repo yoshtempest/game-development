@@ -252,6 +252,7 @@ export function BattleScene(props: Props) {
     activeAbilityRemaining,
     mugetsuSweep,
     domainExpansionActive,
+    babidiMachineGama,
     mugetsuBlink,
     disintegrating,
     domainExpansionPress,
@@ -1320,6 +1321,26 @@ export function BattleScene(props: Props) {
           })()}
       </div>
 
+      {babidiMachineGama && (
+        <img
+          src={playerAbilityPath(
+            "babidi",
+            "domainExpansion",
+            `machineGama/${babidiMachineGama.state}.svg`,
+          )}
+          style={{
+            position: "absolute",
+            left: babidiMachineGama.x,
+            top: babidiMachineGama.y,
+            transform: "translate(-50%, -100%)",
+            width: 200,
+            height: 200,
+            zIndex: 15,
+            pointerEvents: "none",
+          }}
+          alt="Machine Gama"
+        />
+      )}
       {isTraining && <TrainingOverlay onLeave={() => navigate(-1)} />}
 
       {tvFlash && (

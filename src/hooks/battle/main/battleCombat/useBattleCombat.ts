@@ -917,6 +917,8 @@ export function useBattleCombat({
     return () => clearInterval(interval);
   }, [fishingNet, npc.x, npc.y, PLAYER_SIZE]);
 
+
+
   const fishingNetPress = useCallback(() => {
     if (!battle.playerMaxHp) return;
     startAbility();
@@ -1812,8 +1814,10 @@ export function useBattleCombat({
     domainExpansionShattering: babidiDomainShattering,
     press: babidiDomainPress,
     usable: babidiDomainUsable,
+    machineGama: babidiMachineGama,
   } = useBabidiDomainExpansion({
     player,
+    setPlayer,
     npc: { x: npc.x, y: npc.y },
     freezeActionsUntilRef,
     disabledRef: cloneDisabledRef,
@@ -1824,6 +1828,21 @@ export function useBattleCombat({
     charges: battle.delicia,
     chargesMax: battle.hitsToSpecial,
   });
+
+  // Domínio Machine Gama: dispara 8 mísseis (1 a cada 500ms) ao ativar.
+  useEffect(() => {
+    if (!babidiDomainActive) return;
+    let count = 0;
+    const interval = setInterval(() => {
+      if (count >= 8) {
+        clearInterval(interval);
+        return;
+      }
+      count += 1;
+      babidiMissileFireRef.current?.(player);
+    }, 500);
+    return () => clearInterval(interval);
+  }, [babidiDomainActive, player]);
 
   // Preenchimento (`expansion.svg`) e quebra do vidro são um só para toda
   // Expansão de Domínio: o marshadow mostra durante a varredura, o natsuki
@@ -2018,6 +2037,8 @@ export function useBattleCombat({
     specialIntroAbility,
     mugetsuSweep,
     domainExpansionActive,
+    babidiDomainActive,
+    babidiMachineGama,
     mugetsuBlink,
     // Mesmo par de props para os três efeitos: o marshadow usa o mugetsu
     // (cutin + varredura), o natsuki a Muryōkūsho (dreno contínuo) e os demais
