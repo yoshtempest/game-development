@@ -38,7 +38,7 @@ import { useNatsukiSpheres } from "@/hooks/battle/player/characters/natsuki/sphe
 import { useMuryokushoExpansion } from "@/hooks/battle/player/characters/natsuki/muryokushoExpansion/useMuryokushoExpansion";
 import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/hakaiExpansion/useHakaiExpansion";
 import { useBabidiDomainExpansion } from "@/hooks/battle/player/characters/babidi/domainExpansion/useBabidiDomainExpansion";
-import { useBabidiPortals } from "@/hooks/battle/player/characters/babidi/portals/usePortals";
+import { useBabidiPortals } from "@/legacy/babidiPortals/hooks/portals/usePortals";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import {
   useAtomic,
@@ -97,10 +97,7 @@ import {
 import { INTRO_MS } from "@/services/npc/attacks/hungryDog/state";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import { clampX } from "@/gameRules/movement/clampX";
-import type {
-  BabidiPortalWarpFn,
-  BabidiTarget,
-} from "@/utils/types/character/babidi";
+import type { BabidiTarget } from "@/utils/types/character/babidi";
 import type { BattleCombatProps } from "./types";
 
 export function useBattleCombat({
@@ -247,15 +244,11 @@ export function useBattleCombat({
   const rootedSummonsUntilRef = useRef<Record<string, number>>({});
 
   const [fishingNet, setFishingNet] = useState<{
-    hp: number;
-    maxHp: number;
     x: number;
     y: number;
   } | null>(null);
 
   const fishingNetRef = useRef<{
-    hp: number;
-    maxHp: number;
     x: number;
     y: number;
   } | null>(null);
@@ -274,28 +267,6 @@ export function useBattleCombat({
   useEffect(() => {
     fishingNetRef.current = fishingNet;
   }, [fishingNet]);
-
-  // Quando a rede zera o HP, ela se desfaz e libera o inimigo.
-  const onFishingNetDamage = useCallback(
-    (hp: number) => {
-      const net = fishingNetRef.current;
-      if (!net) return;
-      if (hp <= 0) {
-        if (fishingNetTimerRef.current) {
-          clearTimeout(fishingNetTimerRef.current);
-          fishingNetTimerRef.current = null;
-        }
-        setFishingNet(null);
-        fishingNetRef.current = null;
-        npcRootedUntilRef.current = 0;
-      } else {
-        const updated = { ...net, hp };
-        setFishingNet(updated);
-        fishingNetRef.current = updated;
-      }
-    },
-    [npcRootedUntilRef],
-  );
 
   /** +1 stack de VastolordLaser ao derrotar um inimigo com a forma ativa. */
   const addVastolordLaserChargeRef = useRef<() => void>(() => {});
@@ -320,10 +291,6 @@ export function useBattleCombat({
 
   // Esfera do Natsuki em voo — consumida pelo useProjectile para colisões.
   const playerProjectileRef = useRef<PlayerSpecialProjectile | null>(null);
-
-  // Portais do babidi: o hook de portais publica o warp de projéteis aqui e os
-  // loops de projétil (NPC e energia) o consultam a cada tick.
-  const portalWarpRef = useRef<BabidiPortalWarpFn | null>(null);
 
   // Vida de projéteis NPC destrutíveis (1/3 do dano que causariam), uma por
   // natureza de dano — usa ref porque o battle (fonte de totalArmor) só existe
@@ -360,7 +327,6 @@ export function useBattleCombat({
     spawnDamageRef: refs.spawnDamageRef,
     playerCooldownRef: refs.playerCooldown,
     playerHitDamageRef: refs.playerHitDamageRef,
-    portalWarpRef,
     isAlfa,
     onSummonFromRight: (summonType: string) =>
       summonNpcRef.current(summonType, BATTLE_LIMITS.maxX + 600),
@@ -616,8 +582,6 @@ export function useBattleCombat({
     lastBlockPressRef,
     lastAttackPressRef,
     npcPhaseRef,
-    fishingNetHpRef: fishingNetRef,
-    onFishingNetDamage,
     machineGamaShieldRef,
     onMachineGamaBreak: () => machineGamaBreakRef.current(),
     onBeforeNpcHitRef: targeting.onBeforeNpcHitRef,
@@ -866,7 +830,6 @@ export function useBattleCombat({
     npcClass: npcData.class,
     summons,
     onProjectileHit: (target) => babidiOnHitRef.current?.(target),
-    portalWarpRef,
   });
   babidiFireRef.current = babidiEnergy.fire;
 
@@ -925,8 +888,6 @@ export function useBattleCombat({
       fishingNetTimerRef.current = null;
     }
     const net = {
-      hp: battle.playerMaxHp,
-      maxHp: battle.playerMaxHp,
       x: npc.x,
       y: npc.y - 60,
     };
@@ -1943,7 +1904,6 @@ export function useBattleCombat({
     disabledRef: cloneDisabledRef,
     battleEndedRef: battle.isEnding,
     playSound,
-    portalWarpRef,
   });
 
   const domainExpansionAbilities = {

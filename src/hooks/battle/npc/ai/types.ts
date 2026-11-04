@@ -28,8 +28,6 @@ export type Props = {
   npcStaggerRef: React.RefObject<number>;
   rootedUntilRef?: React.RefObject<number>;
   fishingNetRef?: React.RefObject<{
-    hp: number;
-    maxHp: number;
     x: number;
     y: number;
   } | null>;
