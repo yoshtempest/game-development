@@ -14,8 +14,7 @@ import { VastolordLaserButton } from "@/components/Game/Battle/Buttons/Marshadow
 import { AtomicButton } from "@/components/Game/Battle/Buttons/Marshadow/Atomic";
 import { KillerQueenButton } from "@/components/Game/Battle/Buttons/SrGuaxinim/KillerQueen";
 import { StackExplosionButton } from "@/components/Game/Battle/Buttons/Laricell/StackExplosion";
-import { BabidiPortalsButton } from "@/components/Game/Battle/Buttons/Babidi/Portals";
-import { PortalSelect } from "@/components/Game/Battle/Modal/PortalSelect";
+
 import { DomainExpansionButton } from "@/components/Game/Battle/Buttons/DomainExpansion";
 import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
@@ -272,20 +271,15 @@ export function BattleScene(props: Props) {
     babidiMissileProjectiles,
     fishingNet,
     fishingNetPress,
+    fishingNetUsable,
+    fishingNetRemaining,
+    babidiBombDrop,
+    babidiBombDropPress,
+    babidiBombDropUsable,
+    babidiBombDropRemaining,
     babidiAttackVariant,
     babidiShieldSides,
     onBabidiShieldEnd,
-    babidiPortals,
-    babidiPortalGhost,
-    babidiPortalSelection,
-    babidiPortalLanding,
-    babidiPortalFocus,
-    babidiPortalClick,
-    babidiPortalPick,
-    babidiPortalUsable,
-    babidiPortalCount,
-    babidiPortalCost,
-    babidiPortalMaxPortals,
     sphere,
     sphereFocus,
     castActive,
@@ -399,9 +393,7 @@ export function BattleScene(props: Props) {
   // câmera de mais e esconderia o jogador, que está em BATTLE_SPAWN.player.y.
   const focus = mugetsuSweep
     ? { x: mugetsuSweep.x, y: player.y }
-    : babidiPortalFocus
-      ? { x: babidiPortalFocus.x, y: babidiPortalFocus.y }
-      : sphereFocus
+    : sphereFocus
         ? { x: sphereFocus.x, y: sphereFocus.y }
         : { x: focusEntity.x, y: focusEntity.y };
 
@@ -426,8 +418,7 @@ export function BattleScene(props: Props) {
   const worldOffsetY =
     (containerHeight * 0.5 * (bgPosY - initialBgPosRef.current.y)) / 100;
 
-  const baseZoom =
-    babidiPortalFocus || sphereFocus ? 1 : (cameraFocus?.zoom ?? 1);
+  const baseZoom = sphereFocus ? 1 : (cameraFocus?.zoom ?? 1);
   // Expansão de Domínio: leve zoomOut de 1.4x enquanto a habilidade está ativa
   // — o mugetsuEffect é gigante em altura e o zoom revela mais do mapa.
   const domainZoom = domainExpansionActive ? 1 / 1.4 : 1;
@@ -716,7 +707,7 @@ export function BattleScene(props: Props) {
         isAlfa={isAlfa}
         playerForm={vastolordActive ? "vastolordForm" : undefined}
         machineGamaShield={babidiMachineGamaShield}
-        machineGamaShieldMax={battle.playerMaxHp}
+        machineGamaShieldMax={battle.playerMaxHp * 10}
         npcSpecialGauge={
           isAlfa && npcType === "hungryDog"
             ? npc.ai?.hungryDog?.specialGauge
@@ -835,12 +826,10 @@ export function BattleScene(props: Props) {
             babidiEnergyProjectiles={babidiEnergyProjectiles}
             babidiMissileProjectiles={babidiMissileProjectiles}
             fishingNet={fishingNet}
+            babidiBombDrop={babidiBombDrop}
             babidiAttackVariant={babidiAttackVariant}
             babidiShieldSides={babidiShieldSides}
             onBabidiShieldEnd={onBabidiShieldEnd}
-            babidiPortals={babidiPortals}
-            babidiPortalGhost={babidiPortalGhost}
-            babidiPortalLanding={babidiPortalLanding}
             sphere={sphere}
             purpleHole={purpleHole}
             hakai={hakai}
@@ -963,10 +952,6 @@ export function BattleScene(props: Props) {
           bestTime={bestTime}
           showRetry={showRetry}
         />
-      )}
-
-      {babidiPortalSelection !== null && (
-        <PortalSelect index={babidiPortalSelection} onPick={babidiPortalPick} />
       )}
 
       <ComboAction />
@@ -1286,31 +1271,33 @@ export function BattleScene(props: Props) {
         {player.character === "babidi" &&
           (() => {
             abilitySlotsRef.current.push({
-              click: babidiPortalClick,
-              disabled: controlsDisabled || !babidiPortalUsable,
+              click: babidiBombDropPress,
+              disabled: controlsDisabled || !babidiBombDropUsable,
               hold: false,
               abilityId: "dimensionalPortal",
             });
             abilitySlotsRef.current.push({
               click: fishingNetPress,
-              disabled: controlsDisabled,
+              disabled: controlsDisabled || !fishingNetUsable,
               hold: false,
               abilityId: "fishingNet",
             });
             return (
               <>
-                <BabidiPortalsButton
-                  count={babidiPortalCount}
-                  maxPortals={babidiPortalMaxPortals}
-                  cost={babidiPortalCost}
-                  disabled={controlsDisabled || !babidiPortalUsable}
-                  onClick={babidiPortalClick}
+                <GenericAbilityButton
+                  characterId="babidi"
+                  abilityId="dimensionalPortal"
+                  ready={babidiBombDropUsable}
+                  remaining={babidiBombDropRemaining}
+                  disabled={controlsDisabled || !babidiBombDropUsable}
+                  onClick={babidiBombDropPress}
                 />
                 <GenericAbilityButton
                   characterId="babidi"
                   abilityId="fishingNet"
-                  ready={true}
-                  disabled={controlsDisabled}
+                  ready={fishingNetUsable}
+                  remaining={fishingNetRemaining}
+                  disabled={controlsDisabled || !fishingNetUsable}
                   onClick={fishingNetPress}
                 />
               </>

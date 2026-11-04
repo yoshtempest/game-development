@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useLatestRef } from "@/hooks/useLatestRef";
+import { BabidiDomainConstants } from "@/data/characters/babidi";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
 
 export type MachineGamaState = {
@@ -115,8 +116,9 @@ export function useBabidiDomainExpansion({
     activeRef.current = true;
     setActive(true);
     setShattering(false);
-    setMachineGamaShield(playerMaxHp);
-    shieldRef.current = playerMaxHp;
+    const machineGamaHp = playerMaxHp * BabidiDomainConstants.MACHINE_GAMA_HP_MULTIPLIER;
+    setMachineGamaShield(machineGamaHp);
+    shieldRef.current = machineGamaHp;
 
     // Bloqueia controles durante a animação de entrada.
     freezeActionsUntilRef.current = Date.now() + 4000;

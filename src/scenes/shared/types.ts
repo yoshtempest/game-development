@@ -227,6 +227,8 @@ export type BattleSceneApi = {
   babidiMissileProjectiles: import("@/utils/types/character/babidi").BabidiMissileProjectile[];
   fishingNet: { x: number; y: number } | null;
   fishingNetPress: () => void;
+  fishingNetUsable?: boolean;
+  fishingNetRemaining?: number;
   /** Portal/bomba/explosão da Energia Dimensional do babidi. */
   babidiBombDrop: BabidiBombDropVisual | null;
   babidiBombDropPress: () => void;

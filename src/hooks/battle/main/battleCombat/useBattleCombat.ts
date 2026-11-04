@@ -38,7 +38,8 @@ import { useNatsukiSpheres } from "@/hooks/battle/player/characters/natsuki/sphe
 import { useMuryokushoExpansion } from "@/hooks/battle/player/characters/natsuki/muryokushoExpansion/useMuryokushoExpansion";
 import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/hakaiExpansion/useHakaiExpansion";
 import { useBabidiDomainExpansion } from "@/hooks/battle/player/characters/babidi/domainExpansion/useBabidiDomainExpansion";
-import { useBabidiPortals } from "@/legacy/babidiPortals/hooks/portals/usePortals";
+import { useBabidiBombDrop } from "@/hooks/battle/player/characters/babidi/bombDrop/useBombDrop";
+import { BabidiFishingNetConstants } from "@/data/characters/babidi";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import {
   useAtomic,
@@ -253,6 +254,8 @@ export function useBattleCombat({
     y: number;
   } | null>(null);
   const fishingNetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [fishingNetRemaining, setFishingNetRemaining] = useState(0);
+  const fishingNetReadyAtRef = useRef(0);
   const machineGamaShieldRef = useRef(0);
   const machineGamaBreakRef = useRef<() => void>(() => {});
 
@@ -267,6 +270,19 @@ export function useBattleCombat({
   useEffect(() => {
     fishingNetRef.current = fishingNet;
   }, [fishingNet]);
+
+  const fishingNetCooldownTick = useCooldownPauseTick({
+    readyAtRef: fishingNetReadyAtRef,
+    isPausedRef,
+  });
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!fishingNetCooldownTick()) return;
+      const next = Math.max(0, (fishingNetReadyAtRef.current - Date.now()) / 1000);
+      setFishingNetRemaining((prev) => (prev === next ? prev : next));
+    }, ABILITY_COOLDOWN_TICK_MS);
+    return () => clearInterval(id);
+  }, [fishingNetCooldownTick]);
 
   /** +1 stack de VastolordLaser ao derrotar um inimigo com a forma ativa. */
   const addVastolordLaserChargeRef = useRef<() => void>(() => {});
@@ -881,8 +897,15 @@ export function useBattleCombat({
   }, [fishingNet, npc.x, npc.y, PLAYER_SIZE]);
 
   const fishingNetPress = useCallback(() => {
+    if (Date.now() < fishingNetReadyAtRef.current) return;
+    const mana = battleManaRef.current;
+    const spend = mana
+      ? Math.ceil(mana.playerMaxMana * BabidiFishingNetConstants.COST_RATIO)
+      : 0;
+    if (mana && spend > 0 && !mana.consumeMana(spend)) return;
     if (!battle.playerMaxHp) return;
     startAbility();
+    onAbilityUsed();
     if (fishingNetTimerRef.current) {
       clearTimeout(fishingNetTimerRef.current);
       fishingNetTimerRef.current = null;
@@ -893,14 +916,30 @@ export function useBattleCombat({
     };
     setFishingNet(net);
     fishingNetRef.current = net;
-    npcRootedUntilRef.current = Date.now() + 5000;
+    const rootMs = BabidiFishingNetConstants.ROOT_MS;
+    npcRootedUntilRef.current = Date.now() + rootMs;
+    const cooldownMs = applyCooldownReduction(
+      BabidiFishingNetConstants.COOLDOWN_MS,
+      battle.char.stats.cooldownReduction,
+    );
+    fishingNetReadyAtRef.current = Date.now() + cooldownMs;
+    setFishingNetRemaining(cooldownMs / 1000);
     fishingNetTimerRef.current = setTimeout(() => {
       setFishingNet(null);
       fishingNetRef.current = null;
       npcRootedUntilRef.current = 0;
       fishingNetTimerRef.current = null;
-    }, 5000);
-  }, [battle.playerMaxHp, npc.x, npc.y, npcRootedUntilRef, startAbility]);
+    }, rootMs);
+  }, [
+    battle.playerMaxHp,
+    battle.char.stats.cooldownReduction,
+    battleManaRef,
+    npc.x,
+    npc.y,
+    npcRootedUntilRef,
+    startAbility,
+    onAbilityUsed,
+  ]);
 
   const freezeSummonsUntilRef = useRef(0);
 
@@ -1884,26 +1923,27 @@ export function useBattleCombat({
     playerProjectileRef,
   });
 
-  // Portais do babidi (Energia Dimensional) --------------------------------
-  const babidiPortals = useBabidiPortals({
+  // Bomb drop do babidi (Energia Dimensional) --------------------------------
+  const bombDrop = useBabidiBombDrop({
     player,
     setPlayer,
-    npc,
-    summons,
-    setSummons,
-    allies,
-    setAllies,
-    pet: battle.pet,
-    setPet: battle.setPet,
-    obstacles,
-    PLAYER_SIZE,
+    npc: { x: npc.x, y: npc.y },
     battleManaRef,
-    timeRef: refs.timeRef,
     freezeActionsUntilRef,
     isPausedRef,
     disabledRef: cloneDisabledRef,
     battleEndedRef: battle.isEnding,
     playSound,
+    onHit: () => {
+      battle.playerHit(
+        1,
+        true,
+        true,
+        getAbilityDamageType("dimensionalPortal"),
+      );
+    },
+    onUsed: onAbilityUsed,
+    cooldownReduction: battle.char.stats.cooldownReduction,
   });
 
   const domainExpansionAbilities = {
@@ -1932,7 +1972,11 @@ export function useBattleCombat({
 
   return {
     ...natsukiSpheres,
-    ...babidiPortals,
+    babidiBombDrop: bombDrop.visual,
+    babidiBombDropPress: bombDrop.press,
+    babidiBombDropUsable: bombDrop.usable,
+    babidiBombDropRemaining: bombDrop.remaining,
+    babidiResetPortals: () => {},
     battle,
     npc,
     charge,
@@ -2026,6 +2070,8 @@ export function useBattleCombat({
     ],
     fishingNet,
     fishingNetPress,
+    fishingNetUsable: fishingNetRemaining <= 0,
+    fishingNetRemaining,
     babidiAttackVariant: babidiEnergy.attackVariant,
     babidiShieldSides: babidiShield.sides,
     onBabidiShieldEnd: babidiShield.end,
