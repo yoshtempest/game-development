@@ -22,6 +22,8 @@ type Props = {
   hp: number;
   maxHp: number;
   shield: number;
+  machineGamaShield?: number;
+  machineGamaShieldMax?: number;
   delicia: number;
   hitsToSpecial: number;
   blockGauge: number;
@@ -41,6 +43,8 @@ export function PlayerHUDPanel({
   hp,
   maxHp,
   shield,
+  machineGamaShield,
+  machineGamaShieldMax,
   delicia,
   hitsToSpecial,
   blockGauge,
@@ -81,6 +85,17 @@ export function PlayerHUDPanel({
                   className="shieldFill"
                   style={{
                     width: `${Math.min(100, (shield / maxHp) * 100)}%`,
+                  }}
+                />
+              </div>
+            )}
+            {machineGamaShield != null && machineGamaShieldMax != null && machineGamaShieldMax > 0 && (
+              <div className="shieldTrack" style={{ marginTop: 4 }}>
+                <div
+                  className="shieldFill"
+                  style={{
+                    width: `${Math.min(100, (machineGamaShield / machineGamaShieldMax) * 100)}%`,
+                    background: "#d946ef",
                   }}
                 />
               </div>

@@ -20,6 +20,8 @@ export function BattleHUD({
   isAlfa = false,
   npcSpecialGauge,
   playerForm,
+  machineGamaShield,
+  machineGamaShieldMax,
 }: BattleHudProps) {
   const { player } = usePlayer();
   const { progress } = useCharacterProgress();
@@ -42,6 +44,8 @@ export function BattleHUD({
         hp={battle.playerHP}
         maxHp={battle.playerMaxHp}
         shield={battle.playerShield}
+        machineGamaShield={machineGamaShield}
+        machineGamaShieldMax={machineGamaShieldMax}
         delicia={battle.delicia}
         hitsToSpecial={battle.hitsToSpecial}
         blockGauge={battle.blockGauge}

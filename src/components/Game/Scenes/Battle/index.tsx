@@ -96,12 +96,20 @@ type Props = {
   training?: boolean;
   isAlfa?: boolean;
   npcLevel?: number;
+  machineGamaShield?: number;
+  machineGamaShieldMax?: number;
   children?: ReactNode;
   hakai?: boolean;
 };
 
 export function BattleScene(props: Props) {
-  const { npcType, className, background, map, isAlfa = false } = props;
+  const {
+    npcType,
+    className,
+    background,
+    map,
+    isAlfa = false,
+  } = props;
 
   const isTrueVandinha = npcType === "trueVandinha";
 
@@ -254,6 +262,7 @@ export function BattleScene(props: Props) {
     mugetsuSweep,
     domainExpansionActive,
     babidiMachineGama,
+    babidiMachineGamaShield,
     mugetsuBlink,
     disintegrating,
     domainExpansionPress,
@@ -677,20 +686,20 @@ export function BattleScene(props: Props) {
           : undefined
       }
     >
-        <div className="BackgroundLayer">
-    {effectiveBackground && (
-      <div
-        className="BackgroundImage"
-        style={{
-          backgroundImage: `url(${effectiveBackground})`,
-          backgroundSize: `calc(150% * ${zoom})`,
-          backgroundPosition: `calc(${adjustedBgX}% + ${shake.x}px) calc(${adjustedBgY}% + ${shake.y}px)`,
-        }}
-      />
-    )}
+      <div className="BackgroundLayer">
+        {effectiveBackground && (
+          <div
+            className="BackgroundImage"
+            style={{
+              backgroundImage: `url(${effectiveBackground})`,
+              backgroundSize: `calc(150% * ${zoom})`,
+              backgroundPosition: `calc(${adjustedBgX}% + ${shake.x}px) calc(${adjustedBgY}% + ${shake.y}px)`,
+            }}
+          />
+        )}
 
-    {tvFlash && <div className="tvFlash" />}
-  </div>
+        {tvFlash && <div className="tvFlash" />}
+      </div>
       {/* Preenchimento do domínio: PRIMEIRO filho do `.Master`, para pintar
           como o `backgroundImage` da batalha — acima do fundo, abaixo de todo
           o resto (HUD do jogador e do NPC, ComboDisplay, SceneMap, intros) por
@@ -712,6 +721,8 @@ export function BattleScene(props: Props) {
         allies={allies}
         isAlfa={isAlfa}
         playerForm={vastolordActive ? "vastolordForm" : undefined}
+        machineGamaShield={babidiMachineGamaShield}
+        machineGamaShieldMax={battle.playerMaxHp}
         npcSpecialGauge={
           isAlfa && npcType === "hungryDog"
             ? npc.ai?.hungryDog?.specialGauge
@@ -1367,7 +1378,7 @@ export function BattleScene(props: Props) {
               pointerEvents: "none",
               animation:
                 babidiMachineGama.state === "exploding"
-                  ? "mg-shake 0.1s infinite"
+                  ? "mg-shake 0.1s infinite, mg-fade 1.2s forwards"
                   : undefined,
               opacity: babidiMachineGama.state === "exploding" ? 0.8 : 1,
             }}

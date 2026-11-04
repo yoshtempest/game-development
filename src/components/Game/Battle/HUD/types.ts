@@ -31,4 +31,7 @@ export type BattleHudProps = {
   npcSpecialGauge?: number;
   /** Forma especial ativa (Forma Vastolord): troca a face do HUD do jogador. */
   playerForm?: "vastolordForm";
+  /** Escudo Machine Gama (vida extra) do Babidi. */
+  machineGamaShield?: number;
+  machineGamaShieldMax?: number;
 };

@@ -1819,6 +1819,7 @@ export function useBattleCombat({
     press: babidiDomainPress,
     usable: babidiDomainUsable,
     machineGama: babidiMachineGama,
+    machineGamaShield: babidiMachineGamaShield,
     breakMachineGama: babidiBreakMachineGama,
   } = useBabidiDomainExpansion({
     player,
@@ -2048,6 +2049,7 @@ export function useBattleCombat({
     domainExpansionActive,
     babidiDomainActive,
     babidiMachineGama,
+    babidiMachineGamaShield,
     mugetsuBlink,
     // Mesmo par de props para os três efeitos: o marshadow usa o mugetsu
     // (cutin + varredura), o natsuki a Muryōkūsho (dreno contínuo) e os demais
