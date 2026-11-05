@@ -13,13 +13,13 @@ export function BabidiClone({ clone, battleScaleX, battleScaleY }: Props) {
   const [splitting, setSplitting] = useState(true);
 
   useEffect(() => {
-    console.log("BabidiClone mount", clone.id, clone.x, clone.y);
+    console.log("BabidiClone mount", clone.id, "splitting=", splitting);
     const t = setTimeout(() => {
       console.log("BabidiClone split done", clone.id);
       setSplitting(false);
     }, 500);
     return () => clearTimeout(t);
-  }, [clone.id, clone.x, clone.y]);
+  }, [clone.id, clone.x, clone.y]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (clone.exploded) {
     return (

@@ -11,10 +11,9 @@
 .half {
   position: absolute;
   top: 0;
+  left: 0;
   width: 80px;
   height: 80px;
-  object-fit: none;
-  object-position: left top;
 }
 
 .left {
