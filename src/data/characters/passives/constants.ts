@@ -90,12 +90,13 @@ export const CHARACTER_PASSIVES: Record<
   babidi: [
     {
       characterId: "babidi",
-      id: "notImplemented",
-      name: "Passiva (a definir)",
-      description: "Passiva do personagem ainda não definida.",
+      id: "babidiCloneBurst",
+      name: "Explosão de Clones",
+      description:
+        "Uma vez por batalha, ao morrer, o personagem se divide em clones que correm em direção ao inimigo e explodem. Após a habilidade, as habilidades ficam desabilitadas e a vida máxima cai para 50%.",
       unlockedAtLevel: 1,
-      oncePerBattle: false,
-      effect: NOT_IMPLEMENTED,
+      oncePerBattle: true,
+      effect: { kind: "babidiCloneBurst" },
     },
   ],
   natsuki: [

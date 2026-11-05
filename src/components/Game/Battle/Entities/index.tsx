@@ -22,6 +22,7 @@ import { ExtraPunch } from "./srGuaxinim/ExtraPunch";
 import { SpecialProjectile } from "./Projectiles/SpecialProjectile";
 import { EnergyProjectile } from "./Projectiles/EnergyProjectile";
 import { FishingNet } from "./FishingNet";
+import { BabidiClone } from "./BabidiClone";
 import { MissileProjectile } from "./Projectiles/MissileProjectile";
 import { LootBag } from "./LootBag";
 import { BlinkAfterimage } from "@/components/Game/Battle/Effects/Natsuki/BlinkAfterimage";
@@ -79,6 +80,7 @@ export function BattleEntities({
   babidiEnergyProjectiles = [],
   babidiMissileProjectiles = [],
   fishingNet = null,
+  babidiClones = [],
   babidiBombDrop = null,
   babidiAttackVariant,
   babidiShieldSides,
@@ -212,6 +214,15 @@ export function BattleEntities({
         battleScaleX={battleScaleX}
         battleScaleY={battleScaleY}
       />
+
+      {babidiClones.map((clone) => (
+        <BabidiClone
+          key={clone.id}
+          clone={clone}
+          battleScaleX={battleScaleX}
+          battleScaleY={battleScaleY}
+        />
+      ))}
 
       <AtomicEffects
         explosion={atomicExplosion}

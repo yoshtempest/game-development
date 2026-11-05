@@ -19,7 +19,9 @@ import { VASTOLORD_TRANSFORM_MS } from "@/hooks/battle/player/characters/marshad
 import { useBattleRecording } from "@/hooks/battle/recording/battleRecording/useBattleRecording";
 import { useRewind } from "@/hooks/battle/rewind/useRewind";
 import { useBattleSnapshots } from "@/hooks/battle/time/battleSnapshots/useBattleSnapshots";
+import type { NPCBattleState } from "@/utils/types/npc/npc";
 import { useHonoredOne } from "@/hooks/battle/player/characters/natsuki/honoredOne/useHonoredOne";
+import { useBabidiPassive } from "@/hooks/battle/player/characters/babidi/passive/usePassive";
 import { useDefeatFlow } from "@/hooks/battle/defeat/useDefeatFlow";
 import {
   useCameraSequence,
@@ -172,8 +174,17 @@ export function useBattleScene({
     };
   }, [isMenuOpen, pauseAllPlaying, resumeAllPaused]);
 
+  const combatRef = useRef<{
+    battle?: { playerMaxHp: number; setPlayerHP: (hp: number) => void };
+    npc?: { x: number; y: number };
+  } | null>(null);
+
   const honoredOneEnabled =
     getCharacterPassive(player.character, "honoredOne") != null && !training;
+
+  const babidiPassiveEnabled =
+    getCharacterPassive(player.character, "babidiCloneBurst") != null &&
+    !training;
 
   const {
     honoredOneActiveRef,
@@ -181,7 +192,7 @@ export function useBattleScene({
     honoredSequence,
     honoredRegenActive,
     honoredFleeRef,
-    surviveLethalHitRef,
+    surviveLethalHitRef: honoredSurviveLethalHitRef,
     resetHonoredOne,
     skipHonoredOne,
   } = useHonoredOne({
@@ -200,6 +211,24 @@ export function useBattleScene({
       // O skip do honored-one é chamado via UI; nada extra aqui.
     },
   });
+
+  const babidiPassive = useBabidiPassive({
+    enabled: babidiPassiveEnabled,
+    player,
+    setPlayer,
+    getPlayerMaxHp: () => combatRef.current?.battle?.playerMaxHp ?? 0,
+    setPlayerHP: (hp) => combatRef.current?.battle?.setPlayerHP?.(hp),
+    getNpc: () => (combatRef.current?.npc as NPCBattleState | undefined) ?? ({ x: 0, y: 0 } as NPCBattleState),
+    playSound,
+    freezeActionsUntilRef,
+  });
+
+  const surviveLethalHitRef = babidiPassiveEnabled
+    ? babidiPassive.surviveLethalHitRef
+    : honoredSurviveLethalHitRef;
+
+  const babidiClones = babidiPassive.clones;
+  const babidiPassiveDebuff = babidiPassive.debuff;
 
   const isPausedRef = useRef(false);
   const lootActiveRef = useRef(false);
@@ -452,6 +481,7 @@ export function useBattleScene({
     surviveLethalHitRef,
     honoredSequence,
     honoredRegenActive,
+    babidiPassiveDebuff,
     vastolordMultiplierRef,
     vastolordActive,
     transformationFrame,
@@ -465,6 +495,8 @@ export function useBattleScene({
     divergentFistRef,
     setDivergentFistActive,
   });
+
+  combatRef.current = combat;
 
   const {
     battle,
@@ -867,6 +899,7 @@ export function useBattleScene({
     lootNotifications,
     clearLootNotifications,
     ematronClone,
+    babidiClones,
     hakai,
     clonePress,
     cloneRelease,

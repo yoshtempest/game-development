@@ -26,6 +26,7 @@ import type {
 } from "@/utils/types/battle/mugetsu";
 import type {
   BabidiBombDropVisual,
+  BabidiCloneVisual,
   BabidiEnergyProjectile,
   BabidiMissileProjectile,
   BabidiShieldSide,
@@ -119,6 +120,7 @@ export type Props = {
   babidiEnergyProjectiles?: BabidiEnergyProjectile[];
   babidiMissileProjectiles?: BabidiMissileProjectile[];
   fishingNet?: { x: number; y: number } | null;
+  babidiClones?: BabidiCloneVisual[];
   /** Portal/bomba/explosão da Energia Dimensional do babidi. */
   babidiBombDrop?: BabidiBombDropVisual | null;
   /** Pose de mão do sprite do ataque básico do babidi. */

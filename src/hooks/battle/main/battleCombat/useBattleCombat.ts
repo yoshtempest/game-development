@@ -122,6 +122,7 @@ export function useBattleCombat({
   surviveLethalHitRef,
   honoredSequence,
   honoredRegenActive,
+  babidiPassiveDebuff = false,
   vastolordMultiplierRef,
   vastolordActive,
   transformationFrame,
@@ -1181,7 +1182,8 @@ export function useBattleCombat({
     isPhaseTransitioning ||
     isThrown ||
     alfaIntroActive ||
-    isDragging;
+    isDragging ||
+    babidiPassiveDebuff;
 
   // ── Habilidades ativas do SrGuaxinim e da Laricell ──────────────────────────
   // Cada uma tem o próprio botão e cooldown e reaproveita o pipeline genérico

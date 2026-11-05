@@ -222,6 +222,7 @@ export function BattleScene(props: Props) {
     lootNotifications,
     npcClass,
     ematronClone,
+    babidiClones,
     hakai,
     clonePress,
     cloneRelease,
@@ -808,6 +809,7 @@ export function BattleScene(props: Props) {
             lootBags={lootBags}
             npcClass={npcClass}
             ematronClone={ematronClone}
+            babidiClones={babidiClones}
             genkiDamaVisual={genkiDamaVisual}
             vastolordLaser={vastolordLaser}
             kamehameha={kamehameha}

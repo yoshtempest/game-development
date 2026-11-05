@@ -54,6 +54,15 @@ export type BabidiMissileProjectile = {
   dirX: number;
 };
 
+/** Clone gerado pela passiva de explosão do babidi. */
+export type BabidiCloneVisual = {
+  id: string;
+  x: number;
+  y: number;
+  state: "idle" | "run";
+  exploded: boolean;
+};
+
 /** Portal/bomba/explosão da Energia Dimensional do babidi. */
 export type BabidiBombDropVisual = {
   id: string;

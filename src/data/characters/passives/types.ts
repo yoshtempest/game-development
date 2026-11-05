@@ -5,6 +5,7 @@ export type CharacterPassiveId =
   | "vastolordForm"
   | "cursedEnergy"
   | "honoredOne"
+  | "babidiCloneBurst"
   | "clearCut"
   | "combo"
   | "notImplemented";
@@ -14,6 +15,7 @@ export type CharacterPassiveKind =
   | { kind: "vastolordForm"; durationMs: number }
   | { kind: "cursedEnergy" }
   | { kind: "honoredOne" }
+  | { kind: "babidiCloneBurst" }
   | { kind: "clearCut " }
   | { kind: "combo"; windowMs: number }
   | { kind: "notImplemented" };
