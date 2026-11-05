@@ -57,7 +57,7 @@ export const NPC = memo(function NPC({
           width: spriteSize,
           height: spriteSize,
           left: gridX * TILE_SIZE - 40,
-          top: gridY * TILE_SIZE - 20,
+          top: gridY * TILE_SIZE - (spriteSize - TILE_SIZE),
           zIndex: getEntityZIndex(gridY) - 1,
           opacity: hidden || fading ? 0 : shadow.opacity,
           filter: "brightness(0)",

@@ -50,7 +50,7 @@ export const Player = memo(function Player({
 
   const mapWidth = TILE_SIZE * MAP_GRID_COLS;
   const mapHeight = TILE_SIZE * MAP_GRID_ROWS;
-  const entityX = gridX * TILE_SIZE;
+  const entityX = gridX * TILE_SIZE * 1.2;
   const entityY = gridY * TILE_SIZE - height * TILE_SIZE * HEIGHT_STEP_OFFSET;
   const shadow = computeEntityShadow(entityX, entityY, mapWidth, mapHeight);
 
@@ -63,7 +63,7 @@ export const Player = memo(function Player({
           width: PLAYER_SIZE,
           height: PLAYER_SIZE,
           left: gridX * TILE_SIZE - 11,
-          top: gridY * TILE_SIZE,
+          top: gridY * TILE_SIZE - (PLAYER_SIZE - TILE_SIZE - gridY),
           transform: `translate(-10%, -20%) scaleX(${direction === "left" ? -1 : 1})`,
           zIndex: getEntityZIndex(gridY) - 1,
           transition: `left ${EXPLORE_MOVE_INTERVAL}ms, top ${EXPLORE_MOVE_INTERVAL}ms`,
