@@ -4,6 +4,7 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import { ONE_THOUSAND_MS, FIVE_HUNDRED_MS, ONE_HUNDRED_MS } from "@/data/ms";
 import type { BabidiCloneVisual } from "@/utils/types/character/babidi";
 import { babidiSoundPath } from "@/utils/paths/song/characters/babidiPath";
+import { sfx } from "@/utils/paths/song/sfx";
 
 const CLONE_COUNT = 8;
 const SPAWN_INTERVAL_MS = FIVE_HUNDRED_MS;
@@ -153,6 +154,8 @@ export function useBabidiPassive({
                     next[idx] = { ...clone, exploded: true };
                     return next;
                   });
+                  const explosionAudio = new Audio(sfx("explosion.mp3").src);
+                  explosionAudio.play().catch(() => {});
                   if (onExplode) onExplode(targetX, targetY);
                 }
               }, stepMs);
