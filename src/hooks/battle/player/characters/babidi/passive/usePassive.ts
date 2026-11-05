@@ -1,13 +1,14 @@
 import type { Props } from "./types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
+import { ONE_THOUSAND_MS, FIVE_HUNDRED_MS, ONE_HUNDRED_MS } from "@/data/ms";
 import type { BabidiCloneVisual } from "@/utils/types/character/babidi";
 import { babidiSoundPath } from "@/utils/paths/song/characters/babidiPath";
 
 const CLONE_COUNT = 8;
-const SPAWN_INTERVAL_MS = 500;
-const RUN_STAGGER_MS = 50;
-const RUN_DURATION_MS = 600;
+const SPAWN_INTERVAL_MS = FIVE_HUNDRED_MS;
+const RUN_STAGGER_MS = ONE_HUNDRED_MS;
+const RUN_DURATION_MS = ONE_THOUSAND_MS;
 
 export function useBabidiPassive({
   enabled,
@@ -39,7 +40,6 @@ export function useBabidiPassive({
   }, []);
 
   const surviveLethalHitRef = useLatestRef(() => {
-    console.log("babidi surviveLethalHit called, enabled=", enabled);
     if (!enabled || usedRef.current) return false;
     usedRef.current = true;
     setActive(true);
@@ -59,7 +59,6 @@ export function useBabidiPassive({
     for (let i = 0; i < CLONE_COUNT; i++) {
       timersRef.current.push(
         setTimeout(() => {
-          console.log("babidi passive spawn clone", i);
           const audio = new Audio(babidiSoundPath("defeat.mp3").src);
           audio.play().catch(() => {});
           const clone: BabidiCloneVisual = {
@@ -83,8 +82,13 @@ export function useBabidiPassive({
     console.log("babidi passive runStart scheduled at", runStart);
     timersRef.current.push(
       setTimeout(() => {
-        console.log("babidi passive RUN START");
-        cloneIdsRef.current.forEach((cloneId, index) => {
+        const npcForSort = getNpc();
+        const sortedCloneIds = [...cloneIdsRef.current].sort((a, b) => {
+          const pa = clonePositionsRef.current[a] ?? { x: 0, y: 0 };
+          const pb = clonePositionsRef.current[b] ?? { x: 0, y: 0 };
+          return Math.abs(pa.x - npcForSort.x) - Math.abs(pb.x - npcForSort.x);
+        });
+        sortedCloneIds.forEach((cloneId, index) => {
           timersRef.current.push(
             setTimeout(() => {
               console.log("babidi passive run clone", cloneId);
@@ -122,19 +126,8 @@ export function useBabidiPassive({
                   if (idx === -1) return prev;
                   const clone = prev[idx];
                   if (!clone || clone.exploded) return prev;
-                  // Empurra clones para não se sobreporem: mantém 20px de distância.
-                  const spawnIndex = cloneIdsRef.current.indexOf(cloneId);
-                  const prevCloneId =
-                    spawnIndex > 0 ? cloneIdsRef.current[spawnIndex - 1] : null;
-                  let adjustedX = x;
-                  if (prevCloneId) {
-                    const prevClone = prev.find((c) => c.id === prevCloneId);
-                    if (prevClone && adjustedX > prevClone.x - 20) {
-                      adjustedX = prevClone.x - 20;
-                    }
-                  }
                   const next = [...prev];
-                  next[idx] = { ...clone, x: adjustedX, y };
+                  next[idx] = { ...clone, x, y };
                   return next;
                 });
                 if (t >= 1) {

@@ -53,7 +53,7 @@ export function BabidiClone({ clone, battleScaleX, battleScaleY }: Props) {
           style={{
             left: clone.x * battleScaleX,
             top: clone.y * battleScaleY,
-            transform: "translate(-50%, -100%)",
+            transform: `translate(-50%, -100%) scaleX(${clone.flipped ? -1 : 1})`,
           }}
         >
           <img className={`${styles.half} ${styles.left}`} src={src} alt="" />
@@ -77,7 +77,6 @@ export function BabidiClone({ clone, battleScaleX, battleScaleY }: Props) {
           style={{
             left: 0,
             top: 0,
-            transform: "translate(-50%, -100%)",
           }}
         />
       </div>
