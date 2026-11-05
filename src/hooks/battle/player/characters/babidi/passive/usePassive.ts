@@ -25,15 +25,21 @@ export function useBabidiPassive({
   const [debuff, setDebuff] = useState(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const intervalsRef = useRef<ReturnType<typeof setInterval>[]>([]);
+  const cloneIdsRef = useRef<string[]>([]);
+  const clonePositionsRef = useRef<Record<string, { x: number; y: number }>>({});
 
   const clearAll = useCallback(() => {
+    console.log("babidi passive clearAll called");
     for (const t of timersRef.current) clearTimeout(t);
     for (const i of intervalsRef.current) clearInterval(i);
     timersRef.current = [];
     intervalsRef.current = [];
+    cloneIdsRef.current = [];
+    clonePositionsRef.current = {};
   }, []);
 
   const surviveLethalHitRef = useLatestRef(() => {
+    console.log("babidi surviveLethalHit called, enabled=", enabled);
     if (!enabled || usedRef.current) return false;
     usedRef.current = true;
     setActive(true);
@@ -58,12 +64,14 @@ export function useBabidiPassive({
           audio.play().catch(() => {});
           const clone: BabidiCloneVisual = {
             id: `babidi-clone-${Date.now()}-${i}`,
-            x: baseX + i * 20,
+            x: baseX + i * 60,
             y: baseY,
             state: "idle",
             exploded: false,
           };
           spawned.push(clone);
+          cloneIdsRef.current.push(clone.id);
+          clonePositionsRef.current[clone.id] = { x: clone.x, y: clone.y };
           setClones((prev) => [...prev, clone]);
         }, i * SPAWN_INTERVAL_MS),
       );
@@ -75,21 +83,29 @@ export function useBabidiPassive({
     timersRef.current.push(
       setTimeout(() => {
         console.log("babidi passive RUN START");
-        for (let i = 0; i < CLONE_COUNT; i++) {
+        cloneIdsRef.current.forEach((cloneId, index) => {
           timersRef.current.push(
             setTimeout(() => {
-              // We reference clones by index order; find current clone at i.
+              console.log("babidi passive run clone", cloneId);
+              // Set state to run by id.
               setClones((prev) => {
-                const clone = prev[i];
+                const idx = prev.findIndex((c) => c.id === cloneId);
+                if (idx === -1) return prev;
+                const clone = prev[idx];
                 if (!clone) return prev;
                 const next = [...prev];
-                next[i] = { ...clone, state: "run" };
+                next[idx] = { ...clone, state: "run" };
                 return next;
               });
 
               // Animate this clone toward the nearest enemy (NPC).
               const npc = getNpc();
-              const startX = baseX + i * 20;
+              const startPos = clonePositionsRef.current[cloneId] ?? {
+                x: baseX + index * 20,
+                y: baseY,
+              };
+              const startX = startPos.x;
+              const startY = startPos.y;
               const targetX = npc.x;
               const targetY = npc.y;
               const stepMs = 16;
@@ -99,12 +115,14 @@ export function useBabidiPassive({
                 step++;
                 const t = Math.min(1, step / steps);
                 const x = startX + (targetX - startX) * t;
-                const y = baseY + (targetY - baseY) * t;
+                const y = startY + (targetY - startY) * t;
                 setClones((prev) => {
-                  const clone = prev[i];
+                  const idx = prev.findIndex((c) => c.id === cloneId);
+                  if (idx === -1) return prev;
+                  const clone = prev[idx];
                   if (!clone || clone.exploded) return prev;
                   const next = [...prev];
-                  next[i] = { ...clone, x, y };
+                  next[idx] = { ...clone, x, y };
                   return next;
                 });
                 if (t >= 1) {
@@ -114,19 +132,21 @@ export function useBabidiPassive({
                   );
                   // Explode.
                   setClones((prev) => {
-                    const clone = prev[i];
+                    const idx = prev.findIndex((c) => c.id === cloneId);
+                    if (idx === -1) return prev;
+                    const clone = prev[idx];
                     if (!clone) return prev;
                     const next = [...prev];
-                    next[i] = { ...clone, exploded: true };
+                    next[idx] = { ...clone, exploded: true };
                     return next;
                   });
                   if (onExplode) onExplode(targetX, targetY);
                 }
               }, stepMs);
               intervalsRef.current.push(interval);
-            }, runStart + i * RUN_STAGGER_MS),
+            }, index * RUN_STAGGER_MS),
           );
-        }
+        });
       }, runStart),
     );
 
