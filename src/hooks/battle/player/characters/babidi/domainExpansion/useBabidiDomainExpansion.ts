@@ -92,21 +92,6 @@ export function useBabidiDomainExpansion({
     }, 1200);
   }, [setPlayer, shieldRef]);
 
-  const clear = useCallback(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-    if (animRef.current) {
-      clearInterval(animRef.current);
-      animRef.current = null;
-    }
-    activeRef.current = false;
-    setActive(false);
-    setShattering(false);
-    setMachineGama(null);
-  }, []);
-
   const press = useCallback(() => {
     if (activeRef.current) return;
     if (!usableRef.current) return;
@@ -160,12 +145,15 @@ export function useBabidiDomainExpansion({
       });
     }, 50);
 
-    // Duração do domínio: 8s
+    // Duração do domínio: 8s. Ao fim, o domínio se desfaz (shattering), mas o
+    // Machine Gama permanece em batalha em vez de desaparecer.
     timerRef.current = setTimeout(() => {
       setShattering(true);
       setTimeout(() => {
-        clear();
-        setMachineGama(null);
+        activeRef.current = false;
+        setActive(false);
+        setShattering(false);
+        setMachineGama((p) => (p ? { ...p, state: "idle" } : p));
       }, 1500);
     }, 8000);
   }, [
@@ -179,7 +167,6 @@ export function useBabidiDomainExpansion({
     setPlayer,
     playerMaxHp,
     shieldRef,
-    clear,
   ]);
 
   useEffect(() => {
