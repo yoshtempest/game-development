@@ -123,6 +123,7 @@ export function useBattleCombat({
   honoredSequence,
   honoredRegenActive,
   babidiPassiveDebuff = false,
+  babidiPassiveActive = false,
   vastolordMultiplierRef,
   vastolordActive,
   transformationFrame,
@@ -342,7 +343,10 @@ export function useBattleCombat({
       refs.npcMeleeAttackRef.current(multiplier, damageKind);
     },
     isPaused:
-      isPausedRef.current || isPhaseTransitioning || lootActiveRef.current,
+      isPausedRef.current ||
+      isPhaseTransitioning ||
+      lootActiveRef.current ||
+      babidiPassiveActive,
     onSummon: onSummonWrapperRef.current,
     onBurstHit: (pushDir: number) => refs.npcBurstAttackRef.current(pushDir),
     playerProjectileRef,

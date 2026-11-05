@@ -1,4 +1,4 @@
-import { playerAbilityPath } from "@/utils/paths";
+import { npcPathProjectile, playerAbilityPath } from "@/utils/paths";
 import type { BabidiCloneVisual } from "@/utils/types/character/babidi";
 
 type Props = {
@@ -8,7 +8,24 @@ type Props = {
 };
 
 export function BabidiClone({ clone, battleScaleX, battleScaleY }: Props) {
-  if (clone.exploded) return null;
+  if (clone.exploded) {
+    return (
+      <img
+        src={npcPathProjectile("/explosion.svg")}
+        alt="explosion"
+        style={{
+          position: "absolute",
+          left: clone.x * battleScaleX,
+          top: clone.y * battleScaleY,
+          transform: "translate(-50%, -50%)",
+          width: 120,
+          height: 120,
+          zIndex: 16,
+          pointerEvents: "none",
+        }}
+      />
+    );
+  }
   const src =
     clone.state === "run"
       ? playerAbilityPath("babidi", "passive", "cloneRun.svg")

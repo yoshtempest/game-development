@@ -175,7 +175,11 @@ export function useBattleScene({
   }, [isMenuOpen, pauseAllPlaying, resumeAllPaused]);
 
   const combatRef = useRef<{
-    battle?: { playerMaxHp: number; setPlayerHP: (hp: number) => void };
+    battle?: {
+      playerMaxHp: number;
+      setPlayerHP: (hp: number) => void;
+      setNpcHP: (updater: (hp: number) => number) => void;
+    };
     npc?: { x: number; y: number };
   } | null>(null);
 
@@ -219,6 +223,15 @@ export function useBattleScene({
     getPlayerMaxHp: () => combatRef.current?.battle?.playerMaxHp ?? 0,
     setPlayerHP: (hp) => combatRef.current?.battle?.setPlayerHP?.(hp),
     getNpc: () => (combatRef.current?.npc as NPCBattleState | undefined) ?? ({ x: 0, y: 0 } as NPCBattleState),
+    onExplode: (x: number, y: number) => {
+      void x;
+      void y;
+      const battle = combatRef.current?.battle;
+      if (!battle) return;
+      const maxHp = battle.playerMaxHp || 0;
+      const damage = Math.max(1, Math.floor(maxHp * 0.05));
+      battle.setNpcHP((hp: number) => Math.max(0, hp - damage));
+    },
     playSound,
     freezeActionsUntilRef,
   });
@@ -482,6 +495,7 @@ export function useBattleScene({
     honoredSequence,
     honoredRegenActive,
     babidiPassiveDebuff,
+    babidiPassiveActive: babidiPassive.active,
     vastolordMultiplierRef,
     vastolordActive,
     transformationFrame,

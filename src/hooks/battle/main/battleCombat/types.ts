@@ -31,6 +31,7 @@ export type BattleCombatProps = {
   /** O Abençoado está na coreografia (gatilho → pouso): trava todo controle. */
   honoredSequence: boolean;
   babidiPassiveDebuff?: boolean;
+  babidiPassiveActive?: boolean;
   honoredRegenActive: boolean;
   vastolordMultiplierRef: RefObject<() => number>;
   vastolordActive: boolean;

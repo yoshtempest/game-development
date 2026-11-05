@@ -7,6 +7,7 @@ export type Props = {
   setPlayerHP?: (hp: number) => void;
   getPlayerMaxHp?: () => number;
   getNpc: () => NPCBattleState;
+  onExplode?: (x: number, y: number) => void;
   playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
   freezeActionsUntilRef: React.RefObject<number>;
 };
