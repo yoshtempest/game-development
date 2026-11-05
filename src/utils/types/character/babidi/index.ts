@@ -61,6 +61,7 @@ export type BabidiCloneVisual = {
   y: number;
   state: "idle" | "run";
   exploded: boolean;
+  flipped?: boolean;
 };
 
 /** Portal/bomba/explosão da Energia Dimensional do babidi. */

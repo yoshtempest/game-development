@@ -68,6 +68,7 @@ export function useBabidiPassive({
             y: baseY,
             state: "idle",
             exploded: false,
+            flipped: (getNpc().x ?? 0) < baseX + i * 60,
           };
           spawned.push(clone);
           cloneIdsRef.current.push(clone.id);
@@ -87,17 +88,6 @@ export function useBabidiPassive({
           timersRef.current.push(
             setTimeout(() => {
               console.log("babidi passive run clone", cloneId);
-              // Set state to run by id.
-              setClones((prev) => {
-                const idx = prev.findIndex((c) => c.id === cloneId);
-                if (idx === -1) return prev;
-                const clone = prev[idx];
-                if (!clone) return prev;
-                const next = [...prev];
-                next[idx] = { ...clone, state: "run" };
-                return next;
-              });
-
               // Animate this clone toward the nearest enemy (NPC).
               const npc = getNpc();
               const startPos = clonePositionsRef.current[cloneId] ?? {
@@ -108,6 +98,17 @@ export function useBabidiPassive({
               const startY = startPos.y;
               const targetX = npc.x;
               const targetY = npc.y;
+
+              // Set state to run by id.
+              setClones((prev) => {
+                const idx = prev.findIndex((c) => c.id === cloneId);
+                if (idx === -1) return prev;
+                const clone = prev[idx];
+                if (!clone) return prev;
+                const next = [...prev];
+                next[idx] = { ...clone, state: "run", flipped: targetX < startX };
+                return next;
+              });
               const stepMs = 16;
               const steps = Math.ceil(RUN_DURATION_MS / stepMs);
               let step = 0;
@@ -121,8 +122,19 @@ export function useBabidiPassive({
                   if (idx === -1) return prev;
                   const clone = prev[idx];
                   if (!clone || clone.exploded) return prev;
+                  // Empurra clones para não se sobreporem: mantém 20px de distância.
+                  const spawnIndex = cloneIdsRef.current.indexOf(cloneId);
+                  const prevCloneId =
+                    spawnIndex > 0 ? cloneIdsRef.current[spawnIndex - 1] : null;
+                  let adjustedX = x;
+                  if (prevCloneId) {
+                    const prevClone = prev.find((c) => c.id === prevCloneId);
+                    if (prevClone && adjustedX > prevClone.x - 20) {
+                      adjustedX = prevClone.x - 20;
+                    }
+                  }
                   const next = [...prev];
-                  next[idx] = { ...clone, x, y };
+                  next[idx] = { ...clone, x: adjustedX, y };
                   return next;
                 });
                 if (t >= 1) {

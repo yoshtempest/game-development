@@ -60,15 +60,27 @@ export function BabidiClone({ clone, battleScaleX, battleScaleY }: Props) {
           <img className={`${styles.half} ${styles.right}`} src={src} alt="" />
         </div>
       )}
-      <img
-        src={src}
-        alt="babidi clone"
-        className={styles.clone}
+      <div
         style={{
+          position: "absolute",
           left: clone.x * battleScaleX,
           top: clone.y * battleScaleY,
+          transform: `scaleX(${clone.flipped ? -1 : 1})`,
+          zIndex: 14,
+          pointerEvents: "none",
         }}
-      />
+      >
+        <img
+          src={src}
+          alt="babidi clone"
+          className={styles.clone}
+          style={{
+            left: 0,
+            top: 0,
+            transform: "translate(-50%, -100%)",
+          }}
+        />
+      </div>
     </>
   );
 }
