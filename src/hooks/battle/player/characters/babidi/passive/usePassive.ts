@@ -4,7 +4,7 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import type { BabidiCloneVisual } from "@/utils/types/character/babidi";
 
 const CLONE_COUNT = 8;
-const SPAWN_INTERVAL_MS = 200;
+const SPAWN_INTERVAL_MS = 500;
 const RUN_STAGGER_MS = 50;
 const RUN_DURATION_MS = 600;
 
@@ -53,6 +53,7 @@ export function useBabidiPassive({
     for (let i = 0; i < CLONE_COUNT; i++) {
       timersRef.current.push(
         setTimeout(() => {
+          playSound("babidiDefeat");
           const clone: BabidiCloneVisual = {
             id: `babidi-clone-${Date.now()}-${i}`,
             x: baseX + i * 100,
@@ -70,9 +71,6 @@ export function useBabidiPassive({
     const runStart = spawnDuration;
     timersRef.current.push(
       setTimeout(() => {
-        // First clone plays defeat.mp3 once.
-        playSound("babidiDefeat");
-
         for (let i = 0; i < CLONE_COUNT; i++) {
           timersRef.current.push(
             setTimeout(() => {
