@@ -1180,14 +1180,15 @@ export function useBattleCombat({
   const canCharge =
     player.character !== "srGuaxinim" && playerLevel >= CHARGE_ATTACK_MIN_LEVEL;
 
-  const controlsDisabled =
+  const baseControlsDisabled =
     isPausedRef.current ||
     honoredSequence ||
     isPhaseTransitioning ||
     isThrown ||
     alfaIntroActive ||
-    isDragging ||
-    babidiPassiveDebuff;
+    isDragging;
+
+  const controlsDisabled = baseControlsDisabled || babidiPassiveDebuff;
 
   // ── Habilidades ativas do SrGuaxinim e da Laricell ──────────────────────────
   // Cada uma tem o próprio botão e cooldown e reaproveita o pipeline genérico
@@ -1270,6 +1271,8 @@ export function useBattleCombat({
   }, [activeAbilityCooldownTick]);
 
   useBattleControls({
+    // O debuff da passiva do babidi desabilita habilidades, mas NÃO o ataque básico.
+    disabled: baseControlsDisabled,
     attack: () => {
       if (freezeActionsUntilRef.current > Date.now()) return;
       if (isGrabbedRef.current && grabFlippedRef.current) return;
@@ -1295,7 +1298,6 @@ export function useBattleCombat({
       if (freezeActionsUntilRef.current > Date.now()) return;
       handlePlayerHit();
     },
-    disabled: controlsDisabled,
     playerState: player.state,
     onChargePress: canCharge
       ? () => {
