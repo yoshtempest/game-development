@@ -2,6 +2,7 @@ import type { Props } from "./types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import type { BabidiCloneVisual } from "@/utils/types/character/babidi";
+import { babidiSoundPath } from "@/utils/paths/song/characters/babidiPath";
 
 const CLONE_COUNT = 8;
 const SPAWN_INTERVAL_MS = 500;
@@ -16,7 +17,6 @@ export function useBabidiPassive({
   getPlayerMaxHp,
   getNpc,
   onExplode,
-  playSound,
   freezeActionsUntilRef,
 }: Props) {
   const usedRef = useRef(false);
@@ -53,7 +53,8 @@ export function useBabidiPassive({
     for (let i = 0; i < CLONE_COUNT; i++) {
       timersRef.current.push(
         setTimeout(() => {
-          playSound("babidiDefeat");
+          const audio = new Audio(babidiSoundPath("defeat.mp3").src);
+          audio.play().catch(() => {});
           const clone: BabidiCloneVisual = {
             id: `babidi-clone-${Date.now()}-${i}`,
             x: baseX + i * 100,
