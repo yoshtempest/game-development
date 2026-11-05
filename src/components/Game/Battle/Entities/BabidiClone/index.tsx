@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { npcPathProjectile, playerAbilityPath } from "@/utils/paths";
+import styles from "./styles.module.css";
 import type { BabidiCloneVisual } from "@/utils/types/character/babidi";
 
 type Props = {
@@ -8,6 +10,13 @@ type Props = {
 };
 
 export function BabidiClone({ clone, battleScaleX, battleScaleY }: Props) {
+  const [splitting, setSplitting] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setSplitting(false), 500);
+    return () => clearTimeout(t);
+  }, []);
+
   if (clone.exploded) {
     return (
       <img
@@ -26,24 +35,36 @@ export function BabidiClone({ clone, battleScaleX, battleScaleY }: Props) {
       />
     );
   }
+
   const src =
     clone.state === "run"
       ? playerAbilityPath("babidi", "passive", "cloneRun.svg")
       : playerAbilityPath("babidi", "passive", "cloneIdle.svg");
+
   return (
-    <img
-      src={src}
-      alt="babidi clone"
-      style={{
-        position: "absolute",
-        left: clone.x * battleScaleX,
-        top: clone.y * battleScaleY,
-        transform: "translate(-50%, -100%)",
-        width: 80,
-        height: 80,
-        zIndex: 15,
-        pointerEvents: "none",
-      }}
-    />
+    <>
+      {splitting && (
+        <div
+          className={styles.split}
+          style={{
+            left: clone.x * battleScaleX,
+            top: clone.y * battleScaleY,
+            transform: "translate(-50%, -100%)",
+          }}
+        >
+          <img className={`${styles.half} ${styles.left}`} src={src} alt="" />
+          <img className={`${styles.half} ${styles.right}`} src={src} alt="" />
+        </div>
+      )}
+      <img
+        src={src}
+        alt="babidi clone"
+        className={styles.clone}
+        style={{
+          left: clone.x * battleScaleX,
+          top: clone.y * battleScaleY,
+        }}
+      />
+    </>
   );
 }
