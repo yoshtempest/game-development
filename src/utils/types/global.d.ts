@@ -797,6 +797,7 @@ declare global {
     | "domainInitiate"
     | "natsukiOpenedDomain"
     | "reversalRed"
+    | "babidiDefeat"
     | "openPortal"
     | "portalTeleport"
     | "shot"

@@ -59,6 +59,7 @@ export function createSounds() {
     reversalRed: natsukiSoundPath("reversalRed.mp3"),
     portalTeleport: babidiSoundPath("teleport.mp3"),
     openPortal: babidiSoundPath("openPortal.mp3"),
+    babidiDefeat: babidiSoundPath("defeat.mp3"),
     shot: babidiSoundPath("shot.mp3"),
     missile: babidiSoundPath("missile.mp3"),
     natsukiRioiki: natsukiSoundPath("rioiki.mp3"),

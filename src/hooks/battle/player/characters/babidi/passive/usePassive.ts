@@ -41,7 +41,7 @@ export function useBabidiPassive({
     const spawnDuration = CLONE_COUNT * SPAWN_INTERVAL_MS;
     freezeActionsUntilRef.current = Math.max(
       freezeActionsUntilRef.current,
-      Date.now() + spawnDuration + CLONE_COUNT * RUN_STAGGER_MS + RUN_DURATION_MS + 400,
+      Date.now() + spawnDuration,
     );
     setPlayer((p) => ({ ...p, state: "idle" }));
 
@@ -71,7 +71,7 @@ export function useBabidiPassive({
     timersRef.current.push(
       setTimeout(() => {
         // First clone plays defeat.mp3 once.
-        playSound("defeat");
+        playSound("babidiDefeat");
 
         for (let i = 0; i < CLONE_COUNT; i++) {
           timersRef.current.push(

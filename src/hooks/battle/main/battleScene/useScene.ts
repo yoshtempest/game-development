@@ -186,9 +186,7 @@ export function useBattleScene({
   const honoredOneEnabled =
     getCharacterPassive(player.character, "honoredOne") != null && !training;
 
-  const babidiPassiveEnabled =
-    getCharacterPassive(player.character, "babidiCloneBurst") != null &&
-    !training;
+  const babidiPassiveEnabled = player.character === "babidi" && !training;
 
   const {
     honoredOneActiveRef,
