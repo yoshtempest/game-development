@@ -53,11 +53,12 @@ export function useBabidiPassive({
     for (let i = 0; i < CLONE_COUNT; i++) {
       timersRef.current.push(
         setTimeout(() => {
+          console.log("babidi passive spawn clone", i);
           const audio = new Audio(babidiSoundPath("defeat.mp3").src);
           audio.play().catch(() => {});
           const clone: BabidiCloneVisual = {
             id: `babidi-clone-${Date.now()}-${i}`,
-            x: baseX + i * 100,
+            x: baseX + i * 20,
             y: baseY,
             state: "idle",
             exploded: false,
@@ -70,8 +71,10 @@ export function useBabidiPassive({
 
     // After all spawned, start sequential run+explosion.
     const runStart = spawnDuration;
+    console.log("babidi passive runStart scheduled at", runStart);
     timersRef.current.push(
       setTimeout(() => {
+        console.log("babidi passive RUN START");
         for (let i = 0; i < CLONE_COUNT; i++) {
           timersRef.current.push(
             setTimeout(() => {
@@ -86,7 +89,7 @@ export function useBabidiPassive({
 
               // Animate this clone toward the nearest enemy (NPC).
               const npc = getNpc();
-              const startX = baseX + i * 100;
+              const startX = baseX + i * 20;
               const targetX = npc.x;
               const targetY = npc.y;
               const stepMs = 16;

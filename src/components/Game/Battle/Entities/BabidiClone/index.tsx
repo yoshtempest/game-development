@@ -13,9 +13,13 @@ export function BabidiClone({ clone, battleScaleX, battleScaleY }: Props) {
   const [splitting, setSplitting] = useState(true);
 
   useEffect(() => {
-    const t = setTimeout(() => setSplitting(false), 500);
+    console.log("BabidiClone mount", clone.id, clone.x, clone.y);
+    const t = setTimeout(() => {
+      console.log("BabidiClone split done", clone.id);
+      setSplitting(false);
+    }, 500);
     return () => clearTimeout(t);
-  }, []);
+  }, [clone.id, clone.x, clone.y]);
 
   if (clone.exploded) {
     return (
