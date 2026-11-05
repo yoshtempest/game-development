@@ -40,6 +40,7 @@ import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/haka
 import { useBabidiDomainExpansion } from "@/hooks/battle/player/characters/babidi/domainExpansion/useBabidiDomainExpansion";
 import { useBabidiBombDrop } from "@/hooks/battle/player/characters/babidi/bombDrop/useBombDrop";
 import { BabidiFishingNetConstants } from "@/data/characters/babidi";
+import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import {
   useAtomic,
@@ -254,6 +255,7 @@ export function useBattleCombat({
     y: number;
   } | null>(null);
   const fishingNetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fishingNetPushTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [fishingNetRemaining, setFishingNetRemaining] = useState(0);
   const fishingNetReadyAtRef = useRef(0);
   const machineGamaShieldRef = useRef(0);
@@ -264,6 +266,10 @@ export function useBattleCombat({
       if (fishingNetTimerRef.current) {
         clearTimeout(fishingNetTimerRef.current);
         fishingNetTimerRef.current = null;
+      }
+      if (fishingNetPushTimerRef.current) {
+        clearInterval(fishingNetPushTimerRef.current);
+        fishingNetPushTimerRef.current = null;
       }
     };
   }, []);
@@ -910,12 +916,40 @@ export function useBattleCombat({
       clearTimeout(fishingNetTimerRef.current);
       fishingNetTimerRef.current = null;
     }
+    if (fishingNetPushTimerRef.current) {
+      clearInterval(fishingNetPushTimerRef.current);
+      fishingNetPushTimerRef.current = null;
+    }
+
+    // A rede cai sobre o alvo. Se o alvo estiver acima do chão (em y), a rede
+    // empurra o inimigo até o chão de y da batalha enquanto cai.
+    const groundY = BATTLE_SPAWN.npc.y;
+    const enemyAboveGround = npc.y < groundY;
+    const finalEnemyY = enemyAboveGround ? groundY : npc.y;
     const net = {
       x: npc.x,
-      y: npc.y - 60,
+      y: finalEnemyY - 60,
     };
     setFishingNet(net);
     fishingNetRef.current = net;
+
+    if (enemyAboveGround) {
+      const startY = npc.y;
+      const fallMs = BabidiFishingNetConstants.FALL_MS;
+      const pushStart = Date.now();
+      fishingNetPushTimerRef.current = setInterval(() => {
+        const t = Math.min(1, (Date.now() - pushStart) / fallMs);
+        const y = startY + (groundY - startY) * t;
+        npc.updateNpc({ y });
+        if (t >= 1) {
+          if (fishingNetPushTimerRef.current) {
+            clearInterval(fishingNetPushTimerRef.current);
+            fishingNetPushTimerRef.current = null;
+          }
+        }
+      }, 16);
+    }
+
     const rootMs = BabidiFishingNetConstants.ROOT_MS;
     npcRootedUntilRef.current = Date.now() + rootMs;
     const cooldownMs = applyCooldownReduction(
@@ -934,8 +968,7 @@ export function useBattleCombat({
     battle.playerMaxHp,
     battle.char.stats.cooldownReduction,
     battleManaRef,
-    npc.x,
-    npc.y,
+    npc,
     npcRootedUntilRef,
     startAbility,
     onAbilityUsed,

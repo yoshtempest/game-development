@@ -1,0 +1,28 @@
+.net {
+  position: absolute;
+  z-index: 16;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transform: translate(-79%, -65%);
+  animation: netFall 400ms ease-in both;
+}
+
+.net img {
+  width: 300px;
+  height: 300px;
+  opacity: 1;
+}
+
+@keyframes netFall {
+  from {
+    transform: translate(-79%, calc(-65% - var(--fall-distance, 0px)));
+    opacity: 0;
+  }
+  to {
+    transform: translate(-79%, -65%);
+    opacity: 1;
+  }
+}

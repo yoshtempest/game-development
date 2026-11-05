@@ -54,6 +54,8 @@ export const BabidiFishingNetConstants = {
   COOLDOWN_MS: TEN_THOUSAND_MS,
   /** Tempo que o inimigo principal fica imobilizado. */
   ROOT_MS: THREE_THOUSAND_MS,
+  /** Duração da animação de queda da rede sobre o alvo (ms). */
+  FALL_MS: 400,
 } as const;
 
 /** Expansão de Domínio do babidi (Machine Gama). */
