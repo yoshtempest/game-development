@@ -795,6 +795,7 @@ export function useBattleScene({
     resetVastolord,
     vastolordUsedRef,
     resetHonoredOne,
+    resetBabidiPassive: babidiPassive.reset,
     resetTimeScale,
     clearBlink,
     clearDivergentFist,

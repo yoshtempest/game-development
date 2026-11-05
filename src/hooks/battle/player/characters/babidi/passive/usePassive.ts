@@ -39,6 +39,14 @@ export function useBabidiPassive({
     clonePositionsRef.current = {};
   }, []);
 
+  const reset = useCallback(() => {
+    usedRef.current = false;
+    setActive(false);
+    setClones([]);
+    setDebuff(false);
+    clearAll();
+  }, [clearAll]);
+
   const surviveLethalHitRef = useLatestRef(() => {
     if (!enabled || usedRef.current) return false;
     usedRef.current = true;
@@ -185,5 +193,6 @@ export function useBabidiPassive({
     clones,
     debuff,
     surviveLethalHitRef,
+    reset,
   };
 }

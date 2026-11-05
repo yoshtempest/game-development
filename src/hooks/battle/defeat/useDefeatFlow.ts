@@ -22,6 +22,7 @@ export function useDefeatFlow({
   resetVastolord,
   vastolordUsedRef,
   resetHonoredOne,
+  resetBabidiPassive,
   resetTimeScale,
   clearBlink,
   clearDivergentFist,
@@ -88,6 +89,7 @@ export function useDefeatFlow({
     resetVastolord();
     vastolordUsedRef.current = false;
     resetHonoredOne();
+    resetBabidiPassive?.();
     resetTimeScale();
     clearBlink();
     clearDivergentFist();
@@ -129,6 +131,7 @@ export function useDefeatFlow({
     resetVastolord,
     vastolordUsedRef,
     resetHonoredOne,
+    resetBabidiPassive,
     resetTimeScale,
     clearBlink,
     clearDivergentFist,

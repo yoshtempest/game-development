@@ -2,8 +2,8 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 80px;
-  height: 80px;
+  width: 6vw;
+  height: 6vw;
   pointer-events: none;
   z-index: 16;
 }

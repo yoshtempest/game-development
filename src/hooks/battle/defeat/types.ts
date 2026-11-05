@@ -24,6 +24,7 @@ export type Props = {
   resetVastolord: () => void;
   vastolordUsedRef: RefObject<boolean>;
   resetHonoredOne: () => void;
+  resetBabidiPassive?: () => void;
   resetTimeScale: () => void;
   clearBlink: () => void;
   clearDivergentFist: () => void;
