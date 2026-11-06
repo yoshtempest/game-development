@@ -25,6 +25,7 @@ import Talking from "@/components/Game/Interactions/Talking";
 import { trueVandinhaBattleDialogue } from "@/data/dialogues/trueVandinhaBattle/one";
 import { useGameLayout } from "@/hooks/game/useGameLayout";
 import { useBattleScene } from "@/hooks/battle/main/battleScene/useScene";
+import { useBattleCamera } from "@/hooks/battle/camera/useBattleCamera";
 import { BattleEntities } from "@/components/Game/Battle/Entities";
 import { BattleMap } from "@/components/Game/Map/Battle";
 import { DamageNumbers } from "@/components/Game/Battle/Effects/DamageNumbers";
@@ -56,8 +57,6 @@ import { useTitles } from "@/contexts/TitleContext";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { useBattleMana } from "@/contexts/BattleManaContext";
-import { useCameraShake } from "@/hooks/battle/effects/useCameraShake";
-import { VASTOLORD_ROAR_SCREAM_FRAMES } from "@/data/characters/marshadow/vastolordForm";
 import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import {
@@ -383,79 +382,6 @@ export function BattleScene(props: Props) {
     y: (BATTLE_SPAWN.player.y / ProjectileConstants.MAP_HEIGHT) * 100,
   });
 
-  const maxOffsetX = screenWidth - containerWidth;
-  const bgXMin = initialBgPosRef.current.x;
-  const bgXMax =
-    initialBgPosRef.current.x + (maxOffsetX * 200) / containerWidth;
-
-  const focusEntity = cameraFocus?.entity === "npc" ? npc : player;
-
-  // Durante a Expansão de Domínio a câmera acompanha a frente do mugetsuEffect
-  // (e não o jogador) enquanto ele varre o mapa de uma ponta à outra. O Y fica
-  // ancorado no chão (y do jogador): centralizar no meio do mapa subiria a
-  // câmera de mais e esconderia o jogador, que está em BATTLE_SPAWN.player.y.
-  const focus = mugetsuSweep
-    ? { x: mugetsuSweep.x, y: player.y }
-    : sphereFocus
-        ? { x: sphereFocus.x, y: sphereFocus.y }
-        : { x: focusEntity.x, y: focusEntity.y };
-
-  const targetBgX = Math.max(
-    bgXMin,
-    Math.min((focus.x / ProjectileConstants.MAP_WIDTH) * 100, bgXMax),
-  );
-  const targetBgY = Math.max(
-    0,
-    Math.min((focus.y / ProjectileConstants.MAP_HEIGHT) * 100, 100),
-  );
-
-  const [bgPosX, setBgPosX] = useState(targetBgX);
-  const [bgPosY, setBgPosY] = useState(targetBgY);
-
-  const bgTargetRef = useRef({ x: targetBgX, y: targetBgY });
-  bgTargetRef.current.x = targetBgX;
-  bgTargetRef.current.y = targetBgY;
-
-  const worldOffsetX =
-    (containerWidth * 0.5 * (bgPosX - initialBgPosRef.current.x)) / 100;
-  const worldOffsetY =
-    (containerHeight * 0.5 * (bgPosY - initialBgPosRef.current.y)) / 100;
-
-  const baseZoom = sphereFocus ? 1 : (cameraFocus?.zoom ?? 1);
-  // Expansão de Domínio: leve zoomOut de 1.4x enquanto a habilidade está ativa
-  // — o mugetsuEffect é gigante em altura e o zoom revela mais do mapa.
-  const domainZoom = domainExpansionActive ? 1 / 1.4 : 1;
-  const zoomTarget = baseZoom * domainZoom;
-
-  const [zoom, setZoom] = useState(zoomTarget);
-  const zoomTargetRef = useRef(zoomTarget);
-  zoomTargetRef.current = zoomTarget;
-
-  useEffect(() => {
-    const diff = Math.abs(zoom - zoomTargetRef.current);
-    if (diff < 0.001) {
-      if (zoom !== zoomTargetRef.current) {
-        setZoom(zoomTargetRef.current);
-      }
-      return;
-    }
-
-    const id = requestAnimationFrame(() => {
-      setZoom((prev) => {
-        const t = zoomTargetRef.current;
-        const next = prev + (t - prev) * 0.12;
-        return Math.abs(next - t) < 0.001 ? t : next;
-      });
-    });
-
-    return () => cancelAnimationFrame(id);
-  }, [zoom, zoomTarget]);
-
-  const focusX = focus.x;
-  const focusY = focus.y;
-
-  // Tremor enquanto um projétil terrestre que detona (a burst do hungryKing)
-  // atravessa a arena na direção do jogador.
   const groundShakeActive = npc.projectiles.some(
     (p) =>
       p.variant === "ground" &&
@@ -464,38 +390,34 @@ export function BattleScene(props: Props) {
       (p.dirX > 0 ? p.x < player.x : p.x > player.x),
   );
 
-  // Tremor leve enquanto o Vastolord está num quadro de grito da transformação
-  // (screamOne/Two/Three) — acompanha o empurrão contínuo dos inimigos.
-  const screamShakeActive =
-    transformationFrame != null &&
-    transformationFrame < VASTOLORD_ROAR_SCREAM_FRAMES;
-
-  const shake = useCameraShake(
-    battle.damageNumbers,
+  const camera = useBattleCamera({
+    containerWidth,
+    containerHeight,
+    screenWidth,
+    initialBgPosRef,
+    player,
+    npc: npc as unknown as {
+      x: number;
+      y: number;
+      projectiles: Array<{
+        variant?: string;
+        detonatesOnHit?: boolean;
+        impacted?: boolean;
+        dirX: number;
+        x: number;
+      }>;
+    },
+    cameraFocus,
+    sphereFocus,
+    mugetsuSweep,
+    domainExpansionActive,
+    damageNumbers: battle.damageNumbers,
     groundShakeActive,
     castActive,
-    screamShakeActive,
-  );
+    transformationFrame,
+  });
 
-  const bgBaseW = containerWidth * 1.5;
-  const bgBaseH = containerHeight * 1.5;
-  const focusScreenX = focusX - (worldOffsetX + shake.x);
-  const focusScreenY = focusY - (worldOffsetY + shake.y);
-
-  const denomX = containerWidth - zoom * bgBaseW;
-  const denomY = containerHeight - zoom * bgBaseH;
-  const adjustedBgX =
-    denomX === 0
-      ? bgPosX
-      : (zoom * (containerWidth - bgBaseW) * bgPosX +
-          100 * (1 - zoom) * focusScreenX) /
-        denomX;
-  const adjustedBgY =
-    denomY === 0
-      ? bgPosY
-      : (zoom * (containerHeight - bgBaseH) * bgPosY +
-          100 * (1 - zoom) * focusScreenY) /
-        denomY;
+  const { worldOffsetX, worldOffsetY, zoom, shake, adjustedBgX, adjustedBgY } = camera;
 
   const battleScaleX = screenWidth / ProjectileConstants.MAP_WIDTH;
   const battleScaleY = screenHeight / ProjectileConstants.MAP_HEIGHT;
@@ -523,35 +445,6 @@ export function BattleScene(props: Props) {
     })),
   ];
 
-  useEffect(() => {
-    const dx = Math.abs(bgPosX - bgTargetRef.current.x);
-    const dy = Math.abs(bgPosY - bgTargetRef.current.y);
-    if (dx < 0.5 && dy < 0.5) {
-      if (
-        bgPosX !== bgTargetRef.current.x ||
-        bgPosY !== bgTargetRef.current.y
-      ) {
-        setBgPosX(bgTargetRef.current.x);
-        setBgPosY(bgTargetRef.current.y);
-      }
-      return;
-    }
-
-    const id = requestAnimationFrame(() => {
-      setBgPosX((prev) => {
-        const t = bgTargetRef.current.x;
-        const next = prev + (t - prev) * 0.1;
-        return Math.abs(next - t) < 0.5 ? t : next;
-      });
-      setBgPosY((prev) => {
-        const t = bgTargetRef.current.y;
-        const next = prev + (t - prev) * 0.1;
-        return Math.abs(next - t) < 0.5 ? t : next;
-      });
-    });
-
-    return () => cancelAnimationFrame(id);
-  }, [bgPosX, bgPosY, targetBgX, targetBgY]);
 
   useEffect(() => {
     setBattleCollision({
@@ -772,8 +665,8 @@ export function BattleScene(props: Props) {
           cameraX={worldOffsetX + shake.x}
           cameraY={worldOffsetY + shake.y}
           zoom={zoom}
-          focusX={focusX}
-          focusY={focusY}
+          focusX={camera.focus.x}
+          focusY={camera.focus.y}
         >
           {map && <BattleMap map={map} />}
 
