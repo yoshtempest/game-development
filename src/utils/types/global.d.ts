@@ -550,6 +550,7 @@ declare global {
     movementSpeed: number;
     hasPeru?: boolean;
     moving?: boolean;
+    machineGamaControl?: boolean;
     grabbedUntil?: number;
     bleedUntil: number;
     burnUntil: number;

@@ -68,6 +68,11 @@ export function useBattleGravity(
       if (playerModeInternalRef.current === "menu") return;
 
       setPlayer((p) => {
+        // Machine Gama: gravidade desativada enquanto a forma estiver ativa.
+        if (p.machineGamaControl) {
+          return settle(p, { ...p, velY: 0, state: "jump" });
+        }
+
         if (p.throwStartTime > 0) {
           return settle(p, { ...p, velY: 0, state: "fallen" });
         }

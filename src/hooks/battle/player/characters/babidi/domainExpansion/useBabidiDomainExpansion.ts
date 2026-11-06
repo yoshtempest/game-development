@@ -158,6 +158,7 @@ export function useBabidiDomainExpansion({
         // Babidi desaparece e o jogador passa a controlar o Machine Gama.
         setMachineGama(null);
         setMachineGamaControl(true);
+        setPlayer((p) => ({ ...p, machineGamaControl: true, state: "jump" }));
       }, 1500);
     }, 8000);
   }, [

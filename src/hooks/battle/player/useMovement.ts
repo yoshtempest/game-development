@@ -72,6 +72,7 @@ export function useBattleMovement(
   const idleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const downLockRef = useRef(false);
+  const downTapRef = useRef(0);
   const isJumping = useRef(false);
   const hasDoubleJumped = useRef(false);
   const hasUsedFallingAttack = useRef(false);
@@ -198,6 +199,11 @@ export function useBattleMovement(
       if (isPlayerFrozen(p)) return p;
       if (ALL_PREDICATES.isInvulnerable(p.state)) return p;
 
+      // Machine Gama: segurar/subir flutua (sem gravidade).
+      if (p.machineGamaControl) {
+        return { ...p, y: Math.max(0, p.y - 8), velY: 0, state: "jump" };
+      }
+
       const tree = getSkillTree(p.character);
       const skill = tree.skills.find((s) => s.id === "doubleJump");
       const level = progressRef.current[p.character]?.level ?? 1;
@@ -248,6 +254,16 @@ export function useBattleMovement(
     setPlayer((p) => {
       if (isPlayerAttackHolding(p)) return p;
       if (isPlayerFrozen(p)) return p;
+      // Machine Gama: double-tap down reativa a gravidade.
+      if (p.machineGamaControl) {
+        const now = Date.now();
+        if (now - (downTapRef?.current ?? 0) < 300) {
+          downTapRef.current = 0;
+          return { ...p, machineGamaControl: false, state: "falling", velY: 0 };
+        }
+        downTapRef.current = now;
+        return p;
+      }
       return crouchToggle(p);
     });
   }

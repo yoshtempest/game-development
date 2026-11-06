@@ -1875,6 +1875,21 @@ export function useBattleCombat({
 
   machineGamaBreakRef.current = babidiBreakMachineGama;
 
+  // Machine Gama: consumo de energia dimensional enquanto flutua.
+  useEffect(() => {
+    if (!player.machineGamaControl) return;
+    const interval = setInterval(() => {
+      battle.setDelicia((d) => {
+        if (d <= 0) {
+          setPlayer((p) => ({ ...p, machineGamaControl: false, state: "falling" }));
+          return 0;
+        }
+        return d - 1;
+      });
+    }, 100);
+    return () => clearInterval(interval);
+  }, [player.machineGamaControl, battle, setPlayer]);
+
   // Domínio Machine Gama: dispara 8 mísseis (1 a cada 500ms) ao ativar.
   useEffect(() => {
     if (!babidiDomainActive) return;
