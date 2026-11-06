@@ -257,6 +257,7 @@ export function BattleScene(props: Props) {
     domainExpansionActive,
     babidiMachineGama,
     babidiMachineGamaControl,
+    babidiMachineGamaSelfDestruct,
     babidiMachineGamaShield,
     mugetsuBlink,
     disintegrating,
@@ -1304,6 +1305,15 @@ export function BattleScene(props: Props) {
                   disabled={controlsDisabled || !fishingNetUsable}
                   onClick={fishingNetPress}
                 />
+                {babidiMachineGamaControl && (
+                  <button
+                    type="button"
+                    onClick={babidiMachineGamaSelfDestruct}
+                    style={{ marginLeft: 8 }}
+                  >
+                    Autodestruição
+                  </button>
+                )}
               </>
             );
           })()}

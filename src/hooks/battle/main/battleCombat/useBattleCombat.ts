@@ -1190,7 +1190,8 @@ export function useBattleCombat({
     isPhaseTransitioning ||
     isThrown ||
     alfaIntroActive ||
-    isDragging;
+    isDragging ||
+    !!player.machineGamaControl;
 
   const controlsDisabled = baseControlsDisabled || babidiPassiveDebuff;
 
@@ -1883,6 +1884,13 @@ export function useBattleCombat({
 
   machineGamaBreakRef.current = babidiBreakMachineGama;
 
+  const babidiMachineGamaSelfDestruct = useCallback(() => {
+    if (!player.machineGamaControl) return;
+    const damage = Math.floor(battle.npcMaxHp * 0.8);
+    battle.setNpcHP((hp) => Math.max(0, hp - damage));
+    setPlayer((p) => ({ ...p, machineGamaControl: false, state: "idle" }));
+  }, [player.machineGamaControl, battle, setPlayer]);
+
   // Machine Gama: consumo de energia dimensional enquanto flutua.
   useEffect(() => {
     if (!player.machineGamaControl) return;
@@ -2113,6 +2121,7 @@ export function useBattleCombat({
     babidiDomainActive,
     babidiMachineGama,
     babidiMachineGamaControl,
+    babidiMachineGamaSelfDestruct,
     babidiMachineGamaShield,
     mugetsuBlink,
     // Mesmo par de props para os três efeitos: o marshadow usa o mugetsu
