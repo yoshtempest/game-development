@@ -20,6 +20,7 @@ export type BabidiDomainExpansionApi = {
   machineGamaShield: number;
   machineGamaShieldRef: React.RefObject<number>;
   breakMachineGama: () => void;
+  machineGamaControl: boolean;
 };
 
 export type BabidiDomainExpansionProps = {
@@ -56,6 +57,7 @@ export function useBabidiDomainExpansion({
   const [shattering, setShattering] = useState(false);
   const [machineGama, setMachineGama] = useState<MachineGamaState>(null);
   const [machineGamaShield, setMachineGamaShield] = useState(0);
+  const [machineGamaControl, setMachineGamaControl] = useState(false);
   const activeRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const animRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -153,7 +155,9 @@ export function useBabidiDomainExpansion({
         activeRef.current = false;
         setActive(false);
         setShattering(false);
-        setMachineGama((p) => (p ? { ...p, state: "idle" } : p));
+        // Babidi desaparece e o jogador passa a controlar o Machine Gama.
+        setMachineGama(null);
+        setMachineGamaControl(true);
       }, 1500);
     }, 8000);
   }, [
@@ -184,5 +188,6 @@ export function useBabidiDomainExpansion({
     machineGamaShield,
     machineGamaShieldRef: shieldRef,
     breakMachineGama,
+    machineGamaControl,
   };
 }

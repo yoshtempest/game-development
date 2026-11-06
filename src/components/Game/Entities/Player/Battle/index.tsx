@@ -43,6 +43,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     mugetsuBlink = null,
     levelUpParticles = false,
     babidiAttackVariant,
+    babidiMachineGamaControl = false,
     babidiShieldSides = NO_BABIDI_SHIELD,
     onBabidiShieldEnd,
     hakai = false,
@@ -68,6 +69,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     preAtomic,
     outroExpression,
     babidiAttackVariant,
+    babidiMachineGamaControl,
     hakai,
   });
 

@@ -83,6 +83,7 @@ export function BattleEntities({
   babidiClones = [],
   babidiBombDrop = null,
   babidiAttackVariant,
+  babidiMachineGamaControl = false,
   babidiShieldSides,
   onBabidiShieldEnd,
   sphere = null,
@@ -186,6 +187,7 @@ export function BattleEntities({
         atomicFlash={atomicFlash}
         mugetsuBlink={mugetsuBlink}
         babidiAttackVariant={babidiAttackVariant}
+        babidiMachineGamaControl={babidiMachineGamaControl}
         babidiShieldSides={babidiShieldSides}
         onBabidiShieldEnd={onBabidiShieldEnd}
         hakai={hakai}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { idleFrameSprite, resolveBattleSprite } from "@/utils/paths";
+import { idleFrameSprite, playerAbilityPath, resolveBattleSprite } from "@/utils/paths";
 import { resolveSpriteState } from "@/gameRules/battle/playerStates";
 import { getIdleFrames, IDLE_FRAME_MS } from "@/data/sprites/idleFrames";
 
@@ -17,6 +17,7 @@ interface UseBattleSpriteParams {
   preAtomic: boolean;
   outroExpression?: "victory" | "defeat" | null;
   babidiAttackVariant?: BabidiAttackVariant;
+  babidiMachineGamaControl?: boolean;
   hakai?: boolean;
 }
 
@@ -30,11 +31,12 @@ export function useBattleSprite({
   preAtomic,
   outroExpression = null,
   babidiAttackVariant,
+  babidiMachineGamaControl = false,
   hakai = false,
 }: UseBattleSpriteParams) {
   const resolvedState = resolveSpriteState(state);
 
-  const baseSrc = resolvePlayerSprite({
+  let baseSrc = resolvePlayerSprite({
     character,
     state,
     weapon,
@@ -46,6 +48,10 @@ export function useBattleSprite({
     babidiAttackVariant,
     hakai,
   });
+
+  if (character === "babidi" && babidiMachineGamaControl) {
+    baseSrc = playerAbilityPath("babidi", "domainExpansion", "machineGama/idle.svg");
+  }
 
   // Sequência idle do personagem (e forma):1 frame = parado, >1 = animado.
   const idleFrames = getIdleFrames(character, form);

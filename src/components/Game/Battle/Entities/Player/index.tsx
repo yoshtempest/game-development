@@ -29,6 +29,8 @@ type Props = {
   mugetsuBlink?: "out" | "in" | null;
   /** Pose de mão do sprite do ataque básico do babidi. */
   babidiAttackVariant?: BabidiAttackVariant;
+  /** Controle do Machine Gama pelo jogador após a expansão de domínio. */
+  babidiMachineGamaControl?: boolean;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
   babidiShieldSides?: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
@@ -51,6 +53,7 @@ export function Player({
   atomicFlash = false,
   mugetsuBlink = null,
   babidiAttackVariant,
+  babidiMachineGamaControl = false,
   babidiShieldSides,
   onBabidiShieldEnd,
   hakai = false,
@@ -83,6 +86,7 @@ export function Player({
       atomicFlash={atomicFlash}
       mugetsuBlink={mugetsuBlink}
       babidiAttackVariant={babidiAttackVariant}
+      babidiMachineGamaControl={babidiMachineGamaControl}
       babidiShieldSides={babidiShieldSides}
       onBabidiShieldEnd={onBabidiShieldEnd}
       levelUpParticles

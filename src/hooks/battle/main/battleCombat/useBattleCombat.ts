@@ -1856,6 +1856,7 @@ export function useBattleCombat({
     machineGama: babidiMachineGama,
     machineGamaShield: babidiMachineGamaShield,
     breakMachineGama: babidiBreakMachineGama,
+    machineGamaControl: babidiMachineGamaControl,
   } = useBabidiDomainExpansion({
     player,
     setPlayer,
@@ -2088,6 +2089,7 @@ export function useBattleCombat({
     domainExpansionActive,
     babidiDomainActive,
     babidiMachineGama,
+    babidiMachineGamaControl,
     babidiMachineGamaShield,
     mugetsuBlink,
     // Mesmo par de props para os três efeitos: o marshadow usa o mugetsu

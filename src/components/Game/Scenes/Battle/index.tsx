@@ -256,6 +256,7 @@ export function BattleScene(props: Props) {
     mugetsuSweep,
     domainExpansionActive,
     babidiMachineGama,
+    babidiMachineGamaControl,
     babidiMachineGamaShield,
     mugetsuBlink,
     disintegrating,
@@ -830,6 +831,7 @@ export function BattleScene(props: Props) {
             fishingNet={fishingNet}
             babidiBombDrop={babidiBombDrop}
             babidiAttackVariant={babidiAttackVariant}
+            babidiMachineGamaControl={babidiMachineGamaControl}
             babidiShieldSides={babidiShieldSides}
             onBabidiShieldEnd={onBabidiShieldEnd}
             sphere={sphere}

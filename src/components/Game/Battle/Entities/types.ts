@@ -125,6 +125,7 @@ export type Props = {
   babidiBombDrop?: BabidiBombDropVisual | null;
   /** Pose de mão do sprite do ataque básico do babidi. */
   babidiAttackVariant?: BabidiAttackVariant;
+  babidiMachineGamaControl?: boolean;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
   babidiShieldSides?: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
