@@ -26,6 +26,7 @@ import { trueVandinhaBattleDialogue } from "@/data/dialogues/trueVandinhaBattle/
 import { useGameLayout } from "@/hooks/game/useGameLayout";
 import { useBattleScene } from "@/hooks/battle/main/battleScene/useScene";
 import { useBattleCamera } from "@/hooks/battle/camera/useBattleCamera";
+import { BattleBackground } from "./components/BattleBackground";
 import { BattleEntities } from "@/components/Game/Battle/Entities";
 import { BattleMap } from "@/components/Game/Map/Battle";
 import { DamageNumbers } from "@/components/Game/Battle/Effects/DamageNumbers";
@@ -567,20 +568,14 @@ export function BattleScene(props: Props) {
           : undefined
       }
     >
-      <div className="BackgroundLayer">
-        {effectiveBackground && (
-          <div
-            className="BackgroundImage"
-            style={{
-              backgroundImage: `url(${effectiveBackground})`,
-              backgroundSize: `calc(150% * ${zoom})`,
-              backgroundPosition: `calc(${adjustedBgX}% + ${shake.x}px) calc(${adjustedBgY}% + ${shake.y}px)`,
-            }}
-          />
-        )}
-
-        {tvFlash && <div className="tvFlash" />}
-      </div>
+      <BattleBackground
+        effectiveBackground={effectiveBackground}
+        zoom={zoom}
+        adjustedBgX={adjustedBgX}
+        adjustedBgY={adjustedBgY}
+        shake={shake}
+        tvFlash={tvFlash}
+      />
       {/* Preenchimento do domínio: PRIMEIRO filho do `.Master`, para pintar
           como o `backgroundImage` da batalha — acima do fundo, abaixo de todo
           o resto (HUD do jogador e do NPC, ComboDisplay, SceneMap, intros) por
