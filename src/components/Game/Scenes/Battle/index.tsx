@@ -1,5 +1,4 @@
 import { BattleHUD } from "@/components/Game/Battle/HUD";
-import { BattleClear } from "@/components/Game/Battle/Modal/Clear";
 import { PetSkillButton } from "@/components/Game/Battle/Buttons/PetSkill";
 import { WeaponSwitchButton } from "@/components/Game/Battle/Buttons/WeaponSwitch";
 import { CursedEnergyButton } from "@/components/Game/Battle/Buttons/Natsuki/CursedEnergy";
@@ -27,17 +26,14 @@ import { useGameLayout } from "@/hooks/game/useGameLayout";
 import { useBattleScene } from "@/hooks/battle/main/battleScene/useScene";
 import { useBattleCamera } from "@/hooks/battle/camera/useBattleCamera";
 import { BattleBackground } from "./components/BattleBackground";
+import { BattleModals } from "./components/BattleModals";
 import { BattleEntities } from "@/components/Game/Battle/Entities";
 import { BattleMap } from "@/components/Game/Map/Battle";
 import { DamageNumbers } from "@/components/Game/Battle/Effects/DamageNumbers";
 import { LootPickup } from "@/components/Game/Battle/Effects/LootPickup";
 import { ComboDisplay } from "@/components/Game/Battle/Effects/ComboDisplay";
 import { StatusEffects } from "@/components/Game/Battle/Effects/StatusEffects";
-import { VictoryModal } from "@/components/Game/Battle/Modal/Victory";
-import { DefeatModal } from "@/components/Game/Battle/Modal/Defeat";
 import { BattleIntro } from "@/components/Game/Battle/Modal/Intro";
-import { BattleOutro } from "@/components/Game/Battle/Modal/Outro";
-import { BattleHighlight } from "@/components/Game/Battle/Modal/Highlight";
 import { ChargeParticles } from "@/components/Game/Battle/Effects/ChargeParticles";
 import { KokusenAnimation } from "@/components/Game/Battle/Effects/Natsuki/KokusenAnimation";
 import { DivergentFistAnimation } from "@/components/Game/Battle/Effects/Natsuki/DivergentFistAnimation";
@@ -783,51 +779,34 @@ export function BattleScene(props: Props) {
           )}
         </GameMap>
       </div>
-      {showClear && !isTraining && <BattleClear />}
-      {showOutro && !isTraining && (
-        <BattleOutro
-          character={player.character}
-          type={showOutro}
-          onNext={handleCloseOutro}
-        />
-      )}
-
-      {!showOutro && showHighlight && highlightData && !isTraining && (
-        <BattleHighlight
-          replay={highlightData}
-          onClose={handleCloseHighlight}
-        />
-      )}
-
-      {!showOutro && !showHighlight && showVictory && !isTraining && (
-        <VictoryModal
-          isOpen={showVictory}
-          character={player.character}
-          enemyType={npcType}
-          enemyLevel={npcLevel}
-          xpReward={xpReward}
-          rewards={lastRewards}
-          onContinue={handleContinue}
-          skipDelay={skipVictoryDelay}
-          elapsed={victoryElapsed}
-          bestTime={bestTime}
-          getReplayData={getReplayData}
-          isAlfa={isAlfa}
-          titleProgressSnapshot={titleProgressSnapshotRef.current}
-        />
-      )}
-
-      {!showOutro && !showHighlight && showDefeat && !isTraining && (
-        <DefeatModal
-          isOpen={showDefeat}
-          onContinue={handleRetry}
-          onBack={() => navigate(-1)}
-          progress={defeatProgress}
-          elapsed={defeatElapsed}
-          bestTime={bestTime}
-          showRetry={showRetry}
-        />
-      )}
+      <BattleModals
+        showClear={showClear}
+        isTraining={isTraining ?? false}
+        showOutro={showOutro}
+        handleCloseOutro={handleCloseOutro}
+        playerCharacter={player.character}
+        showHighlight={showHighlight}
+        highlightData={highlightData}
+        handleCloseHighlight={handleCloseHighlight}
+        showVictory={showVictory}
+        npcType={npcType}
+        npcLevel={npcLevel}
+        xpReward={xpReward}
+        lastRewards={lastRewards}
+        handleContinue={handleContinue}
+        skipVictoryDelay={skipVictoryDelay}
+        victoryElapsed={victoryElapsed}
+        bestTime={bestTime}
+        getReplayData={getReplayData}
+        isAlfa={isAlfa}
+        titleProgressSnapshot={titleProgressSnapshotRef.current}
+        showDefeat={showDefeat}
+        handleRetry={handleRetry}
+        navigate={navigate}
+        defeatProgress={defeatProgress}
+        defeatElapsed={defeatElapsed}
+        showRetry={showRetry}
+      />
 
       <ComboAction />
 

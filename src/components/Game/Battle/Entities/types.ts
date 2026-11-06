@@ -116,6 +116,7 @@ export type Props = {
   mugetsuBlink?: MugetsuBlink;
   /** Alvos sendo desintegrados em pó pela varredura. */
   disintegrating?: MugetsuDisintegrationTarget[];
+  domainExpansionActive?: boolean;
   /** Projéteis de energia do ataque básico do babidi. */
   babidiEnergyProjectiles?: BabidiEnergyProjectile[];
   babidiMissileProjectiles?: BabidiMissileProjectile[];
