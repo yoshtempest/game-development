@@ -4,35 +4,7 @@ import { BattleOutro } from "@/components/Game/Battle/Modal/Outro";
 import { BattleHighlight } from "@/components/Game/Battle/Modal/Highlight";
 import { VictoryModal } from "@/components/Game/Battle/Modal/Victory";
 import { DefeatModal } from "@/components/Game/Battle/Modal/Defeat";
-
-type Props = {
-  showClear: boolean;
-  isTraining: boolean;
-  showOutro: any;
-  handleCloseOutro: () => void;
-  playerCharacter: CharacterId;
-  showHighlight: boolean;
-  highlightData: any;
-  handleCloseHighlight: () => void;
-  showVictory: boolean;
-  npcType: string;
-  npcLevel: number;
-  xpReward: number;
-  lastRewards: any;
-  handleContinue: () => void;
-  skipVictoryDelay: boolean;
-  victoryElapsed: number;
-  bestTime: number;
-  getReplayData: any;
-  isAlfa: boolean;
-  titleProgressSnapshot: any;
-  showDefeat: boolean;
-  handleRetry: () => void;
-  navigate: (n: number) => void;
-  defeatProgress: number;
-  defeatElapsed: number;
-  showRetry: boolean;
-};
+import type { Props } from "./types";
 
 export function BattleModals(props: Props) {
   const {

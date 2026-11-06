@@ -1,13 +1,6 @@
 import type { CSSProperties } from "react";
+import type { Props } from "./types";
 
-type Props = {
-  effectiveBackground?: string;
-  zoom: number;
-  adjustedBgX: number;
-  adjustedBgY: number;
-  shake: { x: number; y: number };
-  tvFlash: boolean;
-};
 
 export function BattleBackground({
   effectiveBackground,

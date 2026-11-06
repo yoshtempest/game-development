@@ -1,0 +1,28 @@
+export type Props = {
+  showClear: boolean;
+  isTraining: boolean;
+  showOutro: any;
+  handleCloseOutro: () => void;
+  playerCharacter: CharacterId;
+  showHighlight: boolean;
+  highlightData: any;
+  handleCloseHighlight: () => void;
+  showVictory: boolean;
+  npcType: string;
+  npcLevel: number;
+  xpReward: number;
+  lastRewards: any;
+  handleContinue: () => void;
+  skipVictoryDelay: boolean;
+  victoryElapsed: number;
+  bestTime: number;
+  getReplayData: any;
+  isAlfa: boolean;
+  titleProgressSnapshot: any;
+  showDefeat: boolean;
+  handleRetry: () => void;
+  navigate: (n: number) => void;
+  defeatProgress: number;
+  defeatElapsed: number;
+  showRetry: boolean;
+};
