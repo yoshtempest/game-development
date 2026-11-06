@@ -29,7 +29,7 @@ export function MissileProjectile({
 
         return (
           <div key={p.id} className={styles.container}>
-            {p.phase !== "exploding" && (
+            {p.phase !== "exploding" && !p.noPortal && (
               <div
                 className={styles.portal}
                 style={{

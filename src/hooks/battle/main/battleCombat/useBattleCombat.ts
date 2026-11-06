@@ -794,6 +794,9 @@ export function useBattleCombat({
   const babidiMissileFireRef = useRef<
     ((player: { x: number; y: number }) => boolean) | null
   >(null);
+  const babidiMissileFireBurstRef = useRef<
+    ((player: { x: number; y: number }) => void) | null
+  >(null);
   const babidiMissileOnHitRef = useRef<((target: BabidiTarget) => void) | null>(
     null,
   );
@@ -871,6 +874,7 @@ export function useBattleCombat({
     onProjectileHit: (target) => babidiMissileOnHitRef.current?.(target),
   });
   babidiMissileFireRef.current = (player) => babidiMissile.fire(player);
+  babidiMissileFireBurstRef.current = (player) => babidiMissile.fireBurst(player, 4, 35);
 
   // Mísseis automáticos enquanto o NPC está preso pela fishingNet: surgem ao
   // redor do NPC (de dentro de um portal) e voam em sua direção, causando 20%
@@ -1276,6 +1280,10 @@ export function useBattleCombat({
     attack: () => {
       if (freezeActionsUntilRef.current > Date.now()) return;
       if (isGrabbedRef.current && grabFlippedRef.current) return;
+      if (player.machineGamaControl) {
+        babidiMissileFireBurstRef.current?.(player);
+        return;
+      }
       attack();
       oraPress();
     },

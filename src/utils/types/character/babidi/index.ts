@@ -52,6 +52,8 @@ export type BabidiMissileProjectile = {
   targetId: string | null;
   /** Direção horizontal atual do voo: +1 direita (padrão), -1 esquerda (flip). */
   dirX: number;
+  /** Se true, não renderiza o portal de surgimento (Machine Gama). */
+  noPortal?: boolean;
 };
 
 /** Clone gerado pela passiva de explosão do babidi. */

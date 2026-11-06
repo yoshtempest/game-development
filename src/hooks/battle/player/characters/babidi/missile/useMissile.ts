@@ -184,6 +184,37 @@ export function useBabidiMissile({
     [playerSizeRef, findNearestTarget, MAX_MISSILES, randomSpawn],
   );
 
+  const fireBurst = useCallback(
+    (player: { x: number; y: number }, count = 4, spacing = 35) => {
+      const spriteHeight = playerSizeRef.current / PLAYER_SPRITE_DIVISOR;
+      const baseY = player.y - spriteHeight * 3;
+      const baseX = player.x;
+      const newMissiles: BabidiMissileProjectile[] = [];
+      for (let i = 0; i < count; i++) {
+        const spawnX = baseX + i * spacing;
+        const spawnY = baseY;
+        const target = findNearestTarget(spawnX, spawnY);
+        newMissiles.push({
+          id: `babidi-missile-${Date.now()}-${i}`,
+          x: spawnX,
+          y: spawnY,
+          spawnX,
+          spawnY,
+          phase: "flying",
+          age: 0,
+          explosionRemaining: 0,
+          targetId: target?.id ?? null,
+          dirX: 1,
+          angle: 0,
+          aim: "center",
+          noPortal: true,
+        });
+      }
+      setMissiles((prev) => [...prev, ...newMissiles]);
+    },
+    [playerSizeRef, findNearestTarget],
+  );
+
   useEffect(() => {
     if (missiles.length === 0) return;
 
@@ -327,5 +358,5 @@ export function useBabidiMissile({
     playerSizeRef,
   ]);
 
-  return { missiles, fire };
+  return { missiles, fire, fireBurst };
 }
