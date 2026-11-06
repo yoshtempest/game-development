@@ -50,7 +50,28 @@ export function useBattleSprite({
   });
 
   if (character === "babidi" && babidiMachineGamaControl) {
-    baseSrc = playerAbilityPath("babidi", "domainExpansion", "machineGama/idle.svg");
+    const mgState = resolvedState;
+    const file =
+      mgState === "idleCrounched"
+        ? "idleCrounched.svg"
+        : mgState === "walkCrounched"
+          ? "walkCrounched.svg"
+          : mgState === "walk"
+            ? "walk.svg"
+            : mgState === "run" || mgState === "preRun"
+              ? "run.svg"
+              : mgState === "preJump"
+                ? "preJump.svg"
+                : mgState === "jump"
+                  ? "jump.svg"
+                  : mgState === "falling"
+                    ? "falling.svg"
+                    : mgState === "preAttack"
+                      ? "preAttack.svg"
+                      : mgState === "attack" || mgState === "ability" || mgState === "preAbility"
+                        ? "attack.svg"
+                        : "idle.svg";
+    baseSrc = playerAbilityPath("babidi", "domainExpansion", `machineGama/${file}`);
   }
 
   // Sequência idle do personagem (e forma):1 frame = parado, >1 = animado.
