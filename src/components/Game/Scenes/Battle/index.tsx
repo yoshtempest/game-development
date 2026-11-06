@@ -65,8 +65,7 @@ import {
   BLINK_ENERGY_COST,
   DIVERGENT_FIST_COST,
 } from "@/gameRules/battle/cursedEnergy";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import type { BattleMapConfig } from "@/utils/types/maps/battle";
+import { useEffect, useRef, useState } from "react";
 import { TrainingOverlay } from "@/components/Game/Battle/TrainingOverlay";
 import { ProjectileConstants } from "@/data/projectile";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
@@ -82,24 +81,7 @@ import { npcPathProjectile } from "@/utils/paths/npc/npcPathProjectile";
 import { GAME_VIEWPORT_WIDTH_RATIO } from "@/data/grid";
 import { getViewportSize } from "@/utils/viewport";
 
-type Props = {
-  npcType: string;
-  redirectTo?: string;
-  victoryDescription: string;
-  className?: string;
-  background?: string;
-  audioSrc: string;
-  introAudioSrc?: string;
-  onVictory?: () => void;
-  map?: BattleMapConfig;
-  training?: boolean;
-  isAlfa?: boolean;
-  npcLevel?: number;
-  machineGamaShield?: number;
-  machineGamaShieldMax?: number;
-  children?: ReactNode;
-  hakai?: boolean;
-};
+import type { Props } from "./types";
 
 export function BattleScene(props: Props) {
   const { npcType, className, background, map, isAlfa = false } = props;
