@@ -11,7 +11,7 @@ export interface PlayerBattleProps {
   state: PlayerState;
   direction: Direction;
   character: CharacterId;
-  weapon?: YvelWeapon;
+  weapon?: string;
   grabbedUntil?: number;
   grabFlipped?: boolean;
   form?: "vastolordForm";

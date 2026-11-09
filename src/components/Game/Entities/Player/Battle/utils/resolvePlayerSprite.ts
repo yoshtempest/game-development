@@ -11,7 +11,7 @@ import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack"
 interface ResolvePlayerSpriteParams {
   character: CharacterId;
   state: PlayerState;
-  weapon?: YvelWeapon;
+  weapon?: string;
   form?: "vastolordForm";
   transformationFrame?: number | null;
   teleportSprite: boolean;

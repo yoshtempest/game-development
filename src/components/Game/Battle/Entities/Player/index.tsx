@@ -9,7 +9,7 @@ import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack"
 type Props = {
   player: Player;
   PLAYER_SIZE: number;
-  weapon?: YvelWeapon;
+  weapon?: string;
   grabFlipped?: boolean;
   form?: "vastolordForm";
   /** Quadro da transformação do marshadow (0=screamOne … 3=transformated) ou null. */

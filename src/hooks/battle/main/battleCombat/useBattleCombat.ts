@@ -20,6 +20,7 @@ import { useChargeAttack } from "@/hooks/battle/charge/attack/useAttack";
 import { usePhaseTransition } from "@/hooks/battle/death/phaseTransition/usePhaseTransition";
 import { usePlayerSpecialProjectile } from "@/hooks/battle/player/playerSpecialProjectile/usePlayerSpecialProjectile";
 import { useYvelWeaponSwitch } from "@/hooks/battle/player/characters/yvel/useYvelWeaponSwitch";
+import { useSigilo } from "@/hooks/battle/player/characters/drika/useSigilo";
 import { useBattleSync } from "@/hooks/battle/sync/useSync";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { useStatCallbacks } from "@/hooks/battle/effects/statCallbacks/useStatCallbacks";
@@ -637,6 +638,18 @@ export function useBattleCombat({
     surviveLethalHitRef: honoredLethalRef,
   });
 
+  const {
+    arm: drikaArm,
+    sigiloOpen,
+    openSigilo,
+    closeSigilo,
+    selectArm: selectDrikaArmRaw,
+  } = useSigilo({
+    character: player.character,
+    playerHP: battle.playerHP,
+    setPlayerHP: battle.setPlayerHP,
+  });
+
   // Vida dos projéteis destrutíveis = 1/3 do dano que causariam no jogador.
   // Uma vida por natureza: o projétil lê a própria no `setProjectile`.
   projectileHpRef.current = getProjectileDestructionHpByKind({
@@ -668,6 +681,13 @@ export function useBattleCombat({
     onAbilityUsed();
   }, [battleManaRef, onAbilityUsed, switchWeapon]);
 
+  const handleSigiloSelect = useCallback(
+    (arm: string) => {
+      if (!selectDrikaArmRaw(arm)) return;
+      onAbilityUsed();
+    },
+    [selectDrikaArmRaw, onAbilityUsed],
+  );
   const {
     handleCursedEnergyConversion,
     handleBlink,
@@ -2055,6 +2075,11 @@ export function useBattleCombat({
     charge,
     yvelWeapon,
     switchWeapon: handleWeaponSwitch,
+    drikaArm,
+    sigiloOpen,
+    openSigilo,
+    closeSigilo,
+    selectSigiloArm: handleSigiloSelect,
     grabFlipped,
     grabbedTimerRef,
     setIsGrabbed,

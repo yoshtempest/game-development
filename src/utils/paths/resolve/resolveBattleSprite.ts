@@ -29,7 +29,7 @@ import { getBabidiAttackMode } from "@/utils/character/babidiAttackMode";
 export function resolveBattleSprite(
   character: string,
   state: PlayerState,
-  weapon?: YvelWeapon,
+  weapon?: string,
   form?: MarshadowBattleForm,
   babidiAttackVariant?: BabidiAttackVariant,
 ): string {
@@ -159,6 +159,9 @@ export function resolveBattleSprite(
     if (character === "yvel" && weapon) {
       return playerPath(`/${character}/inFight/${weapon}/${state}.svg`);
     }
+    if (character === "drika" && weapon) {
+      return playerPath(`/${character}/inFight/${weapon}/${state}.svg`);
+    }
     if (character === "marshadow") {
       return playerPath(`/${character}/inFight/default/${state}.svg`);
     }
@@ -195,6 +198,11 @@ export function resolveBattleSprite(
     return playerPath(`/babidi/inFight/withGun/attacks/${file}.svg`);
   }
   if (character === "yvel" && weapon) {
+    return playerPath(
+      `/${character}/inFight/${weapon}/${resolved}/${state}.svg`,
+    );
+  }
+  if (character === "drika" && weapon) {
     return playerPath(
       `/${character}/inFight/${weapon}/${resolved}/${state}.svg`,
     );

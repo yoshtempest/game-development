@@ -106,6 +106,11 @@ export type BattleSceneApi = {
   extraPunchSprite: string;
   yvelWeapon: YvelWeapon | undefined;
   switchWeapon: () => void;
+  drikaArm?: string;
+  sigiloOpen?: boolean;
+  openSigilo?: () => void;
+  closeSigilo?: () => void;
+  selectSigiloArm?: (arm: string) => void;
   convertCursedEnergy: () => void;
   blink: () => void;
   showClear: boolean;

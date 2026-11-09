@@ -78,7 +78,7 @@ export type Props = {
   explosionSprite?: string;
   extraPunches?: ExtraPunchVisual[];
   extraPunchSprite?: string;
-  weapon?: YvelWeapon;
+  weapon?: string;
   /** Pasta de sprites do marshadow durante a Forma Vastolord. */
   playerForm?: "vastolordForm";
   /** Quadro da transformação do marshadow (0=screamOne … 3=transformated) ou null. */

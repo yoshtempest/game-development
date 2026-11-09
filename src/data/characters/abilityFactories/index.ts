@@ -101,6 +101,16 @@ export function hakaiAbility(characterId: CharacterId): ActiveAbility {
   });
 }
 
+/** Sigilo da Drika: troca o braço em uso, pagando 5% da vida atual. */
+export function sigiloAbility(): ActiveAbility {
+  return createActiveAbility({
+    id: "sigilo",
+    name: "Sigilo",
+    description:
+      "Troca o braço em uso, pagando 5% da vida atual. Escolha entre 4 braços.",
+  });
+}
+
 /** Troca de arma do Yvel: cada arma tem alcance e sprite próprios. */
 export function weaponSwitchAbility(): ActiveAbility {
   return createActiveAbility({
