@@ -32,7 +32,7 @@ export function ReplayPlayerSprite({ frame, playerSize }: Props) {
         transform: "translate(-50%, -100%)",
       }}
     >
-      <img
+      <img loading="lazy" decoding="async"
         src={playerSrc}
         style={{
           height: "100%",

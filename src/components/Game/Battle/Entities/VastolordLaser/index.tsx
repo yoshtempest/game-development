@@ -39,7 +39,7 @@ export function VastolordLaser({
       height={height}
       pulseAxis="y"
     >
-      <img
+      <img loading="lazy" decoding="async"
         src={playerProjectilePath("vastolordLaser.svg")}
         alt=""
         draggable={false}

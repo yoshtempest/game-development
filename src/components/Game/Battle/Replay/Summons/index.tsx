@@ -13,7 +13,7 @@ export function ReplaySummons({ summons, tileSize }: Props) {
   return (
     <>
       {summons.map((summon) => (
-        <img
+        <img loading="lazy" decoding="async"
           key={summon.id}
           src={getSpritePath(summon.t, summon.st, 1)}
           className={styles.sprite}

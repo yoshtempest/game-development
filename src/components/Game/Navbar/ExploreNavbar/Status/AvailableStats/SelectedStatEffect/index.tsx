@@ -34,7 +34,7 @@ export function SelectedStatEffect({ selectedIndex }: SelectedStatEffectProps) {
 
         return (
           <div key={row.key} className={styles.effectRow}>
-            <img src={row.icon} alt="" />
+            <img loading="lazy" decoding="async" src={row.icon} alt="" />
             <p>
               {row.label}: {formatStatValue(derived[row.key], row.format)}
               {increase ? (

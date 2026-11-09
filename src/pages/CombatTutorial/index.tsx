@@ -87,7 +87,7 @@ function CombatTutorialTasks() {
       <div className={styles.backdrop} />
       <div className={styles.overlay}>
         <div className={styles.taskBox}>
-          <img className={styles.image} src={npcPath("/surica/default.svg")} />
+          <img loading="lazy" decoding="async" className={styles.image} src={npcPath("/surica/default.svg")} />
           <p className={styles.taskText}>{instruction.text}</p>
         </div>
 

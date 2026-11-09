@@ -39,7 +39,7 @@ export function Coffin({
               zIndex: 8,
             }}
           >
-            <img
+            <img loading="lazy" decoding="async"
               src={coffinSrc}
               style={{
                 width: "100%",

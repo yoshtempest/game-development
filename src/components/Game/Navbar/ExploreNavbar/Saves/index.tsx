@@ -78,7 +78,7 @@ export function Saves() {
                   key={item.key}
                   className={`${styles.slotCard} ${isSelected ? styles.selected : ""} ${isActive ? styles.active : ""}`}
                 >
-                  <img src={sceneImage} alt="" className={styles.sceneImage} />
+                  <img loading="lazy" decoding="async" src={sceneImage} alt="" className={styles.sceneImage} />
                   <div className={styles.slotInfo}>
                     <span className={styles.slotLabel}>
                       Save {slot + 1}

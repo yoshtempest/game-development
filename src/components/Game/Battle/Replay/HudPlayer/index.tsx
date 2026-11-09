@@ -30,7 +30,7 @@ export function HudPlayer({
   return (
     <div className={styles.container}>
       <div className="hudFlexColumn">
-        <img
+        <img loading="lazy" decoding="async"
           src={playerPath(`/${pchar}/face.svg`)}
           alt="Player HUD"
           className="hudImage"

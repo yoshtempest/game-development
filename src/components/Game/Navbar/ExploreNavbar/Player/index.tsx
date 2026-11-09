@@ -195,7 +195,7 @@ export function Player() {
       ) : (
         <div ref={scrollRef} className={`${styles.container} hideScrollbar`}>
           <div className={styles.charSelectRow}>
-            <img
+            <img loading="lazy" decoding="async"
               src={itemFilterPath("all.svg")}
               alt="Todos"
               className={` ${styles.charFace} ${isSummaryView ? styles.charBtnActive : ""}`}
@@ -209,7 +209,7 @@ export function Player() {
                     : ""
                 }`}
               >
-                <img
+                <img loading="lazy" decoding="async"
                   src={playerPath(`/${char}/face.svg`)}
                   alt={charLabel(char)}
                   className={styles.charFace}

@@ -22,7 +22,7 @@ export function ComboAction() {
   return (
     <div className={styles.container}>
       <button className={styles.button} onPointerDown={handleDown}>
-        <img src={src} alt={combo.label} draggable={false} />
+        <img loading="lazy" decoding="async" src={src} alt={combo.label} draggable={false} />
       </button>
     </div>
   );

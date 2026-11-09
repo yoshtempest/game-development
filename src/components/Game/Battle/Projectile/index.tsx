@@ -23,7 +23,7 @@ export function ProjectileSprite({ projectile, groundY = 600 }: Props) {
   if (projectile.variant === "cut") {
     return (
       <>
-        <img
+        <img loading="lazy" decoding="async"
           src={src}
           style={{
             position: "absolute",
@@ -35,7 +35,7 @@ export function ProjectileSprite({ projectile, groundY = 600 }: Props) {
             pointerEvents: "none",
           }}
         />
-        <img
+        <img loading="lazy" decoding="async"
           src={src}
           style={{
             position: "absolute",
@@ -90,7 +90,7 @@ export function ProjectileSprite({ projectile, groundY = 600 }: Props) {
     return (
       <>
         {projectile.spears.map((spear, i) => (
-          <img
+          <img loading="lazy" decoding="async"
             key={i}
             src={src}
             style={{
@@ -117,7 +117,7 @@ export function ProjectileSprite({ projectile, groundY = 600 }: Props) {
 
   return (
     <>
-      <img
+      <img loading="lazy" decoding="async"
         src={src}
         style={{
           position: "absolute",

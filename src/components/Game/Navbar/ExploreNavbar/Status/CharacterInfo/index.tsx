@@ -67,7 +67,7 @@ export function CharacterInfo() {
     <div className={`StatusColumn ${styles.characterInfo}`}>
       <div className={styles.imagesRow}>
         {showImage && (
-          <img
+          <img loading="lazy" decoding="async"
             // O `key` reancora o `<img>` a cada ponto investido: o remount
             // reinicia a animação de flash (o `src` é o mesmo e sai do cache).
             key={flashKey}
@@ -83,7 +83,7 @@ export function CharacterInfo() {
           />
         )}
         {petItem && petNpcType && (
-          <img
+          <img loading="lazy" decoding="async"
             src={npcPath(`/${petNpcType}/default.svg`)}
             className={styles.petImage}
           />

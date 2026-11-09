@@ -24,7 +24,7 @@ function SlotContent({ slot }: { slot: ContainerSlot }) {
 
   return (
     <div className={styles.slotContent}>
-      <img
+      <img loading="lazy" decoding="async"
         className={styles.slotIcon}
         src={itemData.image ?? itemPath(`${slot.id}.svg`)}
         alt={itemData.name}

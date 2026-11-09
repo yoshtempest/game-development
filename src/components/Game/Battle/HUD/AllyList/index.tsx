@@ -26,7 +26,7 @@ export function AllyHUDList({ allies }: Props) {
             </h2>
             <HealthBar hp={a.hp} maxHp={a.maxHp} reversed={false} />
           </div>
-          <img
+          <img loading="lazy" decoding="async"
             src={npcPath(`/${a.npcType}/face.svg`)}
             alt={`${a.npcType} HUD`}
             className={styles.image}

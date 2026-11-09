@@ -58,7 +58,7 @@ export function BattleOutro({ character, type, onNext }: Props) {
           <h1>{title}</h1>
           <h2>{displayedText}</h2>
         </div>
-        <img
+        <img loading="lazy" decoding="async"
           className="talkingImage"
           src={playerPath(`/${character}/expressions/${type}.svg`)}
           alt={character}

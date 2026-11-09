@@ -47,7 +47,7 @@ export function DeiseDashAfterimage({
   const top = npcY * scaleY;
 
   return (
-    <img
+    <img loading="lazy" decoding="async"
       src={effectsPath("/divergent/four.svg")}
       className={styles.afterimage}
       draggable={false}

@@ -187,7 +187,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
             return <div key={index} className={styles.blind} style={style} />;
           })}
 
-          <img
+          <img loading="lazy" decoding="async"
             src={rootAssetPath("logo.svg")}
             alt=""
             className={styles.logo}

@@ -67,7 +67,7 @@ export default function Home() {
       className="Master"
       style={{ backgroundImage: `url(${sceneBackgrounds.Home})` }}
     >
-      <img src={rootAssetPath("logo.svg")} alt="logo" className={styles.logo} />
+      <img loading="lazy" decoding="async" src={rootAssetPath("logo.svg")} alt="logo" className={styles.logo} />
       <p className={styles.continue}>Faça o L para continuar</p>
       <ParticlesBackground />
     </div>

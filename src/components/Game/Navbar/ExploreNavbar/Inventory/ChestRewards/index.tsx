@@ -52,7 +52,7 @@ export function ChestRewards({
           <h4>Materiais</h4>
           {result.materials.map((m) => (
             <div key={m.id} className={styles.dropRow}>
-              <img
+              <img loading="lazy" decoding="async"
                 className="dropIcon"
                 src={materialImage(m.id)}
                 alt={m.name}
@@ -69,7 +69,7 @@ export function ChestRewards({
           <h4>Equipamentos</h4>
           {result.equipment.map((eq, index) => (
             <div key={`${eq.id}-${index}`} className={styles.dropRow}>
-              <img
+              <img loading="lazy" decoding="async"
                 className="dropIcon"
                 src={FILTER_LABELS[eq.slot]}
                 alt={eq.name}
@@ -92,7 +92,7 @@ export function ChestRewards({
           <h4>Pets</h4>
           {result.pets.map((pet) => (
             <div key={pet.id} className={styles.dropRow}>
-              <img
+              <img loading="lazy" decoding="async"
                 className="dropIcon"
                 src={FILTER_LABELS.pet}
                 alt={pet.name}

@@ -49,7 +49,7 @@ export function CharacterUnlockModal() {
     <div className="overlay">
       <div className={`modal ${styles.modal}`}>
         {!imageFailed && (
-          <img
+          <img loading="lazy" decoding="async"
             className={styles.image}
             src={playerPath(`/${current}/unlockment.svg`)}
             alt={characterName}

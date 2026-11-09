@@ -21,7 +21,7 @@ export function PetIdentity({ entry }: Props) {
       </h2>
 
       <div className={styles.rankRow}>
-        <img
+        <img loading="lazy" decoding="async"
           className={styles.rankIcon}
           src={rankBadgePath(rank?.src ?? "wandering.svg")}
           alt={`Rank ${RANK_LABELS[entry.rank]}`}

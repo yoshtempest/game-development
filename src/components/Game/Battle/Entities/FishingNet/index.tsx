@@ -30,7 +30,7 @@ export function FishingNet({ net, battleScaleX, battleScaleY }: Props) {
         animationDuration: `${BabidiFishingNetConstants.FALL_MS}ms`,
       } as CSSProperties}
     >
-      <img src={src} alt="fishing net" />
+      <img loading="lazy" decoding="async" src={src} alt="fishing net" />
     </div>
   );
 }

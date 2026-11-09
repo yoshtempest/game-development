@@ -52,7 +52,7 @@ export function DivergentFistAnimation({
   const src = effectsPath(`/divergent/${spriteName}.svg`);
 
   return (
-    <img
+    <img loading="lazy" decoding="async"
       src={src}
       className={styles.overlay}
       style={{

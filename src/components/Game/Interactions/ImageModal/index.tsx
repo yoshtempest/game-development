@@ -16,7 +16,7 @@ export function ImageModal({ src, message, name = "Sistema", onClose }: Props) {
 
   return (
     <div className={styles.backdrop} onClick={onClose}>
-      <img
+      <img loading="lazy" decoding="async"
         className={isGif ? `${styles.image} ${styles.gif}` : styles.image}
         src={resolveAsset(src)}
         alt=""

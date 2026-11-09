@@ -43,7 +43,7 @@ export function KokusenAnimation({
   const src = playerPath(`/natsuki/inFight/attacks/kokusen/${frame}.svg`);
 
   return (
-    <img
+    <img loading="lazy" decoding="async"
       src={src}
       className={styles.overlay}
       style={{

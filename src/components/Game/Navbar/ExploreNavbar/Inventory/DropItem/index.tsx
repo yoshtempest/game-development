@@ -32,7 +32,7 @@ export function DropItem({ isOpen, item, onDrop, onClose }: Props) {
         <div className={styles.title}>Largar item</div>
 
         <div className={styles.itemPreview}>
-          <img
+          <img loading="lazy" decoding="async"
             className={styles.itemIcon}
             src={itemData.image ?? itemPath(`${item.id}.svg`)}
             alt={itemData.name}

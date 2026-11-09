@@ -55,7 +55,7 @@ export function DamageNumbers({
               `+${value}`
             ) : n.type === "armor" ? (
               <>
-                <img
+                <img loading="lazy" decoding="async"
                   src={titleBadgePath("blockAttacks.svg")}
                   className={styles.image}
                 />

@@ -8,7 +8,7 @@ export function ActivePotionDisplay() {
 
   return (
     <div className={styles.potionSection}>
-      <img
+      <img loading="lazy" decoding="async"
         src={activePotion.image}
         alt={activePotion.name}
         className={styles.potionImage}

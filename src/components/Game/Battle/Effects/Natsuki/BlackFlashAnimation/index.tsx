@@ -24,7 +24,7 @@ export function BlackFlashAnimation({
   const src = playerPath(`/natsuki/inFight/attacks/blackFlash/${variant}.svg`);
 
   return (
-    <img
+    <img loading="lazy" decoding="async"
       src={src}
       className={styles.overlay}
       style={{

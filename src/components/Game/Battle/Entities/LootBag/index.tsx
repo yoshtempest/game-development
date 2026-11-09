@@ -49,12 +49,12 @@ export function LootBag({ bag, TILE_SIZE, npcClass }: Props) {
         zIndex: 8,
       }}
     >
-      <img
+      <img loading="lazy" decoding="async"
         className={styles.sprite}
         src={LOOTBAG_SPRITES[npcClass]}
         alt="Lootbag"
       />
-      {badge && <img className={styles.badge} src={badge} alt="item" />}
+      {badge && <img loading="lazy" decoding="async" className={styles.badge} src={badge} alt="item" />}
     </div>
   );
 }

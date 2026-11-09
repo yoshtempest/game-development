@@ -21,7 +21,7 @@ export function FunnyMoments() {
               key={moment.title}
               className={`${"landingCard"} ${styles.funnyCard}`}
             >
-              <img
+              <img loading="lazy" decoding="async"
                 src={moment.image}
                 alt={moment.title}
                 className={styles.funnyImage}

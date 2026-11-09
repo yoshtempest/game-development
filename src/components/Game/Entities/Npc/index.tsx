@@ -49,7 +49,7 @@ export const NPC = memo(function NPC({
 
   return (
     <>
-      <img
+      <img loading="lazy" decoding="async"
         src={resolveAsset(src)}
         aria-hidden
         style={{
@@ -69,7 +69,7 @@ export const NPC = memo(function NPC({
             : "opacity 1s ease-in",
         }}
       />
-      <img
+      <img loading="lazy" decoding="async"
         src={resolveAsset(src)}
         className={className}
         style={{

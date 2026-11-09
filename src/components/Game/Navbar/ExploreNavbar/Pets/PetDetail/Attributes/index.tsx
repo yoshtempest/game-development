@@ -38,7 +38,7 @@ export function PetAttributes({ entry, petNpc, stats }: PetAttributesProps) {
 
           <div className={styles.elementList}>
             {elements.map((element) => (
-              <img
+              <img loading="lazy" decoding="async"
                 key={element}
                 src={elementBadgePath(`${element.toLowerCase()}.svg`)}
                 alt={element}

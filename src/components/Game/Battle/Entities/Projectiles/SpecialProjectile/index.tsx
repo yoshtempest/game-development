@@ -16,7 +16,7 @@ export function SpecialProjectile({
     <>
       {playerProjectile.phase === "merge" && (
         <>
-          <img
+          <img loading="lazy" decoding="async"
             src={spriteMap.blueSphere}
             style={{
               position: "absolute",
@@ -28,7 +28,7 @@ export function SpecialProjectile({
               pointerEvents: "none",
             }}
           />
-          <img
+          <img loading="lazy" decoding="async"
             src={spriteMap.redSphere}
             style={{
               position: "absolute",
@@ -44,7 +44,7 @@ export function SpecialProjectile({
       )}
 
       {playerProjectile.phase !== "merge" && (
-        <img
+        <img loading="lazy" decoding="async"
           src={spriteMap.purpleSphere}
           style={{
             position: "absolute",

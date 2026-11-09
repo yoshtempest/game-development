@@ -11,7 +11,7 @@ export function LoadingScreen() {
 
   return (
     <div className="loading-screen">
-      <img className="loading-logo" src={rootAssetPath("logo.svg")} />
+      <img loading="lazy" decoding="async" className="loading-logo" src={rootAssetPath("logo.svg")} />
     </div>
   );
 }

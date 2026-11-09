@@ -34,14 +34,14 @@ export function ProfessionItem({
       className={`${styles.item} ${selected ? styles.selected : ""}`}
       onClick={onOpen}
     >
-      <img
+      <img loading="lazy" decoding="async"
         src={npcPath(`/professionals/${profession.id}.svg`)}
         className={styles.image}
       />
       <div className={styles.info}>
         <span className={styles.npc}>{profession.npcName}</span>
         <div className={styles.flexRow}>
-          <img
+          <img loading="lazy" decoding="async"
             src={professionBadgePath(`/${profession.id}.svg`)}
             alt=""
             className={styles.toolIcon}

@@ -10,7 +10,7 @@ export function ElementBadges({ types }: Props) {
   return (
     <span className={styles.badges}>
       {types.map((type) => (
-        <img
+        <img loading="lazy" decoding="async"
           key={type}
           src={elementBadgePath(`${type.toLowerCase()}.svg`)}
           alt={type}

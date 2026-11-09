@@ -29,7 +29,7 @@ export function BattleCard({
   return (
     <div className={styles.battleCard}>
       <div className={styles.battleCardHeader}>
-        <img src={spriteSrc} alt={alt ?? name} className={styles.sprite} />
+        <img loading="lazy" decoding="async" src={spriteSrc} alt={alt ?? name} className={styles.sprite} />
         <div>
           <h3>{name}</h3>
           {subtitle}

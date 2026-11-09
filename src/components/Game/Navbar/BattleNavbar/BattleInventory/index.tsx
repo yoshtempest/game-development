@@ -98,7 +98,7 @@ export function BattleInventory() {
                   index === selectedIndex ? styles.selected : ""
                 } ${index === rejectedIndex ? styles.rejected : ""}`}
               >
-                <img
+                <img loading="lazy" decoding="async"
                   className={styles.icon}
                   src={getItemImage(item)}
                   alt={itemData?.name ?? item.id}

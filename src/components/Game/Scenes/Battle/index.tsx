@@ -1206,7 +1206,7 @@ export function BattleScene(props: Props) {
       )}
       {babidiMachineGama && (
         <>
-          <img
+          <img loading="lazy" decoding="async"
             src={playerAbilityPath(
               "babidi",
               "domainExpansion",
@@ -1231,7 +1231,7 @@ export function BattleScene(props: Props) {
           />
           {babidiMachineGama.state === "exploding" &&
             Array.from({ length: 8 }).map((_, i) => (
-              <img
+              <img loading="lazy" decoding="async"
                 key={i}
                 src={npcPathProjectile("/explosion.svg")}
                 style={{

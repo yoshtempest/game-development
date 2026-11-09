@@ -13,7 +13,7 @@ import { elementBadgePath } from "@/utils/paths/icons/elementBadgePath";
  */
 function ElementBadge({ element }: { element: ElementType }) {
   return (
-    <img
+    <img loading="lazy" decoding="async"
       src={elementBadgePath(`${element.toLowerCase()}.svg`)}
       alt={element}
       title={element}

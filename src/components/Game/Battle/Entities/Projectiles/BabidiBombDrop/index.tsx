@@ -42,7 +42,7 @@ export function BabidiBombDrop({
             top: visual.portalY * battleScaleY,
           }}
         >
-          <img
+          <img loading="lazy" decoding="async"
             src={playerAbilityPath("babidi", "portals", "airPortal.svg")}
             alt=""
           />
@@ -50,7 +50,7 @@ export function BabidiBombDrop({
       )}
 
       {visual.phase === "falling" && (
-        <img
+        <img loading="lazy" decoding="async"
           className={styles.bomb}
           src={playerProjectilePath("/babidiBomb.svg")}
           alt=""
@@ -65,7 +65,7 @@ export function BabidiBombDrop({
       )}
 
       {visual.phase === "exploding" && (
-        <img
+        <img loading="lazy" decoding="async"
           className={styles.explosion}
           src={npcPathProjectile("/explosion.svg")}
           alt=""

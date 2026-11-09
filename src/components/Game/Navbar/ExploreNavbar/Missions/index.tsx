@@ -54,7 +54,7 @@ export function Mission() {
             className={`${"tab"} ${activeTab === key ? "tabActive" : ""} ${selectedIndex === i ? "tabSelected" : ""}`}
             onClick={() => switchTab(key)}
           >
-            <img src={TAB_ICONS[key]} alt={key} className={styles.tabIcon} />(
+            <img loading="lazy" decoding="async" src={TAB_ICONS[key]} alt={key} className={styles.tabIcon} />(
             {tabCountMap[key]})
           </button>
         ))}

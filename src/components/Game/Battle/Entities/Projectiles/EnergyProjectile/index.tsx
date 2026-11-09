@@ -27,7 +27,7 @@ export function EnergyProjectile({
         const flip = p.dirX < 0 ? " scaleX(-1)" : "";
 
         return (
-          <img
+          <img loading="lazy" decoding="async"
             key={p.id}
             src={spriteMap[p.sprite]}
             style={{

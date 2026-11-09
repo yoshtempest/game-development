@@ -10,7 +10,7 @@ export function ComboAction({ action, charId }: Props) {
   return (
     <div className={styles.comboActionBox}>
       <div className={styles.comboActionBtn}>
-        <img
+        <img loading="lazy" decoding="async"
           src={resolveBattleSprite(charId, action)}
           alt="Combo"
           draggable={false}

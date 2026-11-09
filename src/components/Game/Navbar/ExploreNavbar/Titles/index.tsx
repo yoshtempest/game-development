@@ -48,7 +48,7 @@ export function TitlesScreen() {
               }`}
             >
               <div className={styles.iconBox}>
-                <img src={def.icon} alt="" className={styles.iconImg} />
+                <img loading="lazy" decoding="async" src={def.icon} alt="" className={styles.iconImg} />
               </div>
 
               <div className={styles.info}>

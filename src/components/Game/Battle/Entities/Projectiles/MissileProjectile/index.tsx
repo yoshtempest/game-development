@@ -38,14 +38,14 @@ export function MissileProjectile({
                   opacity: 1,
                 }}
               >
-                <img
+                <img loading="lazy" decoding="async"
                   src={playerAbilityPath("babidi", "portals", "defaultPortal.svg")}
                   className={styles.portalFlip}
                 />
               </div>
             )}
             {p.phase !== "exploding" && (
-              <img
+              <img loading="lazy" decoding="async"
                 src={playerProjectilePath("/missile.svg")}
                 className={styles.missile}
                 style={{
@@ -57,7 +57,7 @@ export function MissileProjectile({
               />
             )}
             {p.phase === "exploding" && (
-              <img
+              <img loading="lazy" decoding="async"
                 src={npcPathProjectile("/explosion.svg")}
                 className={styles.explosion}
                 style={{

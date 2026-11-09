@@ -42,7 +42,7 @@ export function AvailableStats({
     <div className={`StatusColumn ${styles.container}`}>
       <div className="statusMainContainer">
         <div className="statusHeader">
-          <img src={statusIconPath("disponiblePoints.svg")} />
+          <img loading="lazy" decoding="async" src={statusIconPath("disponiblePoints.svg")} />
           <h2 className="StatusTitle">Pontos disponíveis: {stats.points}</h2>
         </div>
         <button
@@ -79,7 +79,7 @@ export function AvailableStats({
                 onClick={() => onSelectStat(index)}
                 aria-pressed={isSelected}
               >
-                <img src={row.icon} />
+                <img loading="lazy" decoding="async" src={row.icon} />
                 <span>
                   {row.label}: {value}
                   {rowBonus > 0 && (

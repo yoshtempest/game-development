@@ -52,7 +52,7 @@ export function ChestOpeningAnimation({
   return (
     <div className={styles.overlay}>
       <div className={styles.stage}>
-        <img
+        <img loading="lazy" decoding="async"
           key={phase}
           className={`${styles.chest} ${
             phase === "closed" ? styles.closed : styles.opened

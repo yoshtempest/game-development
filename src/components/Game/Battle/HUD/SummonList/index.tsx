@@ -27,7 +27,7 @@ export function SummonHUDList({ summons, npcType }: Props) {
             </h2>
             <HealthBar hp={s.hp} maxHp={s.maxHp} reversed />
           </div>
-          <img
+          <img loading="lazy" decoding="async"
             src={npcPath(`/${s.npcType}/face.svg`)}
             alt={`${s.npcType} HUD`}
             className="hudImage"

@@ -37,7 +37,7 @@ export function FilterBar({
             } ${filterFocused && filterType === f.type ? styles.buttonFocused : ""}`}
             onClick={() => onFilterChange(f.type)}
           >
-            <img
+            <img loading="lazy" decoding="async"
               src={
                 f.type.startsWith("prof_")
                   ? professionBadgePath(f.src)

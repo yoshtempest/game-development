@@ -57,7 +57,7 @@ export function AbilityOverlay({
                 : styles.characterWrapperEnter
             }`}
           >
-            <img
+            <img loading="lazy" decoding="async"
               src={src}
               alt=""
               className={styles.character}

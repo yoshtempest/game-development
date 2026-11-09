@@ -153,7 +153,7 @@ export function Pets() {
             )}
 
             <div className={styles.imageBox}>
-              <img
+              <img loading="lazy" decoding="async"
                 src={petImagePath(petNpc, stats?.stars ?? 1)}
                 alt={entry.name}
                 className={styles.petImage}
@@ -206,7 +206,7 @@ export function Pets() {
               </h2>
               <div className={styles.elementList}>
                 {getNpcElementTypes(petNpc).map((element) => (
-                  <img
+                  <img loading="lazy" decoding="async"
                     key={element}
                     src={elementBadgePath(`${element.toLowerCase()}.svg`)}
                     alt={element}
@@ -216,7 +216,7 @@ export function Pets() {
                 ))}
               </div>
 
-              <img
+              <img loading="lazy" decoding="async"
                 className={styles.rankIcon}
                 src={rankBadgePath(
                   RANKS.find((rank) => rank.id === entry.rank)?.src ??

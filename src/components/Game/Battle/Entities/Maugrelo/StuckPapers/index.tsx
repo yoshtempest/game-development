@@ -30,7 +30,7 @@ export function StuckPapers({
           : 1;
 
         return (
-          <img
+          <img loading="lazy" decoding="async"
             key={sp.id}
             className={exploding ? "" : styles.blink}
             src={

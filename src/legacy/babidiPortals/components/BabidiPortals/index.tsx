@@ -60,7 +60,7 @@ export function BabidiPortals({
             opacity: portal.phase === "flying" ? 0.85 : 1,
           }}
         >
-          <img
+          <img loading="lazy" decoding="async"
             className={styles.sprite}
             src={babidiPortalPath(portal.kind)}
             alt="Portal do babidi"
@@ -78,7 +78,7 @@ export function BabidiPortals({
             transform: ANCHOR_TRANSFORM[ghost.kind],
           }}
         >
-          <img
+          <img loading="lazy" decoding="async"
             className={styles.sprite}
             src={babidiPortalPath(ghost.kind)}
             alt="Portal do babidi (posicionando)"

@@ -40,7 +40,7 @@ export function Chest({ isFocused, isReady, timeLeft, onOpen }: Props) {
         }`}
       >
         <div className={styles.dailyChestInfo}>
-          <img className={styles.image} src={chestPath("default.svg")} />
+          <img loading="lazy" decoding="async" className={styles.image} src={chestPath("default.svg")} />
           <span className={styles.dailyChestTitle}>
             Baú Diário -{" "}
             {isReady ? (
