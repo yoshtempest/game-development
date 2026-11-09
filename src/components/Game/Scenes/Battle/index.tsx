@@ -61,7 +61,7 @@ import {
   BLINK_ENERGY_COST,
   DIVERGENT_FIST_COST,
 } from "@/gameRules/battle/cursedEnergy";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { TrainingOverlay } from "@/components/Game/Battle/TrainingOverlay";
 import { ProjectileConstants } from "@/data/projectile";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
@@ -78,6 +78,9 @@ import { GAME_VIEWPORT_WIDTH_RATIO } from "@/data/grid";
 import { getViewportSize } from "@/utils/viewport";
 
 import type { Props } from "./types";
+
+const MemoBattleEntities = memo(BattleEntities);
+const MemoBattleHUD = memo(BattleHUD);
 
 export function BattleScene(props: Props) {
   const { npcType, className, background, map, isAlfa = false } = props;
@@ -533,6 +536,152 @@ export function BattleScene(props: Props) {
     triggerAbilityCameraFocus,
   ]);
 
+  // Grupos de props memoizados: estabilizam a identidade dos objetos passados aos
+  // filhos pesados, evitando re-render quando apenas estado não relacionado muda.
+  const battleEntitiesProps = useMemo(
+    () => ({
+      npc,
+      player,
+      battle,
+      npcType,
+      summons,
+      allies,
+      coffins,
+      pet,
+      TILE_SIZE,
+      PLAYER_SIZE,
+      grabFlipped,
+      isAlfa,
+      playerProjectile,
+      killerQueen,
+      bombTargets,
+      killerQueenSprite,
+      bombSprite,
+      explosionSprite,
+      extraPunches,
+      extraPunchSprite,
+      weapon: yvelWeapon,
+      playerForm: vastolordActive ? ("vastolordForm" as const) : undefined,
+      transformationFrame,
+      blinkVisual,
+      lootBags,
+      npcClass,
+      ematronClone,
+      babidiClones,
+      genkiDamaVisual,
+      vastolordLaser,
+      kamehameha,
+      granReyCeroEffect,
+      cutInEnemie: battle.cutInEnemie,
+      npcBleeding: battle.npcBleeding,
+      preAtomic: specialIntroActive,
+      outroExpression,
+      atomicHalo,
+      atomicExplosion,
+      atomicCuts,
+      atomicFlash,
+      mugetsuSweep,
+      mugetsuBlink,
+      disintegrating,
+      babidiEnergyProjectiles,
+      babidiMissileProjectiles,
+      fishingNet,
+      babidiBombDrop,
+      babidiAttackVariant,
+      babidiMachineGamaControl,
+      babidiShieldSides,
+      onBabidiShieldEnd,
+      sphere,
+      purpleHole,
+      hakai,
+    }),
+    [
+      npc,
+      player,
+      battle,
+      npcType,
+      summons,
+      allies,
+      coffins,
+      pet,
+      TILE_SIZE,
+      PLAYER_SIZE,
+      grabFlipped,
+      isAlfa,
+      playerProjectile,
+      killerQueen,
+      bombTargets,
+      killerQueenSprite,
+      bombSprite,
+      explosionSprite,
+      extraPunches,
+      extraPunchSprite,
+      yvelWeapon,
+      vastolordActive,
+      transformationFrame,
+      blinkVisual,
+      lootBags,
+      npcClass,
+      ematronClone,
+      babidiClones,
+      genkiDamaVisual,
+      vastolordLaser,
+      kamehameha,
+      granReyCeroEffect,
+      specialIntroActive,
+      outroExpression,
+      atomicHalo,
+      atomicExplosion,
+      atomicCuts,
+      atomicFlash,
+      mugetsuSweep,
+      mugetsuBlink,
+      disintegrating,
+      babidiEnergyProjectiles,
+      babidiMissileProjectiles,
+      fishingNet,
+      babidiBombDrop,
+      babidiAttackVariant,
+      babidiMachineGamaControl,
+      babidiShieldSides,
+      onBabidiShieldEnd,
+      sphere,
+      purpleHole,
+      hakai,
+    ],
+  );
+
+  const battleHudProps = useMemo(
+    () => ({
+      battle,
+      npcStats,
+      npcType,
+      npcLevel,
+      summons,
+      allies,
+      isAlfa,
+      playerForm: vastolordActive ? ("vastolordForm" as const) : undefined,
+      machineGamaShield: babidiMachineGamaShield,
+      machineGamaShieldMax: battle.playerMaxHp * 10,
+      npcSpecialGauge:
+        isAlfa && npcType === "hungryDog"
+          ? npc.ai?.hungryDog?.specialGauge
+          : undefined,
+    }),
+    [
+      battle,
+      npcStats,
+      npcType,
+      npcLevel,
+      summons,
+      allies,
+      isAlfa,
+      vastolordActive,
+      babidiMachineGamaShield,
+      npc,
+    ],
+  );
+
   return (
     <div
       className={`Master ${className ?? ""}`}
@@ -566,23 +715,7 @@ export function BattleScene(props: Props) {
         paused={battlePaused}
       />
 
-      <BattleHUD
-        battle={battle}
-        npcStats={npcStats}
-        npcType={npcType}
-        npcLevel={npcLevel}
-        summons={summons}
-        allies={allies}
-        isAlfa={isAlfa}
-        playerForm={vastolordActive ? "vastolordForm" : undefined}
-        machineGamaShield={babidiMachineGamaShield}
-        machineGamaShieldMax={battle.playerMaxHp * 10}
-        npcSpecialGauge={
-          isAlfa && npcType === "hungryDog"
-            ? npc.ai?.hungryDog?.specialGauge
-            : undefined
-        }
-      />
+      <MemoBattleHUD {...battleHudProps} />
       <ComboDisplay
         count={comboCount}
         rank={comboRank}
@@ -649,62 +782,7 @@ export function BattleScene(props: Props) {
               <JumpDangerZone landingX={npc.jumpLandingX} />
             )}
 
-          <BattleEntities
-            npc={npc}
-            player={player}
-            battle={battle}
-            npcType={npcType}
-            summons={summons}
-            allies={allies}
-            coffins={coffins}
-            pet={pet}
-            TILE_SIZE={TILE_SIZE}
-            PLAYER_SIZE={PLAYER_SIZE}
-            grabFlipped={grabFlipped}
-            isAlfa={isAlfa}
-            playerProjectile={playerProjectile}
-            killerQueen={killerQueen}
-            bombTargets={bombTargets}
-            killerQueenSprite={killerQueenSprite}
-            bombSprite={bombSprite}
-            explosionSprite={explosionSprite}
-            extraPunches={extraPunches}
-            extraPunchSprite={extraPunchSprite}
-            weapon={yvelWeapon}
-            playerForm={vastolordActive ? "vastolordForm" : undefined}
-            transformationFrame={transformationFrame}
-            blinkVisual={blinkVisual}
-            lootBags={lootBags}
-            npcClass={npcClass}
-            ematronClone={ematronClone}
-            babidiClones={babidiClones}
-            genkiDamaVisual={genkiDamaVisual}
-            vastolordLaser={vastolordLaser}
-            kamehameha={kamehameha}
-            granReyCeroEffect={granReyCeroEffect}
-            cutInEnemie={battle.cutInEnemie}
-            npcBleeding={battle.npcBleeding}
-            preAtomic={specialIntroActive}
-            outroExpression={outroExpression}
-            atomicHalo={atomicHalo}
-            atomicExplosion={atomicExplosion}
-            atomicCuts={atomicCuts}
-            atomicFlash={atomicFlash}
-            mugetsuSweep={mugetsuSweep}
-            mugetsuBlink={mugetsuBlink}
-            disintegrating={disintegrating}
-            babidiEnergyProjectiles={babidiEnergyProjectiles}
-            babidiMissileProjectiles={babidiMissileProjectiles}
-            fishingNet={fishingNet}
-            babidiBombDrop={babidiBombDrop}
-            babidiAttackVariant={babidiAttackVariant}
-            babidiMachineGamaControl={babidiMachineGamaControl}
-            babidiShieldSides={babidiShieldSides}
-            onBabidiShieldEnd={onBabidiShieldEnd}
-            sphere={sphere}
-            purpleHole={purpleHole}
-            hakai={hakai}
-          />
+          <MemoBattleEntities {...battleEntitiesProps} />
 
           <ChargeParticles
             particles={charge.particles}
