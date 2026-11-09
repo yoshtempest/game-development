@@ -43,7 +43,6 @@ import { useGroundItems } from "@/contexts/GroundItemContext";
 import { chestPath } from "@/utils/paths";
 import { InteractionPrompt } from "@/components/Game/Interactions/InteractionPrompt";
 import { CutsceneVideo } from "@/components/Game/Map/Cutscene";
-import type { ItemPickupTile } from "@/utils/types/maps/exploreScene";
 import {
   getSceneMemory,
   hasSeenSceneMemory,
@@ -54,9 +53,7 @@ import {
   type SceneMemoryWalkTarget,
 } from "@/data/dialogues/sceneMemories";
 import { useAutoWalk } from "@/hooks/scene/autoWalk/useAutoWalk";
-
-type QuestHighlightTile = { x: number; y: number };
-type QuestNpcPosition = { gridX: number; gridY: number };
+import type { ExploreSceneComponentProps } from "./types";
 
 export function ExploreScene({
   map,
@@ -88,25 +85,7 @@ export function ExploreScene({
   backgroundSize,
   scaleFix,
   tombstoneLocationId,
-}: ExploreSceneProps & {
-  background?: string;
-  backgroundSize?: string;
-  scaleFix?: number;
-  events?: SceneEvent[];
-  setPopup?: (msg: string | null) => void;
-  popup?: string | null;
-  cameraTargetOverride?: { x: number; y: number } | null;
-  questHighlightTiles?: QuestHighlightTile[];
-  questNpcPositions?: QuestNpcPosition[];
-  questDirection?: Direction | null;
-  itemPickupTiles?: ItemPickupTile[];
-  interactionKeys?: string[];
-  interactionLabels?: Record<string, string>;
-  tileDialogues?: Record<string, Dialogue[]>;
-  npcOverlays?: { gridX: number; gridY: number; element: React.ReactNode }[];
-  cutscene?: SceneCutscene;
-  tombstoneLocationId?: string;
-}) {
+}: ExploreSceneComponentProps) {
   const {
     player,
     playerClass,

@@ -21,7 +21,7 @@ import Talking from "@/components/Game/Interactions/Talking";
 import { INTERACTION_LABELS } from "@/data/messages";
 import { useFoodPlateEncounter } from "@/hooks/scene/foodPlateEncounter/useFoodPlateEncounter";
 import type { DialogueSystem } from "@/utils/types/sceneHooks";
-import { RaparigaEncounter } from "@/components/Game/SceneObjects/RaparigaEncounter";
+import { RaparigaEncounter } from "@/components/Game/Scenes/Objects/RaparigaEncounter";
 
 type Props = {
   sceneId: SceneId;

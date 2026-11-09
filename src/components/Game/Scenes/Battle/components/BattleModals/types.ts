@@ -1,3 +1,5 @@
+import type { CharacterId } from "@/data/characters/list";
+
 export type Props = {
   showClear: boolean;
   isTraining: boolean;

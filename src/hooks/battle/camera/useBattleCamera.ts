@@ -117,7 +117,7 @@ export function useBattleCamera(params: BattleCameraParams) {
     });
 
     return () => cancelAnimationFrame(id);
-  }, [bgPosX, bgPosY]);
+  }, [bgPosX, bgPosY, targetBgX, targetBgY]);
 
   useEffect(() => {
     const diff = Math.abs(zoom - zoomTargetRef.current);

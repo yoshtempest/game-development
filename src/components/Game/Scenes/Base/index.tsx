@@ -1,9 +1,5 @@
 import { useEffect, useRef } from "react";
-import {
-  useLocation,
-  type NavigateFunction,
-  type Location,
-} from "react-router";
+import { useLocation } from "react-router";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useTransitionCtx } from "@/contexts/Transition/TransitionContext";
 import { useFlags } from "@/contexts/FlagContext";
@@ -19,63 +15,10 @@ import { ITEMS } from "@/data/items";
 import { useExitTile } from "@/hooks/scene/useExitTile";
 import { useQuestWaypoints } from "@/hooks/quest/useQuestWaypoints";
 import { canStepTo } from "@/gameRules/movement/levels";
-import { isPositionInFront, parseGridKey } from "@/utils/isPositionInFront";
 import { useTombstones } from "@/contexts/TombstoneContext";
-import type { ItemPickupTile } from "@/utils/types/maps/exploreScene";
+import { findInteraction } from "./findInteraction";
+import type { SceneBaseProps } from "./types";
 
-function findInteraction(
-  interactions: Record<string, () => void> | undefined,
-  player: Player,
-  frontX: number,
-  frontY: number,
-) {
-  if (!interactions) return undefined;
-
-  const exact = interactions[`${frontX},${frontY}`];
-  if (exact) return exact;
-
-  let best: { key: string; dist: number } | null = null;
-  for (const key in interactions) {
-    const pos = parseGridKey(key);
-    if (!pos || !isPositionInFront(player, pos.x, pos.y)) continue;
-    const dist = (pos.x - frontX) ** 2 + (pos.y - frontY) ** 2;
-    if (!best || dist < best.dist) best = { key, dist };
-  }
-  return best ? interactions[best.key] : undefined;
-}
-
-type SceneBaseProps = {
-  scene: SceneConfig;
-  className?: string;
-  background?: string;
-  /**
-   * Trilha que substitui a da cena enquanto durar (modal aberto, por
-   * exemplo). Sem ela, vale `scene.audio`.
-   */
-  audioOverride?: AudioConfig;
-
-  interactions?: Record<string, () => void>;
-  itemPickupTiles?: ItemPickupTile[];
-  interactionLabels?: Record<string, string>;
-  popup?: string | null;
-  setPopup?: (msg: string | null) => void;
-
-  handleExit?: (ctx: {
-    player: Player;
-    scene: SceneConfig;
-    navigate: NavigateFunction;
-    location: Location;
-    quests: Quest[];
-  }) => boolean;
-  onFinishExtra?: (ctx: {
-    navigate: NavigateFunction;
-    location: Location;
-  }) => Record<string, unknown> | void;
-  tileDialogues?: Record<string, Dialogue[]>;
-  npcOverlays?: { gridX: number; gridY: number; element: React.ReactNode }[];
-  cameraTargetOverride?: { x: number; y: number } | null;
-  children?: React.ReactNode;
-};
 
 export function SceneBase({
   scene,

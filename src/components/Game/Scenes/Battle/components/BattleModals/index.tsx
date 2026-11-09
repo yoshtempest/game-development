@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment */
+
 import { BattleClear } from "@/components/Game/Battle/Modal/Clear";
 import { BattleOutro } from "@/components/Game/Battle/Modal/Outro";
 import { BattleHighlight } from "@/components/Game/Battle/Modal/Highlight";
