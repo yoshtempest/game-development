@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "type-check": "tsc -b",
+    "optimize:svg": "svgo -f public/assets -r",
     "dev": "vite",
     "dev:server": "npm run dev --prefix server",
     "build": "tsc -b && vite build && npm run build:sw",
@@ -39,6 +40,7 @@
     "gh-pages": "^6.3.0",
     "globals": "^16.4.0",
     "prettier": "^3.8.4",
+    "svgo": "^4.1.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.45.0",
     "vite": "npm:rolldown-vite@7.1.14"
