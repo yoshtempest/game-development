@@ -61,11 +61,45 @@ export default defineConfig({
          * como deprecado.
          */
         advancedChunks: {
+          includeDependenciesRecursively: false,
           groups: [
+            {
+              name: "react-vendor",
+              test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+              priority: 12,
+            },
+            {
+              name: "router-vendor",
+              test: /node_modules[\\/](react-router|react-router-dom)[\\/]/,
+              priority: 12,
+            },
+            {
+              name: "tempest-sdk",
+              test: /node_modules[\\/](tempest-react-sdk)[\\/]/,
+              priority: 12,
+            },
             {
               name: "vendor",
               test: /node_modules[\\/]/,
               priority: 10,
+            },
+            {
+              name: "battle",
+              test: /[\\/]src[\\/](hooks[\\/]battle|components[\\/]Game[\\/]Battle|components[\\/]Game[\\/]Scenes[\\/]Battle|data[\\/]battle)/,
+              priority: 5,
+              minSize: 20 * 1024,
+            },
+            {
+              name: "menus",
+              test: /[\\/]src[\\/](components[\\/]Game[\\/]Navbar|hooks[\\/]menu)/,
+              priority: 4,
+              minSize: 20 * 1024,
+            },
+            {
+              name: "explore",
+              test: /[\\/]src[\\/](components[\\/]Game[\\/]Scenes[\\/]Explore|features|scenes|maps|interactions)/,
+              priority: 3,
+              minSize: 20 * 1024,
             },
           ],
         },
