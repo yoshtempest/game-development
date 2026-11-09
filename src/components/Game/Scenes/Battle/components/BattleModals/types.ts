@@ -1,26 +1,28 @@
 import type { CharacterId } from "@/data/characters/list";
+import type { ReplayData } from "@/utils/types/replay";
+import type { TitlesData } from "@/utils/types/player/titles";
 
 export type Props = {
   showClear: boolean;
   isTraining: boolean;
-  showOutro: any;
+  showOutro: "victory" | "defeat" | null;
   handleCloseOutro: () => void;
   playerCharacter: CharacterId;
   showHighlight: boolean;
-  highlightData: any;
+  highlightData: ReplayData | null;
   handleCloseHighlight: () => void;
   showVictory: boolean;
   npcType: string;
   npcLevel: number;
   xpReward: number;
-  lastRewards: any;
+  lastRewards: RewardInfo | null;
   handleContinue: () => void;
   skipVictoryDelay: boolean;
   victoryElapsed: number;
   bestTime: number;
-  getReplayData: any;
+  getReplayData: () => ReplayData | null;
   isAlfa: boolean;
-  titleProgressSnapshot: any;
+  titleProgressSnapshot: TitlesData["progress"];
   showDefeat: boolean;
   handleRetry: () => void;
   navigate: (n: number) => void;
