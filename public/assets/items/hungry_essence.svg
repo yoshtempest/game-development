@@ -1,7 +1,1 @@
-<svg width="211" height="211" viewBox="0 0 211 211" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="211" height="211" rx="18" fill="#2a2a3a"/>
-  <path d="M105.5 42c-32 0-56 26-56 58v58c0 7 8 11 13 6l9-9 9 11c4 5 12 5 16 0l8-10 8 10c4 5 12 5 16 0l9-11 9 9c5 5 13 1 13-6v-58c0-32-24-58-56-58z" fill="#86c06a" stroke="#5a8a42" stroke-width="4"/>
-  <circle cx="88" cy="98" r="9" fill="#2a2a3a"/>
-  <circle cx="123" cy="98" r="9" fill="#2a2a3a"/>
-  <path d="M86 132c8 6 14 6 20 0 6 6 12 6 20 0" stroke="#2a2a3a" stroke-width="5" stroke-linecap="round"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="211" height="211" fill="none" viewBox="0 0 211 211"><rect width="211" height="211" fill="#2a2a3a" rx="18"/><path fill="#86c06a" stroke="#5a8a42" stroke-width="4" d="M105.5 42c-32 0-56 26-56 58v58c0 7 8 11 13 6l9-9 9 11c4 5 12 5 16 0l8-10 8 10c4 5 12 5 16 0l9-11 9 9c5 5 13 1 13-6v-58c0-32-24-58-56-58z"/><circle cx="88" cy="98" r="9" fill="#2a2a3a"/><circle cx="123" cy="98" r="9" fill="#2a2a3a"/><path stroke="#2a2a3a" stroke-linecap="round" stroke-width="5" d="M86 132c8 6 14 6 20 0 6 6 12 6 20 0"/></svg>

@@ -1,12 +1,1 @@
-<svg width="294" height="258" viewBox="0 0 294 258" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- pote de creatina -->
-  <path d="M98 92h98v112c0 11-9 20-20 20h-58c-11 0-20-9-20-20V92z" fill="#f7f4ee"/>
-  <path d="M98 92h16v132h-4c-7 0-12-6-12-13V92z" fill="#e4dfd3"/>
-  <!-- tampa azul -->
-  <rect x="90" y="60" width="114" height="36" rx="10" fill="#2456c8"/>
-  <rect x="90" y="72" width="114" height="8" fill="#1a41a0"/>
-  <!-- rótulo -->
-  <rect x="98" y="130" width="98" height="50" fill="#2456c8"/>
-  <text x="147" y="152" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="17" fill="#ffffff">CREATINA</text>
-  <text x="147" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#cfe0ff">300g</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="294" height="258" fill="none" viewBox="0 0 294 258"><path fill="#f7f4ee" d="M98 92h98v112c0 11-9 20-20 20h-58c-11 0-20-9-20-20z"/><path fill="#e4dfd3" d="M98 92h16v132h-4c-7 0-12-6-12-13z"/><rect width="114" height="36" x="90" y="60" fill="#2456c8" rx="10"/><path fill="#1a41a0" d="M90 72h114v8H90z"/><path fill="#2456c8" d="M98 130h98v50H98z"/><text x="147" y="152" fill="#fff" font-family="Arial, sans-serif" font-size="17" font-weight="bold" text-anchor="middle">CREATINA</text><text x="147" y="170" fill="#cfe0ff" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">300g</text></svg>

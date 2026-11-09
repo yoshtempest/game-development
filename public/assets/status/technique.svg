@@ -1,16 +1,1 @@
-<svg width="70" height="71" viewBox="0 0 70 71" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <title>Técnica</title>
-  <circle cx="35" cy="35.5" r="28" stroke="#F0A93B" stroke-width="5" fill="#3A2A12" />
-  <g fill="#F0A93B">
-    <rect x="31" y="10" width="8" height="12" rx="2" />
-    <rect x="31" y="49" width="8" height="12" rx="2" />
-    <rect x="10" y="31.5" width="12" height="8" rx="2" />
-    <rect x="48" y="31.5" width="12" height="8" rx="2" />
-    <rect x="16.5" y="17" width="7" height="10" rx="2" transform="rotate(-45 16.5 17)" />
-    <rect x="46.5" y="44" width="7" height="10" rx="2" transform="rotate(-45 46.5 44)" />
-    <rect x="46.5" y="17" width="7" height="10" rx="2" transform="rotate(45 46.5 17)" />
-    <rect x="16.5" y="44" width="7" height="10" rx="2" transform="rotate(45 16.5 44)" />
-  </g>
-  <circle cx="35" cy="35.5" r="12" fill="#F0A93B" />
-  <path d="M35 27.5 L37.8 33.2 L44 34.2 L39.4 38.7 L40.4 44.9 L35 42 L29.6 44.9 L30.6 38.7 L26 34.2 L32.2 33.2 Z" fill="#3A2A12" />
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="70" height="71" fill="none" viewBox="0 0 70 71"><title>Técnica</title><circle cx="35" cy="35.5" r="28" fill="#3a2a12" stroke="#f0a93b" stroke-width="5"/><g fill="#f0a93b"><rect width="8" height="12" x="31" y="10" rx="2"/><rect width="8" height="12" x="31" y="49" rx="2"/><rect width="12" height="8" x="10" y="31.5" rx="2"/><rect width="12" height="8" x="48" y="31.5" rx="2"/><rect width="7" height="10" x="16.5" y="17" rx="2" transform="rotate(-45 16.5 17)"/><rect width="7" height="10" x="46.5" y="44" rx="2" transform="rotate(-45 46.5 44)"/><rect width="7" height="10" x="46.5" y="17" rx="2" transform="rotate(45 46.5 17)"/><rect width="7" height="10" x="16.5" y="44" rx="2" transform="rotate(45 16.5 44)"/></g><circle cx="35" cy="35.5" r="12" fill="#f0a93b"/><path fill="#3a2a12" d="m35 27.5 2.8 5.7 6.2 1-4.6 4.5 1 6.2L35 42l-5.4 2.9 1-6.2-4.6-4.5 6.2-1Z"/></svg>

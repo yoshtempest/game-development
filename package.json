@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "type-check": "tsc -b",
-    "optimize:svg": "svgo -f public/assets -r",
+    "optimize:svg": "svgo -f public/assets -r --config=svgo.config.mjs",
     "dev": "vite",
     "dev:server": "npm run dev --prefix server",
     "build": "tsc -b && vite build && npm run build:sw",

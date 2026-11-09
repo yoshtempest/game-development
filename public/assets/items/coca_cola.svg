@@ -1,12 +1,1 @@
-<svg width="294" height="258" viewBox="0 0 294 258" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- lata coca-cola -->
-  <path d="M104 56h86v152c0 10-19 18-43 18s-43-8-43-18V56z" fill="#c8102e"/>
-  <path d="M104 56h20v170c-12-2-20-7-20-14V56z" fill="#a30d25"/>
-  <path d="M170 56h20v156c0 7-8 12-20 14V56z" fill="#e02747"/>
-  <!-- topo/base -->
-  <ellipse cx="147" cy="57" rx="43" ry="13" fill="#cfd6dc"/>
-  <ellipse cx="147" cy="57" rx="31" ry="8" fill="#aab4bc"/>
-  <ellipse cx="147" cy="225" rx="41" ry="11" fill="#9aa4ac"/>
-  <!-- fita branca ondulada -->
-  <path d="M104 128c18-16 32 14 50 2s28-20 36-10v22c-14-8-24 12-42 18s-32-6-44 4v-36z" fill="#ffffff"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="294" height="258" fill="none" viewBox="0 0 294 258"><path fill="#c8102e" d="M104 56h86v152c0 10-19 18-43 18s-43-8-43-18z"/><path fill="#a30d25" d="M104 56h20v170c-12-2-20-7-20-14z"/><path fill="#e02747" d="M170 56h20v156c0 7-8 12-20 14z"/><ellipse cx="147" cy="57" fill="#cfd6dc" rx="43" ry="13"/><ellipse cx="147" cy="57" fill="#aab4bc" rx="31" ry="8"/><ellipse cx="147" cy="225" fill="#9aa4ac" rx="41" ry="11"/><path fill="#fff" d="M104 128c18-16 32 14 50 2s28-20 36-10v22c-14-8-24 12-42 18s-32-6-44 4z"/></svg>

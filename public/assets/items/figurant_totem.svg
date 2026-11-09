@@ -1,9 +1,1 @@
-<svg width="211" height="211" viewBox="0 0 211 211" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="211" height="211" rx="18" fill="#2a2a3a"/>
-  <path d="M86 42h42v132H86z" fill="#7a4a26" stroke="#5a3418" stroke-width="4"/>
-  <circle cx="107" cy="70" r="14" fill="#b8d08a" stroke="#5a3418" stroke-width="4"/>
-  <path d="M92 106h30l-6 14H98z" fill="#e0c050" stroke="#5a3418" stroke-width="3"/>
-  <path d="M107 136l-8 18h16z" fill="#b8d08a" stroke="#5a3418" stroke-width="3"/>
-  <path d="M78 42h26l-4 10h-30z" fill="#5a3418"/>
-  <path d="M112 42h22l-4 10h-30z" fill="#5a3418"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="211" height="211" fill="none" viewBox="0 0 211 211"><rect width="211" height="211" fill="#2a2a3a" rx="18"/><path fill="#7a4a26" stroke="#5a3418" stroke-width="4" d="M86 42h42v132H86z"/><circle cx="107" cy="70" r="14" fill="#b8d08a" stroke="#5a3418" stroke-width="4"/><path fill="#e0c050" stroke="#5a3418" stroke-width="3" d="M92 106h30l-6 14H98z"/><path fill="#b8d08a" stroke="#5a3418" stroke-width="3" d="m107 136-8 18h16z"/><path fill="#5a3418" d="M78 42h26l-4 10H70zm34 0h22l-4 10h-30z"/></svg>
