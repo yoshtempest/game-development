@@ -36,6 +36,7 @@ type Props = {
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onBabidiShieldEnd?: (side: BabidiShieldSide, nonce: number) => void;
   hakai?: boolean;
+  sigiloPhase?: string;
 };
 
 export function Player({
@@ -57,6 +58,7 @@ export function Player({
   babidiShieldSides,
   onBabidiShieldEnd,
   hakai = false,
+  sigiloPhase,
 }: Props) {
   const blinkSilhouette =
     player.character === "natsuki" && blinkVisual
@@ -91,6 +93,7 @@ export function Player({
       onBabidiShieldEnd={onBabidiShieldEnd}
       levelUpParticles
       hakai={hakai}
+      sigiloPhase={sigiloPhase}
     />
   );
 }

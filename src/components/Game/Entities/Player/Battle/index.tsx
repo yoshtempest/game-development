@@ -43,6 +43,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     mugetsuBlink = null,
     levelUpParticles = false,
     babidiAttackVariant,
+    sigiloPhase,
     babidiMachineGamaControl = false,
     babidiShieldSides = NO_BABIDI_SHIELD,
     onBabidiShieldEnd,
@@ -71,6 +72,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     babidiAttackVariant,
     babidiMachineGamaControl,
     hakai,
+    sigiloPhase,
   });
 
   const isMostHonored = state === "mostHonored";

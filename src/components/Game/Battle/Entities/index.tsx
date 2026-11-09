@@ -89,6 +89,7 @@ export function BattleEntities({
   sphere = null,
   purpleHole = false,
   hakai = false,
+  sigiloPhase,
 }: Props & {
   sphere?: import("@/utils/types/character/natsuki").NatsukiSphere | null;
 }) {
@@ -191,6 +192,7 @@ export function BattleEntities({
         babidiShieldSides={babidiShieldSides}
         onBabidiShieldEnd={onBabidiShieldEnd}
         hakai={hakai}
+        sigiloPhase={sigiloPhase}
       />
 
       <EnergyProjectile

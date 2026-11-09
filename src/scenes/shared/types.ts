@@ -107,7 +107,10 @@ export type BattleSceneApi = {
   yvelWeapon: YvelWeapon | undefined;
   switchWeapon: () => void;
   drikaArm?: string;
+  sigiloPhase?: string;
   sigiloOpen?: boolean;
+  pentagramVisible?: boolean;
+  selectedArmIcon?: string | null;
   openSigilo?: () => void;
   closeSigilo?: () => void;
   selectSigiloArm?: (arm: string) => void;

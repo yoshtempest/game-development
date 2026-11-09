@@ -32,7 +32,17 @@ export function resolveBattleSprite(
   weapon?: string,
   form?: MarshadowBattleForm,
   babidiAttackVariant?: BabidiAttackVariant,
+  sigiloPhase?: string,
 ): string {
+  if (character === "drika" && sigiloPhase === "biting") {
+    return playerPath("/drika/inFight/habilities/sigilo/bitingFinger.svg");
+  }
+  if (character === "drika" && sigiloPhase === "risking") {
+    return playerPath("/drika/inFight/habilities/sigilo/riskingGround.svg");
+  }
+  if (character === "drika" && sigiloPhase === "getting") {
+    return playerPath("/drika/inFight/habilities/sigilo/getArm.svg");
+  }
   if (character === "babidi" && state === "babidiPortalAttack") {
     return playerPath("/babidi/inFight/habilities/portals/upAttack.svg");
   }

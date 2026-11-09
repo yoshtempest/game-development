@@ -19,6 +19,7 @@ interface ResolvePlayerSpriteParams {
   preAtomic: boolean;
   outroExpression?: "victory" | "defeat" | null;
   babidiAttackVariant?: BabidiAttackVariant;
+  sigiloPhase?: string;
 }
 
 export function resolvePlayerSprite({
@@ -31,6 +32,7 @@ export function resolvePlayerSprite({
   outroExpression = null,
   babidiAttackVariant,
   hakai = false,
+  sigiloPhase,
 }: ResolvePlayerSpriteParams): string {
   const resolvedState = resolveSpriteState(state);
 
@@ -67,5 +69,6 @@ export function resolvePlayerSprite({
     weapon,
     form,
     babidiAttackVariant,
+    sigiloPhase,
   );
 }

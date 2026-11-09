@@ -27,6 +27,7 @@ export interface PlayerBattleProps {
   levelUpParticles?: boolean;
   /** Pose de mão do sprite do ataque básico do babidi. */
   babidiAttackVariant?: BabidiAttackVariant;
+  sigiloPhase?: string;
   babidiMachineGamaControl?: boolean;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
   babidiShieldSides?: BabidiShieldSides;

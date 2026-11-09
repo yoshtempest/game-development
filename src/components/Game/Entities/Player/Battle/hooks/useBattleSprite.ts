@@ -19,6 +19,7 @@ interface UseBattleSpriteParams {
   babidiAttackVariant?: BabidiAttackVariant;
   babidiMachineGamaControl?: boolean;
   hakai?: boolean;
+  sigiloPhase?: string;
 }
 
 export function useBattleSprite({
@@ -33,6 +34,7 @@ export function useBattleSprite({
   babidiAttackVariant,
   babidiMachineGamaControl = false,
   hakai = false,
+  sigiloPhase,
 }: UseBattleSpriteParams) {
   const resolvedState = resolveSpriteState(state);
 
@@ -47,6 +49,7 @@ export function useBattleSprite({
     outroExpression,
     babidiAttackVariant,
     hakai,
+    sigiloPhase,
   });
 
   if (character === "babidi" && babidiMachineGamaControl) {
@@ -122,6 +125,7 @@ export function useBattleSprite({
           preAtomic,
           outroExpression: null,
           babidiAttackVariant,
+          sigiloPhase,
         }),
       );
       return;
@@ -145,6 +149,7 @@ export function useBattleSprite({
         weapon,
         form,
         babidiAttackVariant,
+        sigiloPhase,
       ),
     );
   };

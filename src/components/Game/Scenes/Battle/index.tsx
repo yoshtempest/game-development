@@ -185,7 +185,10 @@ export function BattleScene(props: Props) {
     yvelWeapon,
     switchWeapon,
     drikaArm,
+    sigiloPhase,
     sigiloOpen,
+    pentagramVisible,
+    selectedArmIcon,
     openSigilo,
     closeSigilo,
     selectSigiloArm,
@@ -572,6 +575,7 @@ export function BattleScene(props: Props) {
       extraPunches,
       extraPunchSprite,
       weapon: player.character === "drika" ? drikaArm : yvelWeapon,
+      sigiloPhase: player.character === "drika" ? sigiloPhase : undefined,
       playerForm: vastolordActive ? ("vastolordForm" as const) : undefined,
       transformationFrame,
       blinkVisual,
@@ -629,6 +633,7 @@ export function BattleScene(props: Props) {
       extraPunchSprite,
       yvelWeapon,
       drikaArm,
+      sigiloPhase,
       vastolordActive,
       transformationFrame,
       blinkVisual,
@@ -795,6 +800,40 @@ export function BattleScene(props: Props) {
             )}
 
           <MemoBattleEntities {...battleEntitiesProps} />
+
+          {player.character === "drika" && pentagramVisible && (
+            <>
+              <style>{`@keyframes sigiloFadeIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }`}</style>
+              <img
+                src={playerPath("/drika/inFight/habilities/sigilo/pentagram.svg")}
+                alt="pentagram"
+                style={{
+                  position: "absolute",
+                  left: player.x,
+                  top: player.y,
+                  transform: "translate(-50%, -50%)",
+                  animation: "sigiloFadeIn 0.3s ease forwards",
+                  pointerEvents: "none",
+                  zIndex: 5,
+                }}
+              />
+            </>
+          )}
+
+          {player.character === "drika" && selectedArmIcon && (
+            <img
+              src={playerPath(`/drika/inFight/arms/${selectedArmIcon}`)}
+              alt="selected arm"
+              style={{
+                position: "absolute",
+                left: player.x,
+                top: player.y - 40,
+                transform: "translate(-50%, -100%)",
+                pointerEvents: "none",
+                zIndex: 6,
+              }}
+            />
+          )}
 
           <ChargeParticles
             particles={charge.particles}

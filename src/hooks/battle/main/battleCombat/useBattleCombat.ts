@@ -640,7 +640,10 @@ export function useBattleCombat({
 
   const {
     arm: drikaArm,
+    sigiloPhase,
     sigiloOpen,
+    pentagramVisible,
+    selectedArmIcon,
     openSigilo,
     closeSigilo,
     selectArm: selectDrikaArmRaw,
@@ -2076,7 +2079,10 @@ export function useBattleCombat({
     yvelWeapon,
     switchWeapon: handleWeaponSwitch,
     drikaArm,
+    sigiloPhase,
     sigiloOpen,
+    pentagramVisible,
+    selectedArmIcon,
     openSigilo,
     closeSigilo,
     selectSigiloArm: handleSigiloSelect,

@@ -134,4 +134,5 @@ export type Props = {
   /** Furo no sprite do NPC quando a purple o mata (junto com `isDying`). */
   purpleHole?: boolean;
   hakai?: boolean;
+  sigiloPhase?: string;
 };
