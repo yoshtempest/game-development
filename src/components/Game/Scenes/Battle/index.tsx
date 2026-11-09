@@ -66,11 +66,7 @@ import { TrainingOverlay } from "@/components/Game/Battle/TrainingOverlay";
 import { ProjectileConstants } from "@/data/projectile";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
-import {
-  DRIKA_ARMS,
-  DRIKA_ARM_ICONS,
-  DRIKA_ARM_LABELS,
-} from "@/data/characters/drika/drikaArms";
+import { SigiloSelector } from "@/components/Game/Battle/SigiloSelector";
 import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
 import {
@@ -1411,58 +1407,12 @@ export function BattleScene(props: Props) {
         />
       )}
 
-      {sigiloOpen && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "rgba(0,0,0,0.6)",
-            zIndex: 100000,
-          }}
-          onClick={() => closeSigilo?.()}
-        >
-          <div
-            style={{
-              display: "flex",
-              gap: 12,
-              padding: 16,
-              background: "#1a1a2e",
-              borderRadius: 8,
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {DRIKA_ARMS.map((arm) => (
-              <button
-                key={arm}
-                type="button"
-                disabled={arm === drikaArm}
-                onClick={() => selectSigiloArm?.(arm)}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 4,
-                  opacity: arm === drikaArm ? 0.4 : 1,
-                  cursor: arm === drikaArm ? "default" : "pointer",
-                }}
-              >
-                <img
-                  src={playerPath(`/drika/inFight/arms/${DRIKA_ARM_ICONS[arm]}`)}
-                  alt={DRIKA_ARM_LABELS[arm]}
-                  width={48}
-                  height={48}
-                  loading="lazy"
-                  decoding="async"
-                />
-                <span>{DRIKA_ARM_LABELS[arm]}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      <SigiloSelector
+        open={!!sigiloOpen}
+        currentArm={drikaArm}
+        onSelect={(arm) => selectSigiloArm?.(arm)}
+        onClose={() => closeSigilo?.()}
+      />
 
       {props.children}
     </div>
