@@ -24,6 +24,10 @@ type OnlinePlayer = {
   scene?: string;
   x?: number;
   y?: number;
+  direction?: string;
+  moving?: boolean;
+  hasPeru?: boolean;
+  guildId?: string | null;
   updatedAt: number;
 };
 
@@ -114,7 +118,8 @@ app.post("/api/online/rooms/:id/state", (req, res) => {
     res.status(404).json({ error: "sala não encontrada" });
     return;
   }
-  const { playerId, scene, x, y, character } = req.body ?? {};
+  const { playerId, scene, x, y, character, direction, moving, hasPeru, guildId } =
+    req.body ?? {};
   if (!playerId || !room.players.has(String(playerId))) {
     res.status(400).json({ error: "jogador não está na sala" });
     return;
@@ -126,6 +131,10 @@ app.post("/api/online/rooms/:id/state", (req, res) => {
     x,
     y,
     character: character ?? player.character,
+    direction: direction ?? player.direction,
+    moving: moving ?? player.moving,
+    hasPeru: hasPeru ?? player.hasPeru,
+    guildId: guildId ?? player.guildId,
     updatedAt: Date.now(),
   });
   broadcastRoom(room);
@@ -214,6 +223,10 @@ wss.on("connection", (ws) => {
         x: msg.x ?? player.x,
         y: msg.y ?? player.y,
         character: msg.character ?? player.character,
+        direction: msg.direction ?? player.direction,
+        moving: msg.moving ?? player.moving,
+        hasPeru: msg.hasPeru ?? player.hasPeru,
+        guildId: msg.guildId ?? player.guildId,
         updatedAt: Date.now(),
       });
       broadcastRoom(room);

@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 
-type OnlinePlayer = {
+export type OnlinePlayer = {
   id: string;
   name: string;
   character?: string;
@@ -165,6 +165,9 @@ export function OnlineProvider({ children }: { children: ReactNode }) {
       x?: number;
       y?: number;
       character?: string;
+      direction?: string;
+      moving?: boolean;
+      hasPeru?: boolean;
       guildId?: string | null;
     }) => {
       stateRef.current = { ...stateRef.current, ...state };
