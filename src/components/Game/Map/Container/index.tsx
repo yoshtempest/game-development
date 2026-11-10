@@ -86,7 +86,7 @@ export function Container({
             )}
           </div>
 
-          <div className={styles.hint}>[L] Pegar · [B] Fechar</div>
+          <div className="hint">[L] Pegar · [B] Fechar</div>
         </div>
       </div>
     </div>

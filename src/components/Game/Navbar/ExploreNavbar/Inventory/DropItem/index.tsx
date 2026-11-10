@@ -46,7 +46,7 @@ export function DropItem({ isOpen, item, onDrop, onClose }: Props) {
           <span className={styles.qtyMax}>/ {maxQty}</span>
         </div>
 
-        <div className={styles.hint}>
+        <div className="hint">
           [W/S] Quantidade · [L] Largar · [B] Cancelar
         </div>
       </div>

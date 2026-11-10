@@ -5,6 +5,8 @@ import { usePlayer } from "@/contexts/PlayerContext";
 import { useBattleSocket } from "@/hooks/useBattleSocket";
 import { ChoiceBox } from "@/components/Game/Interactions/ChoiceBox";
 import { playerPath } from "@/utils/paths";
+import { EnterListener, CancelListener } from "./listeners";
+import styles from "./styles.module.css";
 
 type ChoiceState =
   | null
@@ -71,21 +73,7 @@ export function SocialOverlay() {
   return (
     <>
       {guildMate && (
-        <div
-          style={{
-            position: "fixed",
-            left: 12,
-            bottom: 12,
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            background: "rgba(0,0,0,0.6)",
-            padding: 8,
-            borderRadius: 8,
-            color: "#fff",
-            zIndex: 1000,
-          }}
-        >
+        <div className={styles.guildOverlay}>
           <img
             src={playerPath(`${guildMate.character ?? "drika"}/expressions/default.svg`)}
             alt={guildMate.name}
@@ -93,32 +81,20 @@ export function SocialOverlay() {
             height={32}
             style={{ borderRadius: "50%" }}
           />
-          <div>
-            <div style={{ fontSize: 12, opacity: 0.8 }}>Você</div>
-            <div style={{ fontSize: 12 }}>{online.playerName}</div>
-            <div style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>
+          <div className={styles.guildInfo}>
+            <p>Você</p>
+            <p>{online.playerName}</p>
+            <p>
               {guildMate.name}
-            </div>
+            </p>
           </div>
         </div>
       )}
 
       {/* Interação: tecla Enter quando há jogador à frente */}
       {remoteAhead && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: 80,
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: "rgba(0,0,0,0.6)",
-            color: "#fff",
-            padding: 8,
-            borderRadius: 8,
-            zIndex: 1000,
-          }}
-        >
-          Pressione Enter para interagir com {remoteAhead.name}
+        <div className="hint">
+          [L] Interagir com {remoteAhead.name}
         </div>
       )}
 
@@ -178,26 +154,4 @@ export function SocialOverlay() {
       />
     </>
   );
-}
-
-function EnterListener({ onEnter }: { onEnter: () => void }) {
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Enter") onEnter();
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [onEnter]);
-  return null;
-}
-
-function CancelListener({ onCancel }: { onCancel: () => void }) {
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onCancel();
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [onCancel]);
-  return null;
 }
