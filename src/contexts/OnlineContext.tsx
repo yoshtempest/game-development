@@ -16,6 +16,9 @@ type OnlinePlayer = {
   scene?: string;
   x?: number;
   y?: number;
+  direction?: string;
+  moving?: boolean;
+  hasPeru?: boolean;
   guildId?: string | null;
   updatedAt: number;
 };
@@ -46,6 +49,9 @@ type OnlineContextValue = {
     x?: number;
     y?: number;
     character?: string;
+    direction?: string;
+    moving?: boolean;
+    hasPeru?: boolean;
     guildId?: string | null;
   }) => void;
 };
@@ -77,6 +83,9 @@ export function OnlineProvider({ children }: { children: ReactNode }) {
     x?: number;
     y?: number;
     character?: string;
+    direction?: string;
+    moving?: boolean;
+    hasPeru?: boolean;
     guildId?: string | null;
   }>({});
 

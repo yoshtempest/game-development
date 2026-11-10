@@ -93,7 +93,7 @@ export function SocialOverlay() {
 
       {/* Interação: tecla Enter quando há jogador à frente */}
       {remoteAhead && (
-        <div className="hint">
+        <div className={`hint ${styles.interactHint}`}>
           [L] Interagir com {remoteAhead.name}
         </div>
       )}

@@ -75,8 +75,21 @@ export function GameApp() {
       x: player.gridX,
       y: player.gridY,
       character: player.character,
+      direction: player.direction,
+      moving: player.moving ?? false,
+      hasPeru: player.hasPeru ?? false,
     });
-  }, [connected, location.pathname, player.gridX, player.gridY, player.character, updateState]);
+  }, [
+    connected,
+    location.pathname,
+    player.gridX,
+    player.gridY,
+    player.character,
+    player.direction,
+    player.hasPeru,
+    player.moving,
+    updateState,
+  ]);
 
   // Host: anuncia entrada em batalha para a sala
   useEffect(() => {
