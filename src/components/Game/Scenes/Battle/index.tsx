@@ -357,6 +357,9 @@ export function BattleScene(props: Props) {
     character?: string;
   } | null>(null);
 
+  const [opponentHP, setOpponentHP] = useState(1000);
+  const [opponentMaxHP, setOpponentMaxHP] = useState(1000);
+
   // Guest envia seu estado de batalha
   useEffect(() => {
     if (isBattleHost || !online.connected) return;
@@ -382,6 +385,44 @@ export function BattleScene(props: Props) {
       hp: Number(battleSocketLast.hp ?? 0),
       character: battleSocketLast.character as string | undefined,
     });
+  }, [isBattleHost, battleSocketLast]);
+
+  // Host: sincroniza HP do oponente a partir do guest
+  useEffect(() => {
+    if (!isBattleHost) return;
+    if (!remotePlayerState) return;
+    setOpponentMaxHP((prev) => (prev === 1000 ? remotePlayerState.hp || 1000 : prev));
+    setOpponentHP((prev) => (remotePlayerState.hp ? remotePlayerState.hp : prev));
+  }, [isBattleHost, remotePlayerState]);
+
+  // Guest: oponente é o host (HP via snapshot)
+  useEffect(() => {
+    if (isBattleHost) return;
+    if (!remoteBattleSnapshot?.player) return;
+    const hp = remoteBattleSnapshot.player.hp;
+    setOpponentMaxHP((prev) => (prev === 1000 ? hp || 1000 : prev));
+    setOpponentHP((prev) => (hp ? hp : prev));
+  }, [isBattleHost, remoteBattleSnapshot]);
+
+  // Teste de dano: host pressiona 'P' para causar dano no oponente
+  useEffect(() => {
+    if (!isBattleHost || !online.connected) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.code !== "KeyP") return;
+      const amount = 10;
+      setOpponentHP((hp) => Math.max(0, hp - amount));
+      battleSocketSend({ type: "opponentDamage", amount });
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isBattleHost, online.connected, battleSocketSend]);
+
+  // Guest: recebe dano do host
+  useEffect(() => {
+    if (isBattleHost) return;
+    if (battleSocketLast?.type !== "opponentDamage") return;
+    const amount = Number(battleSocketLast.amount ?? 0);
+    setOpponentHP((hp) => Math.max(0, hp - amount));
   }, [isBattleHost, battleSocketLast]);
 
   useEffect(() => {
@@ -1523,6 +1564,44 @@ export function BattleScene(props: Props) {
         visible={!isBattleHost && !battleSocketConnected}
         reconnecting={battleSocketReconnecting}
       />
+
+      {online.connected && (
+        <div
+          style={{
+            position: "fixed",
+            top: 12,
+            right: 12,
+            background: "rgba(0,0,0,0.6)",
+            padding: 8,
+            borderRadius: 8,
+            color: "#fff",
+            zIndex: 100000,
+            minWidth: 160,
+          }}
+        >
+          <div style={{ fontSize: 12, marginBottom: 4 }}>Oponente</div>
+          <div
+            style={{
+              height: 10,
+              background: "#333",
+              borderRadius: 5,
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                height: "100%",
+                width: `${(opponentHP / opponentMaxHP) * 100}%`,
+                background: "#e53935",
+                transition: "width 0.2s",
+              }}
+            />
+          </div>
+          <div style={{ fontSize: 11, marginTop: 2 }}>
+            {opponentHP}/{opponentMaxHP}
+          </div>
+        </div>
+      )}
 
       {props.children}
     </div>

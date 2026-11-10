@@ -274,6 +274,7 @@ wss.on("connection", (ws) => {
     }
 
     if (
+      msg.type === "opponentDamage" ||
       msg.type === "guildInvite" ||
       msg.type === "guildResponse" ||
       msg.type === "pvpInvite" ||
@@ -288,6 +289,7 @@ wss.on("connection", (ws) => {
         from: msg.from,
         fromName: msg.fromName,
         accept: msg.accept,
+        amount: msg.amount,
       });
       for (const client of wss.clients) {
         if (client.readyState !== WebSocket.OPEN) continue;
