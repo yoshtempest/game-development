@@ -6,6 +6,7 @@ import { BattleProviders } from "@/components/Game/Battle/BattleProviders";
 import { BattleNavbar } from "@/components/Game/Navbar/BattleNavbar";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { useFlags } from "@/contexts/FlagContext";
+import { useOnline } from "@/contexts/OnlineContext";
 import {
   BATTLE_CONFIGS,
   ROUTE_TO_BATTLE_KEY,
@@ -31,6 +32,8 @@ export default function BattlePage() {
   const config = key ? BATTLE_CONFIGS[key] : undefined;
   const { setFlag } = useFlags();
   const navigate = useNavigate();
+  const online = useOnline();
+  const playerCount = online.connected ? (online.room?.players.length ?? 1) : 1;
   const training = key === "training";
 
   const originRoute = (location.state as { battleOrigin?: string } | null)
@@ -53,6 +56,7 @@ export default function BattlePage() {
     <BattleProviders>
       <BattleScene
         npcType={config.npcType}
+        playerCount={playerCount}
         npcLevel={npcLevel}
         redirectTo={config.redirectTo}
         onVictory={handleVictory}

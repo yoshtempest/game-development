@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useOnline } from "@/contexts/OnlineContext";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useBattleSocket } from "@/hooks/useBattleSocket";
@@ -14,6 +14,7 @@ type ChoiceState =
   | { kind: "guildInvite"; fromId: string; fromName: string };
 
 export function SocialOverlay() {
+  const navigate = useNavigate();
   const online = useOnline();
   const playerCtx = usePlayer();
   const player = playerCtx.player;
@@ -22,6 +23,10 @@ export function SocialOverlay() {
 
   const [choice, setChoice] = useState<ChoiceState>(null);
   const [pendingInvite, setPendingInvite] = useState<{
+    fromId: string;
+    fromName: string;
+  } | null>(null);
+  const [pendingPvp, setPendingPvp] = useState<{
     fromId: string;
     fromName: string;
   } | null>(null);
@@ -43,6 +48,16 @@ export function SocialOverlay() {
       p.y === frontTile.y,
   );
 
+  // Recebe convite de x1
+  useEffect(() => {
+    if (!lastMessage || lastMessage.type !== "pvpInvite") return;
+    if (lastMessage.to !== online.playerId) return;
+    setPendingPvp({
+      fromId: String(lastMessage.from),
+      fromName: String((lastMessage.fromName as string) ?? "Jogador"),
+    });
+  }, [lastMessage, online.playerId]);
+
   // Recebe convite de guilda
   useEffect(() => {
     if (!lastMessage || lastMessage.type !== "guildInvite") return;
@@ -62,6 +77,15 @@ export function SocialOverlay() {
       online.setGuildId(mateId);
     }
   }, [lastMessage, online]);
+
+  // Recebe resposta de x1
+  useEffect(() => {
+    if (!lastMessage || lastMessage.type !== "pvpResponse") return;
+    if (lastMessage.to !== online.playerId) return;
+    if (lastMessage.accept) {
+      void navigate("/battle/pvp");
+    }
+  }, [lastMessage, online.playerId, navigate]);
 
   if (!online.connected) return null;
 
@@ -101,11 +125,18 @@ export function SocialOverlay() {
       {choice?.kind === "interact" && (
         <ChoiceBox
           prompt={`Interagir com ${choice.targetName}`}
-          options={["Convidar para guilda", "Adicionar amigo"]}
+          options={["Convidar para guilda", "Adicionar amigo", "Chamar pro x1"]}
           onSelect={(idx) => {
             if (idx === 0) {
               send({
                 type: "guildInvite",
+                to: choice.targetId,
+                from: online.playerId,
+                fromName: online.playerName,
+              });
+            } else if (idx === 2) {
+              send({
+                type: "pvpInvite",
                 to: choice.targetId,
                 from: online.playerId,
                 fromName: online.playerName,
@@ -129,6 +160,23 @@ export function SocialOverlay() {
             });
             if (idx === 0) online.setGuildId(pendingInvite.fromId);
             setPendingInvite(null);
+          }}
+        />
+      )}
+
+      {pendingPvp && (
+        <ChoiceBox
+          prompt={`${pendingPvp.fromName} chamou você para um x1`}
+          options={["Aceitar", "Recusar"]}
+          onSelect={(idx) => {
+            send({
+              type: "pvpResponse",
+              to: pendingPvp.fromId,
+              from: online.playerId,
+              accept: idx === 0,
+            });
+            if (idx === 0) void navigate("/battle/pvp");
+            setPendingPvp(null);
           }}
         />
       )}

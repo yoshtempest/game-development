@@ -239,6 +239,13 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     background: sceneBackgrounds.CombatTutorial,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
   },
+  pvp: {
+    npcType: "dummy",
+    redirectTo: "/jomasioentrance/one",
+    victoryDescription: "Duelo PvP",
+    background: sceneBackgrounds.CombatTutorial,
+    audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+  },
   trueVandinha: {
     npcType: "trueVandinha",
     onVictory: ({ navigate }) => {
@@ -272,4 +279,5 @@ export const ROUTE_TO_BATTLE_KEY: Record<string, string> = {
   "/battle/vandinhafragment": "vandinha",
   "/battle/truevandinha": "trueVandinha",
   "/training": "training",
+  "/battle/pvp": "pvp",
 };

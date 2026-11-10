@@ -52,6 +52,7 @@ export function useBattleScene({
   training,
   isAlfa = false,
   npcLevel: npcLevelProp,
+  playerCount,
   PLAYER_SIZE,
   dialogueOpen = false,
 }: BattleSceneProps) {
@@ -62,6 +63,7 @@ export function useBattleScene({
     npcType,
     npcLevelProp,
     isAlfa,
+    playerCount,
   });
 
   const {

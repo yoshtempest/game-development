@@ -32,9 +32,15 @@ type Props = {
   npcType: string;
   npcLevelProp?: number;
   isAlfa: boolean;
+  playerCount?: number;
 };
 
-export function useBattleStageSetup({ npcType, npcLevelProp, isAlfa }: Props) {
+export function useBattleStageSetup({
+  npcType,
+  npcLevelProp,
+  isAlfa,
+  playerCount = 1,
+}: Props) {
   const {
     player,
     setPlayer,
@@ -126,7 +132,7 @@ export function useBattleStageSetup({ npcType, npcLevelProp, isAlfa }: Props) {
     npcType,
     difficulty,
     npcLevelProp ?? getNpcLevel(npcType),
-    isAlfa ? 2 : 1,
+    (isAlfa ? 2 : 1) * (playerCount > 1 ? playerCount * 1.5 : 1),
   );
 
   const battleInfoCtx = useBattleInfo();

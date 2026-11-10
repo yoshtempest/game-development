@@ -273,7 +273,12 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    if (msg.type === "guildInvite" || msg.type === "guildResponse") {
+    if (
+      msg.type === "guildInvite" ||
+      msg.type === "guildResponse" ||
+      msg.type === "pvpInvite" ||
+      msg.type === "pvpResponse"
+    ) {
       const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
       if (!room) return;
       const payload = JSON.stringify({

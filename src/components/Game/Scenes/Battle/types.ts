@@ -18,6 +18,7 @@ export type Props = {
   machineGamaShieldMax?: number;
   children?: ReactNode;
   hakai?: boolean;
+  playerCount?: number;
 };
 
 export type BattleBackgroundProps = {

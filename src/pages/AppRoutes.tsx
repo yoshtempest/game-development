@@ -156,6 +156,7 @@ export function AppRoutes() {
             <Route path="training" element={<BattlePage />} />
 
             <Route path="battle/hungry" element={<BattlePage />} />
+            <Route path="battle/pvp" element={<BattlePage />} />
             <Route path="battle/hungryDog" element={<BattlePage />} />
             <Route path="battle/vandinhafragment" element={<BattlePage />} />
             <Route path="battle/truevandinha" element={<BattlePage />} />
