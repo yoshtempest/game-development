@@ -294,6 +294,24 @@ export function BattleScene(props: Props) {
     dialogueOpen: tvDialogueOpen,
   });
 
+  // Modo online: sincronização de snapshot host->guest (passo 2).
+  const online = useOnline();
+  const { connected: battleSocketConnected, send: battleSocketSend, lastMessage: battleSocketLast } =
+    useBattleSocket(online.roomId, online.playerId);
+  const isBattleHost = online.room?.hostId === online.playerId;
+  const { snapshot: remoteBattleSnapshot } = useBattleSnapshot({
+    isHost: isBattleHost,
+    send: battleSocketSend,
+    lastMessage: battleSocketLast,
+    getState: () => ({
+      t: Date.now(),
+      player: { x: player.x, y: player.y, hp: battle.playerHP },
+      npc: { x: npc.x, y: npc.y, hp: battle.npcHP, phase: battle.npcPhase ?? 1 },
+    }),
+  });
+  void remoteBattleSnapshot;
+  void battleSocketConnected;
+
   // Cutscene da TrueVandinha: ao se aproximar na 1ª fase, dispara fall + flash +
   // diálogo + transição para a 2ª fase.
   useEffect(() => {
