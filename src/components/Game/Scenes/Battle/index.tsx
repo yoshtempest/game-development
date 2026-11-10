@@ -36,11 +36,11 @@ import { JumpDangerZone } from "@/components/Game/Battle/Jump/dangerZone";
 import { ComboAction } from "@/components/Game/Battle/Buttons/ComboAction";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { useBattleAudio } from "@/hooks/battle/useBattleAudio";
+import { useBattleViewport, getBattleBackgroundStyle } from "@/hooks/battle/useBattleViewport";
 import { usePlayerActions } from "@/contexts/PlayerContext";
 import { useTitles } from "@/contexts/TitleContext";
 import { memo, useEffect, useMemo, useRef } from "react";
 import { TrainingOverlay } from "@/components/Game/Battle/Overlay/Training";
-import { ProjectileConstants } from "@/data/projectile";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { SigiloSelector } from "@/components/Game/Battle/SigiloSelector";
@@ -49,11 +49,8 @@ import { RemoteResultOverlay } from "@/components/Game/Battle/Overlay/RemoteResu
 import { ConnectionOverlay } from "@/components/Game/Battle/Overlay/Connection";
 import { OnlineBattleOverlay } from "@/components/Game/Battle/Overlay/OnlineBattle";
 import { DrikaSigiloOverlay } from "@/components/Game/Battle/Overlay/DrikaSigilo";
-import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
 import { playerAbilityPath } from "@/utils/paths";
-import { GAME_VIEWPORT_WIDTH_RATIO } from "@/data/grid";
-import { getViewportSize } from "@/utils/viewport";
 
 import type { Props } from "./types";
 
@@ -315,14 +312,15 @@ export function BattleScene(props: Props) {
 
   const { setBattleCollision } = usePlayerActions();
 
-  const { width: screenWidth, height: screenHeight } = getViewportSize();
-  const containerWidth = screenWidth * GAME_VIEWPORT_WIDTH_RATIO;
-  const containerHeight = screenHeight;
-
-  const initialBgPosRef = useRef({
-    x: (BATTLE_SPAWN.player.x / ProjectileConstants.MAP_WIDTH) * 100,
-    y: (BATTLE_SPAWN.player.y / ProjectileConstants.MAP_HEIGHT) * 100,
-  });
+  const {
+    screenWidth,
+    containerWidth,
+    containerHeight,
+    initialBgPosRef,
+    battleScaleX,
+    battleScaleY,
+    effectiveBackground,
+  } = useBattleViewport({ background, cutsceneBackground: tvBackground });
 
   const groundShakeActive = npc.projectiles.some(
     (p) =>
@@ -360,14 +358,6 @@ export function BattleScene(props: Props) {
   });
 
   const { worldOffsetX, worldOffsetY, zoom, shake, adjustedBgX, adjustedBgY } = camera;
-
-  const battleScaleX = screenWidth / ProjectileConstants.MAP_WIDTH;
-  const battleScaleY = screenHeight / ProjectileConstants.MAP_HEIGHT;
-
-  // Expansão de Domínio: o fundo da batalha permanece o original — quem cobre
-  // a cena é o overlay `background.svg` (DomainExpansionBackground), surgindo
-  // sendo renderizado de baixo para cima durante a habilidade inteira.
-  const effectiveBackground = tvBackground ?? background;
 
   const damageTargets = [
     {
@@ -580,15 +570,13 @@ export function BattleScene(props: Props) {
   return (
     <div
       className={`Master ${className ?? ""}`}
-      style={
-        effectiveBackground
-          ? {
-              backgroundImage: `url(${effectiveBackground})`,
-              backgroundSize: `calc(150% * ${zoom})`,
-              backgroundPosition: `calc(${adjustedBgX}% + ${shake.x}px) calc(${adjustedBgY}% + ${shake.y}px)`,
-            }
-          : undefined
-      }
+      style={getBattleBackgroundStyle({
+        effectiveBackground,
+        zoom,
+        adjustedBgX,
+        adjustedBgY,
+        shake,
+      })}
     >
       <BattleBackground
         effectiveBackground={effectiveBackground}
