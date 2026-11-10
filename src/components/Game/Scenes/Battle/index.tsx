@@ -303,6 +303,21 @@ export function BattleScene(props: Props) {
 
   let controlsDisabled = _controlsDisabled;
 
+  const [remotePlayerState, setRemotePlayerState] = useState<{
+    x: number;
+    y: number;
+    hp: number;
+    state?: string;
+    character?: string;
+  } | null>(null);
+
+  const [interpRemotePlayer, setInterpRemotePlayer] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
+  const [guestHasSnapshot, setGuestHasSnapshot] = useState(false);
+
   // Modo online: sincronização de snapshot host->guest (passo 2).
   const online = useOnline();
   const {
@@ -329,6 +344,9 @@ export function BattleScene(props: Props) {
 
   if (isBattleGuest) {
     controlsDisabled = true;
+    if (remoteBattleSnapshot) {
+      setGuestHasSnapshot(true);
+    }
     if (interpolatedRemoteSnapshot?.player) {
       player.x = interpolatedRemoteSnapshot.player.x;
       player.y = interpolatedRemoteSnapshot.player.y;
@@ -350,13 +368,6 @@ export function BattleScene(props: Props) {
 
   void interpolatedRemoteSnapshot;
 
-  const [remotePlayerState, setRemotePlayerState] = useState<{
-    x: number;
-    y: number;
-    hp: number;
-    character?: string;
-  } | null>(null);
-
   const [opponentHP, setOpponentHP] = useState(1000);
   const [opponentMaxHP, setOpponentMaxHP] = useState(1000);
   const lastAttackProcessedRef = useRef<string | null>(null);
@@ -370,11 +381,12 @@ export function BattleScene(props: Props) {
         x: player.x,
         y: player.y,
         hp: battle.playerHP,
+        state: player.state,
         character: player.character,
       });
     }, 100);
     return () => clearInterval(id);
-  }, [isBattleHost, online.connected, battleSocketSend, player.x, player.y, battle.playerHP, player.character]);
+  }, [isBattleHost, online.connected, battleSocketSend, player.x, player.y, player.state, battle.playerHP, player.character]);
 
   // Host recebe estado do guest
   useEffect(() => {
@@ -384,9 +396,36 @@ export function BattleScene(props: Props) {
       x: Number(battleSocketLast.x ?? 0),
       y: Number(battleSocketLast.y ?? 0),
       hp: Number(battleSocketLast.hp ?? 0),
+      state: battleSocketLast.state as string | undefined,
       character: battleSocketLast.character as string | undefined,
     });
   }, [isBattleHost, battleSocketLast]);
+
+  // Host: interpola posição do segundo jogador
+  useEffect(() => {
+    if (!isBattleHost) return;
+    if (!remotePlayerState) return;
+    setInterpRemotePlayer((prev) => {
+      if (!prev) return { x: remotePlayerState.x, y: remotePlayerState.y };
+      return {
+        x: prev.x + (remotePlayerState.x - prev.x) * 0.3,
+        y: prev.y + (remotePlayerState.y - prev.y) * 0.3,
+      };
+    });
+  }, [isBattleHost, remotePlayerState]);
+
+  // Host: interpola posição do segundo jogador
+  useEffect(() => {
+    if (!isBattleHost) return;
+    if (!remotePlayerState) return;
+    setInterpRemotePlayer((prev) => {
+      if (!prev) return { x: remotePlayerState.x, y: remotePlayerState.y };
+      return {
+        x: prev.x + (remotePlayerState.x - prev.x) * 0.3,
+        y: prev.y + (remotePlayerState.y - prev.y) * 0.3,
+      };
+    });
+  }, [isBattleHost, remotePlayerState]);
 
   // Host: sincroniza HP do oponente a partir do guest
   useEffect(() => {
@@ -935,12 +974,15 @@ export function BattleScene(props: Props) {
   );
 
   const secondPlayer = isBattleHost
-    ? remotePlayerState
+    ? (remotePlayerState
+        ? { ...remotePlayerState, x: interpRemotePlayer?.x ?? remotePlayerState.x, y: interpRemotePlayer?.y ?? remotePlayerState.y }
+        : null)
     : interpolatedRemoteSnapshot?.player
       ? {
           x: interpolatedRemoteSnapshot.player.x,
           y: interpolatedRemoteSnapshot.player.y,
           hp: remoteBattleSnapshot?.player?.hp ?? 0,
+          state: interpolatedRemoteSnapshot.player.state,
           character:
             online.room?.players.find((p) => p.id !== online.playerId)
               ?.character ?? "drika",
@@ -1055,7 +1097,7 @@ export function BattleScene(props: Props) {
               x={secondPlayer.x}
               y={secondPlayer.y}
               PLAYER_SIZE={PLAYER_SIZE}
-              state="idle"
+              state={(secondPlayer.state as PlayerState) ?? "idle"}
               direction="down"
             />
           )}
@@ -1669,6 +1711,24 @@ export function BattleScene(props: Props) {
           <div style={{ fontSize: 11, marginTop: 2 }}>
             {opponentHP}/{opponentMaxHP}
           </div>
+        </div>
+      )}
+
+      {isBattleGuest && !guestHasSnapshot && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(0,0,0,0.8)",
+            zIndex: 100003,
+            color: "#fff",
+            fontSize: 24,
+          }}
+        >
+          Aguardando host...
         </div>
       )}
 
