@@ -74,6 +74,8 @@ import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { SigiloSelector } from "@/components/Game/Battle/SigiloSelector";
 import { BabidiMachineGama } from "@/components/Game/Battle/Entities/Babidi/MachineGama";
+import { RemoteResultOverlay } from "@/components/Game/Battle/RemoteResultOverlay";
+import { ConnectionOverlay } from "@/components/Game/Battle/ConnectionOverlay";
 import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
 import {
@@ -1416,41 +1418,15 @@ export function BattleScene(props: Props) {
         onClose={() => closeSigilo?.()}
       />
 
-      {!isBattleHost && remoteResult && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "rgba(0,0,0,0.7)",
-            zIndex: 100001,
-            color: "#fff",
-            fontSize: 32,
-          }}
-        >
-          {remoteResult === "victory" ? "Vitória" : "Derrota"}
-        </div>
-      )}
+      <RemoteResultOverlay
+        visible={!isBattleHost && !!remoteResult}
+        result={remoteResult}
+      />
 
-      {!isBattleHost && !battleSocketConnected && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "rgba(0,0,0,0.7)",
-            zIndex: 100002,
-            color: "#fff",
-            fontSize: 24,
-          }}
-        >
-          {battleSocketReconnecting ? "Reconectando..." : "Conexão perdida"}
-        </div>
-      )}
+      <ConnectionOverlay
+        visible={!isBattleHost && !battleSocketConnected}
+        reconnecting={battleSocketReconnecting}
+      />
 
       {props.children}
     </div>
