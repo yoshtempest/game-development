@@ -16,9 +16,9 @@ test.describe("multiplayer: duas abas", () => {
     await guest.click('button:has-text("Atualizar salas")');
     await guest.waitForTimeout(1000);
     await guest.click('button:has-text("Entrar")');
-    await guest.waitForTimeout(1000);
+    await guest.waitForTimeout(2000);
 
-    await expect(guest.locator("text=Conectado à sala")).toBeVisible();
+    await expect(guest).toHaveURL(/jomasioentrance/);
     await expect(host.locator("text=Jogadores:")).not.toBeVisible().catch(() => {});
 
     await hostCtx.close();

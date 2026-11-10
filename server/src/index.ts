@@ -273,6 +273,19 @@ wss.on("connection", (ws) => {
       return;
     }
 
+    if (msg.type === "play") {
+      const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
+      if (!room) return;
+      const route = (msg.route as string) || "/jomasioentrance/one";
+      const payload = JSON.stringify({ type: "play", roomId: room.id, route });
+      for (const client of wss.clients) {
+        if (client.readyState !== WebSocket.OPEN) continue;
+        const m = socketMeta.get(client);
+        if (m?.roomId === room.id) client.send(payload);
+      }
+      return;
+    }
+
     if (msg.type === "battleStart") {
       const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
       if (!room) return;

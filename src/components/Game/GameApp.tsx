@@ -29,6 +29,8 @@ import {
 import { useQuests } from "@/contexts/QuestContext";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useOnline } from "@/contexts/OnlineContext";
+import { useBattleSocket } from "@/hooks/useBattleSocket";
+import { useNavigate } from "react-router";
 import { useEquipment } from "@/contexts/EquipmentContext";
 import { isCharacter } from "@/data/characters/list";
 import { useAuth } from "@/contexts/AuthContext";
@@ -46,7 +48,15 @@ export function GameApp() {
   const { setQuests, refreshDailyWeekly, quests } = useQuests();
 
   const { chooseClass, setCharacter, player, playerClass } = usePlayer();
-  const { connected, updateState } = useOnline();
+  const online = useOnline();
+  const { connected, updateState } = online;
+  const { send: socketSend, lastMessage: socketLast } = useBattleSocket(
+    online.roomId,
+    online.playerId,
+  );
+  const navigate = useNavigate();
+  const isHost = online.room?.hostId === online.playerId;
+  const lastBattleRouteRef = useRef<string | null>(null);
 
   const { getEquippedItem } = useEquipment();
   const location = useLocation();
@@ -66,6 +76,26 @@ export function GameApp() {
       character: player.character,
     });
   }, [connected, location.pathname, player.gridX, player.gridY, player.character, updateState]);
+
+  // Host: anuncia entrada em batalha para a sala
+  useEffect(() => {
+    if (!connected || !isHost) return;
+    const path = location.pathname;
+    if (!/battle|training/i.test(path)) return;
+    if (lastBattleRouteRef.current === path) return;
+    lastBattleRouteRef.current = path;
+    socketSend({ type: "battleStart", route: path });
+  }, [connected, isHost, location.pathname, socketSend]);
+
+  // Guest: acompanha a batalha iniciada pelo host
+  useEffect(() => {
+    if (!connected || isHost) return;
+    if (socketLast?.type !== "battleStart") return;
+    const route = socketLast.route as string | undefined;
+    if (route && route !== location.pathname) {
+      void navigate(route);
+    }
+  }, [connected, isHost, socketLast, location.pathname, navigate]);
 
   const prevRouteRef = useRef(location.pathname);
   const didSyncRef = useRef(false);
