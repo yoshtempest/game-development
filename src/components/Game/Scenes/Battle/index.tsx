@@ -41,21 +41,21 @@ import { useTitles } from "@/contexts/TitleContext";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
-import { TrainingOverlay } from "@/components/Game/Battle/TrainingOverlay";
+import { TrainingOverlay } from "@/components/Game/Battle/Overlay/Training";
 import { ProjectileConstants } from "@/data/projectile";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { SigiloSelector } from "@/components/Game/Battle/SigiloSelector";
 import { BabidiMachineGama } from "@/components/Game/Battle/Entities/Babidi/MachineGama";
-import { RemoteResultOverlay } from "@/components/Game/Battle/RemoteResultOverlay";
-import { ConnectionOverlay } from "@/components/Game/Battle/ConnectionOverlay";
-import { OnlineBattleOverlay } from "@/components/Game/Battle/OnlineBattleOverlay";
+import { RemoteResultOverlay } from "@/components/Game/Battle/Overlay/RemoteResult";
+import { ConnectionOverlay } from "@/components/Game/Battle/Overlay/Connection";
+import { OnlineBattleOverlay } from "@/components/Game/Battle/Overlay/OnlineBattle";
+import { DrikaSigiloOverlay } from "@/components/Game/Battle/Overlay/DrikaSigilo";
 import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
 import {
   npcPath,
   playerAbilityPath,
-  playerPath,
 } from "@/utils/paths";
 import { GAME_VIEWPORT_WIDTH_RATIO } from "@/data/grid";
 import { getViewportSize } from "@/utils/viewport";
@@ -768,39 +768,13 @@ export function BattleScene(props: Props) {
             />
           )}
 
-          {player.character === "drika" && pentagramVisible && (
-            <>
-              <style>{`@keyframes sigiloFadeIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }`}</style>
-              <img
-                src={playerPath("/drika/inFight/habilities/sigilo/pentagram.svg")}
-                alt="pentagram"
-                style={{
-                  position: "absolute",
-                  left: player.x,
-                  top: player.y,
-                  transform: "translate(-50%, -50%)",
-                  animation: "sigiloFadeIn 0.3s ease forwards",
-                  pointerEvents: "none",
-                  zIndex: 5,
-                }}
-              />
-            </>
-          )}
-
-          {player.character === "drika" && selectedArmIcon && (
-            <img
-              src={playerPath(`/drika/inFight/arms/${selectedArmIcon}`)}
-              alt="selected arm"
-              style={{
-                position: "absolute",
-                left: player.x,
-                top: player.y - 40,
-                transform: "translate(-50%, -100%)",
-                pointerEvents: "none",
-                zIndex: 6,
-              }}
-            />
-          )}
+          <DrikaSigiloOverlay
+            character={player.character}
+            playerX={player.x}
+            playerY={player.y}
+            pentagramVisible={pentagramVisible}
+            selectedArmIcon={selectedArmIcon}
+          />
 
           <ChargeParticles
             particles={charge.particles}
