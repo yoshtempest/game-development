@@ -28,6 +28,7 @@ import {
 
 import { useQuests } from "@/contexts/QuestContext";
 import { usePlayer } from "@/contexts/PlayerContext";
+import { useOnline } from "@/contexts/OnlineContext";
 import { useEquipment } from "@/contexts/EquipmentContext";
 import { isCharacter } from "@/data/characters/list";
 import { useAuth } from "@/contexts/AuthContext";
@@ -45,6 +46,7 @@ export function GameApp() {
   const { setQuests, refreshDailyWeekly, quests } = useQuests();
 
   const { chooseClass, setCharacter, player, playerClass } = usePlayer();
+  const { connected, updateState } = useOnline();
 
   const { getEquippedItem } = useEquipment();
   const location = useLocation();
@@ -54,6 +56,16 @@ export function GameApp() {
   useSleepTimer();
   useRegenTimer();
   useExploreLocation();
+
+  useEffect(() => {
+    if (!connected) return;
+    updateState({
+      scene: location.pathname,
+      x: player.gridX,
+      y: player.gridY,
+      character: player.character,
+    });
+  }, [connected, location.pathname, player.gridX, player.gridY, player.character, updateState]);
 
   const prevRouteRef = useRef(location.pathname);
   const didSyncRef = useRef(false);
