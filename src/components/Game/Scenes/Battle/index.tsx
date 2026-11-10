@@ -24,6 +24,7 @@ import { useBattleSocket } from "@/hooks/useBattleSocket";
 import { useBattleSnapshot } from "@/hooks/battle/useBattleSnapshot";
 import { useInterpolatedSnapshot } from "@/hooks/battle/useInterpolatedSnapshot";
 import { useBattleInputRelay } from "@/hooks/battle/useBattleInputRelay";
+import { useBattleLifecycle } from "@/hooks/battle/useBattleLifecycle";
 import { useCutscene } from "@/hooks/interaction/cutscene/useCutscene";
 import Talking from "@/components/Game/Interactions/Talking";
 import { trueVandinhaBattleDialogue } from "@/data/dialogues/trueVandinhaBattle/one";
@@ -322,6 +323,20 @@ export function BattleScene(props: Props) {
     send: battleSocketSend,
     lastMessage: battleSocketLast,
   });
+
+  const { remoteResult, notifyResult } = useBattleLifecycle({
+    isHost: isBattleHost,
+    send: battleSocketSend,
+    lastMessage: battleSocketLast,
+  });
+
+  useEffect(() => {
+    if (!isBattleHost) return;
+    if (showVictory) notifyResult("victory");
+    else if (showDefeat) notifyResult("defeat");
+  }, [isBattleHost, showVictory, showDefeat, notifyResult]);
+
+  void remoteResult;
 
   // Cutscene da TrueVandinha: ao se aproximar na 1ª fase, dispara fall + flash +
   // diálogo + transição para a 2ª fase.
@@ -1388,6 +1403,24 @@ export function BattleScene(props: Props) {
         onSelect={(arm) => selectSigiloArm?.(arm)}
         onClose={() => closeSigilo?.()}
       />
+
+      {!isBattleHost && remoteResult && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(0,0,0,0.7)",
+            zIndex: 100001,
+            color: "#fff",
+            fontSize: 32,
+          }}
+        >
+          {remoteResult === "victory" ? "Vitória" : "Derrota"}
+        </div>
+      )}
 
       {props.children}
     </div>
