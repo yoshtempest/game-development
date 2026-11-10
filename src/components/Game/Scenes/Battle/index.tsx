@@ -34,6 +34,8 @@ import { useBattleCamera } from "@/hooks/battle/camera/useBattleCamera";
 import { BattleBackground } from "./components/BattleBackground";
 import { BattleModals } from "./components/BattleModals";
 import { BattleEntities } from "@/components/Game/Battle/Entities";
+import { PlayerBattle } from "@/components/Game/Entities/Player/Battle";
+import type { CharacterId } from "@/data/characters/list";
 import { BattleMap } from "@/components/Game/Map/Battle";
 import { DamageNumbers } from "@/components/Game/Battle/Effects/DamageNumbers";
 import { LootPickup } from "@/components/Game/Battle/Effects/LootPickup";
@@ -347,6 +349,40 @@ export function BattleScene(props: Props) {
   }
 
   void interpolatedRemoteSnapshot;
+
+  const [remotePlayerState, setRemotePlayerState] = useState<{
+    x: number;
+    y: number;
+    hp: number;
+    character?: string;
+  } | null>(null);
+
+  // Guest envia seu estado de batalha
+  useEffect(() => {
+    if (isBattleHost || !online.connected) return;
+    const id = setInterval(() => {
+      battleSocketSend({
+        type: "playerState",
+        x: player.x,
+        y: player.y,
+        hp: battle.playerHP,
+        character: player.character,
+      });
+    }, 100);
+    return () => clearInterval(id);
+  }, [isBattleHost, online.connected, battleSocketSend, player.x, player.y, battle.playerHP, player.character]);
+
+  // Host recebe estado do guest
+  useEffect(() => {
+    if (!isBattleHost) return;
+    if (battleSocketLast?.type !== "playerState") return;
+    setRemotePlayerState({
+      x: Number(battleSocketLast.x ?? 0),
+      y: Number(battleSocketLast.y ?? 0),
+      hp: Number(battleSocketLast.hp ?? 0),
+      character: battleSocketLast.character as string | undefined,
+    });
+  }, [isBattleHost, battleSocketLast]);
 
   useEffect(() => {
     if (isBattleHost) return;
@@ -788,6 +824,19 @@ export function BattleScene(props: Props) {
     ],
   );
 
+  const secondPlayer = isBattleHost
+    ? remotePlayerState
+    : interpolatedRemoteSnapshot?.player
+      ? {
+          x: interpolatedRemoteSnapshot.player.x,
+          y: interpolatedRemoteSnapshot.player.y,
+          hp: remoteBattleSnapshot?.player?.hp ?? 0,
+          character:
+            online.room?.players.find((p) => p.id !== online.playerId)
+              ?.character ?? "drika",
+        }
+      : null;
+
   return (
     <div
       className={`Master ${className ?? ""}`}
@@ -889,6 +938,17 @@ export function BattleScene(props: Props) {
             )}
 
           <MemoBattleEntities {...battleEntitiesProps} />
+
+          {online.connected && secondPlayer && (
+            <PlayerBattle
+              character={(secondPlayer.character as CharacterId) ?? "drika"}
+              x={secondPlayer.x}
+              y={secondPlayer.y}
+              PLAYER_SIZE={PLAYER_SIZE}
+              state="idle"
+              direction="down"
+            />
+          )}
 
           {player.character === "drika" && pentagramVisible && (
             <>
