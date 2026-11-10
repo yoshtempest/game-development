@@ -40,6 +40,7 @@ import { useSleepTimer } from "@/hooks/sleep/useSleepTimer";
 import { useRegenTimer } from "@/hooks/player/useRegenTimer";
 import { useExploreLocation } from "@/hooks/scene/useExploreLocation";
 import { CombatTutorialProvider } from "@/contexts/CombatTutorialContext";
+import { SocialOverlay } from "@/components/Game/Social/SocialOverlay";
 
 export function GameApp() {
   const { isOpen } = useInventory();
@@ -194,6 +195,7 @@ export function GameApp() {
         <Movement />
         <Outlet />
         <GameButtons />
+        <SocialOverlay />
       </CombatTutorialProvider>
       <XPBarNotification />
       <HungerBarNotification />

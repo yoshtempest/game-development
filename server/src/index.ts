@@ -273,6 +273,25 @@ wss.on("connection", (ws) => {
       return;
     }
 
+    if (msg.type === "guildInvite" || msg.type === "guildResponse") {
+      const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
+      if (!room) return;
+      const payload = JSON.stringify({
+        type: msg.type,
+        roomId: room.id,
+        to: msg.to,
+        from: msg.from,
+        fromName: msg.fromName,
+        accept: msg.accept,
+      });
+      for (const client of wss.clients) {
+        if (client.readyState !== WebSocket.OPEN) continue;
+        const m = socketMeta.get(client);
+        if (m?.roomId === room.id) client.send(payload);
+      }
+      return;
+    }
+
     if (msg.type === "play") {
       const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
       if (!room) return;

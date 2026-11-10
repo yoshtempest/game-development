@@ -16,6 +16,7 @@ type OnlinePlayer = {
   scene?: string;
   x?: number;
   y?: number;
+  guildId?: string | null;
   updatedAt: number;
 };
 
@@ -34,6 +35,8 @@ type OnlineContextValue = {
   room: OnlineRoom | null;
   rooms: OnlineRoom[];
   connected: boolean;
+  guildId: string | null;
+  setGuildId: (id: string | null) => void;
   createRoom: (name: string) => Promise<OnlineRoom | null>;
   joinRoom: (id: string) => Promise<OnlineRoom | null>;
   leaveRoom: () => Promise<void>;
@@ -43,6 +46,7 @@ type OnlineContextValue = {
     x?: number;
     y?: number;
     character?: string;
+    guildId?: string | null;
   }) => void;
 };
 
@@ -67,11 +71,13 @@ export function OnlineProvider({ children }: { children: ReactNode }) {
   const [roomId, setRoomId] = useState<string | null>(null);
   const [room, setRoom] = useState<OnlineRoom | null>(null);
   const [rooms, setRooms] = useState<OnlineRoom[]>([]);
+  const [guildId, setGuildId] = useState<string | null>(null);
   const stateRef = useRef<{
     scene?: string;
     x?: number;
     y?: number;
     character?: string;
+    guildId?: string | null;
   }>({});
 
   const refreshRooms = useCallback(async () => {
@@ -140,8 +146,18 @@ export function OnlineProvider({ children }: { children: ReactNode }) {
     setRoom(null);
   }, [roomId, playerId]);
 
+  useEffect(() => {
+    stateRef.current = { ...stateRef.current, guildId };
+  }, [guildId]);
+
   const updateState = useCallback(
-    (state: { scene?: string; x?: number; y?: number; character?: string }) => {
+    (state: {
+      scene?: string;
+      x?: number;
+      y?: number;
+      character?: string;
+      guildId?: string | null;
+    }) => {
       stateRef.current = { ...stateRef.current, ...state };
     },
     [],
@@ -195,6 +211,8 @@ export function OnlineProvider({ children }: { children: ReactNode }) {
       room,
       rooms,
       connected: roomId !== null,
+      guildId,
+      setGuildId,
       createRoom,
       joinRoom,
       leaveRoom,
@@ -207,6 +225,8 @@ export function OnlineProvider({ children }: { children: ReactNode }) {
       roomId,
       room,
       rooms,
+      guildId,
+      setGuildId,
       createRoom,
       joinRoom,
       leaveRoom,

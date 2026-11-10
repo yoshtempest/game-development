@@ -30,9 +30,9 @@ export function RemotePlayers({ TILE_SIZE }: Props) {
           style={{
             position: "absolute",
             left: (p.x ?? 0) * TILE_SIZE,
-            top: (p.y ?? 0) * TILE_SIZE,
-            width: TILE_SIZE,
-            height: TILE_SIZE,
+            top: (p.y ?? 0) * TILE_SIZE * 0.95,
+            width: TILE_SIZE * 1.4,
+            height: TILE_SIZE * 1.4,
             zIndex: 1000,
             pointerEvents: "none",
           }}
