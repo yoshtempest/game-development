@@ -1,6 +1,5 @@
 import { BattleHUD } from "@/components/Game/Battle/HUD";
 import { GameMap } from "@/components/Game/Map/Game";
-import { useLatestRef } from "@/hooks/useLatestRef";
 import { useOnline } from "@/contexts/OnlineContext";
 import { useOnlineBattle } from "@/hooks/battle/useOnlineBattle";
 import Talking from "@/components/Game/Interactions/Talking";
@@ -35,11 +34,10 @@ import { AlfaAbility } from "@/components/Game/Battle/Effects/Ability/AlfaAbilit
 import { JumpIndicator } from "@/components/Game/Battle/Jump/indicator";
 import { JumpDangerZone } from "@/components/Game/Battle/Jump/dangerZone";
 import { ComboAction } from "@/components/Game/Battle/Buttons/ComboAction";
-import { useGameAudio } from "@/hooks/game/useGameAudio";
+import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
+import { useBattleAudio } from "@/hooks/battle/useBattleAudio";
 import { usePlayerActions } from "@/contexts/PlayerContext";
 import { useTitles } from "@/contexts/TitleContext";
-import { useSoundEffects } from "@/contexts/SoundEffectsContext";
-import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { memo, useEffect, useMemo, useRef } from "react";
 import { TrainingOverlay } from "@/components/Game/Battle/Overlay/Training";
 import { ProjectileConstants } from "@/data/projectile";
@@ -77,7 +75,6 @@ export function BattleScene(props: Props) {
     cutscene: tvCutscene,
   } = useTrueVandinhaCutscene({ npcType, apiRef: cutsceneApiRef });
 
-  const { stopAll } = useSoundEffects();
   const { titlesData } = useTitles();
 
   // progresso de títulos no início da batalha (capturado uma única vez)
@@ -404,40 +401,16 @@ export function BattleScene(props: Props) {
     };
   }, [setBattleCollision]);
 
-  const battleAudio = useGameAudio({
-    src: props.audioSrc,
-    loop: true,
-    volume: 0.5,
-  });
-  const battleAudioRef = useLatestRef(battleAudio);
   const { isBattleNavOpen } = useBattleNavbar();
 
-  useEffect(() => {
-    const shouldPlay =
-      !showIntro &&
-      !showVictory &&
-      !showDefeat &&
-      !showHighlight &&
-      !isBattleNavOpen;
-
-    if (shouldPlay && !battleAudioRef.current.isPlaying()) {
-      void battleAudioRef.current.play();
-    } else if (!shouldPlay && battleAudioRef.current.isPlaying()) {
-      battleAudioRef.current.pause();
-    }
-
-    if (showVictory || showDefeat) {
-      stopAll();
-    }
-  }, [
+  useBattleAudio({
+    src: props.audioSrc,
     showIntro,
     showVictory,
     showDefeat,
     showHighlight,
     isBattleNavOpen,
-    stopAll,
-    battleAudioRef,
-  ]);
+  });
 
   // Grupos de props memoizados: estabilizam a identidade dos objetos passados aos
   // filhos pesados, evitando re-render quando apenas estado não relacionado muda.
