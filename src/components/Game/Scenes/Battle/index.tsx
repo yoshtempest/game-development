@@ -299,8 +299,12 @@ export function BattleScene(props: Props) {
 
   // Modo online: sincronização de snapshot host->guest (passo 2).
   const online = useOnline();
-  const { connected: battleSocketConnected, send: battleSocketSend, lastMessage: battleSocketLast } =
-    useBattleSocket(online.roomId, online.playerId);
+  const {
+    connected: battleSocketConnected,
+    reconnecting: battleSocketReconnecting,
+    send: battleSocketSend,
+    lastMessage: battleSocketLast,
+  } = useBattleSocket(online.roomId, online.playerId);
   const isBattleHost = online.room?.hostId === online.playerId;
   const { snapshot: remoteBattleSnapshot } = useBattleSnapshot({
     isHost: isBattleHost,
@@ -316,7 +320,15 @@ export function BattleScene(props: Props) {
     isBattleHost ? null : remoteBattleSnapshot,
   );
   void interpolatedRemoteSnapshot;
-  void battleSocketConnected;
+
+  useEffect(() => {
+    if (isBattleHost) return;
+    if (battleSocketConnected) return;
+    const t = setTimeout(() => {
+      void navigate(-1);
+    }, 15000);
+    return () => clearTimeout(t);
+  }, [isBattleHost, battleSocketConnected, navigate]);
 
   useBattleInputRelay({
     isHost: isBattleHost,
@@ -1419,6 +1431,24 @@ export function BattleScene(props: Props) {
           }}
         >
           {remoteResult === "victory" ? "Vitória" : "Derrota"}
+        </div>
+      )}
+
+      {!isBattleHost && !battleSocketConnected && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(0,0,0,0.7)",
+            zIndex: 100002,
+            color: "#fff",
+            fontSize: 24,
+          }}
+        >
+          {battleSocketReconnecting ? "Reconectando..." : "Conexão perdida"}
         </div>
       )}
 
