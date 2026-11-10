@@ -308,6 +308,7 @@ export function BattleScene(props: Props) {
     lastMessage: battleSocketLast,
   } = useBattleSocket(online.roomId, online.playerId);
   const isBattleHost = online.room?.hostId === online.playerId;
+  const isBattleGuest = !isBattleHost && online.connected;
   const { snapshot: remoteBattleSnapshot } = useBattleSnapshot({
     isHost: isBattleHost,
     send: battleSocketSend,
@@ -321,6 +322,27 @@ export function BattleScene(props: Props) {
   const interpolatedRemoteSnapshot = useInterpolatedSnapshot(
     isBattleHost ? null : remoteBattleSnapshot,
   );
+
+  if (isBattleGuest) {
+    if (interpolatedRemoteSnapshot?.player) {
+      player.x = interpolatedRemoteSnapshot.player.x;
+      player.y = interpolatedRemoteSnapshot.player.y;
+    }
+    if (interpolatedRemoteSnapshot?.npc) {
+      npc.x = interpolatedRemoteSnapshot.npc.x;
+      npc.y = interpolatedRemoteSnapshot.npc.y;
+    }
+    if (remoteBattleSnapshot?.player) {
+      battle.playerHP = remoteBattleSnapshot.player.hp;
+    }
+    if (remoteBattleSnapshot?.npc) {
+      battle.npcHP = remoteBattleSnapshot.npc.hp;
+      if (remoteBattleSnapshot.npc.phase != null) {
+        battle.npcPhase = remoteBattleSnapshot.npc.phase;
+      }
+    }
+  }
+
   void interpolatedRemoteSnapshot;
 
   useEffect(() => {
