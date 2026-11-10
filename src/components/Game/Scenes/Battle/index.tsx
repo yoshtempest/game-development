@@ -442,6 +442,17 @@ export function BattleScene(props: Props) {
     setOpponentHP((hp) => Math.max(0, hp - amount));
   }, [isBattleHost, battleSocketLast]);
 
+  // Guest: acompanha retry/leave do host
+  useEffect(() => {
+    if (isBattleHost) return;
+    if (battleSocketLast?.type === "battleRetry") {
+      window.location.reload();
+    }
+    if (battleSocketLast?.type === "battleLeave") {
+      void navigate(-1);
+    }
+  }, [isBattleHost, battleSocketLast, navigate]);
+
   // Guest: solicita re-sync ao conectar
   useEffect(() => {
     if (isBattleHost) return;
@@ -481,6 +492,20 @@ export function BattleScene(props: Props) {
     send: battleSocketSend,
     lastMessage: battleSocketLast,
   });
+
+  const handleRetrySync = () => {
+    handleRetry();
+    if (isBattleHost && online.connected) {
+      battleSocketSend({ type: "battleRetry" });
+    }
+  };
+
+  const handleContinueSync = () => {
+    handleContinue();
+    if (isBattleHost && online.connected) {
+      battleSocketSend({ type: "battleLeave" });
+    }
+  };
 
   const showVictory = isBattleGuest
     ? remoteResult === "victory"
@@ -1160,7 +1185,7 @@ export function BattleScene(props: Props) {
             ? ((remoteRewards?.lastRewards as typeof lastRewards) ?? lastRewards)
             : lastRewards
         }
-        handleContinue={handleContinue}
+        handleContinue={handleContinueSync}
         skipVictoryDelay={skipVictoryDelay}
         victoryElapsed={victoryElapsed}
         bestTime={bestTime}
@@ -1168,7 +1193,7 @@ export function BattleScene(props: Props) {
         isAlfa={isAlfa}
         titleProgressSnapshot={titleProgressSnapshotRef.current}
         showDefeat={showDefeat}
-        handleRetry={handleRetry}
+        handleRetry={handleRetrySync}
         navigate={navigate}
         defeatProgress={defeatProgress}
         defeatElapsed={defeatElapsed}
