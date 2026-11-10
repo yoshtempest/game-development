@@ -15,15 +15,20 @@ export function useBattleInputRelay({
     if (isHost) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       send({ type: "input", action: "keydown", code: e.code, key: e.key });
+      // Evita que o controle local também aplique o movimento/ação.
+      e.stopImmediatePropagation();
+      e.preventDefault();
     };
     const handleKeyUp = (e: KeyboardEvent) => {
       send({ type: "input", action: "keyup", code: e.code, key: e.key });
+      e.stopImmediatePropagation();
+      e.preventDefault();
     };
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("keydown", handleKeyDown, true);
+    window.addEventListener("keyup", handleKeyUp, true);
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("keydown", handleKeyDown, true);
+      window.removeEventListener("keyup", handleKeyUp, true);
     };
   }, [isHost, send]);
 

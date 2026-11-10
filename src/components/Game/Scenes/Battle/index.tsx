@@ -175,7 +175,7 @@ export function BattleScene(props: Props) {
     grabFlipped,
     getReplayData,
     training: isTraining,
-    controlsDisabled,
+    controlsDisabled: _controlsDisabled,
     battlePaused,
     showRetry,
     playerProjectile,
@@ -299,6 +299,8 @@ export function BattleScene(props: Props) {
     dialogueOpen: tvDialogueOpen,
   });
 
+  let controlsDisabled = _controlsDisabled;
+
   // Modo online: sincronização de snapshot host->guest (passo 2).
   const online = useOnline();
   const {
@@ -324,6 +326,7 @@ export function BattleScene(props: Props) {
   );
 
   if (isBattleGuest) {
+    controlsDisabled = true;
     if (interpolatedRemoteSnapshot?.player) {
       player.x = interpolatedRemoteSnapshot.player.x;
       player.y = interpolatedRemoteSnapshot.player.y;
