@@ -22,6 +22,7 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import { useOnline } from "@/contexts/OnlineContext";
 import { useBattleSocket } from "@/hooks/useBattleSocket";
 import { useBattleSnapshot } from "@/hooks/battle/useBattleSnapshot";
+import { useInterpolatedSnapshot } from "@/hooks/battle/useInterpolatedSnapshot";
 import { useBattleInputRelay } from "@/hooks/battle/useBattleInputRelay";
 import { useCutscene } from "@/hooks/interaction/cutscene/useCutscene";
 import Talking from "@/components/Game/Interactions/Talking";
@@ -310,7 +311,10 @@ export function BattleScene(props: Props) {
       npc: { x: npc.x, y: npc.y, hp: battle.npcHP, phase: battle.npcPhase ?? 1 },
     }),
   });
-  void remoteBattleSnapshot;
+  const interpolatedRemoteSnapshot = useInterpolatedSnapshot(
+    isBattleHost ? null : remoteBattleSnapshot,
+  );
+  void interpolatedRemoteSnapshot;
   void battleSocketConnected;
 
   useBattleInputRelay({
