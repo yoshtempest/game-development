@@ -1,15 +1,6 @@
 import type { ReactNode } from "react";
 import type { BattleMapConfig } from "@/utils/types/maps/battle";
 
-export type AbilitySlot = {
-  click?: () => void;
-  press?: () => void;
-  release?: () => void;
-  disabled: boolean;
-  hold: boolean;
-  abilityId?: string;
-};
-
 export type Props = {
   npcType: string;
   redirectTo?: string;

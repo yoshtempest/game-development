@@ -9,9 +9,9 @@ import { trueVandinhaBattleDialogue } from "@/data/dialogues/trueVandinhaBattle/
 import { useGameLayout } from "@/hooks/game/useGameLayout";
 import { useBattleScene } from "@/hooks/battle/main/battleScene/useScene";
 import { useBattleCamera } from "@/hooks/battle/camera/useBattleCamera";
-import { BattleBackground } from "./components/BattleBackground";
-import { BattleAbilities } from "./BattleAbilities";
-import { BattleModals } from "./components/BattleModals";
+import { BattleBackground } from "./components/Background";
+import { BattleAbilities } from "./components/Abilities";
+import { BattleModals } from "./components/Modals";
 import { BattleEntities } from "@/components/Game/Battle/Entities";
 import { PlayerBattle } from "@/components/Game/Entities/Player/Battle";
 import type { CharacterId } from "@/data/characters/list";

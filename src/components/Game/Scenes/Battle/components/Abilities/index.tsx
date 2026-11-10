@@ -1,6 +1,5 @@
 import { useBattleMana } from "@/contexts/BattleManaContext";
-import type { AbilitySlot } from "./types";
-import type { useBattleScene } from "@/hooks/battle/main/battleScene/useScene";
+import type { AbilitySlot, Props } from "./types";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import {
   CURSED_ENERGY_HEAL_RATIO,
@@ -33,69 +32,6 @@ import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/Gr
 import { useRef } from "react";
 import { useAbilityShortcuts } from "@/hooks/battle/useAbilityShortcuts";
 
-type SceneSlice = Pick<
-  ReturnType<typeof useBattleScene>,
-  | "player"
-  | "battle"
-  | "triggerAbilityCameraFocus"
-  | "petSkill"
-  | "pet"
-  | "switchWeapon"
-  | "yvelWeapon"
-  | "openSigilo"
-  | "sphere"
-  | "bluePress"
-  | "blueUsable"
-  | "redPress"
-  | "redUsable"
-  | "purplePress"
-  | "purpleUsable"
-  | "activateDivergentFist"
-  | "divergentFistActive"
-  | "blink"
-  | "convertCursedEnergy"
-  | "honoredOneActive"
-  | "atomicPress"
-  | "atomicUsable"
-  | "atomicRemaining"
-  | "granReyCeroPress"
-  | "granReyCeroUsable"
-  | "granReyCeroRemaining"
-  | "vastolordActive"
-  | "vastolordLaserPress"
-  | "vastolordLaserUsable"
-  | "vastolordLaserStacks"
-  | "activeAbilityPress"
-  | "activeAbilityUsable"
-  | "activeAbilityRemaining"
-  | "babidiBombDropPress"
-  | "babidiBombDropUsable"
-  | "babidiBombDropRemaining"
-  | "fishingNetPress"
-  | "fishingNetUsable"
-  | "fishingNetRemaining"
-  | "babidiMachineGamaControl"
-  | "babidiMachineGamaSelfDestruct"
-  | "domainExpansionPress"
-  | "domainExpansionUsable"
-  | "clonePress"
-  | "cloneRelease"
-  | "cloneUsable"
-  | "kiChargePress"
-  | "kiChargeRelease"
-  | "kiChargeUsable"
-  | "genkiDamaPress"
-  | "genkiDamaRelease"
-  | "genkiDamaUsable"
-  | "kamehamehaPress"
-  | "kamehamehaUsable"
->;
-
-type Props = {
-  scene: SceneSlice;
-  controlsDisabled: boolean;
-  isBattleNavOpen: boolean;
-};
 
 export function BattleAbilities({ scene, controlsDisabled, isBattleNavOpen }: Props) {
   const abilitySlotsRef = useRef<AbilitySlot[]>([]);

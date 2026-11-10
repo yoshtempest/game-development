@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
-import type { AbilitySlot } from "@/components/Game/Scenes/Battle/types";
+import type { AbilitySlot } from "@/components/Game/Scenes/Battle/components/Abilities/types";
 import type { CharacterId } from "@/data/characters/list";
 
 type Params = {
-  abilitySlotsRef: React.MutableRefObject<AbilitySlot[]>;
+  abilitySlotsRef: React.RefObject<AbilitySlot[]>;
   controlsDisabled: boolean;
   isBattleNavOpen: boolean;
   playerMode: string;
