@@ -223,6 +223,24 @@ wss.on("connection", (ws) => {
     if (msg.type === "input") {
       const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
       if (!room) return;
+
+      // Anti-cheat básico: rate limit de inputs por socket.
+      const now = Date.now();
+      const metaAny = meta as { inputTimes?: number[] };
+      if (!metaAny.inputTimes) metaAny.inputTimes = [];
+      metaAny.inputTimes = metaAny.inputTimes.filter((t) => now - t < 1000);
+      if (metaAny.inputTimes.length > 60) {
+        ws.send(JSON.stringify({ type: "error", message: "rate limit excedido" }));
+        return;
+      }
+      metaAny.inputTimes.push(now);
+
+      const code = String(msg.code ?? "");
+      const key = String(msg.key ?? "");
+      if (!code || code.length > 20 || key.length > 20) {
+        ws.send(JSON.stringify({ type: "error", message: "input inválido" }));
+        return;
+      }
       const payload = JSON.stringify({
         type: "input",
         roomId: room.id,
