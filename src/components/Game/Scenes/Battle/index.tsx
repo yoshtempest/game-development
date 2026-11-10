@@ -1,22 +1,4 @@
 import { BattleHUD } from "@/components/Game/Battle/HUD";
-import { PetSkillButton } from "@/components/Game/Battle/Buttons/PetSkill";
-import { WeaponSwitchButton } from "@/components/Game/Battle/Buttons/WeaponSwitch";
-import { CursedEnergyButton } from "@/components/Game/Battle/Buttons/Natsuki/CursedEnergy";
-import { BlinkButton } from "@/components/Game/Battle/Buttons/Natsuki/Blink";
-import { DivergentFistButton } from "@/components/Game/Battle/Buttons/Natsuki/DivergentFist";
-import { SphereJunction } from "@/components/Game/Battle/Buttons/Natsuki/SphereJunction";
-import { EmatronCloneButton } from "@/components/Game/Battle/Buttons/Ematron/Clone";
-import { EmatronKiChargeButton } from "@/components/Game/Battle/Buttons/Ematron/KiCharge";
-import { EmatronGenkiDamaButton } from "@/components/Game/Battle/Buttons/Ematron/GenkiDama";
-import { EmatronKamehamehaButton } from "@/components/Game/Battle/Buttons/Ematron/Kamehameha";
-import { VastolordLaserButton } from "@/components/Game/Battle/Buttons/Marshadow/VastolordLaser";
-import { AtomicButton } from "@/components/Game/Battle/Buttons/Marshadow/Atomic";
-import { KillerQueenButton } from "@/components/Game/Battle/Buttons/SrGuaxinim/KillerQueen";
-import { StackExplosionButton } from "@/components/Game/Battle/Buttons/Laricell/StackExplosion";
-
-import { DomainExpansionButton } from "@/components/Game/Battle/Buttons/DomainExpansion";
-import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
-import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
 import { GameMap } from "@/components/Game/Map/Game";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useOnline } from "@/contexts/OnlineContext";
@@ -28,6 +10,7 @@ import { useGameLayout } from "@/hooks/game/useGameLayout";
 import { useBattleScene } from "@/hooks/battle/main/battleScene/useScene";
 import { useBattleCamera } from "@/hooks/battle/camera/useBattleCamera";
 import { BattleBackground } from "./components/BattleBackground";
+import { BattleAbilities } from "./BattleAbilities";
 import { BattleModals } from "./components/BattleModals";
 import { BattleEntities } from "@/components/Game/Battle/Entities";
 import { PlayerBattle } from "@/components/Game/Entities/Player/Battle";
@@ -57,14 +40,6 @@ import { usePlayerActions } from "@/contexts/PlayerContext";
 import { useTitles } from "@/contexts/TitleContext";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
-import { useBattleMana } from "@/contexts/BattleManaContext";
-import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
-import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
-import {
-  CURSED_ENERGY_HEAL_RATIO,
-  BLINK_ENERGY_COST,
-  DIVERGENT_FIST_COST,
-} from "@/gameRules/battle/cursedEnergy";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { TrainingOverlay } from "@/components/Game/Battle/TrainingOverlay";
 import { ProjectileConstants } from "@/data/projectile";
@@ -79,14 +54,13 @@ import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
 import {
   npcPath,
-  playerAbilityBackgroundPath,
   playerAbilityPath,
   playerPath,
 } from "@/utils/paths";
 import { GAME_VIEWPORT_WIDTH_RATIO } from "@/data/grid";
 import { getViewportSize } from "@/utils/viewport";
 
-import type { Props, AbilitySlot } from "./types";
+import type { Props } from "./types";
 
 const MemoBattleEntities = memo(BattleEntities);
 const MemoBattleHUD = memo(BattleHUD);
@@ -113,12 +87,6 @@ export function BattleScene(props: Props) {
     },
   });
 
-  // Atalhos de teclado (teclas 1..9) para as habilidades do personagem. Cada
-  // botão renderizado em `.abilityButtons` ocupa um slot na ordem de render;
-  // a tecla numérica correspondente dispara a habilidade daquele slot.
-  const abilitySlotsRef = useRef<AbilitySlot[]>([]);
-  abilitySlotsRef.current = [];
-  const pressedAbilityKeysRef = useRef<Set<string>>(new Set());
   const { stopAll } = useSoundEffects();
   const { titlesData } = useTitles();
 
@@ -378,9 +346,6 @@ export function BattleScene(props: Props) {
   const domainConfig = DOMAIN_EXPANSIONS[player.character];
   // A intro é o `background.svg` (SpecialIntro) e o preenchimento é o
   // `expansion.svg` (DomainExpansionBackground) — só quem tem `hasBackgroundArt`.
-  const domainBackground = domainConfig.hasBackgroundArt
-    ? playerAbilityBackgroundPath(player.character, "domainExpansion")
-    : undefined;
   const domainExpansionArt = domainConfig.hasBackgroundArt
     ? playerAbilityPath(player.character, "domainExpansion", "expansion.svg")
     : undefined;
@@ -497,7 +462,6 @@ export function BattleScene(props: Props) {
   });
   const battleAudioRef = useLatestRef(battleAudio);
   const { isBattleNavOpen } = useBattleNavbar();
-  const battleMana = useBattleMana();
 
   useEffect(() => {
     const shouldPlay =
@@ -524,65 +488,6 @@ export function BattleScene(props: Props) {
     isBattleNavOpen,
     stopAll,
     battleAudioRef,
-  ]);
-
-  // Atalhos de teclado para as habilidades (teclas 1..9): disparam a habilidade
-  // do slot correspondente na ordem de render dos botões de `.abilityButtons`.
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (player.mode !== "battle") return;
-      if (controlsDisabled) return;
-      if (isBattleNavOpen) return;
-      const target = e.target as HTMLElement | null;
-      if (
-        target &&
-        (target.tagName === "INPUT" ||
-          target.tagName === "TEXTAREA" ||
-          target.isContentEditable)
-      ) {
-        return;
-      }
-      if (!/^[1-9]$/.test(e.key)) return;
-      const idx = Number(e.key) - 1;
-      const slot = abilitySlotsRef.current[idx];
-      if (!slot || slot.disabled) return;
-      if (slot.hold) {
-        if (pressedAbilityKeysRef.current.has(e.key)) return;
-        pressedAbilityKeysRef.current.add(e.key);
-        slot.press?.();
-        if (slot.abilityId) {
-          triggerAbilityCameraFocus(player.character, slot.abilityId);
-        }
-      } else {
-        if (e.repeat) return;
-        slot.click?.();
-        if (slot.abilityId) {
-          triggerAbilityCameraFocus(player.character, slot.abilityId);
-        }
-      }
-    }
-
-    function handleKeyUp(e: KeyboardEvent) {
-      if (!/^[1-9]$/.test(e.key)) return;
-      if (!pressedAbilityKeysRef.current.has(e.key)) return;
-      pressedAbilityKeysRef.current.delete(e.key);
-      const idx = Number(e.key) - 1;
-      const slot = abilitySlotsRef.current[idx];
-      slot?.release?.();
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, [
-    controlsDisabled,
-    isBattleNavOpen,
-    player.mode,
-    player.character,
-    triggerAbilityCameraFocus,
   ]);
 
   // Grupos de props memoizados: estabilizam a identidade dos objetos passados aos
@@ -1005,407 +910,66 @@ export function BattleScene(props: Props) {
 
       <ComboAction />
 
-      <div
-        className="abilityButtons"
-        onClick={(e) => {
-          const btn = (e.target as HTMLElement | null)?.closest(
-            ".abilityButton",
-          );
-          if (!btn) return;
-          const buttons = Array.from(
-            e.currentTarget.querySelectorAll(".abilityButton"),
-          );
-          const idx = buttons.indexOf(btn);
-          if (idx < 0) return;
-          const slot = abilitySlotsRef.current[idx];
-          if (!slot || slot.hold || slot.disabled || !slot.abilityId) return;
-          triggerAbilityCameraFocus(player.character, slot.abilityId);
+      <BattleAbilities
+        scene={{
+          player,
+          battle,
+          triggerAbilityCameraFocus,
+          petSkill,
+          pet,
+          switchWeapon,
+          yvelWeapon,
+          openSigilo,
+          sphere,
+          bluePress,
+          blueUsable,
+          redPress,
+          redUsable,
+          purplePress,
+          purpleUsable,
+          activateDivergentFist,
+          divergentFistActive,
+          blink,
+          convertCursedEnergy,
+          honoredOneActive,
+          atomicPress,
+          atomicUsable,
+          atomicRemaining,
+          granReyCeroPress,
+          granReyCeroUsable,
+          granReyCeroRemaining,
+          vastolordActive,
+          vastolordLaserPress,
+          vastolordLaserUsable,
+          vastolordLaserStacks,
+          activeAbilityPress,
+          activeAbilityUsable,
+          activeAbilityRemaining,
+          babidiBombDropPress,
+          babidiBombDropUsable,
+          babidiBombDropRemaining,
+          fishingNetPress,
+          fishingNetUsable,
+          fishingNetRemaining,
+          babidiMachineGamaControl,
+          babidiMachineGamaSelfDestruct,
+          domainExpansionPress,
+          domainExpansionUsable,
+          clonePress,
+          cloneRelease,
+          cloneUsable,
+          kiChargePress,
+          kiChargeRelease,
+          kiChargeUsable,
+          genkiDamaPress,
+          genkiDamaRelease,
+          genkiDamaUsable,
+          kamehamehaPress,
+          kamehamehaUsable,
         }}
-        onPointerDown={(e) => {
-          const btn = (e.target as HTMLElement | null)?.closest(
-            ".abilityButton",
-          );
-          if (!btn) return;
-          const buttons = Array.from(
-            e.currentTarget.querySelectorAll(".abilityButton"),
-          );
-          const idx = buttons.indexOf(btn);
-          if (idx < 0) return;
-          const slot = abilitySlotsRef.current[idx];
-          if (!slot || !slot.hold || slot.disabled || !slot.abilityId) return;
-          triggerAbilityCameraFocus(player.character, slot.abilityId);
-        }}
-      >
-        {petSkill &&
-          pet &&
-          (() => {
-            abilitySlotsRef.current.push({
-              click: petSkill.trigger,
-              disabled: controlsDisabled,
-              hold: false,
-            });
-            return (
-              <PetSkillButton
-                imageUrl={npcPath(`/${petSkill.definition.npcType}/face.svg`)}
-                skillName={petSkill.definition.skill.name}
-                ready={petSkill.ready}
-                remaining={petSkill.remaining}
-                cooldownMs={petSkill.definition.skill.cooldownMs}
-                disabled={controlsDisabled}
-                onClick={petSkill.trigger}
-              />
-            );
-          })()}
-
-        {player.character === "yvel" &&
-          (() => {
-            abilitySlotsRef.current.push({
-              click: switchWeapon,
-              disabled:
-                controlsDisabled ||
-                (battleMana != null &&
-                  battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST),
-              hold: false,
-              abilityId: "weaponSwitch",
-            });
-            return (
-              <WeaponSwitchButton
-                weapon={yvelWeapon}
-                disabled={
-                  controlsDisabled ||
-                  (battleMana != null &&
-                    battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST)
-                }
-                onClick={switchWeapon}
-              />
-            );
-          })()}
-
-        {player.character === "drika" &&
-           (() => {
-             abilitySlotsRef.current.push({
-               click: () => openSigilo?.(),
-               disabled: controlsDisabled,
-               hold: false,
-               abilityId: "sigilo",
-             });
-             return (
-               <button
-                 type="button"
-                 className="abilityButton"
-                 disabled={controlsDisabled}
-                 onClick={() => openSigilo?.()}
-               >
-                 Sigilo
-               </button>
-             );
-           })()}
-
-        {player.character === "natsuki" &&
-          (() => {
-            // Esferas: 1 ou 2 botões conforme a purple está em campo.
-            if (sphere?.variant === "purple") {
-              abilitySlotsRef.current.push({
-                click: purplePress,
-                disabled: controlsDisabled || !purpleUsable,
-                hold: false,
-                abilityId: "purpleSphere",
-              });
-            } else {
-              abilitySlotsRef.current.push({
-                click: bluePress,
-                disabled: controlsDisabled || !blueUsable,
-                hold: false,
-                abilityId: "blueSphere",
-              });
-              abilitySlotsRef.current.push({
-                click: redPress,
-                disabled: controlsDisabled || !redUsable,
-                hold: false,
-                abilityId: "redSphere",
-              });
-            }
-            abilitySlotsRef.current.push({
-              click: activateDivergentFist,
-              disabled:
-                controlsDisabled ||
-                (battleMana?.playerMana ?? 0) < DIVERGENT_FIST_COST,
-              hold: false,
-              abilityId: "divergentFist",
-            });
-            const blinkOrCursedDisabled = honoredOneActive
-              ? controlsDisabled ||
-                ALL_PREDICATES.isNatsukiDomain(player.state) ||
-                (battleMana?.playerMana ?? 0) < BLINK_ENERGY_COST
-              : controlsDisabled ||
-                (battleMana?.playerMana ?? 0) < CURSED_ENERGY_HEAL_RATIO ||
-                battle.playerHP >= battle.playerMaxHp;
-            abilitySlotsRef.current.push({
-              click: honoredOneActive ? blink : convertCursedEnergy,
-              disabled: blinkOrCursedDisabled,
-              hold: false,
-              abilityId: honoredOneActive ? "blink" : "cursedEnergyConversion",
-            });
-            return (
-              <>
-                <SphereJunction
-                  blueActive={
-                    sphere?.variant === "blue" && sphere.phase !== "dismissing"
-                  }
-                  blueDisabled={controlsDisabled || !blueUsable}
-                  redDisabled={controlsDisabled || !redUsable}
-                  purpleActive={sphere?.variant === "purple"}
-                  purpleDisabled={controlsDisabled || !purpleUsable}
-                  onBlue={bluePress}
-                  onRed={redPress}
-                  onPurple={purplePress}
-                />
-                <DivergentFistButton
-                  energy={battleMana?.playerMana ?? 0}
-                  active={divergentFistActive}
-                  disabled={
-                    controlsDisabled ||
-                    (battleMana?.playerMana ?? 0) < DIVERGENT_FIST_COST
-                  }
-                  onClick={activateDivergentFist}
-                />
-                {honoredOneActive ? (
-                  <BlinkButton
-                    energy={battleMana?.playerMana ?? 0}
-                    disabled={
-                      controlsDisabled ||
-                      ALL_PREDICATES.isNatsukiDomain(player.state) ||
-                      (battleMana?.playerMana ?? 0) < BLINK_ENERGY_COST
-                    }
-                    onClick={blink}
-                  />
-                ) : (
-                  <CursedEnergyButton
-                    energy={battleMana?.playerMana ?? 0}
-                    energyMax={battleMana?.playerMaxMana ?? 100}
-                    disabled={
-                      controlsDisabled ||
-                      (battleMana?.playerMana ?? 0) <
-                        CURSED_ENERGY_HEAL_RATIO ||
-                      battle.playerHP >= battle.playerMaxHp
-                    }
-                    onClick={convertCursedEnergy}
-                  />
-                )}
-              </>
-            );
-          })()}
-
-        {player.character === "ematron" &&
-          (() => {
-            abilitySlotsRef.current.push({
-              press: clonePress,
-              release: cloneRelease,
-              disabled: controlsDisabled || !cloneUsable,
-              hold: true,
-              abilityId: "clone",
-            });
-            abilitySlotsRef.current.push({
-              press: kiChargePress,
-              release: kiChargeRelease,
-              disabled: controlsDisabled || !kiChargeUsable,
-              hold: true,
-              abilityId: "kiCharge",
-            });
-            abilitySlotsRef.current.push({
-              press: genkiDamaPress,
-              release: genkiDamaRelease,
-              disabled: controlsDisabled || !genkiDamaUsable,
-              hold: true,
-              abilityId: "genkiDama",
-            });
-            abilitySlotsRef.current.push({
-              click: kamehamehaPress,
-              disabled: controlsDisabled || !kamehamehaUsable,
-              hold: false,
-              abilityId: "kamehameha",
-            });
-            return (
-              <>
-                <EmatronCloneButton
-                  energy={battleMana?.playerMana ?? 0}
-                  disabled={controlsDisabled || !cloneUsable}
-                  onPress={clonePress}
-                  onRelease={cloneRelease}
-                />
-                <EmatronKiChargeButton
-                  energy={battleMana?.playerMana ?? 0}
-                  energyMax={battleMana?.playerMaxMana ?? 100}
-                  disabled={controlsDisabled || !kiChargeUsable}
-                  onPress={kiChargePress}
-                  onRelease={kiChargeRelease}
-                />
-                <EmatronGenkiDamaButton
-                  energy={battleMana?.playerMana ?? 0}
-                  disabled={controlsDisabled || !genkiDamaUsable}
-                  onPress={genkiDamaPress}
-                  onRelease={genkiDamaRelease}
-                />
-                <EmatronKamehamehaButton
-                  disabled={controlsDisabled || !kamehamehaUsable}
-                  onClick={kamehamehaPress}
-                />
-              </>
-            );
-          })()}
-
-        {player.character === "marshadow" &&
-          (() => {
-            if (!vastolordActive) {
-              abilitySlotsRef.current.push({
-                click: atomicPress,
-                disabled: controlsDisabled,
-                hold: false,
-                abilityId: "iAmAtomic",
-              });
-              abilitySlotsRef.current.push({
-                click: granReyCeroPress,
-                disabled: controlsDisabled,
-                hold: false,
-                abilityId: "granReyCero",
-              });
-            } else {
-              abilitySlotsRef.current.push({
-                click: vastolordLaserPress,
-                disabled: !vastolordLaserUsable,
-                hold: false,
-                abilityId: "vastolordLaser",
-              });
-            }
-            return !vastolordActive ? (
-              <>
-                <AtomicButton
-                  ready={atomicUsable}
-                  remaining={atomicRemaining}
-                  disabled={controlsDisabled}
-                  onClick={atomicPress}
-                />
-                <GranReyCeroButton
-                  ready={granReyCeroUsable}
-                  remaining={granReyCeroRemaining}
-                  disabled={controlsDisabled}
-                  onClick={granReyCeroPress}
-                />
-              </>
-            ) : (
-              <VastolordLaserButton
-                charges={vastolordLaserStacks}
-                disabled={!vastolordLaserUsable}
-                onClick={vastolordLaserPress}
-              />
-            );
-          })()}
-
-        {player.character === "srGuaxinim" &&
-          (() => {
-            abilitySlotsRef.current.push({
-              click: activeAbilityPress,
-              disabled: controlsDisabled,
-              hold: false,
-              abilityId: "killerQueen",
-            });
-            return (
-              <KillerQueenButton
-                ready={activeAbilityUsable}
-                remaining={activeAbilityRemaining}
-                disabled={controlsDisabled}
-                onClick={activeAbilityPress}
-              />
-            );
-          })()}
-
-        {player.character === "laricell" &&
-          (() => {
-            abilitySlotsRef.current.push({
-              click: activeAbilityPress,
-              disabled: controlsDisabled,
-              hold: false,
-              abilityId: "stackExplosion",
-            });
-            return (
-              <StackExplosionButton
-                ready={activeAbilityUsable}
-                remaining={activeAbilityRemaining}
-                disabled={controlsDisabled}
-                onClick={activeAbilityPress}
-              />
-            );
-          })()}
-
-        {player.character === "babidi" &&
-          (() => {
-            abilitySlotsRef.current.push({
-              click: babidiBombDropPress,
-              disabled: controlsDisabled || !babidiBombDropUsable,
-              hold: false,
-              abilityId: "dimensionalPortal",
-            });
-            abilitySlotsRef.current.push({
-              click: fishingNetPress,
-              disabled: controlsDisabled || !fishingNetUsable,
-              hold: false,
-              abilityId: "fishingNet",
-            });
-            return (
-              <>
-                <GenericAbilityButton
-                  characterId="babidi"
-                  abilityId="dimensionalPortal"
-                  ready={babidiBombDropUsable}
-                  remaining={babidiBombDropRemaining}
-                  disabled={controlsDisabled || !babidiBombDropUsable}
-                  onClick={babidiBombDropPress}
-                />
-                <GenericAbilityButton
-                  characterId="babidi"
-                  abilityId="fishingNet"
-                  ready={fishingNetUsable}
-                  remaining={fishingNetRemaining}
-                  disabled={controlsDisabled || !fishingNetUsable}
-                  onClick={fishingNetPress}
-                />
-                {babidiMachineGamaControl && (
-                  <GenericAbilityButton
-                    characterId="babidi"
-                    abilityId="machineGamaSelfDestruct"
-                    ready={true}
-                    disabled={false}
-                    onClick={babidiMachineGamaSelfDestruct}
-                  />
-                )}
-              </>
-            );
-          })()}
-
-        {!vastolordActive &&
-          (() => {
-            abilitySlotsRef.current.push({
-              click: domainExpansionPress,
-              disabled: controlsDisabled,
-              hold: false,
-              abilityId:
-                player.character === "marshadow"
-                  ? "domainExpansion"
-                  : "domainBurst",
-            });
-            return (
-              <DomainExpansionButton
-                name={domainConfig.name}
-                description={domainConfig.description}
-                accent={domainConfig.accent}
-                background={domainBackground}
-                ready={domainExpansionUsable}
-                disabled={controlsDisabled}
-                onClick={domainExpansionPress}
-              />
-            );
-          })()}
-      </div>
+        controlsDisabled={controlsDisabled}
+        isBattleNavOpen={isBattleNavOpen}
+      />
 
       <BabidiMachineGama machineGama={babidiMachineGama} />
       {isTraining && <TrainingOverlay onLeave={() => navigate(-1)} />}
