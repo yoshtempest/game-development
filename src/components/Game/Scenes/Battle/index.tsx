@@ -90,7 +90,7 @@ import {
 import { GAME_VIEWPORT_WIDTH_RATIO } from "@/data/grid";
 import { getViewportSize } from "@/utils/viewport";
 
-import type { Props } from "./types";
+import type { Props, AbilitySlot } from "./types";
 
 const MemoBattleEntities = memo(BattleEntities);
 const MemoBattleHUD = memo(BattleHUD);
@@ -120,14 +120,6 @@ export function BattleScene(props: Props) {
   // Atalhos de teclado (teclas 1..9) para as habilidades do personagem. Cada
   // botão renderizado em `.abilityButtons` ocupa um slot na ordem de render;
   // a tecla numérica correspondente dispara a habilidade daquele slot.
-  type AbilitySlot = {
-    click?: () => void;
-    press?: () => void;
-    release?: () => void;
-    disabled: boolean;
-    hold: boolean;
-    abilityId?: string;
-  };
   const abilitySlotsRef = useRef<AbilitySlot[]>([]);
   abilitySlotsRef.current = [];
   const pressedAbilityKeysRef = useRef<Set<string>>(new Set());
