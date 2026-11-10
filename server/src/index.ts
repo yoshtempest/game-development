@@ -274,6 +274,7 @@ wss.on("connection", (ws) => {
     }
 
     if (
+      msg.type === "requestSync" ||
       msg.type === "opponentDamage" ||
       msg.type === "guildInvite" ||
       msg.type === "guildResponse" ||

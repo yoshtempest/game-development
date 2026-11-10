@@ -359,6 +359,7 @@ export function BattleScene(props: Props) {
 
   const [opponentHP, setOpponentHP] = useState(1000);
   const [opponentMaxHP, setOpponentMaxHP] = useState(1000);
+  const lastAttackProcessedRef = useRef<string | null>(null);
 
   // Guest envia seu estado de batalha
   useEffect(() => {
@@ -404,6 +405,22 @@ export function BattleScene(props: Props) {
     setOpponentHP((prev) => (hp ? hp : prev));
   }, [isBattleHost, remoteBattleSnapshot]);
 
+  // Host: aplica dano ao oponente quando ataca em alcance (básico)
+  useEffect(() => {
+    if (!isBattleHost || !online.connected) return;
+    if (!remotePlayerState) return;
+    const state = player.state;
+    if (state !== "attack" && state !== "preAttack") return;
+    const key = `${state}-${player.x}-${player.y}`;
+    if (lastAttackProcessedRef.current === key) return;
+    const dist = Math.hypot(player.x - remotePlayerState.x, player.y - remotePlayerState.y);
+    if (dist > 180) return;
+    lastAttackProcessedRef.current = key;
+    const amount = 15;
+    setOpponentHP((hp) => Math.max(0, hp - amount));
+    battleSocketSend({ type: "opponentDamage", amount });
+  }, [isBattleHost, online.connected, player.state, player.x, player.y, remotePlayerState, battleSocketSend]);
+
   // Teste de dano: host pressiona 'P' para causar dano no oponente
   useEffect(() => {
     if (!isBattleHost || !online.connected) return;
@@ -424,6 +441,25 @@ export function BattleScene(props: Props) {
     const amount = Number(battleSocketLast.amount ?? 0);
     setOpponentHP((hp) => Math.max(0, hp - amount));
   }, [isBattleHost, battleSocketLast]);
+
+  // Guest: solicita re-sync ao conectar
+  useEffect(() => {
+    if (isBattleHost) return;
+    if (!battleSocketConnected) return;
+    battleSocketSend({ type: "requestSync" });
+  }, [isBattleHost, battleSocketConnected, battleSocketSend]);
+
+  // Host: responde a requestSync com snapshot completo
+  useEffect(() => {
+    if (!isBattleHost) return;
+    if (battleSocketLast?.type !== "requestSync") return;
+    battleSocketSend({
+      type: "battleSnapshot",
+      t: Date.now(),
+      player: { x: player.x, y: player.y, hp: battle.playerHP },
+      npc: { x: npc.x, y: npc.y, hp: battle.npcHP, phase: battle.npcPhase ?? 1 },
+    });
+  }, [isBattleHost, battleSocketLast, battleSocketSend, player.x, player.y, battle.playerHP, npc.x, npc.y, battle.npcHP, battle.npcPhase]);
 
   useEffect(() => {
     if (isBattleHost) return;
@@ -458,6 +494,14 @@ export function BattleScene(props: Props) {
     if (showVictory) notifyResult("victory", { xpReward, lastRewards });
     else if (showDefeat) notifyResult("defeat", { xpReward, lastRewards });
   }, [isBattleHost, showVictory, showDefeat, notifyResult, xpReward, lastRewards]);
+
+  // PvP: vitória quando o oponente é derrotado
+  useEffect(() => {
+    if (!isBattleHost || !online.connected) return;
+    if (opponentHP <= 0) {
+      notifyResult("victory", { xpReward, lastRewards });
+    }
+  }, [isBattleHost, online.connected, opponentHP, notifyResult, xpReward, lastRewards]);
 
   void remoteResult;
 
