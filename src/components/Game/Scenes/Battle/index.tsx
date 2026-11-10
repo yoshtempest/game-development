@@ -67,8 +67,7 @@ import { ProjectileConstants } from "@/data/projectile";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { SigiloSelector } from "@/components/Game/Battle/SigiloSelector";
-import { BabidiMachineGama } from "@/components/Game/Battle/BabidiMachineGama";
-import { BabidiSelfDestructButton } from "@/components/Game/Battle/BabidiSelfDestructButton";
+import { BabidiMachineGama } from "@/components/Game/Battle/Entities/Babidi/MachineGama";
 import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
 import {
@@ -1300,10 +1299,15 @@ export function BattleScene(props: Props) {
                   disabled={controlsDisabled || !fishingNetUsable}
                   onClick={fishingNetPress}
                 />
-                <BabidiSelfDestructButton
-                  visible={babidiMachineGamaControl}
-                  onClick={babidiMachineGamaSelfDestruct}
-                />
+                {babidiMachineGamaControl && (
+                  <GenericAbilityButton
+                    characterId="babidi"
+                    abilityId="machineGamaSelfDestruct"
+                    ready={true}
+                    disabled={false}
+                    onClick={babidiMachineGamaSelfDestruct}
+                  />
+                )}
               </>
             );
           })()}

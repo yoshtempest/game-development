@@ -15,4 +15,10 @@ export const BABIDI_ACTIVE_ABILITIES: ActiveAbility[] = [
     cooldownMs: BabidiFishingNetConstants.COOLDOWN_MS,
   }),
   domainBurstAbility("babidi"),
+  createActiveAbility({
+    id: "machineGamaSelfDestruct",
+    name: "Autodestruição",
+    description:
+      "Autodestrói o Machine Gama, causando dano em área ao redor dele.",
+  }),
 ];
