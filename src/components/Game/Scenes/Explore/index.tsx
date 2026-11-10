@@ -53,6 +53,7 @@ import {
   type SceneMemoryWalkTarget,
 } from "@/data/dialogues/sceneMemories";
 import { useAutoWalk } from "@/hooks/scene/autoWalk/useAutoWalk";
+import { RemotePlayers } from "@/components/Game/RemotePlayers";
 import type { ExploreSceneComponentProps } from "./types";
 
 export function ExploreScene({
@@ -483,6 +484,8 @@ export function ExploreScene({
             TILE_SIZE={TILE_SIZE}
           />
         )}
+
+        <RemotePlayers TILE_SIZE={TILE_SIZE} />
 
         {tombstones.map((tombstone) => (
           <Tombstone
