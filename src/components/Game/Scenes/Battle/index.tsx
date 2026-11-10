@@ -22,6 +22,7 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import { useOnline } from "@/contexts/OnlineContext";
 import { useBattleSocket } from "@/hooks/useBattleSocket";
 import { useBattleSnapshot } from "@/hooks/battle/useBattleSnapshot";
+import { useBattleInputRelay } from "@/hooks/battle/useBattleInputRelay";
 import { useCutscene } from "@/hooks/interaction/cutscene/useCutscene";
 import Talking from "@/components/Game/Interactions/Talking";
 import { trueVandinhaBattleDialogue } from "@/data/dialogues/trueVandinhaBattle/one";
@@ -311,6 +312,12 @@ export function BattleScene(props: Props) {
   });
   void remoteBattleSnapshot;
   void battleSocketConnected;
+
+  useBattleInputRelay({
+    isHost: isBattleHost,
+    send: battleSocketSend,
+    lastMessage: battleSocketLast,
+  });
 
   // Cutscene da TrueVandinha: ao se aproximar na 1ª fase, dispara fall + flash +
   // diálogo + transição para a 2ª fase.
