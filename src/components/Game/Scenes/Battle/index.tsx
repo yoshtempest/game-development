@@ -149,8 +149,8 @@ export function BattleScene(props: Props) {
     petSkill,
     xpReward,
     lastRewards,
-    showVictory,
-    showDefeat,
+    showVictory: _showVictory,
+    showDefeat: _showDefeat,
     showOutro,
     showClear,
     showHighlight,
@@ -363,17 +363,24 @@ export function BattleScene(props: Props) {
     lastMessage: battleSocketLast,
   });
 
-  const { remoteResult, notifyResult } = useBattleLifecycle({
+  const { remoteResult, remoteRewards, notifyResult } = useBattleLifecycle({
     isHost: isBattleHost,
     send: battleSocketSend,
     lastMessage: battleSocketLast,
   });
 
+  const showVictory = isBattleGuest
+    ? remoteResult === "victory"
+    : _showVictory;
+  const showDefeat = isBattleGuest
+    ? remoteResult === "defeat"
+    : _showDefeat;
+
   useEffect(() => {
     if (!isBattleHost) return;
-    if (showVictory) notifyResult("victory");
-    else if (showDefeat) notifyResult("defeat");
-  }, [isBattleHost, showVictory, showDefeat, notifyResult]);
+    if (showVictory) notifyResult("victory", { xpReward, lastRewards });
+    else if (showDefeat) notifyResult("defeat", { xpReward, lastRewards });
+  }, [isBattleHost, showVictory, showDefeat, notifyResult, xpReward, lastRewards]);
 
   void remoteResult;
 
@@ -1002,8 +1009,12 @@ export function BattleScene(props: Props) {
         showVictory={showVictory}
         npcType={npcType}
         npcLevel={npcLevel}
-        xpReward={xpReward}
-        lastRewards={lastRewards}
+        xpReward={isBattleGuest ? (remoteRewards?.xpReward ?? xpReward) : xpReward}
+        lastRewards={
+          isBattleGuest
+            ? ((remoteRewards?.lastRewards as typeof lastRewards) ?? lastRewards)
+            : lastRewards
+        }
         handleContinue={handleContinue}
         skipVictoryDelay={skipVictoryDelay}
         victoryElapsed={victoryElapsed}
