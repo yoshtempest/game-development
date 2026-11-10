@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import http from "node:http";
+import { WebSocketServer, WebSocket } from "ws";
 import authRoutes from "./routes/auth.js";
 import saveRoutes from "./routes/save.js";
 
@@ -89,6 +91,7 @@ app.post("/api/online/rooms/:id/join", (req, res) => {
     character,
     updatedAt: Date.now(),
   });
+  broadcastRoom(room);
   res.json(roomToJSON(room));
 });
 
@@ -101,6 +104,7 @@ app.post("/api/online/rooms/:id/leave", (req, res) => {
   const { playerId } = req.body ?? {};
   if (playerId) room.players.delete(String(playerId));
   if (room.players.size === 0) rooms.delete(room.id);
+  else broadcastRoom(room);
   res.json({ ok: true });
 });
 
@@ -124,6 +128,7 @@ app.post("/api/online/rooms/:id/state", (req, res) => {
     character: character ?? player.character,
     updatedAt: Date.now(),
   });
+  broadcastRoom(room);
   res.json({ ok: true });
 });
 
@@ -140,6 +145,125 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-app.listen(PORT, () => {
+// ---------------------------------------------------------------------------
+// WebSocket: tempo real para salas/batalha
+// ---------------------------------------------------------------------------
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server, path: "/ws" });
+
+const socketMeta = new WeakMap<WebSocket, { playerId?: string; roomId?: string }>();
+
+function broadcastRoom(room: OnlineRoom) {
+  const payload = JSON.stringify({ type: "roomState", room: roomToJSON(room) });
+  for (const ws of wss.clients) {
+    if (ws.readyState !== WebSocket.OPEN) continue;
+    const meta = socketMeta.get(ws);
+    if (meta?.roomId === room.id) ws.send(payload);
+  }
+}
+
+wss.on("connection", (ws) => {
+  socketMeta.set(ws, {});
+
+  ws.on("message", (raw) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let msg: any;
+    try {
+      msg = JSON.parse(String(raw));
+    } catch {
+      return;
+    }
+
+    const meta = socketMeta.get(ws)!;
+
+    if (msg.type === "joinRoom") {
+      const room = rooms.get(msg.roomId);
+      if (!room) {
+        ws.send(JSON.stringify({ type: "error", message: "sala não encontrada" }));
+        return;
+      }
+      meta.playerId = msg.playerId;
+      meta.roomId = msg.roomId;
+      if (!room.players.has(msg.playerId)) {
+        room.players.set(msg.playerId, {
+          id: msg.playerId,
+          name: msg.playerName ?? "Jogador",
+          updatedAt: Date.now(),
+        });
+      }
+      ws.send(JSON.stringify({ type: "roomState", room: roomToJSON(room) }));
+      broadcastRoom(room);
+      return;
+    }
+
+    if (msg.type === "leaveRoom") {
+      const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
+      if (room && msg.playerId) room.players.delete(msg.playerId);
+      meta.roomId = undefined;
+      if (room) broadcastRoom(room);
+      return;
+    }
+
+    if (msg.type === "playerState") {
+      const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
+      if (!room || !msg.playerId || !room.players.has(msg.playerId)) return;
+      const player = room.players.get(msg.playerId)!;
+      room.players.set(msg.playerId, {
+        ...player,
+        scene: msg.scene ?? player.scene,
+        x: msg.x ?? player.x,
+        y: msg.y ?? player.y,
+        character: msg.character ?? player.character,
+        updatedAt: Date.now(),
+      });
+      broadcastRoom(room);
+      return;
+    }
+
+    if (msg.type === "battleStart") {
+      const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
+      if (!room) return;
+      const payload = JSON.stringify({
+        type: "battleStart",
+        roomId: room.id,
+        origin: msg.origin,
+        npcType: msg.npcType,
+      });
+      for (const client of wss.clients) {
+        if (client.readyState !== WebSocket.OPEN) continue;
+        const m = socketMeta.get(client);
+        if (m?.roomId === room.id) client.send(payload);
+      }
+      return;
+    }
+
+    if (msg.type === "ping") {
+      ws.send(JSON.stringify({ type: "pong", t: msg.t }));
+    }
+  });
+
+  ws.on("close", () => {
+    const meta = socketMeta.get(ws);
+    if (meta?.roomId && meta.playerId) {
+      const room = rooms.get(meta.roomId);
+      if (room) {
+        room.players.delete(meta.playerId);
+        if (room.players.size === 0) rooms.delete(room.id);
+        else broadcastRoom(room);
+      }
+    }
+    socketMeta.delete(ws);
+  });
+});
+
+// heartbeat
+const heartbeat = setInterval(() => {
+  for (const ws of wss.clients) {
+    if (ws.readyState === WebSocket.OPEN) ws.ping();
+  }
+}, 30000);
+wss.on("close", () => clearInterval(heartbeat));
+
+server.listen(PORT, () => {
   console.log(`⚔️  Jomasio server running on http://localhost:${PORT}`);
 });

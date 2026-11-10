@@ -19,6 +19,9 @@ import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAb
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
 import { GameMap } from "@/components/Game/Map/Game";
 import { useLatestRef } from "@/hooks/useLatestRef";
+import { useOnline } from "@/contexts/OnlineContext";
+import { useBattleSocket } from "@/hooks/useBattleSocket";
+import { useBattleSnapshot } from "@/hooks/battle/useBattleSnapshot";
 import { useCutscene } from "@/hooks/interaction/cutscene/useCutscene";
 import Talking from "@/components/Game/Interactions/Talking";
 import { trueVandinhaBattleDialogue } from "@/data/dialogues/trueVandinhaBattle/one";
