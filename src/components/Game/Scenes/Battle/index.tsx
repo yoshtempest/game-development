@@ -3,9 +3,9 @@ import { GameMap } from "@/components/Game/Map/Game";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useOnline } from "@/contexts/OnlineContext";
 import { useOnlineBattle } from "@/hooks/battle/useOnlineBattle";
-import { useCutscene } from "@/hooks/interaction/cutscene/useCutscene";
 import Talking from "@/components/Game/Interactions/Talking";
-import { trueVandinhaBattleDialogue } from "@/data/dialogues/trueVandinhaBattle/one";
+import { useTrueVandinhaCutscene } from "@/hooks/battle/useTrueVandinhaCutscene";
+import type { TrueVandinhaCutsceneApi } from "@/hooks/battle/useTrueVandinhaCutscene";
 import { useGameLayout } from "@/hooks/game/useGameLayout";
 import { useBattleScene } from "@/hooks/battle/main/battleScene/useScene";
 import { useBattleCamera } from "@/hooks/battle/camera/useBattleCamera";
@@ -40,7 +40,7 @@ import { usePlayerActions } from "@/contexts/PlayerContext";
 import { useTitles } from "@/contexts/TitleContext";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef } from "react";
 import { TrainingOverlay } from "@/components/Game/Battle/Overlay/Training";
 import { ProjectileConstants } from "@/data/projectile";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
@@ -53,10 +53,7 @@ import { OnlineBattleOverlay } from "@/components/Game/Battle/Overlay/OnlineBatt
 import { DrikaSigiloOverlay } from "@/components/Game/Battle/Overlay/DrikaSigilo";
 import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
-import {
-  npcPath,
-  playerAbilityPath,
-} from "@/utils/paths";
+import { playerAbilityPath } from "@/utils/paths";
 import { GAME_VIEWPORT_WIDTH_RATIO } from "@/data/grid";
 import { getViewportSize } from "@/utils/viewport";
 
@@ -68,24 +65,17 @@ const MemoBattleHUD = memo(BattleHUD);
 export function BattleScene(props: Props) {
   const { npcType, className, background, map, isAlfa = false } = props;
 
-  const isTrueVandinha = npcType === "trueVandinha";
-
-  // Estado da cutscene da TrueVandinha.
-  const [tvCutsceneOpen, setTvCutsceneOpen] = useState(false);
-  const [tvFlash, setTvFlash] = useState(false);
-  const [tvBackground, setTvBackground] = useState<string | null>(null);
-  const [tvDialogueOpen, setTvDialogueOpen] = useState(false);
-  const tvTriggeredRef = useRef(false);
-  const tvPhase2Ref = useRef(false);
-
-  const tvCutscene = useCutscene({
-    dialogue: trueVandinhaBattleDialogue,
-    autoStart: false,
-    onFinish: () => {
-      setTvCutsceneOpen(false);
-      setTvDialogueOpen(false);
-    },
-  });
+  // A cutscene da TrueVandinha fornece o `dialogueOpen` que o `useBattleScene`
+  // consome como entrada, mas só conhece `player`/`npc`/`battle` depois que a
+  // API da cena é montada — daí o ref preenchido logo após o destructure.
+  const cutsceneApiRef = useRef<TrueVandinhaCutsceneApi | null>(null);
+  const {
+    flash: tvFlash,
+    background: tvBackground,
+    dialogueOpen: tvDialogueOpen,
+    cutsceneOpen: tvCutsceneOpen,
+    cutscene: tvCutscene,
+  } = useTrueVandinhaCutscene({ npcType, apiRef: cutsceneApiRef });
 
   const { stopAll } = useSoundEffects();
   const { titlesData } = useTitles();
@@ -258,6 +248,8 @@ export function BattleScene(props: Props) {
     dialogueOpen: tvDialogueOpen,
   });
 
+  cutsceneApiRef.current = { player, npc, battle };
+
   let controlsDisabled = _controlsDisabled;
 
   const online = useOnline();
@@ -298,49 +290,6 @@ export function BattleScene(props: Props) {
     controlsDisabled = true;
   }
 
-  // Cutscene da TrueVandinha: ao se aproximar na 1ª fase, dispara fall + flash +
-  // diálogo + transição para a 2ª fase.
-  useEffect(() => {
-    if (!isTrueVandinha) return;
-    if (tvTriggeredRef.current) return;
-    if ((battle.npcPhase ?? 1) !== 1) return;
-    const dist = Math.abs(npc.x - player.x);
-    if (dist > 90) return;
-
-    tvTriggeredRef.current = true;
-    // Bloqueia a IA e o lifecycle (que, para boss de 1ª fase, avançaria de
-    // fase sozinho ao zerar o HP). A cutscene assume o controle a partir daqui.
-    battle.isEnding.current = true;
-    npc.updateNpc({ state: "fall" });
-    battle.setNpcHP(0);
-
-    // Pausa a batalha imediatamente para a IA não sobrescrever o sprite.
-    setTvDialogueOpen(true);
-
-    setTvFlash(true);
-    window.setTimeout(() => setTvFlash(false), 500);
-
-    window.setTimeout(() => {
-      setTvBackground(npcPath("/trueVandinha/shenLong.svg"));
-      npc.updateNpc({ state: "giveMeMyPower" });
-      setTvCutsceneOpen(true);
-      tvCutscene.start();
-    }, 500);
-  }, [isTrueVandinha, npc.x, player.x, npc, battle, tvCutscene]);
-
-  useEffect(() => {
-    if (!isTrueVandinha) return;
-    if (!tvCutsceneOpen) return;
-    if (tvPhase2Ref.current) return;
-    // Terceiro diálogo (índice 2): "Muito bem, seu desejo..."
-    if (tvCutscene.index !== 2) return;
-
-    tvPhase2Ref.current = true;
-    battle.setNpcPhase(2);
-    battle.setNpcHP(battle.npcMaxHp);
-    battle.isEnding.current = false;
-    npc.updateNpc({ state: "giveMeMyPower" });
-  }, [isTrueVandinha, tvCutsceneOpen, tvCutscene.index, battle, npc]);
   // Domínio do personagem atual: nome/cor/efeito saem de DOMAIN_EXPANSIONS e
   // alimentam o botão universal e o overlay do burst.
   const domainConfig = DOMAIN_EXPANSIONS[player.character];
