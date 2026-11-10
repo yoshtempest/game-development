@@ -317,6 +317,6 @@ const heartbeat = setInterval(() => {
 }, 30000);
 wss.on("close", () => clearInterval(heartbeat));
 
-server.listen(PORT, () => {
-  console.log(`⚔️  Jomasio server running on http://localhost:${PORT}`);
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`⚔️  Jomasio server running on http://0.0.0.0:${PORT}`);
 });
