@@ -23,6 +23,8 @@ import { useProximityLoopSound } from "@/hooks/battle/npc/useProximityLoopSound"
 import { getTime, NPC_TIME_ID } from "@/gameRules/battle/time";
 
 import { clampX } from "@/gameRules/movement/clampX";
+import { pickNpcTarget, type NpcTarget } from "@/gameRules/battle/npc/targeting";
+import type { NpcHitIntent } from "@/hooks/battle/coop/types";
 
 export function useNpcAI({
   playerX,
@@ -70,6 +72,9 @@ export function useNpcAI({
   spawnDamageRef,
   playerCooldownRef,
   playerHitDamageRef,
+  targets,
+  npcAuthority = true,
+  onRemoteHit,
 }: Props) {
   const [npc, setNpc] = useState<NPCBattleState>({
     x: BATTLE_SPAWN.npc.x,
@@ -82,6 +87,17 @@ export function useNpcAI({
 
   const [projectiles, setProjectiles] = useState<Projectile[]>([]);
   const [forceIdle, setForceIdle] = useState(false);
+
+  // ── Alvo do co-op ────────────────────────────────────────────────────────
+  // `targets` muda a 10–20 Hz; o alvo escolhido é guardado em state para o
+  // `useProjectile` (que precisa da posição do alvo) e em ref para os
+  // callbacks de golpe decidirem se o hit é local ou remoto.
+  const [activeTarget, setActiveTarget] = useState<NpcTarget | null>(null);
+  const targetsRef = useLatestRef(targets ?? []);
+  const activeTargetRef = useLatestRef(activeTarget);
+  const currentTargetRef = useRef<NpcTarget | null>(null);
+  const onRemoteHitRef = useLatestRef(onRemoteHit);
+  const npcAuthorityRef = useLatestRef(npcAuthority);
 
   const activeProjectile = projectiles[0] ?? null;
   const projectileRef = useLatestRef(activeProjectile);
@@ -145,6 +161,142 @@ export function useNpcAI({
   const onApplyDebuffRef = useLatestRef(onApplyDebuff);
   const onBurstHitRef = useLatestRef(onBurstHit);
 
+  // ── Roteamento de golpes (co-op) ─────────────────────────────────────────
+  // A IA é autoritativa no líder. Se o alvo selecionado é o jogador remoto, o
+  // golpe vira uma intenção enviada ao cliente dono; o líder não aplica nada
+  // localmente. Golpes de área são a exceção: acertam todos os vivos.
+  const routeSingle = useCallback(
+    (hit: Omit<NpcHitIntent, "to">) => {
+      const target = currentTargetRef.current;
+      if (!target || target.isLocal) return false;
+      onRemoteHitRef.current?.({ ...hit, to: target.id });
+      return true;
+    },
+    [onRemoteHitRef],
+  );
+
+  const routeArea = useCallback(
+    (hit: Omit<NpcHitIntent, "to">) => {
+      const list = targetsRef.current;
+      if (list.length === 0) return true;
+      let localAlive = false;
+      for (const target of list) {
+        if (target.isLocal) {
+          localAlive = target.alive;
+          continue;
+        }
+        if (target.alive) {
+          onRemoteHitRef.current?.({ ...hit, to: target.id, area: true });
+        }
+      }
+      return localAlive;
+    },
+    [onRemoteHitRef, targetsRef],
+  );
+
+  const handleMeleeHit = useCallback(
+    (multiplier?: number, damageKind?: DamageKind) => {
+      if (routeSingle({ source: "melee", multiplier, damageKind })) return;
+      onMeleeHitRef.current?.(multiplier, damageKind);
+    },
+    [routeSingle, onMeleeHitRef],
+  );
+
+  const handleProjectileHit = useCallback(
+    (damageKind?: DamageKind) => {
+      if (routeSingle({ source: "ranged", damageKind })) return;
+      onProjectileHitRef.current?.(damageKind);
+    },
+    [routeSingle, onProjectileHitRef],
+  );
+
+  const handlePullPlayer = useCallback(
+    (x: number) => {
+      if (routeSingle({ source: "pull", npcX: x })) return;
+      onPullPlayerRef.current?.(x);
+    },
+    [routeSingle, onPullPlayerRef],
+  );
+
+  const handlePushPlayer = useCallback(
+    (x: number) => {
+      if (routeSingle({ source: "push", npcX: x })) return;
+      onPushPlayerRef.current?.(x);
+    },
+    [routeSingle, onPushPlayerRef],
+  );
+
+  const handleRamPushPlayer = useCallback(
+    (direction: "left" | "right", toX: number) => {
+      if (routeSingle({ source: "ram", direction, toX })) return;
+      onRamPushPlayerRef.current?.(direction, toX);
+    },
+    [routeSingle, onRamPushPlayerRef],
+  );
+
+  const handleGrabPlayer = useCallback(
+    (flipped: boolean) => {
+      if (routeSingle({ source: "grab", flipped })) return;
+      onGrabPlayerRef.current?.(flipped);
+    },
+    [routeSingle, onGrabPlayerRef],
+  );
+
+  const handleThrowStart = useCallback(
+    (npcX: number, direction: "left" | "right") => {
+      if (routeSingle({ source: "throwStart", npcX, direction })) return;
+      onThrowStartRef.current?.(npcX, direction);
+    },
+    [routeSingle, onThrowStartRef],
+  );
+
+  const handleThrowPlayer = useCallback(
+    (multiplier: number) => {
+      if (routeSingle({ source: "throw", multiplier })) return;
+      onThrowPlayerRef.current?.(multiplier);
+    },
+    [routeSingle, onThrowPlayerRef],
+  );
+
+  const handleDragPlayer = useCallback(
+    (npcX: number, npcY: number) => {
+      if (routeSingle({ source: "drag", npcX, npcY, amount: 1 })) return;
+      onDragPlayerRef.current?.(npcX, npcY);
+    },
+    [routeSingle, onDragPlayerRef],
+  );
+
+  const handleBurstHit = useCallback(
+    (pushDir: number) => {
+      if (!routeArea({ source: "burst", pushDir })) return;
+      onBurstHitRef.current?.(pushDir);
+    },
+    [routeArea, onBurstHitRef],
+  );
+
+  const handleGroundPaperHit = useCallback(() => {
+    if (!routeArea({ source: "throw", multiplier: 2 })) return;
+    onGroundPaperHitRef.current?.();
+  }, [routeArea, onGroundPaperHitRef]);
+
+  const handleStuckPaperExplode = useCallback(() => {
+    if (!routeArea({ source: "unblockable", amount: 2 })) return;
+    onStuckPaperExplodeRef.current?.();
+  }, [routeArea, onStuckPaperExplodeRef]);
+
+  const handleLaserHit = useCallback(() => {
+    if (!routeArea({ source: "laser", amount: 1 })) return;
+    onLaserHitRef.current?.();
+  }, [routeArea, onLaserHitRef]);
+
+  const handleApplyDebuff = useCallback(
+    (status: NewPlayerStatus) => {
+      if (routeSingle({ source: "status", status })) return;
+      onApplyDebuffRef.current?.(status);
+    },
+    [routeSingle, onApplyDebuffRef],
+  );
+
   const { update: updateProximitySound } = useProximityLoopSound(
     npcTypeRef,
     playerXRef,
@@ -153,13 +305,16 @@ export function useNpcAI({
     stopSound,
   );
 
+  // O projétil persegue o alvo escolhido pela IA, não necessariamente o
+  // jogador local. `enabled` desliga a simulação no guest.
+  const projectileTarget = activeTarget;
   const { strikeProjectiles } = useProjectile(
     projectiles,
     setProjectiles,
-    playerX,
-    playerY,
-    playerState,
-    playerDirection,
+    projectileTarget?.x ?? playerX,
+    projectileTarget?.y ?? playerY,
+    projectileTarget?.state ?? playerState,
+    projectileTarget?.direction ?? playerDirection,
     npc.x,
     npc.y,
     (damageKind) => {
@@ -171,10 +326,10 @@ export function useNpcAI({
         playSound("knifeCut");
         logPlay("knifeCut");
       }
-      onProjectileHit(damageKind);
+      handleProjectileHit(damageKind);
     },
     timeRef,
-    onPullPlayer,
+    handlePullPlayer,
     (x: number) => {
       const maugrelo = npcRef.current.ai?.maugrelo;
       if (!maugrelo) return;
@@ -201,12 +356,13 @@ export function useNpcAI({
     },
     playerCharacter,
     npcClass,
-    (pushDir: number) => onBurstHitRef.current?.(pushDir),
+    handleBurstHit,
     playerProjectileRef,
     onProjectileDestroyed,
     spawnDamageRef,
     playerCooldownRef,
     playerHitDamageRef,
+    npcAuthority,
   );
 
   const resetNpc = (stateOverride?: NPCBattleState["state"]) => {

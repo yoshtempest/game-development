@@ -2,11 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useNavigate } from "react-router";
 import { useOnline } from "@/contexts/OnlineContext";
-import { useBattleSocket } from "@/hooks/useBattleSocket";
+import { usePlayer } from "@/contexts/PlayerContext";
 import { useBattleSnapshot } from "@/hooks/battle/useBattleSnapshot";
 import { useInterpolatedSnapshot } from "@/hooks/battle/useInterpolatedSnapshot";
 import { useBattleInputRelay } from "@/hooks/battle/useBattleInputRelay";
 import { useBattleLifecycle } from "@/hooks/battle/useBattleLifecycle";
+import { applyPlayerStatus } from "@/gameRules/battle/status/statusEffects";
+import { clampX } from "@/gameRules/movement/clampX";
+import type { BattleNet } from "@/hooks/battle/useBattleNet";
+import type { NpcHitIntent } from "@/hooks/battle/coop/types";
 import type { useNpcAI } from "@/hooks/battle/npc/ai/useAi";
 import type { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 
@@ -14,60 +18,42 @@ type Props = {
   player: Player;
   npc: ReturnType<typeof useNpcAI>;
   battle: ReturnType<typeof useBattleSystem>;
+  net: BattleNet;
   handleRetry: () => void;
   handleContinue: () => void;
   showVictoryBase: boolean;
   showDefeatBase: boolean;
   xpReward: number;
   lastRewards: unknown;
-  /** Líder do co-op (quem iniciou a batalha). Ausente = o próprio jogador. */
-  battleLeaderId?: string;
-  isPvp?: boolean;
 };
 
 export function useOnlineBattle({
   player,
   npc,
   battle,
+  net,
   handleRetry,
   handleContinue,
   showVictoryBase,
   showDefeatBase,
   xpReward,
   lastRewards,
-  battleLeaderId,
-  isPvp = false,
 }: Props) {
   const navigate = useNavigate();
   const online = useOnline();
+  const { setPlayer } = usePlayer();
   const {
     connected: battleSocketConnected,
     reconnecting: battleSocketReconnecting,
     send: battleSocketSend,
     lastMessage: battleSocketLast,
-  } = useBattleSocket(online.roomId, online.playerId);
-
-  // PvP mantém a autoridade no host da sala. Co-op de guilda usa quem iniciou
-  // a batalha (o seguidor recebe esse id no state da rota), para que a
-  // autoridade não dependa de quem é o host da sala.
-  const isBattleHost = isPvp
-    ? online.room?.hostId === online.playerId
-    : online.connected &&
-      (battleLeaderId ?? online.playerId) === online.playerId;
-  const isBattleGuest = online.connected && !isBattleHost;
-
-  const [remotePlayerState, setRemotePlayerState] = useState<{
-    x: number;
-    y: number;
-    hp: number;
-    state?: string;
-    character?: string;
-  } | null>(null);
-
-  const [interpRemotePlayer, setInterpRemotePlayer] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
+    subscribe: battleSocketSubscribe,
+    isHost: isBattleHost,
+    isGuest: isBattleGuest,
+    isPvp,
+    remotePlayer: remotePlayerState,
+    interpRemotePlayer,
+  } = net;
 
   const [guestHasSnapshot, setGuestHasSnapshot] = useState(false);
 
@@ -82,6 +68,8 @@ export function useOnlineBattle({
         y: player.y,
         hp: battle.playerHP,
         state: player.state,
+        direction: player.battleDirection,
+        character: player.character,
       },
       npc: { x: npc.x, y: npc.y, hp: battle.npcHP, phase: battle.npcPhase ?? 1 },
     }),
@@ -173,6 +161,7 @@ export function useOnlineBattle({
     y: player.y,
     hp: battle.playerHP,
     state: player.state,
+    direction: player.battleDirection,
     character: player.character,
   });
 
@@ -192,6 +181,27 @@ export function useOnlineBattle({
     battlePlayerStateRef,
   ]);
 
+  // Mudança de estado (ataque, pulo, direção) não pode esperar o próximo tick de
+  // 100 ms: sem isso a animação remota chega atrasada e "trava" no meio do golpe.
+  const lastSentStateRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (isBattleHost || !online.connected) return;
+    const key = `${player.state}|${player.battleDirection}`;
+    if (lastSentStateRef.current === key) return;
+    lastSentStateRef.current = key;
+    battleSocketSend({
+      type: "battlePlayerState",
+      ...battlePlayerStateRef.current,
+    });
+  }, [
+    isBattleHost,
+    online.connected,
+    player.state,
+    player.battleDirection,
+    battleSocketSend,
+    battlePlayerStateRef,
+  ]);
+
   // Host recebe estado do guest
   useEffect(() => {
     if (!isBattleHost) return;
@@ -201,22 +211,10 @@ export function useOnlineBattle({
       y: Number(battleSocketLast.y ?? 0),
       hp: Number(battleSocketLast.hp ?? 0),
       state: battleSocketLast.state as string | undefined,
+      direction: battleSocketLast.direction as Direction | undefined,
       character: battleSocketLast.character as string | undefined,
     });
   }, [isBattleHost, battleSocketLast]);
-
-  // Host: interpola posição do segundo jogador
-  useEffect(() => {
-    if (!isBattleHost) return;
-    if (!remotePlayerState) return;
-    setInterpRemotePlayer((prev) => {
-      if (!prev) return { x: remotePlayerState.x, y: remotePlayerState.y };
-      return {
-        x: prev.x + (remotePlayerState.x - prev.x) * 0.3,
-        y: prev.y + (remotePlayerState.y - prev.y) * 0.3,
-      };
-    });
-  }, [isBattleHost, remotePlayerState]);
 
   // Host: sincroniza HP do oponente a partir do guest (só PvP)
   useEffect(() => {
@@ -302,10 +300,26 @@ export function useOnlineBattle({
         y: player.y,
         hp: battle.playerHP,
         state: player.state,
+        direction: player.battleDirection,
+        character: player.character,
       },
       npc: { x: npc.x, y: npc.y, hp: battle.npcHP, phase: battle.npcPhase ?? 1 },
     });
-  }, [isBattleHost, battleSocketLast, battleSocketSend, player.x, player.y, player.state, battle.playerHP, npc.x, npc.y, battle.npcHP, battle.npcPhase]);
+  }, [
+    isBattleHost,
+    battleSocketLast,
+    battleSocketSend,
+    player.x,
+    player.y,
+    player.state,
+    player.battleDirection,
+    player.character,
+    battle.playerHP,
+    npc.x,
+    npc.y,
+    battle.npcHP,
+    battle.npcPhase,
+  ]);
 
   useEffect(() => {
     if (isBattleHost) return;

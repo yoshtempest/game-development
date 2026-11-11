@@ -3,6 +3,8 @@ import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import type { SpawnDamageFn } from "@/utils/types/battle/spawnDamageFn";
 import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
+import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
+import type { NpcHitIntent } from "@/hooks/battle/coop/types";
 
 export type Props = {
   playerX: number;
@@ -62,4 +64,15 @@ export type Props = {
   /** Dano real do golpe ativo (básico ou special) aplicado nos projéteis. */
   playerHitDamageRef?: React.RefObject<ProjectileHitDamageFn>;
   /** Timestamp até onde os projéteis ficam congelados (Killer Queen). */
+  /**
+   * Jogadores vivos na arena (co-op). Sem isso a IA cai no jogador local.
+   * A escolha é sempre de **um** alvo; golpes de área são roteados à parte.
+   */
+  targets?: NpcTarget[];
+  /** HP local > 0; o alvo local do co-op é descartado quando o jogador cai. */
+  localAliveRef?: React.RefObject<boolean>;
+  /** Guest do co-op não roda IA: o NPC é espelhado do snapshot do líder. */
+  npcAuthority?: boolean;
+  /** Golpe do NPC decidido pelo líder que deve ser resolvido no cliente remoto. */
+  onRemoteHit?: (hit: NpcHitIntent) => void;
 };

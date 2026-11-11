@@ -46,6 +46,8 @@ export function useProjectile(
   spawnDamageRef?: React.RefObject<SpawnDamageFn>,
   playerCooldownRef?: React.RefObject<boolean>,
   playerHitDamageRef?: React.RefObject<ProjectileHitDamageFn>,
+  /** Guest do co-op não simula projétil: o líder é a autoridade. */
+  enabled = true,
 ) {
   const onHitRef = useLatestRef(onHit);
   const onPullPlayerRef = useLatestRef(onPullPlayer);
@@ -153,6 +155,7 @@ export function useProjectile(
   );
 
   useEffect(() => {
+    if (!enabled) return;
     const count = projectiles.length;
     if (count === 0) return;
 
@@ -272,6 +275,7 @@ export function useProjectile(
     playerProjectileRef,
     strike,
     destroy,
+    enabled,
   ]);
 
   return { strikeProjectiles };

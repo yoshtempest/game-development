@@ -218,11 +218,16 @@ export function useNpcBattle({
   );
 
   const npcMeleeHit = useCallback(
-    (multiplier = 1, damageKind: DamageKind = "physical") => {
+    (
+      multiplier = 1,
+      damageKind: DamageKind = "physical",
+      bypassCooldown = false,
+    ) => {
       if (isEnding.current) return;
       if (ALL_PREDICATES.isNpcUnhittable(player.state)) return;
 
-      const skipCooldown = npcType === "maurao" && npcPhase >= 2;
+      const skipCooldown =
+        bypassCooldown || (npcType === "maurao" && npcPhase >= 2);
 
       if (!skipCooldown && !npcCooldown.current) return;
 
@@ -329,10 +334,10 @@ export function useNpcBattle({
   );
 
   const npcRangedHit = useCallback(
-    (damageKind: DamageKind = "physical") => {
+    (damageKind: DamageKind = "physical", bypassCooldown = false) => {
       if (isEnding.current) return;
       if (ALL_PREDICATES.isInvulnerable(player.state)) return;
-      if (!npcCooldown.current) return;
+      if (!bypassCooldown && !npcCooldown.current) return;
       if (ALL_PREDICATES.isDashing(player.state)) return;
       // Sem checagem de agachamento aqui: este callback só é alcançado pelo
       // pipeline de projétil (`onProjectileHit` ← `useProjectile`), e cada

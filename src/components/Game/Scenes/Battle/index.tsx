@@ -290,7 +290,9 @@ export function BattleScene(props: Props) {
     interpolatedRemoteSnapshot,
   } = onlineBattle;
 
-  if (isBattleGuest) {
+  // No PvP os dois controlam a mesma luta (o guest espelha o host). No co-op o
+  // guest tem avatar próprio e precisa de controle para andar/atacar.
+  if (isBattleGuest && isPvp) {
     controlsDisabled = true;
   }
 
@@ -571,7 +573,11 @@ export function BattleScene(props: Props) {
 
   const secondPlayer = isBattleHost
     ? (remotePlayerState
-        ? { ...remotePlayerState, x: interpRemotePlayer?.x ?? remotePlayerState.x, y: interpRemotePlayer?.y ?? remotePlayerState.y }
+        ? {
+            ...remotePlayerState,
+            x: interpRemotePlayer?.x ?? remotePlayerState.x,
+            y: interpRemotePlayer?.y ?? remotePlayerState.y,
+          }
         : null)
     : interpolatedRemoteSnapshot?.player
       ? {
@@ -579,7 +585,9 @@ export function BattleScene(props: Props) {
           y: interpolatedRemoteSnapshot.player.y,
           hp: remoteBattleSnapshot?.player?.hp ?? 0,
           state: interpolatedRemoteSnapshot.player.state,
-          character: remoteCharacter,
+          direction: interpolatedRemoteSnapshot.player.direction,
+          character:
+            interpolatedRemoteSnapshot.player.character ?? remoteCharacter,
         }
       : null;
 
@@ -690,7 +698,7 @@ export function BattleScene(props: Props) {
               y={secondPlayer.y}
               PLAYER_SIZE={PLAYER_SIZE}
               state={(secondPlayer.state as PlayerState) ?? "idle"}
-              direction="down"
+              direction={(secondPlayer.direction as Direction) ?? "down"}
             />
           )}
 

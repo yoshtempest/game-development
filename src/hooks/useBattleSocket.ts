@@ -7,6 +7,8 @@ export type BattleSocketMessage = {
 
 const MAX_RETRIES = 6;
 
+type BattleSocketListener = (msg: BattleSocketMessage) => void;
+
 export function useBattleSocket(roomId: string | null, playerId: string | null) {
   const [connected, setConnected] = useState(false);
   const [reconnecting, setReconnecting] = useState(false);
@@ -16,6 +18,10 @@ export function useBattleSocket(roomId: string | null, playerId: string | null) 
   const wsRef = useRef<WebSocket | null>(null);
   const retriesRef = useRef(0);
   const shouldConnectRef = useRef(true);
+  // `lastMessage` guarda só a última mensagem; eventos de dano não podem ser
+  // engolidos por um snapshot que chegou logo depois. Quem precisa de todos os
+  // eventos assina por tipo.
+  const listenersRef = useRef(new Map<string, Set<BattleSocketListener>>());
 
   const connect = useCallback(() => {
     if (!roomId || !playerId) return;
@@ -41,6 +47,10 @@ export function useBattleSocket(roomId: string | null, playerId: string | null) 
       try {
         const msg = JSON.parse(String(event.data)) as BattleSocketMessage;
         setLastMessage(msg);
+        const listeners = listenersRef.current.get(msg.type);
+        if (listeners) {
+          for (const listener of listeners) listener(msg);
+        }
       } catch {
         // ignore
       }
@@ -97,5 +107,21 @@ export function useBattleSocket(roomId: string | null, playerId: string | null) 
     }
   }, []);
 
-  return { connected, reconnecting, send, lastMessage };
+  const subscribe = useCallback(
+    (type: string, listener: BattleSocketListener) => {
+      let listeners = listenersRef.current.get(type);
+      if (!listeners) {
+        listeners = new Set();
+        listenersRef.current.set(type, listeners);
+      }
+      listeners.add(listener);
+      return () => {
+        listeners?.delete(listener);
+        if (listeners?.size === 0) listenersRef.current.delete(type);
+      };
+    },
+    [],
+  );
+
+  return { connected, reconnecting, send, subscribe, lastMessage };
 }

@@ -1,48 +1,57 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import type { BattleSocketMessage } from "@/hooks/useBattleSocket";
 
 export type BattleSnapshot = {
   t: number;
-  player?: { x: number; y: number; hp: number; state?: string };
-  npc?: { x: number; y: number; hp: number; state?: string; phase?: number };
+  player?: {
+    x: number;
+    y: number;
+    hp: number;
+    state?: string;
+    /** Direção do avatar remoto (o sprite não pode ficar fixo em "down"). */
+    direction?: Direction;
+    character?: string;
+  };
+  npc?: {
+    x: number;
+    y: number;
+    hp: number;
+    state?: string;
+    direction?: Direction;
+    hidden?: boolean;
+    phase?: number;
+    /**
+     * Projéteis ativos do NPC. O guest não simula projétil: ele desenha os do
+     * líder, que é quem resolve colisão e dano.
+     */
+    projectiles?: Projectile[];
+  };
 };
 
+/**
+ * Envio do snapshot do líder. A recepção vive no `useBattleNet` (montado antes
+ * da cena), porque o alvo remoto precisa existir já para a IA do NPC.
+ */
 export function useBattleSnapshot({
   isHost,
   send,
-  lastMessage,
   getState,
 }: {
   isHost: boolean;
   send: (msg: BattleSocketMessage) => void;
-  lastMessage: BattleSocketMessage | null;
   getState: () => BattleSnapshot;
 }) {
-  const [snapshot, setSnapshot] = useState<BattleSnapshot | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   // `getState` é recriado a cada render do chamador. Sem o ref, o effect
   // reiniciava o intervalo a cada frame e ele nunca chegava a disparar.
   const getStateRef = useLatestRef(getState);
 
-  // Host: envia snapshot periodicamente
   useEffect(() => {
     if (!isHost) return;
-    intervalRef.current = setInterval(() => {
+    // 50 ms: projéteis andam rápido e a 10 Hz o guest via o tiro "pulando".
+    const id = setInterval(() => {
       send({ type: "battleSnapshot", ...(getStateRef.current() as object) });
-    }, 100);
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    };
+    }, 50);
+    return () => clearInterval(id);
   }, [isHost, send, getStateRef]);
-
-  // Guest: recebe snapshot
-  useEffect(() => {
-    if (isHost) return;
-    if (!lastMessage || lastMessage.type !== "battleSnapshot") return;
-    setSnapshot(lastMessage as unknown as BattleSnapshot);
-  }, [isHost, lastMessage]);
-
-  return { snapshot, isHost };
 }
