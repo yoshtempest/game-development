@@ -33,6 +33,7 @@ import { useBattleSocket } from "@/hooks/useBattleSocket";
 import { useNavigate } from "react-router";
 import { useEquipment } from "@/contexts/EquipmentContext";
 import { isCharacter } from "@/data/characters/list";
+import { ROUTE_TO_BATTLE_KEY } from "@/data/battle/config";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useHungerTimer } from "@/hooks/hunger/useHungerTimer";
@@ -51,12 +52,12 @@ export function GameApp() {
   const { chooseClass, setCharacter, player, playerClass } = usePlayer();
   const online = useOnline();
   const { connected, updateState } = online;
-  const { send: socketSend, lastMessage: socketLast } = useBattleSocket(
-    online.roomId,
-    online.playerId,
-  );
+  const {
+    send: socketSend,
+    lastMessage: socketLast,
+    connected: socketConnected,
+  } = useBattleSocket(online.roomId, online.playerId);
   const navigate = useNavigate();
-  const isHost = online.room?.hostId === online.playerId;
   const lastBattleRouteRef = useRef<string | null>(null);
 
   const { getEquippedItem } = useEquipment();
@@ -91,25 +92,67 @@ export function GameApp() {
     updateState,
   ]);
 
-  // Host: anuncia entrada em batalha para a sala
+  // Co-op de guilda: o líder anuncia a batalha só para o parceiro
+  // (`online.guildId`). PvP e treino continuam 1v1 e não passam por aqui.
+  const guildMate = online.room?.players.find((p) => p.id === online.guildId);
+
   useEffect(() => {
-    if (!connected || !isHost) return;
     const path = location.pathname;
-    if (!/battle|training/i.test(path)) return;
+    const battleKey = ROUTE_TO_BATTLE_KEY[path];
+    const isCoopBattle =
+      battleKey !== undefined && battleKey !== "pvp" && battleKey !== "training";
+
+    if (!isCoopBattle) {
+      lastBattleRouteRef.current = null;
+      return;
+    }
+    if (!connected || !socketConnected || !guildMate) return;
+    // Quem chegou como convidado (state.battleLeaderId) não reanuncia.
+    if ((location.state as { battleLeaderId?: string } | null)?.battleLeaderId) {
+      return;
+    }
     if (lastBattleRouteRef.current === path) return;
     lastBattleRouteRef.current = path;
-    socketSend({ type: "battleStart", route: path });
-  }, [connected, isHost, location.pathname, socketSend]);
+    socketSend({
+      type: "battleStart",
+      route: path,
+      from: online.playerId,
+      to: guildMate.id,
+      state: location.state ?? null,
+    });
+  }, [
+    connected,
+    socketConnected,
+    guildMate,
+    location.pathname,
+    location.state,
+    online.playerId,
+    socketSend,
+  ]);
 
-  // Guest: acompanha a batalha iniciada pelo host
+  // Seguidor: navega só quando o anúncio veio do parceiro de guilda e é
+  // endereçado a ele. O líder vai no state para a autoridade do co-op.
   useEffect(() => {
-    if (!connected || isHost) return;
+    if (!connected || !online.guildId) return;
     if (socketLast?.type !== "battleStart") return;
+    const from = socketLast.from as string | undefined;
+    const to = socketLast.to as string | undefined;
     const route = socketLast.route as string | undefined;
-    if (route && route !== location.pathname) {
-      void navigate(route);
-    }
-  }, [connected, isHost, socketLast, location.pathname, navigate]);
+    if (!route || to !== online.playerId || from !== online.guildId) return;
+    if (route === location.pathname) return;
+    const state =
+      socketLast.state && typeof socketLast.state === "object"
+        ? (socketLast.state as Record<string, unknown>)
+        : {};
+    void navigate(route, { state: { ...state, battleLeaderId: from } });
+  }, [
+    connected,
+    online.guildId,
+    online.playerId,
+    socketLast,
+    location.pathname,
+    navigate,
+  ]);
 
   const prevRouteRef = useRef(location.pathname);
   const didSyncRef = useRef(false);

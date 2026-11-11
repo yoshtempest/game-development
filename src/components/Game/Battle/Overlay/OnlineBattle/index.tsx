@@ -4,6 +4,8 @@ type Props = {
   opponentMaxHP: number;
   isBattleGuest: boolean;
   guestHasSnapshot: boolean;
+  /** Só o PvP tem "oponente"; no co-op contra NPC não há barra de oponente. */
+  isPvp: boolean;
 };
 
 export function OnlineBattleOverlay({
@@ -12,10 +14,11 @@ export function OnlineBattleOverlay({
   opponentMaxHP,
   isBattleGuest,
   guestHasSnapshot,
+  isPvp,
 }: Props) {
   return (
     <>
-      {onlineConnected && (
+      {isPvp && onlineConnected && (
         <div
           style={{
             position: "fixed",

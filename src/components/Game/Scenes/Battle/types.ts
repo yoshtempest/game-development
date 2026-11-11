@@ -19,6 +19,10 @@ export type Props = {
   children?: ReactNode;
   hakai?: boolean;
   playerCount?: number;
+  /** Líder da batalha co-op (quem iniciou). Ausente = o próprio jogador. */
+  battleLeaderId?: string;
+  /** PvP usa a lógica de oponente; batalhas contra NPC são co-op de guilda. */
+  isPvp?: boolean;
 };
 
 export type BattleBackgroundProps = {

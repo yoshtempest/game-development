@@ -56,6 +56,19 @@ const BASE_HP = 90;
 const BASE_DAMAGE = 5;
 
 /**
+ * Multiplicador global dos status do NPC principal. Cada jogador na mesma
+ * batalha vale 150% da base: dois jogadores deixam o NPC com 3x vida, dano e
+ * armadura. O alfa dobra por cima disso.
+ */
+export function getNpcStatMultiplier(
+  isAlfa: boolean,
+  playerCount: number,
+): number {
+  const coop = playerCount > 1 ? playerCount * 1.5 : 1;
+  return (isAlfa ? 2 : 1) * coop;
+}
+
+/**
  * Status do NPC: base por nível × classe × dificuldade, multiplicados pelo
  * `multiplier` global (alfa, estrela de pet) e pelos multiplicadores próprios
  * do tipo (`NPC_STATUS_MULTIPLIERS`, 5º parâmetro opcional) — que é o que

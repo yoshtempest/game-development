@@ -33,8 +33,19 @@ export default function BattlePage() {
   const { setFlag } = useFlags();
   const navigate = useNavigate();
   const online = useOnline();
-  const playerCount = online.connected ? (online.room?.players.length ?? 1) : 1;
   const training = key === "training";
+  const isPvp = key === "pvp";
+
+  // Co-op é da guilda, não da sala inteira: só o parceiro (`online.guildId`)
+  // entra junto e conta para o escalonamento. PvP e treino continuam 1v1.
+  const guildMate = online.room?.players.find(
+    (p) => p.id !== online.playerId && p.id === online.guildId,
+  );
+  const playerCount = !isPvp && !training && guildMate ? 2 : 1;
+
+  const battleLeaderId = (
+    location.state as { battleLeaderId?: string } | null
+  )?.battleLeaderId;
 
   const originRoute = (location.state as { battleOrigin?: string } | null)
     ?.battleOrigin;
@@ -57,6 +68,8 @@ export default function BattlePage() {
       <BattleScene
         npcType={config.npcType}
         playerCount={playerCount}
+        battleLeaderId={battleLeaderId}
+        isPvp={isPvp}
         npcLevel={npcLevel}
         redirectTo={config.redirectTo}
         onVictory={handleVictory}

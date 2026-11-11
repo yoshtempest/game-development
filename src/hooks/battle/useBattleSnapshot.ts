@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLatestRef } from "@/hooks/useLatestRef";
 import type { BattleSocketMessage } from "@/hooks/useBattleSocket";
 
 export type BattleSnapshot = {
@@ -20,18 +21,21 @@ export function useBattleSnapshot({
 }) {
   const [snapshot, setSnapshot] = useState<BattleSnapshot | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // `getState` é recriado a cada render do chamador. Sem o ref, o effect
+  // reiniciava o intervalo a cada frame e ele nunca chegava a disparar.
+  const getStateRef = useLatestRef(getState);
 
   // Host: envia snapshot periodicamente
   useEffect(() => {
     if (!isHost) return;
     intervalRef.current = setInterval(() => {
-      send({ type: "battleSnapshot", ...(getState() as object) });
+      send({ type: "battleSnapshot", ...(getStateRef.current() as object) });
     }, 100);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
       intervalRef.current = null;
     };
-  }, [isHost, send, getState]);
+  }, [isHost, send, getStateRef]);
 
   // Guest: recebe snapshot
   useEffect(() => {

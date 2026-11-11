@@ -19,19 +19,6 @@ export function useBattleLifecycle({
 }) {
   const [remoteResult, setRemoteResult] = useState<BattleResult>(null);
   const [remoteRewards, setRemoteRewards] = useState<BattleRewards | null>(null);
-  const [battleStarted, setBattleStarted] = useState(false);
-
-  // Host: anuncia início
-  useEffect(() => {
-    if (!isHost) return;
-    send({ type: "battleStart" });
-  }, [isHost, send]);
-
-  // Guest: recebe início
-  useEffect(() => {
-    if (isHost) return;
-    if (lastMessage?.type === "battleStart") setBattleStarted(true);
-  }, [isHost, lastMessage]);
 
   // Guest: recebe resultado
   useEffect(() => {
@@ -50,5 +37,5 @@ export function useBattleLifecycle({
     send({ type: "battleEnd", result, ...rewards });
   };
 
-  return { remoteResult, remoteRewards, battleStarted, notifyResult };
+  return { remoteResult, remoteRewards, notifyResult };
 }

@@ -14,6 +14,7 @@ import { usePlayTimeActions } from "@/contexts/PlayTimeContext";
 import { useSettings } from "@/hooks/settings/useSetting";
 import { useTombstones } from "@/contexts/TombstoneContext";
 import { useNpcSetup } from "@/hooks/battle/npc/useSetup";
+import { getNpcStatMultiplier } from "@/gameRules/npc/npcStats";
 import { getNpcLevel } from "@/data/npc";
 import { useBattleRewards } from "@/hooks/battle/rewards/useRewards";
 import { useSummons } from "@/hooks/battle/summon/useSummons";
@@ -128,11 +129,15 @@ export function useBattleStageSetup({
 
   const { showIntro, skipIntro } = useBattleIntro();
 
+  // Fonte única do multiplicador: o mesmo número alimenta o HUD/battleInfo e o
+  // combate real (`useBattleCombat` → `useSystem` → `useStats`/`useNpcBattle`).
+  const npcStatMultiplier = getNpcStatMultiplier(isAlfa, playerCount);
+
   const { npcData, npcLevel, npcStats } = useNpcSetup(
     npcType,
     difficulty,
     npcLevelProp ?? getNpcLevel(npcType),
-    (isAlfa ? 2 : 1) * (playerCount > 1 ? playerCount * 1.5 : 1),
+    npcStatMultiplier,
   );
 
   const battleInfoCtx = useBattleInfo();
@@ -309,6 +314,7 @@ export function useBattleStageSetup({
     npcData,
     npcLevel,
     npcStats,
+    npcStatMultiplier,
     xpReward,
     prepareBattleLoot,
     grantLootBag,

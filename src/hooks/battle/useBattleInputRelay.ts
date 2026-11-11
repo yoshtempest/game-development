@@ -5,14 +5,17 @@ export function useBattleInputRelay({
   isHost,
   send,
   lastMessage,
+  enabled = true,
 }: {
   isHost: boolean;
   send: (msg: BattleSocketMessage) => void;
   lastMessage: BattleSocketMessage | null;
+  /** Só o PvP compartilha um avatar; no co-op cada jogador move o seu. */
+  enabled?: boolean;
 }) {
   // Guest: envia inputs de teclado para o host
   useEffect(() => {
-    if (isHost) return;
+    if (!enabled || isHost) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       send({ type: "input", action: "keydown", code: e.code, key: e.key });
       // Evita que o controle local também aplique o movimento/ação.
@@ -30,11 +33,11 @@ export function useBattleInputRelay({
       window.removeEventListener("keydown", handleKeyDown, true);
       window.removeEventListener("keyup", handleKeyUp, true);
     };
-  }, [isHost, send]);
+  }, [enabled, isHost, send]);
 
   // Host: aplica inputs remotos via eventos sintéticos
   useEffect(() => {
-    if (!isHost) return;
+    if (!enabled || !isHost) return;
     if (!lastMessage || lastMessage.type !== "input") return;
     const code = (lastMessage.code as string) ?? "";
     const key = (lastMessage.key as string) ?? "";
@@ -46,5 +49,5 @@ export function useBattleInputRelay({
       bubbles: true,
     });
     window.dispatchEvent(evt);
-  }, [isHost, lastMessage]);
+  }, [enabled, isHost, lastMessage]);
 }

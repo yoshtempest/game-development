@@ -58,7 +58,15 @@ const MemoBattleEntities = memo(BattleEntities);
 const MemoBattleHUD = memo(BattleHUD);
 
 export function BattleScene(props: Props) {
-  const { npcType, className, background, map, isAlfa = false } = props;
+  const {
+    npcType,
+    className,
+    background,
+    map,
+    isAlfa = false,
+    battleLeaderId,
+    isPvp = false,
+  } = props;
 
   // A cutscene da TrueVandinha fornece o `dialogueOpen` que o `useBattleScene`
   // consome como entrada, mas só conhece `player`/`npc`/`battle` depois que a
@@ -258,6 +266,8 @@ export function BattleScene(props: Props) {
     showDefeatBase: _showDefeat,
     xpReward,
     lastRewards,
+    battleLeaderId,
+    isPvp,
   });
 
   const {
@@ -551,6 +561,14 @@ export function BattleScene(props: Props) {
     ],
   );
 
+  // Quem é o "outro" jogador: no PvP é o host da sala; no co-op de guilda é
+  // quem iniciou a batalha (o líder), não necessariamente o host da sala.
+  const remotePlayerId = isPvp ? online.room?.hostId : battleLeaderId;
+  const remoteCharacter =
+    online.room?.players.find((p) => p.id === remotePlayerId)?.character ??
+    online.room?.players.find((p) => p.id !== online.playerId)?.character ??
+    "drika";
+
   const secondPlayer = isBattleHost
     ? (remotePlayerState
         ? { ...remotePlayerState, x: interpRemotePlayer?.x ?? remotePlayerState.x, y: interpRemotePlayer?.y ?? remotePlayerState.y }
@@ -561,9 +579,7 @@ export function BattleScene(props: Props) {
           y: interpolatedRemoteSnapshot.player.y,
           hp: remoteBattleSnapshot?.player?.hp ?? 0,
           state: interpolatedRemoteSnapshot.player.state,
-          character:
-            online.room?.players.find((p) => p.id !== online.playerId)
-              ?.character ?? "drika",
+          character: remoteCharacter,
         }
       : null;
 
@@ -891,6 +907,7 @@ export function BattleScene(props: Props) {
         opponentMaxHP={opponentMaxHP}
         isBattleGuest={isBattleGuest}
         guestHasSnapshot={guestHasSnapshot}
+        isPvp={isPvp}
       />
 
       {props.children}

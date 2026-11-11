@@ -162,12 +162,46 @@ const wss = new WebSocketServer({ server, path: "/ws" });
 
 const socketMeta = new WeakMap<WebSocket, { playerId?: string; roomId?: string }>();
 
+/**
+ * Vários componentes abrem um socket para a mesma sala (GameApp, SocialOverlay,
+ * BattleScene). Um deles fechar não pode remover o jogador da sala enquanto
+ * outro socket do mesmo jogador continuar aberto — senão o parceiro de guilda
+ * deixa de vê-lo depois da primeira batalha.
+ */
+function hasOtherSocket(
+  roomId: string,
+  playerId: string,
+  except: WebSocket,
+): boolean {
+  for (const client of wss.clients) {
+    if (client === except) continue;
+    if (client.readyState !== WebSocket.OPEN) continue;
+    const meta = socketMeta.get(client);
+    if (meta?.roomId === roomId && meta?.playerId === playerId) return true;
+  }
+  return false;
+}
+
 function broadcastRoom(room: OnlineRoom) {
   const payload = JSON.stringify({ type: "roomState", room: roomToJSON(room) });
   for (const ws of wss.clients) {
     if (ws.readyState !== WebSocket.OPEN) continue;
     const meta = socketMeta.get(ws);
     if (meta?.roomId === room.id) ws.send(payload);
+  }
+}
+
+/**
+ * Repassa uma mensagem para todos os sockets da sala. O servidor não interpreta
+ * o estado de batalha: `to`/`from` deixam o cliente filtrar o co-op de guilda,
+ * já que o mesmo canal também carrega PvP e convites.
+ */
+function relayRoom(roomId: string, payload: Record<string, unknown>) {
+  const data = JSON.stringify(payload);
+  for (const ws of wss.clients) {
+    if (ws.readyState !== WebSocket.OPEN) continue;
+    const meta = socketMeta.get(ws);
+    if (meta?.roomId === roomId) ws.send(data);
   }
 }
 
@@ -207,9 +241,14 @@ wss.on("connection", (ws) => {
 
     if (msg.type === "leaveRoom") {
       const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
-      if (room && msg.playerId) room.players.delete(msg.playerId);
+      const playerId = msg.playerId ?? meta.playerId;
+      if (room && playerId && !hasOtherSocket(room.id, playerId, ws)) {
+        room.players.delete(playerId);
+        if (room.players.size === 0) rooms.delete(room.id);
+        else broadcastRoom(room);
+      }
       meta.roomId = undefined;
-      if (room) broadcastRoom(room);
+      meta.playerId = undefined;
       return;
     }
 
@@ -270,27 +309,42 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    if (msg.type === "battleEnd") {
+    if (
+      msg.type === "battleStart" ||
+      msg.type === "battleSnapshot" ||
+      msg.type === "battlePlayerState" ||
+      msg.type === "battleNpcDamage" ||
+      msg.type === "battleEnd" ||
+      msg.type === "battleRetry" ||
+      msg.type === "battleLeave" ||
+      msg.type === "requestSync" ||
+      msg.type === "opponentDamage"
+    ) {
       const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
       if (!room) return;
-      const payload = JSON.stringify({
-        type: "battleEnd",
+      relayRoom(room.id, {
+        type: msg.type,
         roomId: room.id,
+        to: msg.to,
+        from: msg.from,
+        route: msg.route,
+        state: msg.state,
         result: msg.result,
+        xpReward: msg.xpReward,
+        lastRewards: msg.lastRewards,
+        amount: msg.amount,
+        t: msg.t,
+        x: msg.x,
+        y: msg.y,
+        hp: msg.hp,
+        character: msg.character,
+        player: msg.player,
+        npc: msg.npc,
       });
-      for (const client of wss.clients) {
-        if (client.readyState !== WebSocket.OPEN) continue;
-        const m = socketMeta.get(client);
-        if (m?.roomId === room.id) client.send(payload);
-      }
       return;
     }
 
     if (
-      msg.type === "requestSync" ||
-      msg.type === "opponentDamage" ||
-      msg.type === "battleRetry" ||
-      msg.type === "battleLeave" ||
       msg.type === "guildInvite" ||
       msg.type === "guildResponse" ||
       msg.type === "pvpInvite" ||
@@ -328,23 +382,6 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    if (msg.type === "battleStart") {
-      const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
-      if (!room) return;
-      const payload = JSON.stringify({
-        type: "battleStart",
-        roomId: room.id,
-        origin: msg.origin,
-        npcType: msg.npcType,
-      });
-      for (const client of wss.clients) {
-        if (client.readyState !== WebSocket.OPEN) continue;
-        const m = socketMeta.get(client);
-        if (m?.roomId === room.id) client.send(payload);
-      }
-      return;
-    }
-
     if (msg.type === "ping") {
       ws.send(JSON.stringify({ type: "pong", t: msg.t }));
     }
@@ -354,7 +391,7 @@ wss.on("connection", (ws) => {
     const meta = socketMeta.get(ws);
     if (meta?.roomId && meta.playerId) {
       const room = rooms.get(meta.roomId);
-      if (room) {
+      if (room && !hasOtherSocket(meta.roomId, meta.playerId, ws)) {
         room.players.delete(meta.playerId);
         if (room.players.size === 0) rooms.delete(room.id);
         else broadcastRoom(room);
