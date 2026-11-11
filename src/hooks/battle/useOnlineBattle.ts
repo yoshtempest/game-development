@@ -25,6 +25,8 @@ type Props = {
   showDefeatBase: boolean;
   xpReward: number;
   lastRewards: unknown;
+  battleLeaderId?: string;
+  isPvp?: boolean;
 };
 
 export function useOnlineBattle({

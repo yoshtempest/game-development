@@ -99,6 +99,12 @@ export function useNpcAI({
   const onRemoteHitRef = useLatestRef(onRemoteHit);
   const npcAuthorityRef = useLatestRef(npcAuthority);
 
+  // ── Se o guest não tem autoridade, pular o execute do ataque.
+  // O projectile system já vem com `enabled: npcAuthority` (false no guest),
+  // e os wrappers routeSingle/routeArea enviam hits via onRemoteHit em vez de
+  // aplicá-los localmente.
+  const skipExecute = !npcAuthorityRef.current;
+
   const activeProjectile = projectiles[0] ?? null;
   const projectileRef = useLatestRef(activeProjectile);
   const setProjectile = useCallback(
@@ -406,6 +412,13 @@ export function useNpcAI({
     const interval = setInterval(() => {
       const n = npcRef.current;
 
+      // ── Se não há autoridade (guest do co-op), NPC não toma decisões.
+      // O guest apenas espelha o NPC do líder via snapshot.
+      if (!npcAuthorityRef.current) {
+        // Apenas atualiza posição baseada no snapshot do líder, sem IA.
+        return;
+      }
+
       // Passiva "O Abençoado": inimigos próximos recuam até ficarem a
       // HONORED_ONE_FLEE_DISTANCE de distância em x (roda mesmo com o AI
       // pausado/hitstop, já que a batalha está congelada).
@@ -450,6 +463,29 @@ export function useNpcAI({
           ...n,
           direction: getNpcDirection(n.x, playerXRef.current),
         });
+        return;
+      }
+
+      // Se o guest não tem autoridade, pular o execute do ataque.
+      // O NPC ainda se move (posição vinda do snapshot do líder), mas não
+      // gera danos/efeitos localmente; os hits são roteados via onRemoteHit.
+      if (skipExecute) {
+        // Aún assim, atualizar posição baseada no alvo local para manter o NPC
+        // visível, mas sem gerar efeitos de ataque.
+        const attack = getNpcAttack(npcTypeRef.current);
+        // Pular o execute, mas ainda assim computed some state para o NPC não
+        // ficar totalmente congelado. Apenas avançamos o tick sem aplicar
+        // dano/efeitos.
+        const animBase: NPCBattleState = { ...n };
+        const result = { direction: n.direction, state: n.state, hidden: n.hidden };
+        // Usar resultado vazio para commit, mantendo NPC vivo mas inativo.
+        commit(animBase, {
+          ...n,
+          direction: result.direction,
+          state: result.state,
+          hidden: result.hidden,
+        });
+        // Pular o resto do processamento deste tick.
         return;
       }
 
@@ -594,6 +630,11 @@ export function useNpcAI({
     playerDirectionRef,
     projectileRef,
     setProjectile,
+    npcAuthorityRef,
+    activeTargetRef,
+    targetsRef,
+    currentTargetRef,
+    onRemoteHitRef,
   ]);
 
   const updateNpc = (partial: Partial<NPCBattleState>) => {

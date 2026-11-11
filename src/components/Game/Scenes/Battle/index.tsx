@@ -1,6 +1,7 @@
 import { BattleHUD } from "@/components/Game/Battle/HUD";
 import { GameMap } from "@/components/Game/Map/Game";
 import { useOnline } from "@/contexts/OnlineContext";
+import { useBattleNet } from "@/hooks/battle/useBattleNet";
 import { useOnlineBattle } from "@/hooks/battle/useOnlineBattle";
 import Talking from "@/components/Game/Interactions/Talking";
 import { useTrueVandinhaCutscene } from "@/hooks/battle/useTrueVandinhaCutscene";
@@ -87,6 +88,10 @@ export function BattleScene(props: Props) {
 
   const { TILE_SIZE, PLAYER_SIZE, MAP_COLS, MAP_ROWS } = useGameLayout();
 
+  // Camada de rede (líder/guest) - montada ANTES de useBattleScene
+  // para que o NPC guest enxergue o jogador remoto via snapshot.
+  const battleNet = useBattleNet({ battleLeaderId, isPvp });
+  const { isGuest: netIsGuest } = battleNet;
   const {
     player,
     npc,
@@ -268,6 +273,7 @@ export function BattleScene(props: Props) {
     lastRewards,
     battleLeaderId,
     isPvp,
+    net: battleNet,
   });
 
   const {
@@ -292,7 +298,7 @@ export function BattleScene(props: Props) {
 
   // No PvP os dois controlam a mesma luta (o guest espelha o host). No co-op o
   // guest tem avatar próprio e precisa de controle para andar/atacar.
-  if (isBattleGuest && isPvp) {
+  if (netIsGuest && isPvp) {
     controlsDisabled = true;
   }
 
