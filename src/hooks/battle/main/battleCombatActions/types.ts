@@ -26,6 +26,8 @@ export type BattleCombatActionsProps = {
   progress: ReturnType<typeof useBattleStageSetup>["progress"];
   /** Arma equipada do Yvel (o special dela troca a arma em uso). */
   weapon: YvelWeapon | undefined;
+  /** Equipa uma arma do Yvel (a forja do ataque carregado, issue #217). */
+  equipYvelWeapon: (weapon: YvelWeapon) => boolean;
   summons: ReturnType<typeof useBattleStageSetup>["summons"];
   setSummons: ReturnType<typeof useBattleStageSetup>["setSummons"];
   giveSummonRewards: ReturnType<typeof useBattleStageSetup>["giveSummonRewards"];
