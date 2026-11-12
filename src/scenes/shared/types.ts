@@ -28,6 +28,7 @@ import type { useKamehameha } from "@/hooks/battle/player/characters/ematron/kam
 import type { useAtomic } from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
 import type { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/mugetsuExpansion/useMugetsuExpansion";
 import type { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/granReyCero/useGranReyCero";
+import type { UnlimitedBladeWorksApi } from "@/hooks/battle/player/characters/yvel/useUnlimitedBladeWorks";
 import type { CameraFocus } from "@/hooks/battle/effects/cameraSequence/useCameraSequence";
 import type { CharacterId } from "@/data/characters/list";
 
@@ -106,6 +107,8 @@ export type BattleSceneApi = {
   extraPunchSprite: string;
   yvelWeapon: YvelWeapon | undefined;
   switchWeapon: () => void;
+  /** Unlimited Blade Works (Expansão do yvel): janela + arsenal pausado. */
+  yvelBladeWorks: UnlimitedBladeWorksApi;
   drikaArm?: string;
   sigiloPhase?: string;
   sigiloOpen?: boolean;

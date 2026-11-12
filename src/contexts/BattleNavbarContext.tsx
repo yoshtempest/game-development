@@ -24,6 +24,16 @@ type BattleNavbarContextType = {
   finishClose: () => void;
 
   resetBattleNavbar: () => void;
+
+  /**
+   * Pausa de seletor em batalha (ex.: o arsenal do Unlimited Blade Works do
+   * Yvel). Congela a batalha exatamente como o menu — modo "menu" no player e
+   * `isMenuOpen` no `useMenuPause` —, mas sem abrir o navbar: quem abriu
+   * desenha a própria UI por cima.
+   */
+  isSelectorPauseOpen: boolean;
+  openSelectorPause: () => void;
+  closeSelectorPause: () => void;
 };
 
 const BattleNavbarContext = createContext<BattleNavbarContextType | null>(null);
@@ -36,9 +46,11 @@ export function BattleNavbarProvider({ children }: { children: ReactNode }) {
     close: closeToggle,
   } = useToggle();
   const [isClosing, setIsClosing] = useState(false);
+  const [isSelectorPauseOpen, setIsSelectorPauseOpen] = useState(false);
 
   const { player, setMode, restoreMode } = usePlayer();
 
+  const isSelectorPauseOpenRef = useLatestRef(isSelectorPauseOpen);
   const locationRef = useLatestRef(location);
   const isBattleNavOpenRef = useLatestRef(isBattleNavOpen);
   const isClosingRef = useLatestRef(isClosing);
@@ -83,6 +95,25 @@ export function BattleNavbarProvider({ children }: { children: ReactNode }) {
     openBattleNavbar();
   }, [closeBattleNavbar, isBattleNavOpenRef, isClosingRef, openBattleNavbar]);
 
+  /**
+   * Abre a pausa de seletor. Só entra em batalha e só uma vez: abrir de novo
+   * sobrescreveria o modo salvo pelo `setMode` com o próprio "menu", e o
+   * `restoreMode` do fechamento devolveria o player ao modo errado.
+   */
+  const openSelectorPause = useCallback(() => {
+    if (isSelectorPauseOpenRef.current) return;
+    if (playerModeRef.current !== "battle") return;
+    setMode("menu");
+    setIsSelectorPauseOpen(true);
+  }, [isSelectorPauseOpenRef, playerModeRef, setMode]);
+
+  /** Fecha a pausa de seletor; idempotente para o cleanup de unmount. */
+  const closeSelectorPause = useCallback(() => {
+    if (!isSelectorPauseOpenRef.current) return;
+    setIsSelectorPauseOpen(false);
+    restoreMode();
+  }, [isSelectorPauseOpenRef, restoreMode]);
+
   // Fecha sem restaurar modo (usado ao montar/desmontar a cena de batalha).
   const resetBattleNavbar = useCallback(() => {
     setIsClosing(false);
@@ -101,6 +132,9 @@ export function BattleNavbarProvider({ children }: { children: ReactNode }) {
       toggleBattleNavbar,
       finishClose,
       resetBattleNavbar,
+      isSelectorPauseOpen,
+      openSelectorPause,
+      closeSelectorPause,
     }),
     [
       isBattleNavOpen,
@@ -112,6 +146,9 @@ export function BattleNavbarProvider({ children }: { children: ReactNode }) {
       toggleBattleNavbar,
       finishClose,
       resetBattleNavbar,
+      isSelectorPauseOpen,
+      openSelectorPause,
+      closeSelectorPause,
     ],
   );
 
@@ -132,6 +169,9 @@ const DEFAULT_BATTLE_NAVBAR: BattleNavbarContextType = {
   toggleBattleNavbar: () => {},
   finishClose: () => {},
   resetBattleNavbar: () => {},
+  isSelectorPauseOpen: false,
+  openSelectorPause: () => {},
+  closeSelectorPause: () => {},
 };
 
 // eslint-disable-next-line react-refresh/only-export-components

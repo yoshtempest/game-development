@@ -145,7 +145,11 @@ export function useBattleCore({
     quests,
   } = setup;
 
-  const { weapon: yvelWeapon, switchWeapon } = useYvelWeaponSwitch({
+  const {
+    weapon: yvelWeapon,
+    switchWeapon,
+    equipWeapon: equipYvelWeapon,
+  } = useYvelWeaponSwitch({
     character: player.character,
     timeRef: refs.timeRef,
   });
@@ -740,6 +744,7 @@ export function useBattleCore({
     coop,
     yvelWeapon,
     switchWeapon,
+    equipYvelWeapon,
     babidiShield,
     onBlockRef: refs.onBlockRef,
     onDamageTakenRef: refs.onDamageTakenRef,

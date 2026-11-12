@@ -13,6 +13,10 @@ import { ONE_THOUSAND_FIVE_HUNDRED_MS } from "@/data/ms";
  * - `muryokusho`: o domínio bespoke do natsuki — congela o mundo, segura a
  *   pose `rioiki.svg` por 5s e drena 0,2% da vida MÁXIMA dos inimigos a cada
  *   50ms — ver `useNatsukiDomainExpansion`.
+ * - `unlimitedBladeWorks`: o domínio do yvel — abre uma janela em que a troca
+ *   de arma vira escolha (qualquer arma, a qualquer momento, sem custo de
+ *   mana), com a batalha pausada enquanto o arsenal está aberto — ver
+ *   `useUnlimitedBladeWorks`.
  * - `burst`: o efeito base universal — explosão de dano especial em todos os
  *   inimigos da arena, mesmo multiplicador para todos — ver
  *   `useDomainExpansionBurst`.
@@ -23,7 +27,13 @@ export type DomainExpansionDefinition = {
   description: string;
   /** Cor do efeito (borda, rótulo e brilho do botão). */
   accent: string;
-  kind: "mugetsu" | "muryokusho" | "hakai" | "burst" | "machineGama";
+  kind:
+    | "mugetsu"
+    | "muryokusho"
+    | "hakai"
+    | "burst"
+    | "machineGama"
+    | "unlimitedBladeWorks";
   /**
    * Tem a arte do domínio em `abilities/domainExpansion/`: a intro
    * (`background.svg`) no `SpecialIntro` e o preenchimento (`expansion.svg`)
@@ -58,11 +68,11 @@ export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
       kind: "burst",
     },
     yvel: {
-      name: "Ringue Infinito",
+      name: "Unlimited Blade Works",
       description:
-        "Expande um domínio sobre a arena inteira: uma explosão de energia atinge todos os inimigos, causando dano especial.",
+        "Abre o arsenal infinito: por um tempo, escolha qualquer arma a qualquer momento, sem custo de mana. A batalha pausa enquanto você escolhe.",
       accent: "#f97316",
-      kind: "burst",
+      kind: "unlimitedBladeWorks",
     },
     samurion: {
       name: "Poço dos Gigantes",

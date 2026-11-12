@@ -14,6 +14,16 @@ export type YvelWeapon = (typeof YVEL_WEAPONS)[number];
 /** Arma inicial do Yvel no começo da batalha. */
 export const DEFAULT_YVEL_WEAPON: YvelWeapon = "withDoubleSwords";
 
+/**
+ * Duração (ms de batalha, sem contar a pausa do arsenal) da janela do
+ * Unlimited Blade Works. Enquanto ela dura, o botão de troca abre o seletor
+ * em vez de sortear.
+ *
+ * Decisão para revisar: a issue #219 não fixa a duração; 15s dá tempo de
+ * trocar algumas vezes sem virar o kit permanente do personagem.
+ */
+export const UNLIMITED_BLADE_WORKS_DURATION_MS = 15000;
+
 /** Alcance de ataque (px) por arma do Yvel — adaptativo conforme a arma equipada. */
 export const YVEL_WEAPON_RANGES: Record<YvelWeapon, number> = {
   withDoubleSwords: 140,

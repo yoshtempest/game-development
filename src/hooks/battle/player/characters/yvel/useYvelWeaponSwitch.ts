@@ -53,6 +53,23 @@ export function useYvelWeaponSwitch({
     return true;
   }, [available, isEndingRef, timeRef, weapon]);
 
+  /**
+   * Equipa uma arma escolhida (o arsenal do Unlimited Blade Works). Sem
+   * hitstop: a batalha já está pausada enquanto o seletor está aberto.
+   *
+   * @returns true quando a arma mudou.
+   */
+  const equipWeapon = useCallback(
+    (next: YvelWeapon): boolean => {
+      if (!available) return false;
+      if (isEndingRef?.current) return false;
+      if (next === weapon) return false;
+      setWeapon(next);
+      return true;
+    },
+    [available, isEndingRef, weapon],
+  );
+
   useEffect(() => {
     if (available) {
       setWeapon(DEFAULT_YVEL_WEAPON);
@@ -70,5 +87,6 @@ export function useYvelWeaponSwitch({
     weapon: available ? weapon : undefined,
     switching: switchingRef.current,
     switchWeapon,
+    equipWeapon,
   };
 }

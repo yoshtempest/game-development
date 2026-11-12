@@ -50,6 +50,7 @@ import { TrainingOverlay } from "@/components/Game/Battle/Overlay/Training";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { SigiloSelector } from "@/components/Game/Battle/SigiloSelector";
+import { YvelArsenal } from "@/components/Game/Battle/YvelArsenal";
 import { BabidiMachineGama } from "@/components/Game/Battle/Entities/Babidi/MachineGama";
 import { RemoteResultOverlay } from "@/components/Game/Battle/Overlay/RemoteResult";
 import { ConnectionOverlay } from "@/components/Game/Battle/Overlay/Connection";
@@ -238,6 +239,7 @@ export function BattleScene(props: Props) {
     extraPunchSprite,
     yvelWeapon,
     switchWeapon,
+    yvelBladeWorks,
     drikaArm,
     sigiloPhase,
     sigiloOpen,
@@ -1127,6 +1129,7 @@ export function BattleScene(props: Props) {
           pet,
           switchWeapon,
           yvelWeapon,
+          yvelBladeWorks,
           openSigilo,
           sphere,
           bluePress,
@@ -1191,6 +1194,15 @@ export function BattleScene(props: Props) {
           onNext={tvCutscene.next}
         />
       )}
+
+      <YvelArsenal
+        open={yvelBladeWorks.selectorOpen}
+        currentWeapon={yvelWeapon}
+        accent={domainConfig.accent}
+        title={domainConfig.name}
+        onSelect={yvelBladeWorks.selectWeapon}
+        onClose={yvelBladeWorks.closeSelector}
+      />
 
       <SigiloSelector
         open={!!sigiloOpen}
