@@ -21,6 +21,7 @@ import { useNavbar } from "@/contexts/NavbarContext";
 import { useEquipment } from "@/contexts/EquipmentContext";
 import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
 import { usePlayerAnimation } from "@/hooks/battle/player/usePlayerAnimation";
+import { useBasicCombo } from "@/hooks/battle/player/basicCombo/useBasicCombo";
 import { useEmatronCombo } from "@/hooks/battle/player/characters/ematron/useCombo";
 import { useTimeScale } from "@/hooks/battle/time/useTimeScale";
 import { BATTLE_DEFAULT_STATE } from "@/gameRules/battle/defaultState";
@@ -129,6 +130,10 @@ type PlayerActionsContextType = {
   ematronComboAirActiveRef: React.RefObject<boolean>;
   /** Combo do ematron: índice do último step avançado no press. */
   ematronComboStepIndexRef: React.RefObject<number>;
+  /** Combo básico genérico: true quando o último press iniciou um básico do combo. */
+  basicComboActiveRef: React.RefObject<boolean>;
+  /** Combo básico genérico: índice (em `BASIC_COMBO_STEPS`) do último básico iniciado. */
+  basicComboStepIndexRef: React.RefObject<number>;
 
   setTimeScale: (scale: number) => void;
   resetTimeScale: () => void;
@@ -173,10 +178,15 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const ematronComboAirActiveRef = ematronCombo.airActiveRef;
   const ematronComboStepIndexRef = ematronCombo.stepIndexRef;
   const resetEmatronCombo = ematronCombo.reset;
+  const basicCombo = useBasicCombo();
+  const basicComboActiveRef = basicCombo.activeRef;
+  const basicComboStepIndexRef = basicCombo.stepIndexRef;
+  const resetBasicCombo = basicCombo.reset;
 
   useEffect(() => {
     resetEmatronCombo();
-  }, [player.character, player.mode, resetEmatronCombo]);
+    resetBasicCombo();
+  }, [player.character, player.mode, resetEmatronCombo, resetBasicCombo]);
 
   usePlayerAnimation(
     player,
@@ -267,6 +277,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     genkiDamaRiseStartYRef,
     natsukiPunchRef,
     specialIntroLockRef,
+    basicCombo,
   );
   const battleRef = useRef(battle);
   battleRef.current = battle;
@@ -518,6 +529,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       ematronComboActiveRef,
       ematronComboAirActiveRef,
       ematronComboStepIndexRef,
+      basicComboActiveRef,
+      basicComboStepIndexRef,
 
       setTimeScale,
       resetTimeScale,
@@ -577,6 +590,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       ematronComboActiveRef,
       ematronComboAirActiveRef,
       ematronComboStepIndexRef,
+      basicComboActiveRef,
+      basicComboStepIndexRef,
       setTimeScale,
       resetTimeScale,
       timeScaleRef,

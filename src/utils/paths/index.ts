@@ -48,6 +48,7 @@ export { sfx } from "./song/sfx";
 export type { MarshadowBattleForm } from "./characters/marshadow/types";
 export { idleFrameSprite } from "./player/idleFrameSprite";
 export { resolveBattleSprite } from "./resolve/resolveBattleSprite";
+export { basicComboSpritePath } from "./resolve/basicComboSprite";
 export { battleDefault } from "./song/battleDefault";
 export { receiveOrUnlock } from "./song/receiveOrUnlock";
 export { playerSoundPath } from "./song/playerSoundPath";

@@ -1,3 +1,5 @@
+import type { DamageKind } from "@/utils/types/battle/damageKind";
+import type { BasicHitOptions } from "@/utils/types/battle/basicHitOptions";
 import type { SpecialHitOptions } from "@/utils/types/battle/specialHitOptions";
 import type { CharactersProgress } from "@/data/characters/defaultProgress";
 import type { BabidiTarget } from "@/utils/types/character/babidi";
@@ -23,6 +25,8 @@ export type Props = {
       multiplier?: number,
       bypassCanPlayerHit?: boolean,
       bypassCooldown?: boolean,
+      damageKind?: DamageKind,
+      options?: BasicHitOptions,
     ) => void;
     specialHit: (
       multiplier?: number,
@@ -31,6 +35,8 @@ export type Props = {
     ) => void;
     setDelicia: React.Dispatch<React.SetStateAction<number>>;
     hitsToSpecial: number;
+    /** Sangramento no NPC principal (debuff do 3º golpe do combo básico). */
+    applyNpcBleed: (durationMs: number) => void;
   };
 
   setSummons: React.Dispatch<React.SetStateAction<SummonedNpc[]>>;
@@ -55,6 +61,10 @@ export type Props = {
   ematronComboAirActiveRef?: React.RefObject<boolean>;
   /** Índice do último step do combo do ematron (lido no press). */
   ematronComboStepIndexRef?: React.RefObject<number>;
+  /** Combo básico genérico: true quando o press atual iniciou um básico do combo. */
+  basicComboActiveRef?: React.RefObject<boolean>;
+  /** Combo básico genérico: índice do passo iniciado no press atual. */
+  basicComboStepIndexRef?: React.RefObject<number>;
   /** Avança o player um passo em direção ao alvo atingido (combo do ematron). */
   onComboAdvance?: (forwardDistance: number, targetX: number) => void;
   /** Básico do babidi: dispara o projétil no press (devolve se disparou). */

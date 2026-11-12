@@ -42,6 +42,12 @@ export type BattleCombatActionsProps = {
   ematronComboStepIndexRef: ReturnType<
     typeof useBattleStageSetup
   >["ematronComboStepIndexRef"];
+  basicComboActiveRef: ReturnType<
+    typeof useBattleStageSetup
+  >["basicComboActiveRef"];
+  basicComboStepIndexRef: ReturnType<
+    typeof useBattleStageSetup
+  >["basicComboStepIndexRef"];
   forcePunchRef: ReturnType<typeof useBattleStageSetup>["forcePunchRef"];
   /** Básico do babidi: dispara o projétil de energia no press. */
   babidiFireRef: RefObject<

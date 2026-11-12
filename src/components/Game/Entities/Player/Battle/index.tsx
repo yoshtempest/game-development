@@ -50,6 +50,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     babidiShieldSides = NO_BABIDI_SHIELD,
     onBabidiShieldEnd,
     hakai = false,
+    basicComboStep,
   } = props;
 
   const isChargingKi = character === "ematron" && state === "chargingKi";
@@ -75,6 +76,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     babidiMachineGamaControl,
     hakai,
     sigiloPhase,
+    basicComboStep,
   });
 
   const isMostHonored = state === "mostHonored";

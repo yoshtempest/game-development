@@ -552,6 +552,12 @@ declare global {
     moving?: boolean;
     machineGamaControl?: boolean;
     grabbedUntil?: number;
+    /**
+     * Postura do combo básico genérico (índice em `BASIC_COMBO_STEPS`) do
+     * último básico iniciado. Só existe para o sprite: o dano lê o ref do
+     * `useBasicCombo`, que é atualizado no mesmo press.
+     */
+    basicComboStep?: number;
     bleedUntil: number;
     burnUntil: number;
     poisonUntil: number;

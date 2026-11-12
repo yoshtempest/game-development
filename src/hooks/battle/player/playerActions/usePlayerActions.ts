@@ -19,6 +19,7 @@ import { PlayerSpecialConstants } from "@/data/projectile";
 import { useBuildTargetList } from "@/hooks/battle/player/usePlayerTargeting";
 import { resetCooldownRef } from "@/utils/battle/cooldown";
 import { EMATRON_COMBO_STEPS } from "@/data/characters/ematron";
+import { getBasicComboStep } from "@/gameRules/battle/basicCombo";
 
 import { useLatestRef } from "@/hooks/useLatestRef";
 
@@ -45,6 +46,8 @@ export function usePlayerBattleActions({
   ematronComboActiveRef,
   ematronComboAirActiveRef,
   ematronComboStepIndexRef,
+  basicComboActiveRef,
+  basicComboStepIndexRef,
   onComboAdvance,
   babidiFireRef,
   babidiOnHitRef,
@@ -223,6 +226,13 @@ export function usePlayerBattleActions({
       return;
     }
 
+    // Combo básico genérico (#376): só o press que iniciou um básico usa o
+    // passo; mash durante a animação cai no golpe 1x de sempre.
+    const basicComboStep =
+      basicComboActiveRef?.current === true
+        ? getBasicComboStep(basicComboStepIndexRef?.current ?? 0)
+        : null;
+
     const targets = getTargets();
     const mainTarget = targets.find((t) => t.id === "main");
 
@@ -290,6 +300,13 @@ export function usePlayerBattleActions({
       } else if (player.state === "falling" && !fallingAttackUsedRef.current) {
         fallingAttackUsedRef.current = true;
         battle.playerHit(1.2);
+      } else if (basicComboStep) {
+        const { bleedMs } = basicComboStep;
+        battle.playerHit(basicComboStep.multiplier, false, false, "physical", {
+          critBonus: basicComboStep.critBonus,
+          onLanded:
+            bleedMs > 0 ? () => battle.applyNpcBleed(bleedMs) : undefined,
+        });
       } else {
         battle.playerHit();
       }
@@ -308,7 +325,9 @@ export function usePlayerBattleActions({
       const pushDir = player.battleDirection === "right" ? 1 : -1;
       hitSummon(
         target,
-        isEmatronComboHit ? comboMultiplier : 1,
+        isEmatronComboHit
+          ? comboMultiplier
+          : (basicComboStep?.multiplier ?? 1),
         "basic",
         isEmatronComboHit ? pushDir : undefined,
       );
@@ -339,6 +358,8 @@ export function usePlayerBattleActions({
     ematronComboActiveRef,
     ematronComboAirActiveRef,
     ematronComboStepIndexRef,
+    basicComboActiveRef,
+    basicComboStepIndexRef,
     onComboAdvance,
     babidiFireRef,
     babidiMissileFireRef,

@@ -28,6 +28,8 @@ export interface PlayerBattleProps {
   /** Pose de mão do sprite do ataque básico do babidi. */
   babidiAttackVariant?: BabidiAttackVariant;
   sigiloPhase?: string;
+  /** Postura do combo básico genérico em exibição (`Player.basicComboStep`). */
+  basicComboStep?: number;
   /** Nick do jogador remoto acima do sprite (online). */
   nameTag?: string;
   babidiMachineGamaControl?: boolean;

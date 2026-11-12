@@ -183,6 +183,7 @@ O escopo atual abrange:
 | RN41 | Quem cai num round avisa a partida; os dois cair em até 0,7 s é empate (ninguém pontua). Vence a série quem chegar a maioria simples (1, 2 ou 3 rounds) |
 | RN42 | Oponente que sai do duelo ou fica 4 s sem dar sinal antes de a série acabar perde por W.O.; sair depois da série decidida não muda o resultado |
 | RN43 | O duelo é amistoso: não dá XP, loot, progresso de missão nem penalidade de derrota; o Rewind fica desligado e a Forma Vastolord (passiva) vale |
+| RN44 | O ataque básico (exceto ematron, babidi, natsuki e srGuaxinim, que têm básico próprio) é um combo de 3 instâncias: golpe leve numa postura (`attack1`), golpe leve em outra postura (`attack2`) e golpe pesado (`attack3`, 1,3x de dano, +15 pontos de chance de crítico e 3 s de sangramento no NPC principal quando o golpe conecta). O próximo press só avança a postura se vier até 2 s depois do anterior; passado isso, volta para a 1ª. Constantes em `data/battle/basicCombo.ts` |
 
 ### 3.4 Restrições de Hardware
 
