@@ -18,6 +18,11 @@ import {
 // ── Ciclo principal ───────────────────────────────────────
 /** Tempo de recarga. Segue o mesmo padrão do cooldown de `I Am Atomic`. */
 export const GRAN_REY_CERO_COOLDOWN_MS = 20_000;
+/**
+ * Reiryoku gasto por disparo. Menor que o do `I Am Atomic` porque a lâmina
+ * acerta só o que estiver na linha de mira.
+ */
+export const GRAN_REY_CERO_REIRYOKU_COST = 25;
 /** Orçamento de deslocamento: 2s de "corrida" somados ao rastejo. */
 export const GRAN_REY_CERO_TRAVEL_MS = TWO_THOUSAND_MS;
 /** Distância percorrida no total, em px lógicos do plano 1000x600. */

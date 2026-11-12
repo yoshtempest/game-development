@@ -69,7 +69,13 @@ export function hasManaBar(character: CharacterId): boolean {
   return character !== "marshadow";
 }
 
+/**
+ * Nome do recurso que as habilidades do personagem consomem. O marshadow não
+ * tem mana: paga com o reiryoku da barra de fluxo (`useEnergy`), e o menu de
+ * habilidades precisa chamar o custo pelo nome certo.
+ */
 export function getEnergyName(character: CharacterId): string {
+  if (character === "marshadow") return "Reiryoku";
   if (character === "natsuki") return "Energia Amaldiçoada";
   if (character === "ematron") return "Ki";
   if (character === "babidi") return "Energia Dimensional";
