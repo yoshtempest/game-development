@@ -9,7 +9,7 @@ import {
 
 import { clampX } from "@/gameRules/movement/clampX";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
-import { gainAbilityCharge } from "@/gameRules/battle/special";
+import { gainAbilityCharge, gainSpecial } from "@/gameRules/battle/special";
 
 export function useActiveSkills({
   cursedEnergyEnabled,
@@ -65,7 +65,7 @@ export function useActiveSkills({
     if (!mana || battle.isEnding.current) return;
     if (mana.playerMana < BLINK_ENERGY_COST) return;
     if (!mana.consumeMana(BLINK_ENERGY_COST)) return;
-    battle.setDelicia((d) => gainAbilityCharge(d, battle.hitsToSpecial));
+    battle.setDelicia((d) => gainSpecial(d, battle.hitsToSpecial));
     playSound("blink");
     const dir = player.battleDirection === "left" ? -1 : 1;
     const targetX = clampX(player.x + dir * BLINK_DISTANCE);

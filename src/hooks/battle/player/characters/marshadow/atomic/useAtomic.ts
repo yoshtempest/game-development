@@ -11,10 +11,13 @@ import {
 } from "@/data/ms";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
+import { useMenuPause } from "@/hooks/battle/utilities/useMenuPause";
+import { usePausableTimers } from "@/hooks/battle/utilities/pausableTimers/usePausableTimers";
 import {
   ABILITY_COOLDOWN_TICK_MS,
   useCooldownPauseTick,
 } from "@/hooks/battle/utilities/useCooldowns";
+import { getProjectileCenter } from "@/gameRules/npc/projectile/projectileDamage";
 import type { AtomicCut, AtomicExplosion } from "@/utils/types/battle/atomic";
 
 /** Raio da explosão (px lógicos) a partir do inimigo com maior vida máxima. */
@@ -41,6 +44,11 @@ export const ATOMIC_AREA_MULTIPLIER = 1;
  * vida máxima e, 100ms depois da troca para finalizating.svg, causa dano em
  * TODOS os inimigos em um raio de 300px (2x no alvo, 1x nos demais) junto com
  * um CutInEnemie (chance de sangrar no NPC principal). Cooldown de 20s.
+ *
+ * A coreografia inteira roda em timers pausáveis: com o menu aberto cada fase
+ * congela com o tempo restante e o halo/explosão continuam na tela; no unpause
+ * a sequência retoma de onde parou e o golpe acerta. Antes os timers corriam
+ * dentro do menu e a limpeza no fim apagava a explosão sem dano aplicado.
  */
 export function useAtomic({
   player,
@@ -50,12 +58,12 @@ export function useAtomic({
   npcMaxHp,
   npcHp,
   summons,
+  projectiles,
   startSpecialIntro,
   onBoom,
   onNpcCutInRef,
   freezeActionsUntilRef,
   isPausedRef,
-  isMenuOpenRef,
   battleEndedRef,
   disabledRef,
   playSound,
@@ -78,13 +86,15 @@ export function useAtomic({
     y: number;
     npcType: string;
   } | null>(null);
-  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const { isMenuOpen } = useMenuPause();
+  const timers = usePausableTimers(isMenuOpen);
 
   const npcRef = useLatestRef(npc);
   const npcTypeRef = useLatestRef(npcType);
   const npcMaxHpRef = useLatestRef(npcMaxHp);
   const npcHpRef = useLatestRef(npcHp);
   const summonsRef = useLatestRef(summons);
+  const projectilesRef = useLatestRef(projectiles);
   const onBoomRef = useLatestRef(onBoom);
   const onUsedRef = useLatestRef(onUsed);
 
@@ -100,27 +110,10 @@ export function useAtomic({
   });
 
   const clearTimers = useCallback(() => {
-    for (const timer of timersRef.current) clearTimeout(timer);
-    timersRef.current = [];
-  }, []);
+    timers.clear();
+  }, [timers]);
 
   const cleanup = useCallback(() => {
-    // Se o menu estiver aberto, não limpa o estado visual (halo, explosão, cuts, flash)
-    // para que a animação não desapareça durante a pausa. A limpeza real acontece
-    // quando o menu fecha (via useEffect abaixo) ou quando a habilidade é cancelada
-    // de verdade (vitória/derrota).
-    if (isMenuOpenRef.current) {
-      activeRef.current = false;
-      clearTimers();
-      // Só reseta o player se estivermos em modo battle; no menu o estado fica
-      // congelado no sprite da habilidade.
-      setPlayer((p) =>
-        p.mode !== "battle" || !ALL_PREDICATES.isAtomic(p.state)
-          ? p
-          : { ...p, state: "idle" },
-      );
-      return;
-    }
     activeRef.current = false;
     clearTimers();
     setHalo(false);
@@ -133,26 +126,9 @@ export function useAtomic({
         ? p
         : { ...p, state: "idle" },
     );
-  }, [clearTimers, isMenuOpenRef, setPlayer]);
+  }, [clearTimers, setPlayer]);
 
   const cleanupRef = useLatestRef(cleanup);
-
-  // Quando o menu fecha, se a habilidade estava ativa, faz a limpeza completa.
-  useEffect(() => {
-    if (isMenuOpenRef.current) return;
-    if (!activeRef.current) return;
-    // O menu acabou de fechar: se a habilidade já completou (timers dispararam),
-    // o cleanup já foi chamado mas pulou a limpeza visual. Fazemos agora.
-    const timer = setTimeout(() => {
-      if (!activeRef.current) return;
-      setHalo(false);
-      setExplosion(null);
-      setFlash(false);
-      setCuts([]);
-      targetRef.current = null;
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [isMenuOpenRef, activeRef]);
 
   /** Inimigo com a maior vida máxima — o alvo da explosão (2x de dano). */
   const findTarget = useCallback(() => {
@@ -224,102 +200,108 @@ export function useAtomic({
     const finalizeAt = ATOMIC_STARTING_MS + ATOMIC_PREPARING_MS;
     const explodeAt = finalizeAt + ATOMIC_EXPLOSION_DELAY_MS;
 
-    timersRef.current = [];
+    timers.schedule(() => {
+      if (shouldCancelRef.current()) {
+        cleanupRef.current();
+        return;
+      }
+      setPlayer((pp) =>
+        pp.mode !== "battle" ? pp : { ...pp, state: "preparingAtomic" },
+      );
+      setHalo(true);
+      playSound("preAtomic");
+    }, prepareAt);
 
-    timersRef.current.push(
-      setTimeout(() => {
-        if (shouldCancelRef.current()) {
-          cleanupRef.current();
-          return;
+    timers.schedule(() => {
+      if (shouldCancelRef.current()) {
+        cleanupRef.current();
+        return;
+      }
+      setPlayer((pp) =>
+        pp.mode !== "battle" ? pp : { ...pp, state: "finalizatingAtomic" },
+      );
+      const target = findTarget();
+      targetRef.current = target;
+      setExplosion({
+        x: target.x,
+        y: target.y,
+        npcType: target.npcType,
+        phase: "starting",
+      });
+    }, finalizeAt);
+
+    timers.schedule(() => {
+      if (shouldCancelRef.current()) {
+        cleanupRef.current();
+        return;
+      }
+      const target = targetRef.current ?? findTarget();
+
+      setExplosion((prev) => (prev ? { ...prev, phase: "explosion" } : prev));
+      setFlash(true);
+      playSound("atomic");
+
+      // Inimigos atingidos: todos em um raio de 300px (eixos x/y) do alvo.
+      const hitSummonIds: string[] = [];
+      const hitMain =
+        Math.abs(npcRef.current.x - target.x) <= ATOMIC_RADIUS &&
+        Math.abs(npcRef.current.y - target.y) <= ATOMIC_RADIUS;
+
+      for (const s of summonsRef.current) {
+        if (
+          Math.abs(s.x - target.x) > ATOMIC_RADIUS ||
+          Math.abs(s.y - target.y) > ATOMIC_RADIUS
+        ) {
+          continue;
         }
-        setPlayer((pp) =>
-          pp.mode !== "battle" ? pp : { ...pp, state: "preparingAtomic" },
+        hitSummonIds.push(s.id);
+        if (s.isDying || s.hp <= 0) continue;
+        cutKeyRef.current += 1;
+        const cutKey = cutKeyRef.current;
+        setCuts((prev) => [
+          ...prev,
+          {
+            key: cutKey,
+            x: s.x,
+            y: s.y,
+            npcType: s.npcType,
+            rotation: Math.random() * 90,
+          },
+        ]);
+        timers.schedule(
+          () => setCuts((prev) => prev.filter((c) => c.key !== cutKey)),
+          ATOMIC_CUT_DURATION_MS,
         );
-        setHalo(true);
-        playSound("preAtomic");
-      }, prepareAt),
+      }
 
-      setTimeout(() => {
-        if (shouldCancelRef.current()) {
-          cleanupRef.current();
-          return;
-        }
-        setPlayer((pp) =>
-          pp.mode !== "battle" ? pp : { ...pp, state: "finalizatingAtomic" },
-        );
-        const target = findTarget();
-        targetRef.current = target;
-        setExplosion({
-          x: target.x,
-          y: target.y,
-          npcType: target.npcType,
-          phase: "starting",
-        });
-      }, finalizeAt),
-
-      setTimeout(() => {
-        if (shouldCancelRef.current()) {
-          cleanupRef.current();
-          return;
-        }
-        const target = targetRef.current ?? findTarget();
-
-        setExplosion((prev) => (prev ? { ...prev, phase: "explosion" } : prev));
-        setFlash(true);
-        playSound("atomic");
-
-        // Inimigos atingidos: todos em um raio de 300px (eixos x/y) do alvo.
-        const hitSummonIds: string[] = [];
-        const hitMain =
-          Math.abs(npcRef.current.x - target.x) <= ATOMIC_RADIUS &&
-          Math.abs(npcRef.current.y - target.y) <= ATOMIC_RADIUS;
-
-        for (const s of summonsRef.current) {
-          if (
-            Math.abs(s.x - target.x) > ATOMIC_RADIUS ||
-            Math.abs(s.y - target.y) > ATOMIC_RADIUS
-          ) {
-            continue;
-          }
-          hitSummonIds.push(s.id);
-          if (s.isDying || s.hp <= 0) continue;
-          cutKeyRef.current += 1;
-          const cutKey = cutKeyRef.current;
-          setCuts((prev) => [
-            ...prev,
-            {
-              key: cutKey,
-              x: s.x,
-              y: s.y,
-              npcType: s.npcType,
-              rotation: Math.random() * 90,
-            },
-          ]);
-          timersRef.current.push(
-            setTimeout(
-              () => setCuts((prev) => prev.filter((c) => c.key !== cutKey)),
-              ATOMIC_CUT_DURATION_MS,
-            ),
+      const hitProjectileIds = projectilesRef.current
+        .filter((p) => {
+          if (p.indestructible) return false;
+          const center = getProjectileCenter(p);
+          return (
+            Math.abs(center.x - target.x) <= ATOMIC_RADIUS &&
+            Math.abs(center.y - target.y) <= ATOMIC_RADIUS
           );
-        }
+        })
+        .map((p) => p.id);
 
-        // NPC principal atingido: dano (via onBoom) + CutInEnemie com
-        // chance de sangrar (mecânica padrão de ataque do marshadow).
-        if (hitMain && npcHpRef.current > 0) {
-          onNpcCutInRef.current?.();
-        }
+      // NPC principal atingido: dano (via onBoom) + CutInEnemie com
+      // chance de sangrar (mecânica padrão de ataque do marshadow).
+      if (hitMain && npcHpRef.current > 0) {
+        onNpcCutInRef.current?.();
+      }
 
-        onBoomRef.current({
-          targetId: target.id,
-          targetX: target.x,
-          targetY: target.y,
-          hitMain,
-          hitSummonIds,
-        });
-      }, explodeAt),
+      onBoomRef.current({
+        targetId: target.id,
+        targetX: target.x,
+        targetY: target.y,
+        hitMain,
+        hitSummonIds,
+        hitProjectileIds,
+      });
+    }, explodeAt);
 
-      setTimeout(() => cleanupRef.current(), ATOMIC_TOTAL_DURATION_MS),
-    );
+    timers.schedule(() => cleanupRef.current(), ATOMIC_TOTAL_DURATION_MS);
   }, [
     cleanupRef,
     clearTimers,
@@ -332,10 +314,12 @@ export function useAtomic({
     onBoomRef,
     onUsedRef,
     playSound,
+    projectilesRef,
     setPlayer,
     shouldCancelRef,
     startSpecialIntro,
     summonsRef,
+    timers,
     usableRef,
   ]);
 

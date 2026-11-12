@@ -16,6 +16,8 @@ export type Props = {
   npcHp: number;
   /** Summons inimigos (x/y e vida máxima usados para alvo e raio). */
   summons: SummonedNpc[];
+  /** Projéteis do NPC: os destrutíveis no raio também levam a explosão. */
+  projectiles: Projectile[];
   /** specialIntro: abre o background da habilidade (habilities/atomic/...). */
   startSpecialIntro: (
     character: string,
@@ -28,8 +30,6 @@ export type Props = {
   onNpcCutInRef: RefObject<() => void>;
   freezeActionsUntilRef: RefObject<number>;
   isPausedRef: RefObject<boolean>;
-  /** Menu da batalha aberto: pausa os timers da animação para ela não completar durante a pausa. */
-  isMenuOpenRef: RefObject<boolean>;
   battleEndedRef: RefObject<boolean>;
   disabledRef: RefObject<boolean>;
   playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;

@@ -9,6 +9,7 @@ import {
   DASH_COOLDOWN,
   DASH_DAMAGE_INTERVAL_MS,
   DASH_DURATION_MS,
+  DASH_MAX_TICK_GAP_MS,
   DASH_POST_IDLE_MS,
   DASH_PUSH_GAP,
   DASH_WIND_UP_MS,
@@ -41,6 +42,15 @@ function dashToEnd(direction: "left" | "right"): number {
  * estado muda para `idle` (sem `direction`), e o `useNpcAI` a vira de volta ao
  * jogador. Ao chegar na outra ponta ela fica `DASH_POST_IDLE_MS` (3s) parada
  * sem atacar, dando ao jogador uma janela para causar dano.
+ *
+ * O trajeto avança por tick e de forma incremental a partir da posição atual:
+ * o progresso soma só o tempo dos ticks em que a IA rodou (com teto de
+ * `DASH_MAX_TICK_GAP_MS`) e cada tick anda a fração correspondente da
+ * distância total. Com o progresso medido no relógio de parede e a posição
+ * absoluta a partir de `dashStartX`, qualquer pausa da IA (menu, mundo
+ * congelado por habilidade do jogador, sequência do O Abençoado, que ainda
+ * afasta a Deise do jogador) fazia ela saltar direto para o ponto em que
+ * "deveria" estar ao retomar.
  */
 export function deisePhase2(ctx: BehaviorContext, ai: DeiseAI): Phase2Result {
   const {
@@ -65,6 +75,8 @@ export function deisePhase2(ctx: BehaviorContext, ai: DeiseAI): Phase2Result {
       ai.dashStartX = npc.x;
       ai.dashDirection = dashDirectionTo(targetX, npc.x);
       ai.dashEndX = dashToEnd(ai.dashDirection);
+      ai.dashElapsed = 0;
+      ai.lastDashTick = now;
       ai.lastDashDamage = now;
       playSound?.("whooshWind");
     }
@@ -73,8 +85,18 @@ export function deisePhase2(ctx: BehaviorContext, ai: DeiseAI): Phase2Result {
 
   // ── dashing: cruza a arena em DASH_DURATION_MS até a ponta oposta ──
   if (ai.dashState === "dashing") {
-    const progress = Math.min((now - ai.dashStart) / DASH_DURATION_MS, 1);
-    const newX = ai.dashStartX + (ai.dashEndX - ai.dashStartX) * progress;
+    const tickMs = Math.min(
+      Math.max(0, now - ai.lastDashTick),
+      DASH_MAX_TICK_GAP_MS,
+    );
+    ai.lastDashTick = now;
+    ai.dashElapsed += tickMs;
+    const progress = Math.min(ai.dashElapsed / DASH_DURATION_MS, 1);
+    const step = ((ai.dashEndX - ai.dashStartX) * tickMs) / DASH_DURATION_MS;
+    const newX =
+      ai.dashDirection === "right"
+        ? Math.min(npc.x + step, ai.dashEndX)
+        : Math.max(npc.x + step, ai.dashEndX);
 
     if (isNear(newX, npc.y, playerX, playerY, DASH_CONTACT_RANGE)) {
       // Parry abre caminho: sem parry a Deise arrasta o jogador à frente dela.

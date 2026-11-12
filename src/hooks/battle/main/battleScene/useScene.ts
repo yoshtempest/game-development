@@ -15,6 +15,7 @@ import { useBattleStageSetup } from "@/hooks/battle/useBattleStageSetup";
 import { useBattleCombat } from "@/hooks/battle/main/battleCombat/useBattleCombat";
 import { useBattlePresentation } from "@/hooks/battle/utilities/battlePresentation/useBattlePresentation";
 import { useMenuPause } from "@/hooks/battle/utilities/useMenuPause";
+import { useBattlePauseShift } from "@/hooks/battle/utilities/useBattlePauseShift";
 import { VASTOLORD_TRANSFORM_MS } from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
 import { useBattleRecording } from "@/hooks/battle/recording/battleRecording/useBattleRecording";
 import { useRewind } from "@/hooks/battle/rewind/useRewind";
@@ -34,6 +35,7 @@ import { aggregateRewards } from "@/gameRules/battle/loot/buildLootBags";
 import { CHARACTERS } from "@/data/characters/list";
 import type { CharacterId } from "@/data/characters/list";
 import { getAbilityCameraFocus } from "@/data/characters/abilities";
+import { getLaserCameraFocus } from "@/hooks/battle/camera/laserCameraFocus";
 import { saveGame } from "@/services/save/saveService";
 import { loadBestTime, saveBestTime } from "@/utils/bestTime";
 import { recordWin } from "@/utils/rewards";
@@ -177,6 +179,12 @@ export function useBattleScene({
       resumeAttackSounds();
     };
   }, [isMenuOpen, pauseAllPlaying, resumeAllPaused]);
+
+  useBattlePauseShift({
+    isMenuOpen,
+    freezeActionsUntilRef,
+    timeRef: refs.timeRef,
+  });
 
   const combatRef = useRef<{
     battle?: {
@@ -940,6 +948,16 @@ export function useBattleScene({
       ? { entity: "npc", zoom: 1 }
       : null;
 
+  const laserFocus = getLaserCameraFocus({
+    playerState: player.state,
+    specialIntroActive,
+    specialIntroCharacter,
+    specialIntroAbility,
+    npcType,
+    npcPhase,
+    maugreloPhase2State: npc.ai?.maugrelo?.phase2State,
+  });
+
   return buildBattleSceneApi({
     player,
     npc,
@@ -1020,7 +1038,7 @@ export function useBattleScene({
     kokusenFrame,
     blackFlashActive,
     blackFlashVariant,
-    cameraFocus: cameraFocus.focus ?? alfaIntroFocus,
+    cameraFocus: cameraFocus.focus ?? alfaIntroFocus ?? laserFocus,
     triggerAbilityCameraFocus,
     vastolordActive,
     vastolordRemainingMs,

@@ -35,4 +35,9 @@ export type AtomicBoomPayload = {
   /** NPC principal atingido (sofre dano + CutInEnemie com chance de sangrar). */
   hitMain: boolean;
   hitSummonIds: string[];
+  /**
+   * Projéteis inimigos destrutíveis dentro do raio (issue #320): a explosão
+   * também os atinge, com o mesmo dano de área dos demais inimigos.
+   */
+  hitProjectileIds: string[];
 };

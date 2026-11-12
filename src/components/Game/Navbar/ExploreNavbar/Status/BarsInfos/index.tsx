@@ -10,6 +10,7 @@ import { ProgressBar } from "@/components/Game/ProgressBar";
 import styles from "./styles.module.css";
 import { Drumstick, Heart, Moon, Sparkles } from "lucide-react";
 import { statusIconPath } from "@/utils/paths";
+import { formatCompactNumber } from "@/utils/formatCompactNumber";
 
 export function BarsInfos() {
   const { player } = usePlayer();
@@ -71,8 +72,8 @@ export function BarsInfos() {
             <span>HP</span>
           </div>
           <span className={styles.statusValue}>
-            <strong>{currentHP}</strong>
-            <span> / {playerMaxHp}</span>
+            <strong>{formatCompactNumber(currentHP)}</strong>
+            <span> / {formatCompactNumber(playerMaxHp)}</span>
           </span>
         </div>
         <ProgressBar
@@ -96,8 +97,8 @@ export function BarsInfos() {
               <span>{getEnergyName(character)}</span>
             </div>
             <span className={styles.statusValue}>
-              <strong>{currentMana}</strong>
-              <span> / {maxMana}</span>
+              <strong>{formatCompactNumber(currentMana)}</strong>
+              <span> / {formatCompactNumber(maxMana)}</span>
             </span>
           </div>
           <ProgressBar

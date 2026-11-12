@@ -19,6 +19,7 @@ export type PetState = {
     | "jumpAttack"
     | "meleeAttack"
     | "get"
-    | "run";
+    | "run"
+    | "invoking";
   npcType: string;
 } | null;

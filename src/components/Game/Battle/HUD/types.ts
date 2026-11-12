@@ -28,6 +28,14 @@ export type BattleHudOpponent = {
   maxHp: number;
 };
 
+/** Parceiro do co-op 2v1, com a barra exibida abaixo do jogador local. */
+export type BattleHudPartner = {
+  name: string;
+  character: CharacterId;
+  hp: number;
+  maxHp: number;
+};
+
 export type BattleHudProps = {
   battle: BattleHUDState;
   npcStats: NpcStats;
@@ -44,4 +52,5 @@ export type BattleHudProps = {
   machineGamaShield?: number;
   machineGamaShieldMax?: number;
   opponent?: BattleHudOpponent | null;
+  partner?: BattleHudPartner | null;
 };

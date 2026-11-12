@@ -1,4 +1,7 @@
 import { Minus, Plus } from "lucide-react";
+
+import { BGM_COLUMN, SFX_COLUMN } from "@/hooks/menu/config/configConstants";
+
 import styles from "@/components/Game/Navbar/ExploreNavbar/Config/styles.module.css";
 
 type Props = {
@@ -24,7 +27,9 @@ export function VolumeSection({
     <div className={styles.flexColumn}>
       <h2 className={styles.marginTop}>Sons:</h2>
       <div className={styles.volumeContainer}>
-        {selectedColumn === 3 && <span className={styles.cursor}>▼</span>}
+        {selectedColumn === SFX_COLUMN && (
+          <span className={styles.cursor}>▼</span>
+        )}
 
         <h2 className={styles.marginTop}>Efeitos Sonoros: {sfxVolume}</h2>
 
@@ -52,7 +57,9 @@ export function VolumeSection({
         </div>
       </div>
       <div className={styles.volumeContainer}>
-        {selectedColumn === 4 && <span className={styles.cursor}>▼</span>}
+        {selectedColumn === BGM_COLUMN && (
+          <span className={styles.cursor}>▼</span>
+        )}
 
         <h2 className={styles.marginTop}>Música de Fundo: {bgmVolume}</h2>
         <div className={styles.flexRow}>

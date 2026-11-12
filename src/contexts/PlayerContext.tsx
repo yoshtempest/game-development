@@ -98,6 +98,13 @@ type PlayerActionsContextType = {
   lastAttackPressRef: React.RefObject<number>;
   battleTenacityRef: React.RefObject<number>;
   freezeActionsUntilRef: React.RefObject<number>;
+  /**
+   * true enquanto o `SpecialIntro` / `DomainExpansionIntro` está na tela.
+   * Trava movimento, pulo, dash, bloqueio e ataque do jogador sem mexer no
+   * `freezeActionsUntilRef`: a ativação da habilidade, no fim do intro, ainda
+   * confere o lock de ação no `canUse` e não pode encontrá-lo armado.
+   */
+  specialIntroLockRef: React.RefObject<boolean>;
 
   /** Punho Divergente do natsuki: true força o próximo ataque a ser um soco. */
   forcePunchRef: React.RefObject<boolean>;
@@ -230,6 +237,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const lastBlockPressRef = useRef(0);
   const lastAttackPressRef = useRef(0);
   const freezeActionsUntilRef = useRef(0);
+  const specialIntroLockRef = useRef(false);
   const playerModeRef = useRef<PlayerMode>(player.mode);
   playerModeRef.current = player.mode;
 
@@ -258,6 +266,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     genkiDamaRiseStartRef,
     genkiDamaRiseStartYRef,
     natsukiPunchRef,
+    specialIntroLockRef,
   );
   const battleRef = useRef(battle);
   battleRef.current = battle;
@@ -496,6 +505,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       lastAttackPressRef,
       battleTenacityRef,
       freezeActionsUntilRef,
+      specialIntroLockRef,
 
       forcePunchRef,
 
@@ -556,6 +566,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       lastAttackPressRef,
       battleTenacityRef,
       freezeActionsUntilRef,
+      specialIntroLockRef,
       forcePunchRef,
       honoredRiseStartRef,
       honoredRiseStartYRef,

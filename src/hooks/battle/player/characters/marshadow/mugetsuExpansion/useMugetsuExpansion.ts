@@ -141,20 +141,12 @@ export function useMugetsuExpansion({
   }, []);
 
   // Pausa do jogador congela o domínio: ao fechar o menu, devolve o tempo que
-  // ficou parado à frente da varredura, ao lock de ação e ao congelamento do
-  // mundo — sem isso a Expansão "queimaria" o próprio tempo dentro do menu e
-  // retomaria perto do fim (ou já morta).
-  useMenuPauseShift(isMenuOpen, ({ pausedMs, pauseStart }) => {
+  // ficou parado à frente da varredura — sem isso a Expansão "queimaria" o
+  // próprio tempo dentro do menu. O lock de ação e o congelamento do mundo são
+  // deslocados uma vez só, para a batalha inteira, pelo `useBattlePauseShift`.
+  useMenuPauseShift(isMenuOpen, ({ pausedMs }) => {
     if (!activeRef.current) return;
     if (sweepStartRef.current !== 0) sweepStartRef.current += pausedMs;
-    if (freezeActionsUntilRef.current > pauseStart) {
-      freezeActionsUntilRef.current += pausedMs;
-    }
-    timeRef.current = timeRef.current.map((effect) =>
-      effect.until > pauseStart
-        ? { ...effect, until: effect.until + pausedMs }
-        : effect,
-    );
   });
 
   /**

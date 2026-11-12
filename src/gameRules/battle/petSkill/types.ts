@@ -39,6 +39,8 @@ export type PetSkillRunDeps = {
     targetY: number,
     cb: (damage: number) => void,
   ) => void;
+  /** Põe o pet no sprite `invoking` por `durationMs` (hungryKing). */
+  triggerPetInvoke: (durationMs: number) => void;
   applyNpcBleed: (durationMs: number) => void;
   summons: SummonedNpc[];
   setSummons: React.Dispatch<React.SetStateAction<SummonedNpc[]>>;

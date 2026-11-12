@@ -86,6 +86,8 @@ export type NPCBattleState = {
       dashStartX: number;
       dashDirection: "left" | "right";
       dashEndX: number;
+      dashElapsed: number;
+      lastDashTick: number;
       lastDash: number;
       lastDashDamage: number;
       postDashStart: number;

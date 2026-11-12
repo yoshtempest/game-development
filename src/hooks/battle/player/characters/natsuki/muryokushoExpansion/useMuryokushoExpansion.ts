@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
 import { usePausableTimers } from "@/hooks/battle/utilities/pausableTimers/usePausableTimers";
-import { useMenuPauseShift } from "@/hooks/battle/utilities/useMenuPauseShift";
 import { applyTime, clearTime, freezeWorldSpec } from "@/gameRules/battle/time";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { DOMAIN_SHATTER_MS } from "@/data/characters/domainExpansions";
@@ -83,21 +82,6 @@ export function useMuryokushoExpansion({
   const spawnDamageRef = useLatestRef(spawnDamageNumber);
   const startIntroRef = useLatestRef(startSpecialIntro);
   const playSoundRef = useLatestRef(playSound);
-
-  // Pausa do jogador congela o domínio: ao fechar o menu, o tempo parado é
-  // devolvido ao lock de ação e ao congelamento do mundo — senão os 5s do
-  // dreno "queimariam" dentro do menu e o domínio retomaria já no fim.
-  useMenuPauseShift(isMenuOpen, ({ pausedMs, pauseStart }) => {
-    if (!activeRef.current) return;
-    if (freezeActionsUntilRef.current > pauseStart) {
-      freezeActionsUntilRef.current += pausedMs;
-    }
-    timeRef.current = timeRef.current.map((effect) =>
-      effect.until > pauseStart
-        ? { ...effect, until: effect.until + pausedMs }
-        : effect,
-    );
-  });
 
   const { usable, usableRef, shouldCancelRef } = useSkillGuard({
     player,

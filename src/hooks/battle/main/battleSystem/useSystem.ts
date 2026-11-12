@@ -174,7 +174,6 @@ export function useBattleSystem(props: BattleSystemProps) {
   const behavior = (battleBehaviors[player.character] ||
     battleBehaviors.default)!;
 
-
   const elementDamageBonus = getElementDamageBonus(npcElementTypes);
 
   const professionWeaponMultiplier = equippedWeaponId
@@ -354,15 +353,21 @@ export function useBattleSystem(props: BattleSystemProps) {
     onMachineGamaBreak,
   });
 
-  const { pet, setPet, resetPet, triggerJumpAttack, triggerTeleportBite } =
-    usePetBattle({
-      enabled: petIsBattle,
-      playerX,
-      playerY,
-      npcX,
-      isPaused: isEnding.current,
-      spriteNpcType: petSkillDef?.battleSprite ?? "goat",
-    });
+  const {
+    pet,
+    setPet,
+    resetPet,
+    triggerJumpAttack,
+    triggerTeleportBite,
+    triggerInvoke: triggerPetInvoke,
+  } = usePetBattle({
+    enabled: petIsBattle,
+    playerX,
+    playerY,
+    npcX,
+    isPaused: isEnding.current,
+    spriteNpcType: petSkillDef?.battleSprite ?? "goat",
+  });
 
   const {
     remaining: petSkillRemaining,
@@ -583,6 +588,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     setPet,
     triggerJumpAttack,
     triggerTeleportBite,
+    triggerPetInvoke,
     applyNpcBleed,
     petSkill: petSkillDef
       ? {

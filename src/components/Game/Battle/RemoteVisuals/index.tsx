@@ -102,6 +102,8 @@ type WorldProps = {
   isNpcDying: boolean;
   TILE_SIZE: number;
   PLAYER_SIZE: number;
+  /** Nick acima do avatar remoto (#537). */
+  nameTag?: string;
 };
 
 /**
@@ -120,6 +122,7 @@ export function RemoteWorldEffects({
   isNpcDying,
   TILE_SIZE,
   PLAYER_SIZE,
+  nameTag,
 }: WorldProps) {
   if (!visuals) return null;
   const { entities, scene } = visuals;
@@ -145,6 +148,7 @@ export function RemoteWorldEffects({
         TILE_SIZE={TILE_SIZE}
         PLAYER_SIZE={PLAYER_SIZE}
         killerQueenSprite={() => killerQueenSrc ?? ""}
+        playerNameTag={nameTag}
       />
       <DrikaSigiloOverlay
         character={character}

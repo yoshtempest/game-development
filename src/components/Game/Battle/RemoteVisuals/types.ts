@@ -4,6 +4,7 @@ import type { BattleEntitiesBattle } from "@/components/Game/Battle/Entities/typ
 import type { SpecialIntro } from "@/components/Game/Battle/Effects/SpecialIntro";
 import type { ChargeParticles } from "@/components/Game/Battle/Effects/ChargeParticles";
 import type { BabidiMachineGama } from "@/components/Game/Battle/Entities/Babidi/MachineGama";
+import type { DamageNumbers } from "@/components/Game/Battle/Effects/DamageNumbers";
 
 /**
  * Props do `BattleEntities` que são da cena local, não do jogador: NPC,
@@ -26,7 +27,8 @@ type LocalSceneKey =
   | "hideMainNpc"
   | "layer"
   | "npcBleeding"
-  | "purpleHole";
+  | "purpleHole"
+  | "playerNameTag";
 
 /** O que o `Player` da arena lê do jogador. */
 export type RemotePlayerView = Pick<
@@ -68,6 +70,14 @@ export type RemoteSceneVisuals = {
   sigilo: { pentagramVisible: boolean; selectedArmIcon: string | null };
   charge: Omit<ComponentProps<typeof ChargeParticles>, "playerX" | "playerY">;
   machineGama: ComponentProps<typeof BabidiMachineGama>["machineGama"];
+  /** HP e nick do remetente: barra do parceiro no HUD do 2v1 (#548). */
+  vitals: { hp: number; maxHp: number; name: string };
+  /**
+   * Números de dano do remetente (#549). Só no co-op: no PvP cada lado já vê
+   * o dano que causa (sobre o proxy) e o que recebe, e repetir os do outro
+   * duplicaria cada golpe na tela.
+   */
+  damageNumbers: ComponentProps<typeof DamageNumbers>["numbers"];
 };
 
 export type RemoteBattleVisuals = {

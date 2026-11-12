@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import http from "node:http";
+import os from "node:os";
 import { WebSocketServer, WebSocket } from "ws";
 import authRoutes from "./routes/auth.js";
 import saveRoutes from "./routes/save.js";
@@ -161,6 +162,25 @@ app.get("/api/online/rooms/:id", (req, res) => {
     return;
   }
   res.json(roomToJSON(room));
+});
+
+/**
+ * IPv4 da rede local desta máquina (#539). O dono da sala passa o endereço
+ * para os amigos sem rodar `ipconfig`; interfaces internas (loopback) ficam de
+ * fora. Pode haver mais de uma (Wi-Fi + cabo + VPN), então volta a lista.
+ */
+function lanAddresses(): string[] {
+  const out: string[] = [];
+  for (const entries of Object.values(os.networkInterfaces())) {
+    for (const entry of entries ?? []) {
+      if (entry.family === "IPv4" && !entry.internal) out.push(entry.address);
+    }
+  }
+  return out;
+}
+
+app.get("/api/online/host-info", (_req, res) => {
+  res.json({ addresses: lanAddresses() });
 });
 
 app.get("/api/health", (_req, res) => {

@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
 import { usePausableTimers } from "@/hooks/battle/utilities/pausableTimers/usePausableTimers";
-import { useMenuPauseShift } from "@/hooks/battle/utilities/useMenuPauseShift";
 import { ONE_THOUSAND_MS, SIX_HUNDRED_MS } from "@/data/ms";
 
 /** Lock de ação do player durante o flash do domínio. */
@@ -53,15 +52,6 @@ export function useDomainExpansionBurst({
   const chargesMaxRef = useLatestRef(chargesMax);
   const setDeliciaRef = useLatestRef(setDelicia);
   const onBurstRef = useLatestRef(onBurst);
-
-  // Pausa do jogador: o tempo parado é devolvido ao lock de ação no unpause
-  // (os 600ms do flash não podem escorrer com o menu aberto).
-  useMenuPauseShift(isMenuOpen, ({ pausedMs, pauseStart }) => {
-    if (!activeRef.current) return;
-    if (freezeActionsUntilRef.current > pauseStart) {
-      freezeActionsUntilRef.current += pausedMs;
-    }
-  });
 
   const { usable, usableRef } = useSkillGuard({
     player,

@@ -1,3 +1,4 @@
+import { NameTag } from "@/components/Game/Entities/NameTag";
 import styles from "./styles.module.css";
 import type { PlayerBattleProps } from "./types";
 import { useBattleSprite } from "./hooks/useBattleSprite";
@@ -44,6 +45,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     levelUpParticles = false,
     babidiAttackVariant,
     sigiloPhase,
+    nameTag,
     babidiMachineGamaControl = false,
     babidiShieldSides = NO_BABIDI_SHIELD,
     onBabidiShieldEnd,
@@ -198,6 +200,8 @@ export function PlayerBattle(props: PlayerBattleProps) {
         )}
 
         {atomicHalo && character === "marshadow" && <AtomicHalo />}
+
+        {nameTag && <NameTag name={nameTag} />}
 
         {levelUpParticles && (
           <LevelUpParticles

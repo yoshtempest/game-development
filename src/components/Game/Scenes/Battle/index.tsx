@@ -32,6 +32,7 @@ import { DomainExpansionIntro } from "@/components/Game/Battle/Effects/Domain/Do
 import { DomainExpansionBackground } from "@/components/Game/Battle/Effects/Domain/DomainExpansionBackground";
 import { DomainBurstOverlay } from "@/components/Game/Battle/Effects/Domain/DomainBurstOverlay";
 import { AlfaAbility } from "@/components/Game/Battle/Effects/Ability/AlfaAbility";
+import { TransformationAura } from "@/components/Game/Battle/Effects/TransformationAura";
 import { JumpIndicator } from "@/components/Game/Battle/Jump/indicator";
 import { JumpDangerZone } from "@/components/Game/Battle/Jump/dangerZone";
 import { ComboAction } from "@/components/Game/Battle/Buttons/ComboAction";
@@ -152,9 +153,10 @@ export function BattleScene(props: Props) {
 
   // Contrato da cena com a IA: só o líder simula; o guest espelha o NPC e
   // resolve localmente os golpes endereçados a ele.
-  const coopActive =
-    online.connected && !isPvp && (props.playerCount ?? 1) > 1;
-  const pvpOpponent = usePvpOpponentStats(isPvp ? battleNet.remotePlayer : null);
+  const coopActive = online.connected && !isPvp && (props.playerCount ?? 1) > 1;
+  const pvpOpponent = usePvpOpponentStats(
+    isPvp ? battleNet.remotePlayer : null,
+  );
   const pvpDownRef = useRef<() => void>(() => {});
   const coop = useMemo<BattleCoop>(
     () => ({
@@ -367,6 +369,7 @@ export function BattleScene(props: Props) {
     net: battleNet,
     coopActive,
     runCoopDefeat,
+    honoredSequence,
   });
 
   const {
@@ -787,6 +790,12 @@ export function BattleScene(props: Props) {
           isCharging: charge.isCharging,
         },
         machineGama: babidiMachineGama,
+        vitals: {
+          hp: battle.playerHP,
+          maxHp: battle.playerMaxHp,
+          name: online.playerName,
+        },
+        damageNumbers: coopActive ? battle.damageNumbers : [],
       },
     };
   };
@@ -799,28 +808,50 @@ export function BattleScene(props: Props) {
     build: buildVisuals,
   });
 
+  const remoteVitals = remoteVisuals?.scene.vitals ?? null;
+  const remoteName =
+    remoteVitals?.name ??
+    battleNet.remotePlayer?.name ??
+    online.room?.players.find((p) => p.id === battleNet.remoteId)?.name ??
+    "Jogador";
+  const partnerCharacter = CHARACTERS.find(
+    (c) => c === remoteVisuals?.entities.player.character,
+  );
+  const hudPartner = useMemo(
+    () =>
+      coopActive && remoteVitals && partnerCharacter
+        ? {
+            name: remoteVitals.name,
+            character: partnerCharacter,
+            hp: remoteVitals.hp,
+            maxHp: remoteVitals.maxHp,
+          }
+        : null,
+    [coopActive, remoteVitals, partnerCharacter],
+  );
+
   // Líder do co-op e os dois lados do duelo recebem o estado do outro jogador
   // direto (`battlePlayerState`); o guest do co-op o lê do snapshot do líder.
   const secondPlayer =
     isBattleHost || isPvp
-    ? remotePlayerState
-      ? {
-          ...remotePlayerState,
-          x: interpRemotePlayer?.x ?? remotePlayerState.x,
-          y: interpRemotePlayer?.y ?? remotePlayerState.y,
-        }
-      : null
-    : interpolatedRemoteSnapshot?.player
-      ? {
-          x: interpolatedRemoteSnapshot.player.x,
-          y: interpolatedRemoteSnapshot.player.y,
-          hp: remoteBattleSnapshot?.player?.hp ?? 0,
-          state: interpolatedRemoteSnapshot.player.state,
-          direction: interpolatedRemoteSnapshot.player.direction,
-          character:
-            interpolatedRemoteSnapshot.player.character ?? remoteCharacter,
-        }
-      : null;
+      ? remotePlayerState
+        ? {
+            ...remotePlayerState,
+            x: interpRemotePlayer?.x ?? remotePlayerState.x,
+            y: interpRemotePlayer?.y ?? remotePlayerState.y,
+          }
+        : null
+      : interpolatedRemoteSnapshot?.player
+        ? {
+            x: interpolatedRemoteSnapshot.player.x,
+            y: interpolatedRemoteSnapshot.player.y,
+            hp: remoteBattleSnapshot?.player?.hp ?? 0,
+            state: interpolatedRemoteSnapshot.player.state,
+            direction: interpolatedRemoteSnapshot.player.direction,
+            character:
+              interpolatedRemoteSnapshot.player.character ?? remoteCharacter,
+          }
+        : null;
 
   return (
     <div
@@ -858,7 +889,7 @@ export function BattleScene(props: Props) {
         paused={battlePaused}
       />
 
-      <MemoBattleHUD {...battleHudProps} />
+      <MemoBattleHUD {...battleHudProps} partner={hudPartner} />
       <ComboDisplay
         count={comboCount}
         rank={comboRank}
@@ -938,6 +969,7 @@ export function BattleScene(props: Props) {
             isNpcDying={battle.isNpcDying}
             TILE_SIZE={TILE_SIZE}
             PLAYER_SIZE={PLAYER_SIZE}
+            nameTag={remoteName}
           />
           {online.connected && secondPlayer && !remoteVisuals && (
             <PlayerBattle
@@ -947,6 +979,7 @@ export function BattleScene(props: Props) {
               PLAYER_SIZE={PLAYER_SIZE}
               state={(secondPlayer.state as PlayerState) ?? "idle"}
               direction={(secondPlayer.direction as Direction) ?? "down"}
+              nameTag={remoteName}
             />
           )}
 
@@ -977,6 +1010,21 @@ export function BattleScene(props: Props) {
             scaleY={battleScaleY}
             targets={damageTargets}
           />
+          {remoteVisuals && (
+            <DamageNumbers
+              numbers={remoteVisuals.scene.damageNumbers}
+              scaleX={battleScaleX}
+              scaleY={battleScaleY}
+              targets={[
+                ...damageTargets,
+                {
+                  x: secondPlayer?.x ?? remoteVisuals.entities.player.x,
+                  y: secondPlayer?.y ?? remoteVisuals.entities.player.y,
+                  h: PLAYER_SIZE / PLAYER_SPRITE_DIVISOR,
+                },
+              ]}
+            />
+          )}
 
           <LootPickup
             notifications={lootNotifications}
@@ -1031,6 +1079,7 @@ export function BattleScene(props: Props) {
           )}
         </GameMap>
       </div>
+      <TransformationAura active={vastolordActive} paused={battlePaused} />
       <BattleModals
         showClear={showClear}
         isTraining={isTraining ?? false}
@@ -1160,7 +1209,7 @@ export function BattleScene(props: Props) {
       />
 
       <ConnectionOverlay
-        visible={!isBattleHost && !battleSocketConnected}
+        visible={online.connected && !isBattleHost && !battleSocketConnected}
         reconnecting={battleSocketReconnecting}
       />
 

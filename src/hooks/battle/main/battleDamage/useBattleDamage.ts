@@ -4,11 +4,20 @@ import { combatService } from "@/services/combat";
 import { cursedEnergyFromDamage } from "@/gameRules/battle/cursedEnergy";
 import { rollEnchantmentProc } from "@/gameRules/battle/equipment";
 import { ENCHANTMENT_DURATION_MS } from "@/data/equipment/enchantments";
-import { VASTOLORD_DAMAGE_EXTEND_MS, VASTOLORD_DAMAGE_EXTEND_RATIO } from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
+import {
+  VASTOLORD_DAMAGE_EXTEND_MS,
+  VASTOLORD_DAMAGE_EXTEND_RATIO,
+} from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
 import { getAbilityDamageType } from "@/data/characters/abilities";
 import { damageSummon } from "@/gameRules/battle/damageSummon";
-import { ATOMIC_TARGET_MULTIPLIER, ATOMIC_AREA_MULTIPLIER } from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
-import { DOMAIN_BURST_MAIN_MULTIPLIER, DOMAIN_BURST_SUMMON_MULTIPLIER } from "@/hooks/battle/utilities/domainExpansionBurst/useDomainExpansionBurst";
+import {
+  ATOMIC_TARGET_MULTIPLIER,
+  ATOMIC_AREA_MULTIPLIER,
+} from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
+import {
+  DOMAIN_BURST_MAIN_MULTIPLIER,
+  DOMAIN_BURST_SUMMON_MULTIPLIER,
+} from "@/hooks/battle/utilities/domainExpansionBurst/useDomainExpansionBurst";
 import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
 import type { BattleDamageProps } from "./types";
 
@@ -147,16 +156,35 @@ export function useBattleDamage({
     ],
   );
 
+  const { strikeProjectiles } = npc;
+
   const handleAtomicBoom = useCallback(
     (payload: AtomicBoomPayload) => {
       if (battle.isEnding.current) return;
 
-      const { targetId, hitMain, hitSummonIds } = payload;
+      const { targetId, hitMain, hitSummonIds, hitProjectileIds } = payload;
+
+      // Projéteis no raio: special com o fator de área (o alvo da explosão é
+      // sempre um inimigo, nunca um projétil). `strikeState: "ability"` porque
+      // no boom o jogador está em `finalizatingAtomic`, que o resolvedor de
+      // dano trataria como básico.
+      strikeProjectiles(
+        hitProjectileIds.map((id) => ({
+          id,
+          multiplier: ATOMIC_AREA_MULTIPLIER,
+        })),
+        {
+          strikeState: "ability",
+          damageKind: getAbilityDamageType("iAmAtomic"),
+        },
+      );
 
       // NPC principal: dano especial — 2x se for o alvo (maior vida máxima).
       if (hitMain) {
         const factor =
-          targetId === "main" ? ATOMIC_TARGET_MULTIPLIER : ATOMIC_AREA_MULTIPLIER;
+          targetId === "main"
+            ? ATOMIC_TARGET_MULTIPLIER
+            : ATOMIC_AREA_MULTIPLIER;
         battle.playerHit(
           factor * specialDamageRatio,
           true,
@@ -168,7 +196,9 @@ export function useBattleDamage({
       for (const summon of summons) {
         if (!hitSummonIds.includes(summon.id)) continue;
         const factor =
-          targetId === summon.id ? ATOMIC_TARGET_MULTIPLIER : ATOMIC_AREA_MULTIPLIER;
+          targetId === summon.id
+            ? ATOMIC_TARGET_MULTIPLIER
+            : ATOMIC_AREA_MULTIPLIER;
         damageSummon({
           target: { id: summon.id, x: summon.x, y: summon.y },
           multiplier: factor * specialDamageRatio,
@@ -193,6 +223,7 @@ export function useBattleDamage({
     },
     [
       specialDamageRatio,
+      strikeProjectiles,
       battle,
       giveSummonRewards,
       player,

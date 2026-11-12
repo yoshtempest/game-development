@@ -52,6 +52,7 @@ export function usePetBattle({
   const biteToRef = useRef({ x: 0, y: 0 });
   const biteReturnFromRef = useRef({ x: 0, y: 0 });
   const biteCallbackRef = useRef<((damage: number) => void) | null>(null);
+  const invokeUntilRef = useRef(0);
 
   useEffect(() => {
     if (!enabled) {
@@ -259,6 +260,15 @@ export function usePetBattle({
         }
       }
 
+      if (now < invokeUntilRef.current) {
+        setPet((prev) =>
+          prev && prev.state !== "invoking"
+            ? { ...prev, state: "invoking" }
+            : prev,
+        );
+        return;
+      }
+
       const targetX = playerXRef.current - OFFSET_X;
       const direction: "left" | "right" =
         npcXRef.current - playerXRef.current > 0 ? "right" : "left";
@@ -329,8 +339,20 @@ export function usePetBattle({
     [],
   );
 
+  /**
+   * Segura o pet parado no sprite `invoking` por `durationMs` (issue #204:
+   * hungryKing invocando o hungryDeath). Pulo e mordida têm prioridade no
+   * loop, então a invocação não interrompe um ataque já em curso; quando o
+   * prazo vence, o loop de seguir o player devolve o estado para idle/walk.
+   */
+  const triggerInvoke = useCallback((durationMs: number) => {
+    invokeUntilRef.current = Date.now() + durationMs;
+    setPet((prev) => (prev ? { ...prev, state: "invoking" } : prev));
+  }, []);
+
   function resetPet() {
     if (!enabled) return;
+    invokeUntilRef.current = 0;
     jumpPhaseRef.current = "idle";
     jumpAttackRef.current = null;
     bitePhaseRef.current = "idle";
@@ -344,5 +366,12 @@ export function usePetBattle({
     });
   }
 
-  return { pet, setPet, resetPet, triggerJumpAttack, triggerTeleportBite };
+  return {
+    pet,
+    setPet,
+    resetPet,
+    triggerJumpAttack,
+    triggerTeleportBite,
+    triggerInvoke,
+  };
 }

@@ -28,6 +28,8 @@ export interface PlayerBattleProps {
   /** Pose de mão do sprite do ataque básico do babidi. */
   babidiAttackVariant?: BabidiAttackVariant;
   sigiloPhase?: string;
+  /** Nick do jogador remoto acima do sprite (online). */
+  nameTag?: string;
   babidiMachineGamaControl?: boolean;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
   babidiShieldSides?: BabidiShieldSides;

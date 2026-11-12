@@ -4,6 +4,7 @@ import {
   MIN_ACTION_GAP,
 } from "@/data/cooldowns";
 import {
+  FIFTY_MS,
   SIX_HUNDRED_MS,
   THREE_THOUSAND_MS,
   TWO_HUNDRED_FIFTY_MS,
@@ -27,6 +28,14 @@ export const DASH_PUSH_GAP = 40;
 export const DASH_POST_IDLE_MS = THREE_THOUSAND_MS;
 /** Cooldown entre um dash e o próximo. */
 export const DASH_COOLDOWN = THREE_THOUSAND_MS;
+/**
+ * Maior intervalo entre dois ticks da IA (20ms) que ainda conta como tempo de
+ * dash. Um intervalo maior significa que a IA não rodou — batalha pausada,
+ * mundo congelado por habilidade, stagger ou a sequência do O Abençoado — e o
+ * trajeto não pode avançar por esse tempo, senão a Deise "teleporta" ao
+ * retomar.
+ */
+export const DASH_MAX_TICK_GAP_MS = FIFTY_MS;
 
 export type DeiseAI = {
   knownPhase: number;
@@ -38,6 +47,10 @@ export type DeiseAI = {
   dashStartX: number;
   dashDirection: "left" | "right";
   dashEndX: number;
+  /** Tempo de dash efetivamente simulado (só ticks em que a IA rodou). */
+  dashElapsed: number;
+  /** Instante do último tick do dash, para medir o delta do próximo. */
+  lastDashTick: number;
   lastDash: number;
   lastDashDamage: number;
   postDashStart: number;
@@ -55,6 +68,8 @@ export function initDeiseAi(npcPhase: number): DeiseAI {
     dashStartX: 0,
     dashDirection: "left",
     dashEndX: 0,
+    dashElapsed: 0,
+    lastDashTick: 0,
     lastDash: now,
     lastDashDamage: 0,
     postDashStart: 0,
@@ -69,6 +84,8 @@ export function handlePhaseChange(ai: DeiseAI, npcPhase: number): DeiseAI {
   ai.dashState = "idle";
   ai.dashStart = 0;
   ai.dashStartX = 0;
+  ai.dashElapsed = 0;
+  ai.lastDashTick = 0;
   ai.lastDash = 0;
   ai.lastDashDamage = 0;
   ai.postDashStart = 0;

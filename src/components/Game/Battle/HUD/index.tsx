@@ -7,6 +7,7 @@ import { playerPath } from "@/utils/paths";
 // import { CHARACTERS } from "@/data/options/characters";
 import { PlayerHUDPanel } from "./PlayerPanel";
 import { NPCHUDPanel } from "./NpcPanel";
+import { PartnerHUDPanel } from "./PartnerPanel";
 import { SummonHUDList } from "./SummonList";
 import { AllyHUDList } from "./AllyList";
 import type { BattleHudProps } from "./types";
@@ -24,6 +25,7 @@ export function BattleHUD({
   machineGamaShield,
   machineGamaShieldMax,
   opponent = null,
+  partner = null,
 }: BattleHudProps) {
   const { player } = usePlayer();
   const { progress } = useCharacterProgress();
@@ -56,6 +58,8 @@ export function BattleHUD({
         mana={battle.mana}
         maxMana={battle.manaMax}
       />
+
+      {partner && <PartnerHUDPanel partner={partner} />}
 
       {opponent && (
         <NPCHUDPanel

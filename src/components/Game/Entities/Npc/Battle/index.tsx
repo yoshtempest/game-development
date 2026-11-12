@@ -14,6 +14,8 @@ import {
   BLOOD_ICON_SRC,
 } from "@/data/characters/marshadow/marshadowCutIn";
 import type { CutInEnemieOverlay } from "@/utils/types/battle/cutInEnemie";
+import { useHitFlash } from "@/hooks/battle/visuals/useHitFlash";
+import styles from "./styles.module.css";
 
 type Props = {
   x: number;
@@ -88,7 +90,14 @@ type Props = {
    * central-direito no ponto do impacto (em vez de só sumir no fade).
    */
   purpleHole?: boolean;
+  /**
+   * HP atual. Quando cai, o sprite pisca em vermelho (`useHitFlash`).
+   * Ausente = sem piscada (pet, aliado e visual remoto não passam HP).
+   */
+  hp?: number;
 };
+
+const HIT_FLASH_CLASS = ["", styles.hitFlashA, styles.hitFlashB] as const;
 
 export function NPCBattle({
   x,
@@ -107,8 +116,10 @@ export function NPCBattle({
   cutInEnemie = null,
   npcBleeding = false,
   purpleHole = false,
+  hp,
 }: Props) {
   const { playSound } = useSoundEffects();
+  const hitFlash = useHitFlash(hp);
   const prevIsExplodingRef = useRef(isExploding);
 
   const isHungryDeathRunning = npcType === "hungryDeath" && state === "run";
@@ -232,6 +243,8 @@ export function NPCBattle({
             decoding="async"
             src={resolvedSrc}
             onError={handleSpriteError}
+            className={HIT_FLASH_CLASS[hitFlash.phase]}
+            onAnimationEnd={hitFlash.endFlash}
             style={{
               width: "100%",
               height: "100%",

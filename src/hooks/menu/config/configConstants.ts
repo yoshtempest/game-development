@@ -10,3 +10,14 @@ export function getColumnMaxIndex(column: number): number {
   if (column === 2) return BOTTOM_COUNT;
   return 1;
 }
+
+/**
+ * Colunas do `VolumeSection`. Ficam nomeadas porque o componente é
+ * compartilhado entre a config de exploração (onde são as colunas 3 e 4 da
+ * grade) e a tela de configurações da batalha, que só tem as duas.
+ */
+export const SFX_COLUMN = 3;
+export const BGM_COLUMN = 4;
+
+/** Passo de volume por toque/seta, igual nas duas telas de configuração. */
+export const VOLUME_STEP = 10;

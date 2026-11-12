@@ -4,9 +4,19 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import { applyTime, clearTime } from "@/gameRules/battle/time";
 import { ALL_TIME_KINDS } from "@/gameRules/battle/time/types";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
+import { usePausableTimers } from "@/hooks/battle/utilities/pausableTimers/usePausableTimers";
 import type { EmatronCloneVisual } from "@/utils/types/character/ematron";
 import type { HakaiApi, HakaiProps } from "./types";
 
+/**
+ * Expansão de Domínio do ematron (Hakai): teleporte para trás do inimigo e
+ * 4s de dano verdadeiro contínuo com o mundo parado.
+ *
+ * Pausa (menu aberto): o teleporte e o fim dos 4s são timers pausáveis e o
+ * dreno não roda (`isPausedRef`) — o domínio congela e retoma com o tempo que
+ * faltava. O lock de ação e o congelamento do mundo são deslocados pelo
+ * `useBattlePauseShift` da cena.
+ */
 export function useHakaiExpansion({
   player,
   setPlayer,
@@ -17,6 +27,7 @@ export function useHakaiExpansion({
   startSpecialIntro,
   timeRef,
   isPausedRef,
+  isMenuOpen,
   battleEndedRef,
   disabledRef,
   playSound,
@@ -31,7 +42,7 @@ export function useHakaiExpansion({
   );
   const activeRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timers = usePausableTimers(isMenuOpen);
 
   const npcRef = useLatestRef(npc);
   const setNpcHPRef = useLatestRef(setNpcHP);
@@ -40,7 +51,6 @@ export function useHakaiExpansion({
   const setDeliciaRef = useLatestRef(setDelicia);
   const chargesRef = useLatestRef(charges);
   const chargesMaxRef = useLatestRef(chargesMax);
-  const teleportTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const distance = 60;
 
   const { usableRef } = useSkillGuard({
@@ -61,16 +71,8 @@ export function useHakaiExpansion({
       timerRef.current = null;
     }
 
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-
-    if (teleportTimeoutRef.current) {
-      clearTimeout(teleportTimeoutRef.current);
-      teleportTimeoutRef.current = null;
-    }
-  }, []);
+    timers.clear();
+  }, [timers]);
 
   const press = useCallback(() => {
     if (activeRef.current) return;
@@ -104,8 +106,7 @@ export function useHakaiExpansion({
       });
       playSoundRef.current("ematronTeleport");
       // 2) Após 500ms, teleporta para a sombra e troca para hakai.svg; inicia dano.
-      teleportTimeoutRef.current = setTimeout(() => {
-        teleportTimeoutRef.current = null;
+      timers.schedule(() => {
         setCloneVisual(null);
 
         setHakai(true);
@@ -134,7 +135,7 @@ export function useHakaiExpansion({
           });
         }, 10);
       }, 500);
-      timeoutRef.current = setTimeout(() => {
+      timers.schedule(() => {
         clear();
         activeRef.current = false;
         setActive(false);
@@ -163,6 +164,7 @@ export function useHakaiExpansion({
     player.x,
     startSpecialIntro,
     timeRef,
+    timers,
   ]);
 
   useEffect(() => () => clear(), [clear]);

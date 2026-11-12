@@ -12,6 +12,8 @@ import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import { getAbilityDamageType } from "@/data/characters/abilities";
 
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
+import { useMenuPause } from "@/hooks/battle/utilities/useMenuPause";
+import { usePausableTimers } from "@/hooks/battle/utilities/pausableTimers/usePausableTimers";
 import {
   ABILITY_COOLDOWN_TICK_MS,
   useCooldownPauseTick,
@@ -52,6 +54,12 @@ const GRAN_REY_CERO_DAMAGE_KIND = getAbilityDamageType("granReyCero");
  * O movimento é por quadro (`requestAnimationFrame`) e não por `setInterval`
  * como o laser: aqui a posição precisa ser contínua, e o dano continua
  * atrelado a um acumulador de 200ms dentro do mesmo quadro.
+ *
+ * Pausa (menu aberto): o quadro segue agendado mas não avança, e o relógio do
+ * quadro (`lastFrameRef`) é reancorado a cada volta — senão o primeiro quadro
+ * depois do unpause receberia a pausa inteira como `dt`, estouraria o
+ * orçamento de 2s e a lâmina sumiria sem acertar. O fade-out usa timer
+ * pausável pelo mesmo motivo.
  */
 export function useGranReyCero({
   player,
@@ -80,6 +88,8 @@ export function useGranReyCero({
   cooldownReduction,
 }: Props): GranReyCeroApi {
   const { stopSound } = useSoundEffects();
+  const { isMenuOpen } = useMenuPause();
+  const fadeTimers = usePausableTimers(isMenuOpen);
   const { showAbilityIntro } = useSettings();
   const [effect, setEffect] = useState<GranReyCeroEffect | null>(null);
   const [remaining, setRemaining] = useState(0);
@@ -90,7 +100,7 @@ export function useGranReyCero({
   const onUsedRef = useLatestRef(onUsed);
   const rafRef = useRef<number | null>(null);
   const lastFrameRef = useRef(0);
-  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fadingRef = useRef(false);
   /** Tempo acumulado correndo (sem alvo) e rastejando (com alvo), em ms. */
   const travelMsRef = useRef(0);
   const creepMsRef = useRef(0);
@@ -131,11 +141,9 @@ export function useGranReyCero({
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
-    if (fadeTimerRef.current != null) {
-      clearTimeout(fadeTimerRef.current);
-      fadeTimerRef.current = null;
-    }
-  }, []);
+    fadeTimers.clear();
+    fadingRef.current = false;
+  }, [fadeTimers]);
 
   /** Encerra a lâmina e restaura o idle. */
   const finish = useCallback(() => {
@@ -163,7 +171,8 @@ export function useGranReyCero({
    * `finish` já derruba o estado do player (a sprite some junto com a lâmina).
    */
   const beginFade = useCallback(() => {
-    if (fadeTimerRef.current != null) return;
+    if (fadingRef.current) return;
+    fadingRef.current = true;
     if (rafRef.current != null) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
@@ -172,11 +181,8 @@ export function useGranReyCero({
     if (blade) {
       setEffect({ ...blade, fading: true });
     }
-    fadeTimerRef.current = setTimeout(
-      () => finishRef.current(),
-      GRAN_REY_CERO_FADE_OUT_MS,
-    );
-  }, [effectRef, finishRef]);
+    fadeTimers.schedule(() => finishRef.current(), GRAN_REY_CERO_FADE_OUT_MS);
+  }, [effectRef, fadeTimers, finishRef]);
 
   const beginFadeRef = useLatestRef(beginFade);
 
@@ -298,10 +304,8 @@ export function useGranReyCero({
       return;
     }
 
-    // Pausa o loop da lâmina enquanto o menu estiver aberto: evita que a
-    // habilidade complete e desapareça durante a pausa, mantendo o jogador
-    // no sprite da animação. Ao fechar o menu, o loop retoma de onde parou.
     if (isMenuOpenRef.current) {
+      lastFrameRef.current = Date.now();
       rafRef.current = requestAnimationFrame(frameRef.current);
       return;
     }

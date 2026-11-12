@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { FIFTY_MS, FOUR_HUNDRED_FIFTY_MS } from "@/data/ms";
+import { formatCompactNumber } from "@/utils/formatCompactNumber";
 import styles from "./styles.module.css";
 
 /**
@@ -125,7 +126,7 @@ export function HealthBar({ hp, maxHp = 100, reversed = false }: Props) {
       <div className={styles.text}>
         {/* `ceil` e nao `round`: o HP pode ser fracionario (o piso de dano e
             0.01), e arredondar mostrava "1000 / 1000" com a barra em 99.96%. */}
-        {Math.ceil(hp)} / {maxHp}
+        {formatCompactNumber(Math.ceil(hp))} / {formatCompactNumber(maxHp)}
       </div>
     </div>
   );

@@ -1,0 +1,35 @@
+/*
+ * Piscada vermelha de dano (issue #244). Duas animações idênticas com nomes
+ * diferentes: alternar entre elas reinicia a piscada a cada golpe (ver
+ * useHitFlash). A animação sobrescreve o `filter` inline do sprite só
+ * enquanto roda, então o grayscale da morte continua valendo depois.
+ */
+.hitFlashA {
+  animation: npcHitFlashA 0.22s ease-out;
+}
+
+.hitFlashB {
+  animation: npcHitFlashB 0.22s ease-out;
+}
+
+@keyframes npcHitFlashA {
+  0%,
+  100% {
+    filter: none;
+  }
+  35% {
+    filter: brightness(0.9) sepia(1) saturate(8) hue-rotate(-50deg)
+      drop-shadow(0 0 var(--size-4) var(--danger));
+  }
+}
+
+@keyframes npcHitFlashB {
+  0%,
+  100% {
+    filter: none;
+  }
+  35% {
+    filter: brightness(0.9) sepia(1) saturate(8) hue-rotate(-50deg)
+      drop-shadow(0 0 var(--size-4) var(--danger));
+  }
+}

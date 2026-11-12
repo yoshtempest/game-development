@@ -34,7 +34,7 @@ import { VASTOLORD_KILL_EXTEND_MS } from "@/hooks/battle/player/characters/marsh
 import { getAbilityDamageType } from "@/data/characters/abilities";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { getProjectileDestructionHpByKind } from "@/gameRules/npc/projectile/projectileHp";
-import { gainAbilityCharge } from "@/gameRules/battle/special";
+import { gainAbilityCharge, gainSpecial } from "@/gameRules/battle/special";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
 import { getWeaponEnchantment } from "@/gameRules/battle/equipment";
 import type { Enchantment } from "@/data/equipment/enchantments";
@@ -252,6 +252,15 @@ export function useBattleCombat({
     [battle],
   );
 
+  /**
+   * Habilidade utilitária usada (sem dano, uso contínuo — o teleporte da
+   * Instância do ematron): rende só +1 de carga da Expansão, a mesma regra do
+   * blink do natsuki (`gainSpecial`).
+   */
+  const onUtilityAbilityUsed = useCallback(() => {
+    battle.setDelicia((d) => gainSpecial(d, battle.hitsToSpecial));
+  }, [battle]);
+
   const handleWeaponSwitch = useCallback(() => {
     const mana = battleManaRef.current;
     if (mana && !mana.consumeMana(YVEL_WEAPON_SWITCH_MANA_COST)) return;
@@ -272,45 +281,49 @@ export function useBattleCombat({
   // nascem antes de `usePlayerBattleActions` existir, então o alvo vai por ref.
   const onFireRef = useRef<() => void>(() => {});
 
-  const { playerProjectile, fishingNetPress, fishingNetMissiles, rootDurationMs } =
-    useBattleEntities({
-      battle,
-      refs,
-      npc,
-      player,
-      playerClass,
-      npcType,
-      npcLevel,
-      difficulty,
-      isAlfa,
-      summons,
-      setSummons,
-      allies,
-      setAllies,
-      isPausedRef,
-      lootActiveRef,
-      honoredFleeRef,
-      npcRootedUntilRef,
-      rootedSummonsUntilRef,
-      PLAYER_SIZE,
-      timeScaleRef,
-      setTimeScale,
-      playerProjectileRef,
-      onFireRef,
-      vastolordActive,
-      extendVastolordRef,
-      addVastolordLaserChargeRef,
-      battleManaRef,
-      startAbility,
-      onAbilityUsed,
-      fishingNet,
-      fishingNetRef,
-      fishingNetTimerRef,
-      fishingNetPushTimerRef,
-      fishingNetReadyAtRef,
-      setFishingNet,
-      setFishingNetRemaining,
-    });
+  const {
+    playerProjectile,
+    fishingNetPress,
+    fishingNetMissiles,
+    rootDurationMs,
+  } = useBattleEntities({
+    battle,
+    refs,
+    npc,
+    player,
+    playerClass,
+    npcType,
+    npcLevel,
+    difficulty,
+    isAlfa,
+    summons,
+    setSummons,
+    allies,
+    setAllies,
+    isPausedRef,
+    lootActiveRef,
+    honoredFleeRef,
+    npcRootedUntilRef,
+    rootedSummonsUntilRef,
+    PLAYER_SIZE,
+    timeScaleRef,
+    setTimeScale,
+    playerProjectileRef,
+    onFireRef,
+    vastolordActive,
+    extendVastolordRef,
+    addVastolordLaserChargeRef,
+    battleManaRef,
+    startAbility,
+    onAbilityUsed,
+    fishingNet,
+    fishingNetRef,
+    fishingNetTimerRef,
+    fishingNetPushTimerRef,
+    fishingNetReadyAtRef,
+    setFishingNet,
+    setFishingNetRemaining,
+  });
 
   // Babidi: o básico é um projétil de energia. O press dispara via `fireRef`
   // (preenchido pelo hook de ataque do babidi, mais abaixo) e a colisão resolve
@@ -407,6 +420,7 @@ export function useBattleCombat({
       summonAlly,
       triggerJumpAttack: battle.triggerJumpAttack,
       triggerTeleportBite: battle.triggerTeleportBite,
+      triggerPetInvoke: battle.triggerPetInvoke,
       applyNpcBleed: battle.applyNpcBleed,
       summons,
       setSummons,
@@ -768,7 +782,7 @@ export function useBattleCombat({
     setTimeScale,
     resetTimeScale,
     playSound,
-    onUsed: onAbilityUsed,
+    onUsed: onUtilityAbilityUsed,
     isPausedRef,
     disabledRef: cloneDisabledRef,
     battleEndedRef: battle.isEnding,
@@ -917,12 +931,12 @@ export function useBattleCombat({
     npcMaxHp: battle.npcMaxHp,
     npcHp: battle.npcHP,
     summons,
+    projectiles: npc.projectiles,
     startSpecialIntro,
     onBoom: handleAtomicBoomRef.current,
     onNpcCutInRef: marshadowCutInTriggerLatest,
     freezeActionsUntilRef,
     isPausedRef,
-    isMenuOpenRef,
     battleEndedRef: battle.isEnding,
     disabledRef: cloneDisabledRef,
     playSound,

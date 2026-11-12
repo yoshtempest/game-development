@@ -1,0 +1,31 @@
+.aura {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  box-shadow:
+    inset 0 0 var(--size-60) var(--ability-vastolord-60),
+    inset 0 0 var(--size-24) var(--ability-vastolord-soft-80);
+  opacity: 0.35;
+  animation: auraPulse 1400ms ease-in-out infinite alternate;
+}
+
+.paused {
+  animation-play-state: paused;
+}
+
+@keyframes auraPulse {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aura {
+    animation: none;
+    opacity: 0.5;
+  }
+}

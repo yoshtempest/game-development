@@ -5,6 +5,7 @@ import { HEIGHT_STEP_OFFSET } from "@/gameRules/movement/levels";
 import { getEntityZIndex } from "@/utils/entityDepth";
 import { MAP_GRID_COLS, MAP_GRID_ROWS } from "@/data/grid";
 import { computeEntityShadow } from "@/utils/shadow/entityShadow";
+import { NameTag } from "@/components/Game/Entities/NameTag";
 import { LevelUpParticles } from "@/components/Game/LevelUpParticles";
 import { ProfessionBadge } from "@/components/Game/ProfessionBadge";
 import { motion } from "motion/react";
@@ -19,6 +20,12 @@ type Props = {
   PLAYER_SIZE: number;
   hasPeru?: boolean;
   moving?: boolean;
+  /**
+   * Nick de outro jogador online. Presente = avatar remoto: mostra o nick e
+   * esconde o que vem dos contexts do jogador local (partículas de level-up e
+   * selo de profissão), que apareciam sobre o avatar do outro.
+   */
+  remoteName?: string;
 };
 
 /**
@@ -36,6 +43,7 @@ export const Player = memo(function Player({
   PLAYER_SIZE,
   hasPeru,
   moving,
+  remoteName,
 }: Props) {
   const spriteDirection = direction === "left" ? "right" : direction;
   const spriteName = moving
@@ -126,8 +134,14 @@ export const Player = memo(function Player({
           }
           style={{ width: "100%", height: "100%", objectFit: "contain" }}
         />
-        <LevelUpParticles character={character} size={PLAYER_SIZE} />
-        <ProfessionBadge />
+        {remoteName == null ? (
+          <>
+            <LevelUpParticles character={character} size={PLAYER_SIZE} />
+            <ProfessionBadge />
+          </>
+        ) : (
+          <NameTag name={remoteName} mirrored={direction === "left"} />
+        )}
       </div>
     </>
   );

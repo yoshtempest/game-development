@@ -1,3 +1,4 @@
+import { formatCompactNumber } from "@/utils/formatCompactNumber";
 import styles from "./styles.module.css";
 
 type Props = {
@@ -32,7 +33,7 @@ export function EnergyBar({ label, value, max = 100, tone = "mana" }: Props) {
         }}
       />
       <div className={styles.text}>
-        {label} {Math.round(value)} / {Math.round(max)}
+        {label} {formatCompactNumber(value)} / {formatCompactNumber(max)}
       </div>
     </div>
   );

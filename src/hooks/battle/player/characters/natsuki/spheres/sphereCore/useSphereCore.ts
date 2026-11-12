@@ -3,6 +3,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
+import { useMenuPause } from "@/hooks/battle/utilities/useMenuPause";
+import { useMenuPauseShift } from "@/hooks/battle/utilities/useMenuPauseShift";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { sphereEnergyCost } from "@/gameRules/battle/cursedEnergy";
 import { applyTime, clearTime, freezeWorldSpec } from "@/gameRules/battle/time";
@@ -41,6 +43,13 @@ const PURPLE_CAST_FREEZE_MS =
  * O que é de uma esfera só — controle da blue, voo da red e fusão/perfuração da
  * purple — mora nos hooks dela (`useBlueSphere`, `useRedSphere`,
  * `usePurpleSphere`); aqui fica apenas o ciclo que as três usam.
+ *
+ * Toda fase é medida contra `phaseStartRef` (relógio de parede). Na pausa o
+ * tick não roda, mas o relógio sim: sem devolver o tempo parado ao início da
+ * fase, o primeiro tick depois do unpause via a fase já vencida — o voo da
+ * red/purple "chegava" num quadro, sem varrer o caminho, e a esfera sumia sem
+ * acertar. O `useMenuPauseShift` desloca o início da fase (e o cooldown
+ * mínimo) pelo tempo de pausa.
  */
 export function useSphereCore({
   player,
@@ -63,6 +72,16 @@ export function useSphereCore({
   const fromRef = useRef({ x: 0, y: 0 });
   const targetRef = useRef({ x: 0, y: 0 });
   const cooldownUntilRef = useRef(0);
+
+  const { isMenuOpen } = useMenuPause();
+  useMenuPauseShift(isMenuOpen, ({ pausedMs, pauseStart }) => {
+    if (sphereRef.current && phaseStartRef.current !== 0) {
+      phaseStartRef.current += pausedMs;
+    }
+    if (cooldownUntilRef.current > pauseStart) {
+      cooldownUntilRef.current += pausedMs;
+    }
+  });
 
   const playerRef = useLatestRef(player);
   const setPlayerRef = useLatestRef(setPlayer);

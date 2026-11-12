@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ONE_THOUSAND_MS, THREE_THOUSAND_MS } from "@/data/ms";
 import type { MarshadowBattleForm } from "@/utils/paths";
 import { useSettings } from "@/hooks/settings/useSetting";
+import { usePlayerActions } from "@/contexts/PlayerContext";
 import { usePausableTimers } from "@/hooks/battle/utilities/pausableTimers/usePausableTimers";
 
 export const SPECIAL_INTRO_DURATION = ONE_THOUSAND_MS;
@@ -30,6 +31,13 @@ export const SPECIAL_INTRO_TIME_SCALE = 0.1;
  * `onActivate` — é a saída para uma tomada de controle que precisa se sobrepor
  * à habilidade em preparo (ex.: O Abençoado). O `onCancel` opcional avisa a
  * habilidade para ela desarmar o próprio estado, já que o `onActivate` não roda.
+ *
+ * Enquanto o intro está na tela o `specialIntroLockRef` fica armado e o
+ * jogador não anda, pula, dá dash nem ataca — vale para TODA habilidade, sem
+ * cada uma precisar estender o `freezeActionsUntilRef` por conta própria. O
+ * lock é solto ANTES do `onActivate`: a ativação confere o `canUse` (player
+ * `idle`, sem lock) e precisa encontrá-lo livre. Como o timer do intro é
+ * pausável, o lock acompanha a pausa sem prazo de parede para deslocar.
  */
 export function useSpecialIntro({
   setTimeScale,
@@ -37,6 +45,7 @@ export function useSpecialIntro({
   isMenuOpen,
 }: Props) {
   const { showAbilityIntro } = useSettings();
+  const { specialIntroLockRef } = usePlayerActions();
   const [specialIntro, setSpecialIntro] = useState<{
     character: string;
     ability?: string;
@@ -66,6 +75,7 @@ export function useSpecialIntro({
       if (activeRef.current) return false;
 
       activeRef.current = true;
+      specialIntroLockRef.current = true;
       onActivateRef.current = onActivate;
       onCancelRef.current = onCancel ?? null;
       setSpecialIntro({ character, ability, form });
@@ -74,6 +84,7 @@ export function useSpecialIntro({
       timers.clear();
       timers.schedule(() => {
         activeRef.current = false;
+        specialIntroLockRef.current = false;
 
         const activate = onActivateRef.current;
         onActivateRef.current = null;
@@ -86,7 +97,13 @@ export function useSpecialIntro({
 
       return true;
     },
-    [setTimeScale, resetTimeScale, showAbilityIntro, timers],
+    [
+      setTimeScale,
+      resetTimeScale,
+      showAbilityIntro,
+      specialIntroLockRef,
+      timers,
+    ],
   );
 
   /**
@@ -100,6 +117,7 @@ export function useSpecialIntro({
   const cancelSpecialIntro = useCallback(() => {
     if (!activeRef.current) return;
     activeRef.current = false;
+    specialIntroLockRef.current = false;
 
     timers.clear();
 
@@ -110,7 +128,7 @@ export function useSpecialIntro({
     setSpecialIntro(null);
     resetTimeScale();
     onCancel?.();
-  }, [resetTimeScale, timers]);
+  }, [resetTimeScale, specialIntroLockRef, timers]);
 
   useEffect(() => {
     // Os timers pendentes são limpos pelo próprio `usePausableTimers` na
@@ -118,9 +136,10 @@ export function useSpecialIntro({
     return () => {
       onActivateRef.current = null;
       onCancelRef.current = null;
+      specialIntroLockRef.current = false;
       resetTimeScale();
     };
-  }, [resetTimeScale]);
+  }, [resetTimeScale, specialIntroLockRef]);
 
   return {
     specialIntroActive: specialIntro !== null,

@@ -62,7 +62,15 @@ export function useHonoredOne({
     }
   }, [honoredRiseStartRef, honoredFleeRef, honoredFallRef, honoredOneTimerRef]);
 
-  /** Pula a animação do "O Abençoado": termina a sequência imediatamente. */
+  /**
+   * Pula a animação do "O Abençoado": termina a sequência imediatamente.
+   *
+   * Pular precisa conceder exatamente o que o pouso concede (ver efeito de fim
+   * da coreografia): a regeneração de energia amaldiçoada continua ligada e o
+   * modo ativo (blink no lugar da conversão) é armado. Antes o skip desligava a
+   * regen e nunca chamava `activateHonoredOne`, então quem pulava perdia os
+   * dois benefícios da passiva.
+   */
   const skipHonoredOne = useCallback(() => {
     if (!honoredSequence) return;
     if (honoredOneTimerRef.current) {
@@ -72,11 +80,11 @@ export function useHonoredOne({
     honoredFallRef.current = false;
     honoredFleeRef.current = false;
     setHonoredSequence(false);
-    setHonoredRegenActive(false);
     honoredRiseStartRef.current = 0;
     refs.timeRef.current = clearTime(refs.timeRef.current, HONORED_ONE_TIME_ID);
     freezeActionsUntilRef.current = Date.now();
     setPlayer((p) => ({ ...p, state: "idle" }));
+    activateHonoredOne();
     onSkipRef.current?.();
   }, [
     honoredSequence,
@@ -85,6 +93,7 @@ export function useHonoredOne({
     setPlayer,
     honoredFallRef,
     honoredRiseStartRef,
+    activateHonoredOne,
     onSkipRef,
   ]);
 
@@ -99,6 +108,13 @@ export function useHonoredOne({
    * 3. ao aterrissar vira idleCrounched.svg e só então a batalha volta ao
    *    normal — a energia amaldiçoada regenera 100%/1s e o botão de conversão
    *    vira o blink.
+   *
+   * O golpe letal costuma chegar no meio de um deslocamento imposto pelo NPC
+   * (arremesso, puxão, empurrão). Por isso o gatilho zera `throwStartTime`,
+   * `pullStartTime` e `grabbedUntil` no mesmo updater que entra em
+   * `mostHonored`: com o arremesso ainda ativo, a gravidade e a animação de
+   * arremesso devolviam o estado para `fallen` a cada tick e a coreografia era
+   * cancelada (o pouso em `idleCrounched` nunca chegava).
    */
   const surviveLethalHitRef = useLatestRef(() => {
     if (!enabled || honoredOneUsedRef.current) return false;
@@ -114,7 +130,15 @@ export function useHonoredOne({
       "[honored-regen] sequence start: setHonoredRegenActive(true), mana=",
       battleManaRef.current?.playerMana,
     );
-    setPlayer((p) => ({ ...p, state: "mostHonored", velY: 0 }));
+    setPlayer((p) => ({
+      ...p,
+      state: "mostHonored",
+      velY: 0,
+      pullStartTime: 0,
+      pullDuration: 300,
+      throwStartTime: 0,
+      grabbedUntil: 0,
+    }));
     // Regra de time: o mundo inteiro sai do time normal, **exceto a esfera do
     // natsuki** — ela é a única coisa que continua em 1x enquanto ele sobe. O
     // player fica de fora do `TimeKind`, então o lock de ação dele é escrito à

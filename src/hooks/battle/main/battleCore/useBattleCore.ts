@@ -9,8 +9,14 @@ import { useGrabThrow } from "@/hooks/battle/throw/useGrabThrow";
 import { useBabidiShield } from "@/hooks/battle/player/characters/babidi/useShield";
 import { useYvelWeaponSwitch } from "@/hooks/battle/player/characters/yvel/useYvelWeaponSwitch";
 import { useCooldownPauseTick } from "@/hooks/battle/utilities/useCooldowns";
-import { BATTLE_LIMITS, BLOCK_ATTACK_PUSH_DISTANCE } from "@/gameRules/movement/constants";
-import { NPC_BLOCK_HOLD_MS, NPC_BLOCK_MIN_PCT } from "@/hooks/battle/npc/blocking/useBlocking";
+import {
+  BATTLE_LIMITS,
+  BLOCK_ATTACK_PUSH_DISTANCE,
+} from "@/gameRules/movement/constants";
+import {
+  NPC_BLOCK_HOLD_MS,
+  NPC_BLOCK_MIN_PCT,
+} from "@/hooks/battle/npc/blocking/useBlocking";
 import { INTRO_MS } from "@/services/npc/attacks/hungryDog/state";
 import { clampX } from "@/gameRules/movement/clampX";
 import { applyPlayerStatus } from "@/gameRules/battle/status/statusEffects";
@@ -18,9 +24,7 @@ import { ProjectileHpConstants } from "@/data/projectile";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
-import {
-  VASTOLORD_KILL_EXTEND_MS,
-} from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
+import { VASTOLORD_KILL_EXTEND_MS } from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
 import type { BattleCombatProps } from "./types";
 
 /**
@@ -157,9 +161,11 @@ export function useBattleCore({
     onGrabPlayer,
     onThrowStart,
     onThrowPlayer,
+    releasePlayer,
   } = useGrabThrow({
     setPlayer,
     npcThrowAttackRef: refs.npcThrowAttackRef,
+    displacementLockedRef: honoredFleeRef,
   });
 
   const targeting = useNpcTargeting();
@@ -240,10 +246,11 @@ export function useBattleCore({
   const dragEndAtRef = useRef(0);
   const dragHitDoneRef = useRef(false);
   const onDragPlayer = useCallback(() => {
+    if (honoredFleeRef.current) return;
     dragEndAtRef.current = Date.now() + ALFA_DRAG_MS;
     dragHitDoneRef.current = false;
     setIsDragging(true);
-  }, []);
+  }, [honoredFleeRef]);
   const dragBattleRef = useRef<ReturnType<typeof useBattleSystem> | null>(null);
 
   // Esfera do Natsuki em voo — consumida pelo useProjectile para colisões.
@@ -331,6 +338,7 @@ export function useBattleCore({
     onDragPlayer,
     onPullPlayer: (npcX: number) =>
       setPlayer((p) => {
+        if (honoredFleeRef.current) return p;
         const direction = npcX > p.x ? 1 : -1;
         const pullToX = clampX(p.x + direction * 200);
         return {
@@ -342,6 +350,7 @@ export function useBattleCore({
       }),
     onPushPlayer: (npcX: number) =>
       setPlayer((p) => {
+        if (honoredFleeRef.current) return p;
         if (npcType === "trueVandinha") {
           const direction = npcX > p.x ? -1 : 1;
           const pushToX = clampX(p.x + direction * 100);
@@ -373,7 +382,7 @@ export function useBattleCore({
       }),
     onRamPushPlayer: (direction: "left" | "right", toX: number) =>
       setPlayer((p) => {
-        if (p.mode !== "battle") return p;
+        if (p.mode !== "battle" || honoredFleeRef.current) return p;
         const x = clampX(toX);
         return { ...p, x, battleDirection: direction };
       }),
@@ -392,7 +401,7 @@ export function useBattleCore({
       // afastado do NPC gerador a cada tick de dano.
       if (npcX != null) {
         setPlayer((p) => {
-          if (p.mode !== "battle") return p;
+          if (p.mode !== "battle" || honoredFleeRef.current) return p;
           const direction = npcX > p.x ? -1 : 1;
           const pushToX = clampX(p.x + direction * 5);
           return { ...p, x: pushToX };
@@ -451,6 +460,11 @@ export function useBattleCore({
         dragBattleRef.current?.npcFixedHit(1);
       }
 
+      if (honoredFleeRef.current) {
+        setIsDragging(false);
+        return;
+      }
+
       const n = npcRef.current;
       const fromX = n.x - 8;
       const toX = clampX(fromX);
@@ -464,7 +478,7 @@ export function useBattleCore({
     }, 16);
 
     return () => clearInterval(interval);
-  }, [isDragging, isMenuOpenRef, setPlayer, npcRef]);
+  }, [isDragging, isMenuOpenRef, setPlayer, npcRef, honoredFleeRef]);
 
   const onCriticalPushRef = useLatestRef(() => {
     const dir = player.battleDirection === "right" ? 1 : -1;
@@ -529,11 +543,20 @@ export function useBattleCore({
   // em que a passiva salva o player, descartar qualquer habilidade que esteja
   // sendo PREPARADA (intro pendente) — a coreografia não pode ser sobrescrita
   // por um cast que terminaria depois dela. O `cancelSpecialIntro` real é
-  // preenchido mais abaixo, junto do `useSpecialIntro`.
+  // preenchido mais abaixo, junto do `useSpecialIntro`. Pelo mesmo motivo, se
+  // quem salvou foi O Abençoado (`honoredFleeRef` ligado no gatilho), o
+  // agarrão/arremesso/arrasto em curso é solto: todos eles reescrevem o estado
+  // do player para `fallen` e cancelariam a coreografia. Enquanto a sequência
+  // dura, os handlers de puxão/empurrão/investida/laser/arrasto do NPC também
+  // ignoram o player (mesmo `honoredFleeRef`).
   const cancelSpecialIntroRef = useRef<() => void>(() => {});
   const honoredLethalRef = useLatestRef(() => {
     const survived = surviveLethalHitRef.current?.() ?? false;
     if (survived) cancelSpecialIntroRef.current();
+    if (survived && honoredFleeRef.current) {
+      releasePlayer();
+      setIsDragging(false);
+    }
     return survived;
   });
 

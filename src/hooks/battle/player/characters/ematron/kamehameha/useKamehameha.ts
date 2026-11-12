@@ -9,6 +9,9 @@ import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
 
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
+import { useMenuPause } from "@/hooks/battle/utilities/useMenuPause";
+import { useMenuPauseShift } from "@/hooks/battle/utilities/useMenuPauseShift";
+import { usePausableTimers } from "@/hooks/battle/utilities/pausableTimers/usePausableTimers";
 import { ProjectileConstants } from "@/data/projectile";
 import {
   EMATRON_KAMEHAMEHA_DAMAGE_RATIO,
@@ -38,6 +41,11 @@ import {
  * direção da face, causando 1% do dano base a cada 20ms e empurrando o inimigo,
  * com animação constante. Enquanto está no sprite de carga/disparo o player não
  * pode agir (freeze) e o efeito termina devolvendo o estado ao idle.
+ *
+ * Pausa (menu aberto): carga, entrada e fade-out são timers pausáveis, o tick
+ * de dano não roda e o início do disparo (`shotStartRef`) recebe de volta o
+ * tempo parado — sem isso os 2s do feixe venciam dentro do menu e ele sumia no
+ * primeiro tick depois do unpause.
  */
 export function useKamehameha({
   player,
@@ -65,13 +73,16 @@ export function useKamehameha({
 }: KamehamehaProps): KamehamehaApi {
   const { stopSound } = useSoundEffects();
   const activeRef = useRef(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const startupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { isMenuOpen } = useMenuPause();
+  const timers = usePausableTimers(isMenuOpen);
   const tickTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const shotStartRef = useRef(0);
   const rawAccRef = useRef(0);
   const shownAccRef = useRef(new Map<string, number>());
+
+  useMenuPauseShift(isMenuOpen, ({ pausedMs }) => {
+    if (shotStartRef.current !== 0) shotStartRef.current += pausedMs;
+  });
 
   const playerRef = useLatestRef(player);
   const npcRef = useLatestRef(npc);
@@ -99,23 +110,12 @@ export function useKamehameha({
   });
 
   const clearTimers = useCallback(() => {
-    if (timerRef.current != null) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-    if (startupTimerRef.current != null) {
-      clearTimeout(startupTimerRef.current);
-      startupTimerRef.current = null;
-    }
-    if (fadeTimerRef.current != null) {
-      clearTimeout(fadeTimerRef.current);
-      fadeTimerRef.current = null;
-    }
+    timers.clear();
     if (tickTimerRef.current != null) {
       clearInterval(tickTimerRef.current);
       tickTimerRef.current = null;
     }
-  }, []);
+  }, [timers]);
 
   /** Encerra o feixe (fim do efeito ou cancelamento) e restaura o idle. */
   const finish = useCallback(() => {
@@ -128,8 +128,7 @@ export function useKamehameha({
 
     // Animação de saída: transiciona para 'ending' e depois limpa.
     setEffect((prev) => (prev ? { ...prev, phase: "ending" } : null));
-    fadeTimerRef.current = setTimeout(() => {
-      fadeTimerRef.current = null;
+    timers.schedule(() => {
       setEffect(null);
       setPlayerRef.current((p) =>
         p.mode !== "battle" || !ALL_PREDICATES.isKamehameha(p.state)
@@ -138,7 +137,7 @@ export function useKamehameha({
       );
       freezeActionsUntilRef.current = Date.now();
     }, EMATRON_KAMEHAMEHA_FADE_MS);
-  }, [clearTimers, freezeActionsUntilRef, setPlayerRef, stopSoundRef]);
+  }, [clearTimers, freezeActionsUntilRef, setPlayerRef, stopSoundRef, timers]);
 
   const finishRef = useLatestRef(finish);
 
@@ -323,13 +322,13 @@ export function useKamehameha({
     // O som do feixe fica em loop enquanto o kamehameha estiver ativo (começa
     // no press, para no finish).
 
+    clearTimers();
+
     // Transição de 'starting' para 'active' após a animação de entrada.
-    startupTimerRef.current = setTimeout(() => {
-      startupTimerRef.current = null;
+    timers.schedule(() => {
       setEffect((prev) => (prev ? { ...prev, phase: "active" } : null));
     }, EMATRON_KAMEHAMEHA_STARTUP_MS);
 
-    clearTimers();
     tickTimerRef.current = setInterval(
       tickRef.current,
       EMATRON_KAMEHAMEHA_TICK_MS,
@@ -342,6 +341,7 @@ export function useKamehameha({
     setPlayerRef,
     shouldCancelRef,
     tickRef,
+    timers,
   ]);
 
   const fireRef = useLatestRef(fire);
@@ -362,12 +362,10 @@ export function useKamehameha({
       p.mode !== "battle" ? p : { ...p, state: "chargingKamehameha" },
     );
 
-    timerRef.current = setTimeout(() => {
-      timerRef.current = null;
-      fireRef.current();
-    }, EMATRON_KAMEHAMEHA_CHARGING_MS);
+    timers.schedule(() => fireRef.current(), EMATRON_KAMEHAMEHA_CHARGING_MS);
   }, [
     fireRef,
+    timers,
     freezeActionsUntilRef,
     onUsedRef,
     playSoundRef,

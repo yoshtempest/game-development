@@ -92,6 +92,7 @@ export function BattleEntities({
   sigiloPhase,
   hideMainNpc = false,
   layer = "full",
+  playerNameTag,
 }: Props & {
   sphere?: import("@/utils/types/character/natsuki").NatsukiSphere | null;
 }) {
@@ -206,6 +207,7 @@ export function BattleEntities({
         hakai={hakai}
         sigiloPhase={sigiloPhase}
         levelUpParticles={layer === "full"}
+        nameTag={playerNameTag}
       />
 
       <EnergyProjectile

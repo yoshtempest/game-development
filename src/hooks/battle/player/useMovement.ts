@@ -65,6 +65,7 @@ export function useBattleMovement(
   genkiDamaRiseStartRef?: RefObject<number>,
   genkiDamaRiseStartYRef?: RefObject<number>,
   natsukiPunchRef?: RefObject<boolean>,
+  specialIntroLockRef?: RefObject<boolean>,
 ) {
   const leftIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const rightIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -77,10 +78,17 @@ export function useBattleMovement(
   const hasDoubleJumped = useRef(false);
   const hasUsedFallingAttack = useRef(false);
 
-  /** Trava de ação compartilhada (habilidade/explosão em andamento). */
+  /**
+   * Trava de ação compartilhada: habilidade/explosão em andamento
+   * (`freezeActionsUntilRef`) ou intro de habilidade na tela
+   * (`specialIntroLockRef`). O intro trava TODO personagem, qualquer que seja a
+   * habilidade: andar durante ele tirava o player do `idle` e a ativação, no
+   * fim do intro, abortava — só o overlay aparecia e o golpe nunca saía.
+   */
   const isActionFrozen = () =>
-    !!freezeActionsUntilRef?.current &&
-    freezeActionsUntilRef.current > Date.now();
+    !!specialIntroLockRef?.current ||
+    (!!freezeActionsUntilRef?.current &&
+      freezeActionsUntilRef.current > Date.now());
 
   const { progress } = useCharacterProgress();
   const progressRef = useLatestRef(progress);

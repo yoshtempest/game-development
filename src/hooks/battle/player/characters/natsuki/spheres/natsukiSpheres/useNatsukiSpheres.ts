@@ -30,6 +30,10 @@ import type { SphereBattle } from "@/hooks/battle/player/characters/natsuki/sphe
  * `useBlueSphere` (persistente e controlada pelo joystick), `useRedSphere`
  * (arremesso que empurra) e `usePurpleSphere` (fusão que atravessa tudo). Aqui
  * fica apenas o tick que despacha cada fase para o seu dono e a API da cena.
+ *
+ * Com o menu aberto o tick e o dreno da blue param: a esfera fica congelada na
+ * tela (o núcleo devolve o tempo parado ao início da fase) e a blue não gasta
+ * energia — sem isso o dreno esvaziava a barra dentro do menu e a dissipava.
  */
 export function useNatsukiSpheres({
   player,
@@ -102,8 +106,6 @@ export function useNatsukiSpheres({
    * núcleo; quem a esfera vira em campo depende da variante.
    */
   function tick() {
-    // Pausa o tick das esferas enquanto o menu estiver aberto: evita que
-    // a animação complete e a esfera desapareça durante a pausa.
     if (isMenuOpenRef.current) return;
 
     const s = core.sphereRef.current;
@@ -157,13 +159,19 @@ export function useNatsukiSpheres({
     return () => clearInterval(id);
   }, [tickRef]);
 
+  /**
+   * Dreno da blue em campo. Respeita a mesma pausa da batalha que o tick e a
+   * regeneração do O Abençoado (`useStatusDots`): com o menu aberto (ou
+   * qualquer outra pausa — intro, diálogo, rewind, câmera congelada) a esfera
+   * fica parada, então não pode continuar consumindo energia amaldiçoada.
+   */
   useEffect(() => {
-    const id = setInterval(
-      () => drainRef.current(),
-      BLUE_SPHERE_DRAIN_INTERVAL_MS,
-    );
+    const id = setInterval(() => {
+      if (isPausedRef.current || isMenuOpenRef.current) return;
+      drainRef.current();
+    }, BLUE_SPHERE_DRAIN_INTERVAL_MS);
     return () => clearInterval(id);
-  }, [drainRef]);
+  }, [drainRef, isPausedRef, isMenuOpenRef]);
 
   const sphere = core.sphere;
   const sphereFocus: NatsukiSphereFocus =

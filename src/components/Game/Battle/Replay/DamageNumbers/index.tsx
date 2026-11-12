@@ -1,5 +1,6 @@
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
 import { findDamageTarget } from "@/utils/battle/findDamageTarget";
+import { formatCompactNumber } from "@/utils/formatCompactNumber";
 import type { ReplayFrame } from "@/utils/types/replay";
 import styles from "./styles.module.css";
 
@@ -55,9 +56,11 @@ export function ReplayDamageNumbers({ damage, frame, npcType, layout }: Props) {
             ) : d.ty === "miss" ? (
               "MISS!"
             ) : d.c ? (
-              <span className={styles.critText}>{`CRIT -${d.v}`}</span>
+              <span
+                className={styles.critText}
+              >{`CRIT -${formatCompactNumber(d.v)}`}</span>
             ) : d.v > 0 ? (
-              `-${d.v}`
+              `-${formatCompactNumber(d.v)}`
             ) : (
               "0"
             )}

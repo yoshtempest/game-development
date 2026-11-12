@@ -634,7 +634,10 @@ export function useNpcBattle({
   // Hit da burst do hungryKing (fase 2): 10% do dano base do NPC aplicado como
   // dano + empurra o jogador 50px em x (direção da burst) e 50px em y (a
   // gravidade derruba com animação falling.svg). O dodge/agachamento já é
-  // tratado no projétil (useProjectile).
+  // tratado no projétil (useProjectile). O empurrão é decidido no updater
+  // porque, quando a burst é o golpe letal, o gatilho do O Abençoado já
+  // enfileirou `mostHonored` antes dele: sobrescrever com `falling` cancelava
+  // a coreografia e o pouso em `idleCrounched` nunca chegava.
   const npcBurstHit = useCallback(
     (pushDir: number) => {
       if (isEnding.current) return;
@@ -657,6 +660,7 @@ export function useNpcBattle({
 
       setPlayer((p) => {
         if (p.mode !== "battle") return p;
+        if (ALL_PREDICATES.isInvulnerable(p.state)) return p;
         const newX = clampX(p.x + pushDir * 50);
         return {
           ...p,

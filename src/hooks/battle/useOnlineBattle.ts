@@ -31,6 +31,12 @@ type Props = {
   coopActive?: boolean;
   /** Derrota local do guest quando o líder anuncia a derrota da dupla. */
   runCoopDefeat?: () => void;
+  /**
+   * Sequência do O Abençoado em curso no jogador local: golpes do líder que
+   * deslocam o player (empurrão, puxão, investida, arremesso, arrasto,
+   * agarrão) são ignorados para não cancelar a coreografia.
+   */
+  honoredSequence?: boolean;
 };
 
 export function useOnlineBattle({
@@ -46,6 +52,7 @@ export function useOnlineBattle({
   lastRewards,
   coopActive = false,
   runCoopDefeat,
+  honoredSequence = false,
 }: Props) {
   const navigate = useNavigate();
   const online = useOnline();
@@ -194,6 +201,7 @@ export function useOnlineBattle({
   // alvo resolve armadura, esquiva, bloqueio e status com os próprios dados.
   const battleRef = useLatestRef(battle);
   const setPlayerRef = useLatestRef(setPlayer);
+  const honoredSequenceRef = useLatestRef(honoredSequence);
 
   useEffect(() => {
     if (!isBattleGuest || isPvp || !playerId) return;
@@ -201,13 +209,14 @@ export function useOnlineBattle({
       const hit = message as unknown as NpcHitIntent;
       if (hit.to !== playerId) return;
       const currentBattle = battleRef.current;
+      const displacementLocked = honoredSequenceRef.current;
 
       const pushAway = (
         npcX: number | undefined,
         distance: number,
         ms: number,
       ) => {
-        if (npcX == null) return;
+        if (npcX == null || displacementLocked) return;
         setPlayerRef.current((p) => {
           const direction = npcX > p.x ? -1 : 1;
           return {
@@ -252,7 +261,7 @@ export function useOnlineBattle({
           pushAway(hit.npcX, 200, 300);
           break;
         case "pull":
-          if (hit.npcX != null) {
+          if (hit.npcX != null && !displacementLocked) {
             setPlayerRef.current((p) => {
               const direction = hit.npcX! > p.x ? 1 : -1;
               return {
@@ -265,7 +274,7 @@ export function useOnlineBattle({
           }
           break;
         case "ram":
-          if (hit.toX != null) {
+          if (hit.toX != null && !displacementLocked) {
             setPlayerRef.current((p) => ({
               ...p,
               x: clampX(hit.toX!),
@@ -274,7 +283,7 @@ export function useOnlineBattle({
           }
           break;
         case "throwStart":
-          if (hit.npcX != null) {
+          if (hit.npcX != null && !displacementLocked) {
             setPlayerRef.current((p) => {
               const direction = hit.npcX! > p.x ? -1 : 1;
               return {
@@ -289,7 +298,7 @@ export function useOnlineBattle({
           }
           break;
         case "drag":
-          if (hit.npcX != null && hit.npcY != null) {
+          if (hit.npcX != null && hit.npcY != null && !displacementLocked) {
             setPlayerRef.current((p) => ({
               ...p,
               x: clampX(hit.npcX! - 8),
@@ -302,7 +311,7 @@ export function useOnlineBattle({
           }
           break;
         case "grab":
-          if (hit.flipped != null) {
+          if (hit.flipped != null && !displacementLocked) {
             setPlayerRef.current((p) => ({
               ...p,
               grabbedUntil: Date.now() + 4000,
@@ -320,6 +329,7 @@ export function useOnlineBattle({
     battleSocketSubscribe,
     battleRef,
     setPlayerRef,
+    honoredSequenceRef,
   ]);
 
   // Guest envia seu estado de batalha. `battlePlayerState` é distinto de
@@ -393,14 +403,17 @@ export function useOnlineBattle({
     });
   }, [isBattleHost, battleSocketSubscribe, battleSocketSend, buildSnapshotRef]);
 
+  // Socket da batalha caído por 15 s tira o jogador da luta. Só vale online:
+  // fora de sala não existe socket, e "sem conexão" ali é o estado normal —
+  // sem o guard toda batalha solo era abandonada sozinha depois de 15 s.
   useEffect(() => {
-    if (isBattleHost) return;
+    if (isBattleHost || !online.connected) return;
     if (battleSocketConnected) return;
     const t = setTimeout(() => {
       void navigate(-1);
     }, 15000);
     return () => clearTimeout(t);
-  }, [isBattleHost, battleSocketConnected, navigate]);
+  }, [isBattleHost, online.connected, battleSocketConnected, navigate]);
 
   const { remoteResult, remoteRewards, notifyResult, clearRemoteResult } =
     useBattleLifecycle({

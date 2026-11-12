@@ -80,6 +80,7 @@ function RemotePlayer({ player, TILE_SIZE, PLAYER_SIZE }: RemotePlayerProps) {
       PLAYER_SIZE={PLAYER_SIZE}
       hasPeru={player.hasPeru ?? false}
       moving={moving}
+      remoteName={player.name}
     />
   );
 }

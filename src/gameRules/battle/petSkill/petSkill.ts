@@ -6,6 +6,14 @@ import type { PetSkillDefinition } from "@/data/characters/pets/petSkills";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import type { PetSkillRunDeps } from "@/gameRules/battle/petSkill/types";
 import { calcPetDamage } from "@/gameRules/battle/petSkill/calcPetDamage";
+import { ONE_THOUSAND_MS } from "@/data/ms";
+
+/**
+ * Quanto o hungryKing fica no sprite `invoking`: do caixão fechado até ele
+ * abrir e o hungryDeath sair (`useCoffinAnimation` abre em 500 ms e começa o
+ * fade em 1000 ms). Se a timeline do caixão mudar, este número acompanha.
+ */
+const HUNGRY_KING_INVOKE_MS = ONE_THOUSAND_MS;
 
 export function runPetSkill(
   def: PetSkillDefinition,
@@ -26,6 +34,7 @@ export function runPetSkill(
     summonAlly,
     triggerJumpAttack,
     triggerTeleportBite,
+    triggerPetInvoke,
     applyNpcBleed,
     summons,
     setSummons,
@@ -152,6 +161,7 @@ export function runPetSkill(
     case "summon": {
       if (def.petId === "pet_hungryKing") {
         const starMultiplier = PET_STAR_MULTIPLIER ** (petStars - 1);
+        triggerPetInvoke(HUNGRY_KING_INVOKE_MS);
         beginCoffinSequence(
           [playerX + 200],
           groundY,

@@ -34,6 +34,7 @@ export function MainNpc({
       cutInEnemie={cutInEnemie}
       npcBleeding={npcBleeding}
       purpleHole={purpleHole}
+      hp={battle.npcHP}
     />
   );
 }

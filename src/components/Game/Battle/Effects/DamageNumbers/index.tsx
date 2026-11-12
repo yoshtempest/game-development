@@ -1,6 +1,7 @@
 import styles from "./styles.module.css";
 import { findDamageTarget } from "@/utils/battle/findDamageTarget";
 import { titleBadgePath } from "@/utils/paths";
+import { formatCompactNumber } from "@/utils/formatCompactNumber";
 import { type DamageNumbersProps, TYPE_CLASS } from "./constants";
 
 export type { DamageTarget } from "@/utils/battle/findDamageTarget";
@@ -27,6 +28,7 @@ export function DamageNumbers({
             ? target.h + HEAD_GAP
             : 80;
         const value = Math.round(n.value);
+        const label = formatCompactNumber(value);
         return (
           <div
             key={n.id}
@@ -42,7 +44,7 @@ export function DamageNumbers({
                 <span className={styles.critLabel}>CRITICAL!</span>
 
                 <span className={styles.critText}>
-                  {value > 0 ? `-${value}` : "0"}
+                  {value > 0 ? `-${label}` : "0"}
                 </span>
               </div>
             ) : n.type === "blocked" ? (
@@ -52,7 +54,7 @@ export function DamageNumbers({
             ) : n.type === "miss" ? (
               "MISS!"
             ) : n.type === "heal" ? (
-              `+${value}`
+              `+${label}`
             ) : n.type === "armor" ? (
               <>
                 <img
@@ -64,7 +66,7 @@ export function DamageNumbers({
                 +1
               </>
             ) : value > 0 ? (
-              `-${value}`
+              `-${label}`
             ) : (
               "0"
             )}

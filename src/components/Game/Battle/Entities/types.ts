@@ -39,6 +39,11 @@ export type BattleEntitiesBattle = {
   isExploding: boolean;
   npcPhase: number;
   isNpcDying: boolean;
+  /**
+   * HP do NPC principal, só para a piscada de dano do sprite. Opcional porque
+   * o visual remoto (co-op/PvP) não carrega HP.
+   */
+  npcHP?: number;
 };
 
 export type BattleEntityPositioning = {
@@ -146,4 +151,6 @@ export type Props = {
    * existem na cena local).
    */
   layer?: "full" | "remotePlayer";
+  /** Nick acima do avatar (só a camada do jogador remoto usa). */
+  playerNameTag?: string;
 };

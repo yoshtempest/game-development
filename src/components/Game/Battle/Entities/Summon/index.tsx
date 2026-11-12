@@ -20,6 +20,7 @@ export function Summon({ summons, hiddenIds, TILE_SIZE }: Props) {
           direction={s.direction as "left" | "right"}
           isHidden={hiddenIds.has(s.id)}
           isDying={s.isDying}
+          hp={s.hp}
         />
       ))}
     </>

@@ -37,8 +37,20 @@ import {
 
 import Talking from "@/components/Game/Interactions/Talking";
 import { useCutscene } from "@/hooks/interaction/cutscene/useCutscene";
+import { useVolumeControls } from "@/hooks/menu/config/useVolumeControls";
+import { VolumeSection } from "@/components/Game/Navbar/ExploreNavbar/Config/Volume";
 
+/**
+ * Tela "Configurações" do menu da batalha.
+ *
+ * Além do comparativo com o NPC, traz o mesmo controle de volume da config de
+ * exploração (`VolumeSection` + `useVolumeControls`): sem ele, o jogador
+ * precisava sair da batalha para mexer no som. O volume fica fora do bloco
+ * condicionado a `battleInfo` para estar disponível mesmo antes do NPC
+ * publicar os stats.
+ */
 export function Settings() {
+  const volume = useVolumeControls(true);
   const battleInfoCtx = useBattleInfo();
   const { player } = usePlayer();
   const { progress } = useCharacterProgress();
@@ -236,6 +248,7 @@ export function Settings() {
   return (
     <div className="containerOfNavbar">
       <div className={`${styles.battleContainer} `}>
+        <VolumeSection {...volume} />
         {battleInfo && playerStats && classData && playerSummary && (
           <>
             <h2 className={styles.center}>Configurações de Batalha</h2>

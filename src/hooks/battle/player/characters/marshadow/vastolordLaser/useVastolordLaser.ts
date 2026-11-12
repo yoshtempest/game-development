@@ -10,10 +10,16 @@ import { clampX } from "@/gameRules/movement/clampX";
 import { combatService } from "@/services/combat";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
-import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
+import {
+  applyVampirism,
+  getVampirismPercent,
+} from "@/gameRules/battle/vampirism/applyVampirism";
 import { getAbilityDamageType } from "@/data/characters/abilities";
 
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
+import { useMenuPause } from "@/hooks/battle/utilities/useMenuPause";
+import { useMenuPauseShift } from "@/hooks/battle/utilities/useMenuPauseShift";
+import { usePausableTimers } from "@/hooks/battle/utilities/pausableTimers/usePausableTimers";
 import {
   VASTOLORD_LASER_DAMAGE_RATIO,
   VASTOLORD_LASER_DURATION_MS,
@@ -46,6 +52,11 @@ const MAIN_TARGET_KEY = "main-npc";
  * dano base do personagem e é empurrado 10px para longe do jogador (parando
  * nas bordas via BATTLE_LIMITS). O jogador fica travado no disparo durante os
  * 3s; a habilidade só pode ser usada UMA vez por forma.
+ *
+ * Pausa (menu aberto): o tick de dano não roda, entrada e fade-out são timers
+ * pausáveis e o início do disparo (`shotStartRef`) recebe de volta o tempo
+ * parado — sem isso os 3s do feixe venciam dentro do menu e ele sumia no
+ * primeiro tick depois do unpause.
  */
 export function useVastolordLaser({
   player,
@@ -90,7 +101,24 @@ export function useVastolordLaser({
    * inteiros. Chaveado por id (summon) ou por `MAIN_TARGET_KEY` (chefe).
    */
   const shownAccRef = useRef(new Map<string, number>());
+  /**
+   * Dano mitigado acumulado ainda não convertido em cura.
+   *
+   * Cada tick tira uma fração do dano base (1%), e `applyVampirism` arredonda a
+   * cura: com 10% de vampirismo universal, um tick de 0.5 de dano rendia
+   * `Math.round(0.05) === 0`. Chamado por tick, o feixe inteiro nunca curava
+   * (issue #398). O dano é somado aqui e só vai ao funil quando o lote já rende
+   * pelo menos 1 de cura; a sobra (o que o arredondamento não pagou) continua
+   * no acumulador para o próximo lote.
+   */
+  const vampDamageAccRef = useRef(0);
   const tickTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const { isMenuOpen } = useMenuPause();
+  const timers = usePausableTimers(isMenuOpen);
+  useMenuPauseShift(isMenuOpen, ({ pausedMs }) => {
+    if (shotStartRef.current !== 0) shotStartRef.current += pausedMs;
+  });
 
   const playerRef = useLatestRef(player);
   const npcRef = useLatestRef(npc);
@@ -131,11 +159,12 @@ export function useVastolordLaser({
     clearTimer();
     rawAccRef.current = 0;
     shownAccRef.current.clear();
+    vampDamageAccRef.current = 0;
     shotStartRef.current = 0;
 
     // Animação de saída: transiciona para 'ending' e depois limpa.
     setBeam((prev) => (prev ? { ...prev, phase: "ending" } : null));
-    const fadeTimer = setTimeout(() => {
+    timers.schedule(() => {
       setBeam(null);
       setPlayer((p) =>
         p.mode !== "battle" || !ALL_PREDICATES.isLaser(p.state)
@@ -143,10 +172,7 @@ export function useVastolordLaser({
           : { ...p, state: "idle" },
       );
     }, VASTOLORD_LASER_FADE_MS);
-
-    // Cleanup do timer de fade no unmount.
-    return () => clearTimeout(fadeTimer);
-  }, [clearTimer, setPlayer, stopSound]);
+  }, [clearTimer, setPlayer, stopSound, timers]);
 
   const finishRef = useLatestRef(finish);
 
@@ -157,8 +183,6 @@ export function useVastolordLaser({
 
   const tickRef = useLatestRef(
     useCallback(() => {
-      // Pausa o tick do feixe enquanto o menu estiver aberto: evita que o
-      // laser complete e desapareça durante a pausa.
       if (isMenuOpenRef.current) return;
 
       if (shouldCancelRef.current()) {
@@ -225,6 +249,32 @@ export function useVastolordLaser({
         registerHitRef.current?.(whole);
       };
 
+      /**
+       * Converte o dano do tick em cura pelo funil único (`applyVampirism`,
+       * fonte `other` = só o universal, que a Forma Vastolord injeta), mas em
+       * lote: ver `vampDamageAccRef`.
+       */
+      const healFromBeam = (dealt: number) => {
+        const percent = getVampirismPercent("other", vampirism);
+        if (percent <= 0) return;
+        const pending = vampDamageAccRef.current + dealt;
+        if ((pending * percent) / 100 < 1) {
+          vampDamageAccRef.current = pending;
+          return;
+        }
+        const healed = applyVampirism({
+          damage: pending,
+          source: "other",
+          vampirism,
+          playerMaxHp,
+          setPlayerHP,
+        });
+        vampDamageAccRef.current = Math.max(
+          0,
+          pending - (healed * 100) / percent,
+        );
+      };
+
       // NPC principal: dano + empurrão para longe do jogador (clampado).
       const mainNpc = npcRef.current;
       if (
@@ -241,13 +291,7 @@ export function useVastolordLaser({
           ),
         );
         setNpcHP((hp) => Math.max(0, hp - dmg));
-        applyVampirism({
-          damage: dmg,
-          source: "other",
-          vampirism,
-          playerMaxHp,
-          setPlayerHP,
-        });
+        healFromBeam(dmg);
         reportTick(MAIN_TARGET_KEY, dmg, mainNpc.x, mainNpc.y, "npc");
         const dir = mainNpc.x >= playerRef.current.x ? 1 : -1;
         mainNpc.updateNpc({
@@ -277,13 +321,7 @@ export function useVastolordLaser({
           ),
         );
         const newHp = Math.max(0, s.hp - dmg);
-        applyVampirism({
-          damage: dmg,
-          source: "other",
-          vampirism,
-          playerMaxHp,
-          setPlayerHP,
-        });
+        healFromBeam(dmg);
         reportTick(s.id, dmg, s.x, s.y, "summon");
         if (newHp <= 0) {
           killed = true;
@@ -345,6 +383,7 @@ export function useVastolordLaser({
     }
     rawAccRef.current = 0;
     shownAccRef.current.clear();
+    vampDamageAccRef.current = 0;
     const p = playerRef.current;
     shotStartRef.current = Date.now();
     freezeActionsUntilRef.current = Math.max(
@@ -365,7 +404,7 @@ export function useVastolordLaser({
     playSound("laser", true);
 
     // Transição de 'starting' para 'active' após a animação de entrada.
-    const startupTimer = setTimeout(() => {
+    timers.schedule(() => {
       setBeam((prev) => (prev ? { ...prev, phase: "active" } : null));
     }, VASTOLORD_LASER_STARTUP_MS);
 
@@ -374,9 +413,6 @@ export function useVastolordLaser({
       tickRef.current,
       VASTOLORD_LASER_TICK_MS,
     );
-
-    // Limpa o timer de startup no unmount/fim.
-    return () => clearTimeout(startupTimer);
   }, [
     clearTimer,
     freezeActionsUntilRef,
@@ -385,6 +421,7 @@ export function useVastolordLaser({
     setPlayer,
     shouldCancelRef,
     tickRef,
+    timers,
   ]);
 
   const fireRef = useLatestRef(fire);

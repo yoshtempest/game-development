@@ -23,6 +23,14 @@ import {
   getPetClass,
 } from "@/utils/character/petProgress";
 
+/**
+ * Grade de pets do menu de exploração.
+ *
+ * As estrelas do card representam o estágio atual do pet (`stats.stars`, o
+ * maior estágio possuído): todas até ele ficam coloridas. Colorir por
+ * `qtyByStar` deixava só a estrela do estágio atual acesa depois de uma
+ * fusão, porque a fusão consome as cópias dos estágios anteriores.
+ */
 export function Pets() {
   const listRef = useRef<HTMLDivElement | null>(null);
   const { pushControls } = useGameControls();
@@ -182,13 +190,14 @@ export function Pets() {
                   <div className={styles.starsColumn}>
                     {Array.from({ length: PET_STAR_MAX }, (_, i) => {
                       const star = i + 1;
-                      const qty = entry.qtyByStar[i] ?? 0;
                       return (
                         <div key={star} className={styles.starChip}>
                           <Star
                             size={12}
                             className={
-                              qty > 0 ? styles.starFilled : styles.starEmpty
+                              star <= stats.stars
+                                ? styles.starFilled
+                                : styles.starEmpty
                             }
                           />
                         </div>

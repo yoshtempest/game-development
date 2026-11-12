@@ -114,15 +114,27 @@ export function useProjectile(
    * Não consome o token de cooldown: a explosão é UMA instância radial, já
    * paga pelo special ao abrir — o token existe para segurar o loop de 20ms,
    * não para limitar quantos alvos o mesmo golpe pode atingir.
+   *
+   * `options.strikeState` resolve o dano como se o jogador estivesse nesse
+   * estado. A explosão do "I Am Atomic" precisa disso: no instante do boom o
+   * jogador está em `finalizatingAtomic`, que não é estado de golpe de
+   * habilidade, e o projétil levaria o dano do básico em vez do special que o
+   * NPC leva. `options.damageKind` carrega a natureza da habilidade.
    */
   const strikeProjectiles = useCallback(
-    (strikes: ProjectileStrike[]) => {
+    (
+      strikes: ProjectileStrike[],
+      options?: { strikeState?: PlayerState; damageKind?: DamageKind },
+    ) => {
       if (strikes.length === 0) return;
       const multiplierById = new Map(strikes.map((s) => [s.id, s.multiplier]));
-      const state = playerStateRef.current;
+      const state = options?.strikeState ?? playerStateRef.current;
       // Uma resolução para a explosão inteira: o valor base é o mesmo para
       // todos os projéteis atingidos (o crítico é sorteado uma vez).
-      const base = resolveHit(state, { bypassCharge: true });
+      const base = resolveHit(state, {
+        bypassCharge: true,
+        damageKind: options?.damageKind,
+      });
       if (!base || base.damage <= 0) return;
 
       setProjectiles((prev) =>

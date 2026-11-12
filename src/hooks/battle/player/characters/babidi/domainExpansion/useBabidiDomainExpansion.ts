@@ -3,6 +3,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { BabidiDomainConstants } from "@/data/characters/babidi";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
+import { useMenuPause } from "@/hooks/battle/utilities/useMenuPause";
+import { usePausableTimers } from "@/hooks/battle/utilities/pausableTimers/usePausableTimers";
 
 export type MachineGamaState = {
   x: number;
@@ -39,6 +41,14 @@ export type BabidiDomainExpansionProps = {
   chargesMax: number;
 };
 
+/**
+ * Expansão de Domínio do babidi: o Machine Gama entra andando, o domínio dura
+ * 8s e, ao se desfazer, o jogador passa a controlar o Machine Gama.
+ *
+ * Pausa (menu aberto): a duração do domínio, o fade de quebra e a remoção do
+ * Machine Gama explodido são timers pausáveis, e a caminhada de entrada não
+ * avança — o domínio congela e retoma com o tempo que faltava.
+ */
 export function useBabidiDomainExpansion({
   player,
   setPlayer,
@@ -59,7 +69,8 @@ export function useBabidiDomainExpansion({
   const [machineGamaShield, setMachineGamaShield] = useState(0);
   const [machineGamaControl, setMachineGamaControl] = useState(false);
   const activeRef = useRef(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { isMenuOpen, isMenuOpenRef } = useMenuPause();
+  const timers = usePausableTimers(isMenuOpen);
   const animRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const chargesRef = useLatestRef(charges);
@@ -89,10 +100,10 @@ export function useBabidiDomainExpansion({
     // Jogador pula saindo de cima do Machine Gama.
     setPlayer((p) => ({ ...p, state: "jump" }));
     // Após a explosão, fade-out e remoção.
-    setTimeout(() => {
+    timers.schedule(() => {
       setMachineGama(null);
     }, 1200);
-  }, [setPlayer, shieldRef]);
+  }, [setPlayer, shieldRef, timers]);
 
   const press = useCallback(() => {
     if (activeRef.current) return;
@@ -126,6 +137,7 @@ export function useBabidiDomainExpansion({
 
     if (animRef.current) clearInterval(animRef.current);
     animRef.current = setInterval(() => {
+      if (isMenuOpenRef.current) return;
       setMachineGama((prev) => {
         if (!prev) return prev;
         if (prev.state === "walk") {
@@ -150,9 +162,9 @@ export function useBabidiDomainExpansion({
 
     // Duração do domínio: 8s. Ao fim, o domínio se desfaz (shattering), mas o
     // Machine Gama permanece em batalha em vez de desaparecer.
-    timerRef.current = setTimeout(() => {
+    timers.schedule(() => {
       setShattering(true);
-      setTimeout(() => {
+      timers.schedule(() => {
         activeRef.current = false;
         setActive(false);
         setShattering(false);
@@ -173,11 +185,13 @@ export function useBabidiDomainExpansion({
     setPlayer,
     playerMaxHp,
     shieldRef,
+    isMenuOpenRef,
+    timers,
   ]);
 
   useEffect(() => {
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
+      if (animRef.current) clearInterval(animRef.current);
     };
   }, []);
 
