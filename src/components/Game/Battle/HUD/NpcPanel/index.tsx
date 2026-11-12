@@ -18,6 +18,10 @@ type Props = {
   blockGauge?: number;
   blockLimit?: number;
   specialGauge?: number;
+  /** PvP: nome do oponente no lugar do nome do NPC. */
+  displayName?: string;
+  /** PvP: retrato do personagem do oponente no lugar da face do NPC. */
+  faceSrc?: string;
 };
 
 export function NPCHUDPanel({
@@ -30,6 +34,8 @@ export function NPCHUDPanel({
   blockGauge,
   blockLimit,
   specialGauge,
+  displayName,
+  faceSrc,
 }: Props) {
   const playerRank = `${srcRank(getRank(npcLevel ?? 1))}`;
   return (
@@ -38,7 +44,8 @@ export function NPCHUDPanel({
         <div className={`${styles.nameRow} ${styles.nameRowEnd}`}>
           {npcElementTypes && <ElementBadges types={npcElementTypes} />}
           <h2 className={`${"hudName"} ${styles.name}`}>
-            {getNpcDisplayName(npcType, isAlfa)} - Nv.{npcLevel}
+            {displayName ?? getNpcDisplayName(npcType, isAlfa)} - Nv.
+            {npcLevel}
           </h2>
         </div>
 
@@ -56,7 +63,7 @@ export function NPCHUDPanel({
         <img
           loading="lazy"
           decoding="async"
-          src={npcPath(`/${npcType}/face.svg`)}
+          src={faceSrc ?? npcPath(`/${npcType}/face.svg`)}
           alt="Npc HUD"
           className="hudImage"
         />

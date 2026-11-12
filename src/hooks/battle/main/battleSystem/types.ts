@@ -1,6 +1,7 @@
 import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
 import type { BabidiShieldSide } from "@/utils/types/character/babidi";
 import type { OnBeforeNpcHit } from "@/hooks/battle/npc/blocking/useBlocking";
+import type { PvpOpponentStats } from "@/hooks/battle/coop/types";
 
 export type BattleSystemProps = {
   playerX: number;
@@ -52,6 +53,11 @@ export type BattleSystemProps = {
   savedPlayerHP?: number | null;
   npcStatMultiplier?: number;
   npcArmorBonus?: number;
+  /**
+   * PvP: HP máximo, armadura e tipagem do oponente substituem as do dummy que
+   * ocupa o slot do NPC. `null` mantém o NPC da tabela.
+   */
+  npcOverride?: PvpOpponentStats | null;
   weapon?: YvelWeapon;
   /** Passiva O Abençoado: quando retorna true, o golpe letal reduz a vida a 1. */
   surviveLethalHitRef?: React.RefObject<() => boolean>;

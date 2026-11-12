@@ -13,6 +13,15 @@ export const BATTLE_SPAWN = {
     y: 550,
   },
 
+  /**
+   * Lado direito do duelo PvP (quem aceitou o x1). Mesmo ponto do NPC: é o
+   * slot que o oponente ocupa na tela do outro jogador.
+   */
+  pvpRight: {
+    x: 900,
+    y: 550,
+  },
+
   npc: {
     x: 900,
     y: 550,

@@ -591,6 +591,7 @@ export function useBattleCore({
     savedPlayerHP: savedPlayerHPRef.current,
     npcStatMultiplier,
     npcArmorBonus,
+    npcOverride: coop?.pvp ? coop.pvpOpponent : null,
     weapon: yvelWeapon,
     surviveLethalHitRef: honoredLethalRef,
   });

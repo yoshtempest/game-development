@@ -5,7 +5,6 @@ import { useOnline } from "@/contexts/OnlineContext";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useBattleSnapshot } from "@/hooks/battle/useBattleSnapshot";
 import { useInterpolatedSnapshot } from "@/hooks/battle/useInterpolatedSnapshot";
-import { useBattleInputRelay } from "@/hooks/battle/useBattleInputRelay";
 import { useBattleLifecycle } from "@/hooks/battle/useBattleLifecycle";
 import { applyPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import { clampX } from "@/gameRules/movement/clampX";
@@ -146,29 +145,6 @@ export function useOnlineBattle({
     remoteBattleSnapshot?.npc?.projectiles,
     setNpcProjectiles,
   ]);
-
-  // PvP do protótipo: o guest espelha o avatar do host (os dois controlam a
-  // mesma luta). No co-op isso está errado — cada jogador tem o próprio avatar,
-  // então o espelhamento de posição/HP fica restrito ao PvP.
-  if (isBattleGuest && isPvp) {
-    if (interpolatedRemoteSnapshot?.player) {
-      player.x = interpolatedRemoteSnapshot.player.x;
-      player.y = interpolatedRemoteSnapshot.player.y;
-    }
-    if (interpolatedRemoteSnapshot?.npc) {
-      npc.x = interpolatedRemoteSnapshot.npc.x;
-      npc.y = interpolatedRemoteSnapshot.npc.y;
-    }
-    if (remoteBattleSnapshot?.player) {
-      battle.playerHP = remoteBattleSnapshot.player.hp;
-    }
-    if (remoteBattleSnapshot?.npc) {
-      battle.npcHP = remoteBattleSnapshot.npc.hp;
-      if (remoteBattleSnapshot.npc.phase != null) {
-        battle.npcPhase = remoteBattleSnapshot.npc.phase;
-      }
-    }
-  }
 
   // ── Co-op: autoridade compartilhada ──────────────────────────────────────
   // O líder manda no NPC; o guest manda no próprio HP/posição. O guest adota o
@@ -346,18 +322,20 @@ export function useOnlineBattle({
     setPlayerRef,
   ]);
 
-  const [opponentHP, setOpponentHP] = useState(1000);
-  const [opponentMaxHP, setOpponentMaxHP] = useState(1000);
-  const lastAttackProcessedRef = useRef<string | null>(null);
-
   // Guest envia seu estado de batalha. `battlePlayerState` é distinto de
   // `playerState` (estado de exploração/sala) para o servidor não confundir os
   // dois canais. O payload vai num ref para o intervalo não ser recriado a
   // cada frame (o que o impedia de disparar).
+  // `maxHp`/`armor`/`level`/`name` alimentam o PvP: o oponente usa a armadura
+  // e o HP máximo deste jogador no próprio funil de dano e no HUD.
   const battlePlayerStateRef = useLatestRef({
     x: player.x,
     y: player.y,
     hp: battle.playerHP,
+    maxHp: battle.playerMaxHp,
+    armor: battle.totalArmor,
+    level: battle.char.level,
+    name: online.playerName,
     state: player.state,
     direction: player.battleDirection,
     character: player.character,
@@ -395,84 +373,12 @@ export function useOnlineBattle({
     battlePlayerStateRef,
   ]);
 
-  // Host: sincroniza HP do oponente a partir do guest (só PvP)
+  // Guest: solicita re-sync ao conectar (no duelo não há líder para responder)
   useEffect(() => {
-    if (!isPvp || !isBattleHost) return;
-    if (!remotePlayerState) return;
-    setOpponentMaxHP((prev) =>
-      prev === 1000 ? remotePlayerState.hp || 1000 : prev,
-    );
-    setOpponentHP((prev) =>
-      remotePlayerState.hp ? remotePlayerState.hp : prev,
-    );
-  }, [isPvp, isBattleHost, remotePlayerState]);
-
-  // Guest: oponente é o host (HP via snapshot, só PvP)
-  useEffect(() => {
-    if (!isPvp || isBattleHost) return;
-    if (!remoteBattleSnapshot?.player) return;
-    const hp = remoteBattleSnapshot.player.hp;
-    setOpponentMaxHP((prev) => (prev === 1000 ? hp || 1000 : prev));
-    setOpponentHP((prev) => (hp ? hp : prev));
-  }, [isPvp, isBattleHost, remoteBattleSnapshot]);
-
-  // Host: aplica dano ao oponente quando ataca em alcance (básico, só PvP)
-  useEffect(() => {
-    if (!isPvp || !isBattleHost || !online.connected) return;
-    if (!remotePlayerState) return;
-    const state = player.state;
-    if (state !== "attack" && state !== "preAttack") return;
-    const key = `${state}-${player.x}-${player.y}`;
-    if (lastAttackProcessedRef.current === key) return;
-    const dist = Math.hypot(
-      player.x - remotePlayerState.x,
-      player.y - remotePlayerState.y,
-    );
-    if (dist > 180) return;
-    lastAttackProcessedRef.current = key;
-    const amount = 15;
-    setOpponentHP((hp) => Math.max(0, hp - amount));
-    battleSocketSend({ type: "opponentDamage", amount });
-  }, [
-    isPvp,
-    isBattleHost,
-    online.connected,
-    player.state,
-    player.x,
-    player.y,
-    remotePlayerState,
-    battleSocketSend,
-  ]);
-
-  // Teste de dano: host pressiona 'P' para causar dano no oponente (só PvP)
-  useEffect(() => {
-    if (!isPvp || !isBattleHost || !online.connected) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.code !== "KeyP") return;
-      const amount = 10;
-      setOpponentHP((hp) => Math.max(0, hp - amount));
-      battleSocketSend({ type: "opponentDamage", amount });
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [isPvp, isBattleHost, online.connected, battleSocketSend]);
-
-  // Guest: recebe dano do host (só PvP)
-  useEffect(() => {
-    if (!isPvp || isBattleHost) return;
-    return battleSocketSubscribe("opponentDamage", (message) => {
-      const amount = Number(message.amount ?? 0);
-      if (!Number.isFinite(amount) || amount <= 0) return;
-      setOpponentHP((hp) => Math.max(0, hp - amount));
-    });
-  }, [isPvp, isBattleHost, battleSocketSubscribe]);
-
-  // Guest: solicita re-sync ao conectar
-  useEffect(() => {
-    if (isBattleHost) return;
+    if (isBattleHost || isPvp) return;
     if (!battleSocketConnected) return;
     battleSocketSend({ type: "requestSync" });
-  }, [isBattleHost, battleSocketConnected, battleSocketSend]);
+  }, [isBattleHost, isPvp, battleSocketConnected, battleSocketSend]);
 
   // Host: responde a requestSync com snapshot completo. Antes o effect
   // dependia de `lastMessage` + todo o estado da cena e reenviava o snapshot a
@@ -496,13 +402,6 @@ export function useOnlineBattle({
     return () => clearTimeout(t);
   }, [isBattleHost, battleSocketConnected, navigate]);
 
-  useBattleInputRelay({
-    isHost: isBattleHost,
-    send: battleSocketSend,
-    subscribe: battleSocketSubscribe,
-    enabled: isPvp,
-  });
-
   const { remoteResult, remoteRewards, notifyResult, clearRemoteResult } =
     useBattleLifecycle({
       isHost: isBattleHost,
@@ -516,7 +415,7 @@ export function useOnlineBattle({
   const handleRetryRef = useLatestRef(handleRetry);
   const coopDefeatRanRef = useRef(false);
   useEffect(() => {
-    if (isBattleHost) return;
+    if (isBattleHost || isPvp) return;
     const offRetry = battleSocketSubscribe("battleRetry", () => {
       coopDefeatRanRef.current = false;
       clearRemoteResult();
@@ -531,6 +430,7 @@ export function useOnlineBattle({
     };
   }, [
     isBattleHost,
+    isPvp,
     battleSocketSubscribe,
     clearRemoteResult,
     handleRetryRef,
@@ -579,21 +479,6 @@ export function useOnlineBattle({
     lastRewards,
   ]);
 
-  // PvP: vitória quando o oponente é derrotado
-  useEffect(() => {
-    if (!isBattleHost || !online.connected) return;
-    if (opponentHP <= 0) {
-      notifyResult("victory", { xpReward, lastRewards });
-    }
-  }, [
-    isBattleHost,
-    online.connected,
-    opponentHP,
-    notifyResult,
-    xpReward,
-    lastRewards,
-  ]);
-
   return {
     onlineConnected: online.connected,
     isBattleHost,
@@ -604,8 +489,6 @@ export function useOnlineBattle({
     remotePlayerState,
     interpRemotePlayer,
     guestHasSnapshot,
-    opponentHP,
-    opponentMaxHP,
     remoteResult,
     remoteRewards,
     notifyResult,

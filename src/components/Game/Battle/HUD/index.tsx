@@ -3,6 +3,7 @@ import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
 import { getRank, srcRank } from "@/gameRules/rank";
 import { getCharacterElementTypes } from "@/data/types/characterElementTypes";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
+import { playerPath } from "@/utils/paths";
 // import { CHARACTERS } from "@/data/options/characters";
 import { PlayerHUDPanel } from "./PlayerPanel";
 import { NPCHUDPanel } from "./NpcPanel";
@@ -22,6 +23,7 @@ export function BattleHUD({
   playerForm,
   machineGamaShield,
   machineGamaShieldMax,
+  opponent = null,
 }: BattleHudProps) {
   const { player } = usePlayer();
   const { progress } = useCharacterProgress();
@@ -55,7 +57,19 @@ export function BattleHUD({
         maxMana={battle.manaMax}
       />
 
-      {npcType && (
+      {opponent && (
+        <NPCHUDPanel
+          npcType={npcType ?? "dummy"}
+          npcLevel={opponent.level}
+          npcHP={battle.npcHP}
+          npcMaxHp={opponent.maxHp}
+          npcElementTypes={getCharacterElementTypes(opponent.character)}
+          displayName={opponent.name}
+          faceSrc={playerPath(`${opponent.character}/expressions/default.svg`)}
+        />
+      )}
+
+      {npcType && !opponent && (
         <NPCHUDPanel
           npcType={npcType}
           npcLevel={npcLevel}

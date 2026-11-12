@@ -393,6 +393,16 @@ export function useBattleScene({
       return;
     }
 
+    // PvP: cair encerra o round, não a batalha. Rewind fica de fora (voltaria
+    // o HP do proxy do oponente, que não é deste cliente); a Forma Vastolord é
+    // passiva do personagem e vale no duelo.
+    if (coop?.pvp) {
+      if (tryVastolordRevivalRef.current()) return;
+      setPlayer((p) => ({ ...p, state: "fallen" }));
+      coop.pvpDownRef.current();
+      return;
+    }
+
     if (performRewindRef.current()) {
       playSound("returningTime");
       battle.isEnding.current = true;
@@ -431,6 +441,13 @@ export function useBattleScene({
   });
 
   const onNpcDeathRef = useLatestRef(() => {
+    // PvP: o HP do proxy chegar a 0 não decide nada — quem cai avisa
+    // (`pvpDown`). Liberar o `isEnding` deixa a luta seguir se o oponente se
+    // salvar (Forma Vastolord) e o HP dele voltar pelo próximo pacote.
+    if (coop?.pvp) {
+      battle.isEnding.current = false;
+      return;
+    }
     if (npcType === "trueVandinha" && (battle.npcPhase ?? 1) === 1) {
       battle.isEnding.current = false;
       return;
@@ -857,17 +874,38 @@ export function useBattleScene({
   const coopAuthoritative = coop?.authoritative ?? true;
   const coopRemoteAlive = coop?.remoteAlive ?? true;
   const isCoopGuest = coopActive && !coopAuthoritative;
+  const isPvpRight = (coop?.pvp ?? false) && coop?.pvpSide === "right";
+  const needsCustomSpawn = isCoopGuest || isPvpRight;
+
+  /**
+   * Põe o jogador local no próprio spawn. `BATTLE_DEFAULT_STATE` manda todo
+   * mundo para `BATTLE_SPAWN.player`; o guest do co-op e o lado direito do
+   * duelo precisam de outro ponto, senão nascem sobre o parceiro/oponente.
+   */
+  const applyLocalSpawn = useCallback(() => {
+    if (isPvpRight) {
+      setPlayer((p) => ({
+        ...p,
+        x: BATTLE_SPAWN.pvpRight.x,
+        battleDirection: "left",
+      }));
+      return;
+    }
+    if (isCoopGuest) {
+      setPlayer((p) => ({ ...p, x: BATTLE_SPAWN.coopPlayer.x }));
+    }
+  }, [isPvpRight, isCoopGuest, setPlayer]);
 
   // O guest nasce no spawn do parceiro: `BATTLE_DEFAULT_STATE` (aplicado pelo
   // `setMode("battle")` no mount e pelo `resetBattleState` do retry) põe todo
   // mundo em `BATTLE_SPAWN.player`, e os dois avatares ficavam sobrepostos.
   const coopSpawnedRef = useRef(false);
   useEffect(() => {
-    if (!isCoopGuest || player.mode !== "battle") return;
+    if (!needsCustomSpawn || player.mode !== "battle") return;
     if (coopSpawnedRef.current) return;
     coopSpawnedRef.current = true;
-    setPlayer((p) => ({ ...p, x: BATTLE_SPAWN.coopPlayer.x }));
-  }, [isCoopGuest, player.mode, setPlayer]);
+    applyLocalSpawn();
+  }, [needsCustomSpawn, player.mode, applyLocalSpawn]);
 
   // Líder caído + parceiro caído = derrota da dupla. O `runDefeat` liga o
   // `showDefeat`, que o `useOnlineBattle` transforma no `battleEnd` do guest.
@@ -883,10 +921,8 @@ export function useBattleScene({
     setCoopSpectator(false);
     coopDefeatRanRef.current = false;
     handleRetryBase();
-    if (isCoopGuest) {
-      setPlayer((p) => ({ ...p, x: BATTLE_SPAWN.coopPlayer.x }));
-    }
-  }, [handleRetryBase, isCoopGuest, setPlayer]);
+    applyLocalSpawn();
+  }, [handleRetryBase, applyLocalSpawn]);
 
   /**
    * Derrota local disparada de fora (guest recebendo o `battleEnd` do líder):

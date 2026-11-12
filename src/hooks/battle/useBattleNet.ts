@@ -4,6 +4,7 @@ import { useBattleSocket } from "@/hooks/useBattleSocket";
 import { useInterpolatedRemotePlayer } from "@/hooks/battle/useInterpolatedRemotePlayer";
 import type { BattleSnapshot } from "@/hooks/battle/useBattleSnapshot";
 import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
+import type { DamageArmor } from "@/utils/types/battle/damageKind";
 
 /**
  * Sem pacote do parceiro há mais que isto, ele conta como fora da luta. O
@@ -26,7 +27,27 @@ export type BattleRemotePlayer = {
   state?: string;
   direction?: Direction;
   character?: string;
+  /** HP máximo do remoto (escala do proxy no PvP). */
+  maxHp?: number;
+  /** Armadura do remoto: o atacante do PvP a usa no funil de dano. */
+  armor?: DamageArmor;
+  level?: number;
+  name?: string;
 };
+
+function readArmor(value: unknown): DamageArmor | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const raw = value as Record<string, unknown>;
+  const physical = Number(raw.physical);
+  const magical = Number(raw.magical);
+  if (!Number.isFinite(physical) || !Number.isFinite(magical)) return undefined;
+  return { physical, magical };
+}
+
+function readOptionalNumber(value: unknown): number | undefined {
+  const n = Number(value);
+  return value == null || !Number.isFinite(n) ? undefined : n;
+}
 
 /**
  * Camada de rede da batalha, montada **antes** de `useBattleScene`.
@@ -40,9 +61,12 @@ export type BattleRemotePlayer = {
 export function useBattleNet({
   battleLeaderId,
   isPvp,
+  pvpOpponentId,
 }: {
   battleLeaderId?: string;
   isPvp: boolean;
+  /** Oponente do duelo, vindo do convite de x1 (não do host da sala). */
+  pvpOpponentId?: string;
 }) {
   const online = useOnline();
   const { connected, reconnecting, send, subscribe } = useBattleSocket(
@@ -50,21 +74,21 @@ export function useBattleNet({
     online.playerId,
   );
 
-  // PvP usa o host da sala; co-op usa quem iniciou a batalha.
-  const isHost = isPvp
-    ? online.room?.hostId === online.playerId
-    : online.connected &&
-      (battleLeaderId ?? online.playerId) === online.playerId;
-  const isGuest = online.connected && !isHost;
+  // O duelo é simétrico: cada cliente manda no próprio HP e não há líder.
+  // Co-op usa quem iniciou a batalha como líder.
+  const isHost =
+    !isPvp &&
+    online.connected &&
+    (battleLeaderId ?? online.playerId) === online.playerId;
+  const isGuest = !isPvp && online.connected && !isHost;
 
   // Quem manda `battlePlayerState` para este cliente.
   const remoteId = isPvp
-    ? isHost
-      ? online.room?.players.find((p) => p.id !== online.playerId)?.id
-      : online.room?.hostId
+    ? pvpOpponentId
     : isHost
       ? online.guildId
       : battleLeaderId;
+  const receivesPlayerState = isHost || isPvp;
 
   const [remotePlayer, setRemotePlayer] = useState<BattleRemotePlayer | null>(
     null,
@@ -89,7 +113,7 @@ export function useBattleNet({
   }, [online.connected]);
 
   useEffect(() => {
-    if (!isHost) return;
+    if (!receivesPlayerState) return;
     return subscribe("battlePlayerState", (msg) => {
       const from = msg.from as string | undefined;
       if (remoteId && from && from !== remoteId) return;
@@ -102,9 +126,13 @@ export function useBattleNet({
         state: msg.state as string | undefined,
         direction: msg.direction as Direction | undefined,
         character: msg.character as string | undefined,
+        maxHp: readOptionalNumber(msg.maxHp),
+        armor: readArmor(msg.armor),
+        level: readOptionalNumber(msg.level),
+        name: typeof msg.name === "string" ? msg.name : undefined,
       });
     });
-  }, [isHost, remoteId, subscribe]);
+  }, [receivesPlayerState, remoteId, subscribe]);
 
   useEffect(() => {
     if (!isGuest) return;
@@ -136,7 +164,9 @@ export function useBattleNet({
     remoteSeenAt != null
       ? now - remoteSeenAt < REMOTE_STALE_MS
       : now - mountedAt < REMOTE_JOIN_GRACE_MS;
-  const remoteHp = isHost ? remotePlayer?.hp : remoteSnapshot?.player?.hp;
+  const remoteHp = receivesPlayerState
+    ? remotePlayer?.hp
+    : remoteSnapshot?.player?.hp;
   const remoteAlive = remoteFresh && (remoteHp == null || remoteHp > 0);
 
   return {
@@ -155,6 +185,8 @@ export function useBattleNet({
     remoteSnapshot,
     remoteTarget,
     remoteAlive,
+    /** Chegou pacote do parceiro/oponente há pouco (queda de rede ≠ morte). */
+    remoteFresh,
   };
 }
 

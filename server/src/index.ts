@@ -208,6 +208,18 @@ const DISCONNECT_GRACE_MS = 10_000;
 
 const pendingRemovals = new Map<string, ReturnType<typeof setTimeout>>();
 
+/**
+ * Teto de um único `pvpDamage`. Folgado em relação ao maior golpe do jogo
+ * (habilidades com multiplicador alto em personagem nível máximo); serve para
+ * barrar valor forjado, não para balancear.
+ */
+const PVP_MAX_HIT = 50_000;
+
+/** Ticks de dano (sangramento, ORA, múltiplos summons) somam várias dezenas/s. */
+const PVP_MAX_HITS_PER_SECOND = 60;
+
+const pvpDamageTimes = new WeakMap<WebSocket, number[]>();
+
 function removalKey(roomId: string, playerId: string): string {
   return `${roomId}:${playerId}`;
 }
@@ -327,43 +339,24 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    if (msg.type === "input") {
-      const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
-      if (!room) return;
-
-      // Anti-cheat básico: rate limit de inputs por socket.
+    // Anti-cheat básico do duelo: cada cliente manda no próprio HP, então o
+    // dano que um jogador declara contra o outro é a superfície de trapaça.
+    // Valor absurdo ou rajada acima do que o jogo produz é descartado aqui.
+    if (msg.type === "pvpDamage") {
+      const amount = Number(msg.amount);
+      if (!Number.isFinite(amount) || amount <= 0 || amount > PVP_MAX_HIT) {
+        return;
+      }
       const now = Date.now();
-      const metaAny = meta as { inputTimes?: number[] };
-      if (!metaAny.inputTimes) metaAny.inputTimes = [];
-      metaAny.inputTimes = metaAny.inputTimes.filter((t) => now - t < 1000);
-      if (metaAny.inputTimes.length > 60) {
-        ws.send(
-          JSON.stringify({ type: "error", message: "rate limit excedido" }),
-        );
+      const times = (pvpDamageTimes.get(ws) ?? []).filter(
+        (t) => now - t < 1000,
+      );
+      if (times.length >= PVP_MAX_HITS_PER_SECOND) {
+        pvpDamageTimes.set(ws, times);
         return;
       }
-      metaAny.inputTimes.push(now);
-
-      const code = String(msg.code ?? "");
-      const key = String(msg.key ?? "");
-      if (!code || code.length > 20 || key.length > 20) {
-        ws.send(JSON.stringify({ type: "error", message: "input inválido" }));
-        return;
-      }
-      const payload = JSON.stringify({
-        type: "input",
-        roomId: room.id,
-        playerId: msg.playerId ?? meta.playerId,
-        action: msg.action,
-        code: msg.code,
-        key: msg.key,
-      });
-      for (const client of wss.clients) {
-        if (client.readyState !== WebSocket.OPEN) continue;
-        const m = socketMeta.get(client);
-        if (m?.roomId === room.id) client.send(payload);
-      }
-      return;
+      times.push(now);
+      pvpDamageTimes.set(ws, times);
     }
 
     if (
@@ -376,7 +369,10 @@ wss.on("connection", (ws) => {
       msg.type === "battleRetry" ||
       msg.type === "battleLeave" ||
       msg.type === "requestSync" ||
-      msg.type === "opponentDamage"
+      msg.type === "pvpDamage" ||
+      msg.type === "pvpDown" ||
+      msg.type === "pvpRematch" ||
+      msg.type === "pvpLeave"
     ) {
       const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
       if (!room) return;
@@ -408,6 +404,7 @@ wss.on("connection", (ws) => {
         fromName: msg.fromName,
         accept: msg.accept,
         amount: msg.amount,
+        bestOf: msg.bestOf,
       });
       for (const client of wss.clients) {
         if (client.readyState !== WebSocket.OPEN) continue;

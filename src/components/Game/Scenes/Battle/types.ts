@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import type { BattleMapConfig } from "@/utils/types/maps/battle";
+import type { PvpSide } from "@/hooks/battle/coop/types";
+import type { PvpBestOf } from "@/hooks/battle/pvp/usePvpMatch";
 
 export type Props = {
   npcType: string;
@@ -23,6 +25,12 @@ export type Props = {
   battleLeaderId?: string;
   /** PvP usa a lógica de oponente; batalhas contra NPC são co-op de guilda. */
   isPvp?: boolean;
+  /** Oponente do duelo (id do jogador na sala). */
+  pvpOpponentId?: string;
+  /** Lado da arena deste jogador no duelo. */
+  pvpSide?: PvpSide;
+  /** Tamanho da série do duelo. */
+  pvpBestOf?: PvpBestOf;
 };
 
 export type BattleBackgroundProps = {

@@ -44,6 +44,7 @@ import {
 import { usePlayerActions } from "@/contexts/PlayerContext";
 import { useTitles } from "@/contexts/TitleContext";
 import { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import { useLatestRef } from "@/hooks/useLatestRef";
 import { TrainingOverlay } from "@/components/Game/Battle/Overlay/Training";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
@@ -53,6 +54,13 @@ import { RemoteResultOverlay } from "@/components/Game/Battle/Overlay/RemoteResu
 import { ConnectionOverlay } from "@/components/Game/Battle/Overlay/Connection";
 import { OnlineBattleOverlay } from "@/components/Game/Battle/Overlay/OnlineBattle";
 import { CoopSpectatorOverlay } from "@/components/Game/Battle/Overlay/CoopSpectator";
+import { PvpMatchOverlay } from "@/components/Game/Battle/Overlay/PvpMatch";
+import {
+  usePvpOpponentStats,
+  usePvpProxy,
+} from "@/hooks/battle/pvp/usePvpProxy";
+import { usePvpMatch } from "@/hooks/battle/pvp/usePvpMatch";
+import { CHARACTERS } from "@/data/characters/list";
 import { DrikaSigiloOverlay } from "@/components/Game/Battle/Overlay/DrikaSigilo";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
 import { playerAbilityPath } from "@/utils/paths";
@@ -72,6 +80,9 @@ export function BattleScene(props: Props) {
     isAlfa = false,
     battleLeaderId,
     isPvp = false,
+    pvpOpponentId,
+    pvpSide = "left",
+    pvpBestOf = 1,
   } = props;
 
   // A cutscene da TrueVandinha fornece o `dialogueOpen` que o `useBattleScene`
@@ -97,8 +108,7 @@ export function BattleScene(props: Props) {
   // líder enxerga o parceiro como alvo, e o guest precisa saber que não tem
   // autoridade já no primeiro tick.
   const online = useOnline();
-  const battleNet = useBattleNet({ battleLeaderId, isPvp });
-  const { isGuest: netIsGuest } = battleNet;
+  const battleNet = useBattleNet({ battleLeaderId, isPvp, pvpOpponentId });
   const battleSocketSend = battleNet.send;
 
   const sendNpcHit = useCallback(
@@ -112,16 +122,25 @@ export function BattleScene(props: Props) {
   // resolve localmente os golpes endereçados a ele.
   const coopActive =
     online.connected && !isPvp && (props.playerCount ?? 1) > 1;
+  const pvpOpponent = usePvpOpponentStats(isPvp ? battleNet.remotePlayer : null);
+  const pvpDownRef = useRef<() => void>(() => {});
   const coop = useMemo<BattleCoop>(
     () => ({
       active: coopActive,
-      authoritative: !battleNet.isGuest,
+      authoritative: !battleNet.isGuest && !isPvp,
       localPlayerId: online.playerId,
       remoteTarget: battleNet.remoteTarget,
       remoteAlive: battleNet.remoteAlive,
       sendNpcHit,
+      pvp: isPvp,
+      pvpSide,
+      pvpOpponent,
+      pvpDownRef,
     }),
     [
+      isPvp,
+      pvpSide,
+      pvpOpponent,
       coopActive,
       battleNet.isGuest,
       battleNet.remoteTarget,
@@ -326,8 +345,6 @@ export function BattleScene(props: Props) {
     remotePlayerState,
     interpRemotePlayer,
     guestHasSnapshot,
-    opponentHP,
-    opponentMaxHP,
     remoteResult,
     remoteRewards,
     handleRetrySync,
@@ -338,9 +355,47 @@ export function BattleScene(props: Props) {
     interpolatedRemoteSnapshot,
   } = onlineBattle;
 
-  // No PvP os dois controlam a mesma luta (o guest espelha o host). No co-op o
-  // guest tem avatar próprio e precisa de controle para andar/atacar.
-  if (netIsGuest && isPvp) {
+  // ── Duelo PvP ──────────────────────────────────────────────────────────
+  // Cada jogador controla o próprio avatar; o NPC local é o proxy do oponente.
+  const pvpOpponentLabel =
+    battleNet.remotePlayer?.name ??
+    online.room?.players.find((p) => p.id === pvpOpponentId)?.name ??
+    "Oponente";
+  const pvpMatch = usePvpMatch({
+    enabled: isPvp,
+    bestOf: pvpBestOf,
+    playerId: online.playerId,
+    opponentId: pvpOpponentId ?? null,
+    opponentSeen: battleNet.remotePlayer != null,
+    opponentFresh: battleNet.remoteFresh,
+    resetRound: handleRetry,
+    onLeave: () => void navigate(-1),
+    send: battleSocketSend,
+    subscribe: battleNet.subscribe,
+  });
+  pvpDownRef.current = pvpMatch.reportLocalDown;
+
+  usePvpProxy({
+    enabled: isPvp,
+    playerId: online.playerId,
+    opponentId: pvpOpponentId ?? null,
+    remote: battleNet.remotePlayer,
+    interp: battleNet.interpRemotePlayer,
+    npc,
+    battle,
+    playerX: player.x,
+    acceptingDamage: pvpMatch.phase === "fighting",
+    send: battleSocketSend,
+    subscribe: battleNet.subscribe,
+  });
+
+  // A intro "jogador × NPC" mostraria o dummy que ocupa o slot do oponente.
+  const skipIntroRef = useLatestRef(skipIntro);
+  useEffect(() => {
+    if (isPvp) skipIntroRef.current();
+  }, [isPvp, skipIntroRef]);
+
+  if (isPvp && pvpMatch.phase !== "fighting") {
     controlsDisabled = true;
   }
   // Espectador do co-op: caído, sem agir até a dupla vencer ou cair.
@@ -470,6 +525,7 @@ export function BattleScene(props: Props) {
   // filhos pesados, evitando re-render quando apenas estado não relacionado muda.
   const battleEntitiesProps = useMemo(
     () => ({
+      hideMainNpc: isPvp,
       npc,
       player,
       battle,
@@ -527,6 +583,7 @@ export function BattleScene(props: Props) {
       hakai,
     }),
     [
+      isPvp,
       npc,
       player,
       battle,
@@ -584,8 +641,27 @@ export function BattleScene(props: Props) {
     ],
   );
 
+  const opponentName = pvpOpponentLabel;
+  const opponentCharacterRaw = battleNet.remotePlayer?.character;
+  const opponentCharacter = CHARACTERS.find((c) => c === opponentCharacterRaw);
+  const opponentLevel = battleNet.remotePlayer?.level ?? 1;
+  const opponentMaxHp = pvpOpponent?.maxHp;
+  const hudOpponent = useMemo(
+    () =>
+      isPvp && opponentCharacter && opponentMaxHp
+        ? {
+            name: opponentName,
+            character: opponentCharacter,
+            level: opponentLevel,
+            maxHp: opponentMaxHp,
+          }
+        : null,
+    [isPvp, opponentName, opponentCharacter, opponentLevel, opponentMaxHp],
+  );
+
   const battleHudProps = useMemo(
     () => ({
+      opponent: hudOpponent,
       battle,
       npcStats,
       npcType,
@@ -602,6 +678,7 @@ export function BattleScene(props: Props) {
           : undefined,
     }),
     [
+      hudOpponent,
       battle,
       npcStats,
       npcType,
@@ -615,15 +692,18 @@ export function BattleScene(props: Props) {
     ],
   );
 
-  // Quem é o "outro" jogador: no PvP é o host da sala; no co-op de guilda é
-  // quem iniciou a batalha (o líder), não necessariamente o host da sala.
-  const remotePlayerId = isPvp ? online.room?.hostId : battleLeaderId;
+  // Quem é o "outro" jogador: no PvP é o oponente do convite; no co-op de
+  // guilda é quem iniciou a batalha (o líder), não necessariamente o host.
+  const remotePlayerId = isPvp ? pvpOpponentId : battleLeaderId;
   const remoteCharacter =
     online.room?.players.find((p) => p.id === remotePlayerId)?.character ??
     online.room?.players.find((p) => p.id !== online.playerId)?.character ??
     "drika";
 
-  const secondPlayer = isBattleHost
+  // Líder do co-op e os dois lados do duelo recebem o estado do outro jogador
+  // direto (`battlePlayerState`); o guest do co-op o lê do snapshot do líder.
+  const secondPlayer =
+    isBattleHost || isPvp
     ? remotePlayerState
       ? {
           ...remotePlayerState,
@@ -969,13 +1049,13 @@ export function BattleScene(props: Props) {
       />
 
       <OnlineBattleOverlay
-        onlineConnected={online.connected}
-        opponentHP={opponentHP}
-        opponentMaxHP={opponentMaxHP}
         isBattleGuest={isBattleGuest}
         guestHasSnapshot={guestHasSnapshot}
-        isPvp={isPvp}
       />
+
+      {isPvp && (
+        <PvpMatchOverlay match={pvpMatch} opponentName={pvpOpponentLabel} />
+      )}
 
       {props.children}
     </div>

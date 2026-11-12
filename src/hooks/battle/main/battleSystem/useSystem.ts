@@ -93,6 +93,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     savedPlayerHP,
     npcStatMultiplier = 1,
     npcArmorBonus = 0,
+    npcOverride = null,
     weapon,
     surviveLethalHitRef,
     machineGamaShieldRef,
@@ -123,13 +124,22 @@ export function useBattleSystem(props: BattleSystemProps) {
     titleBonus,
     getElementDamageBonus,
     playerMaxHp,
-    npcMaxHp,
-    npcArmor,
+    npcMaxHp: tableNpcMaxHp,
+    npcArmor: tableNpcArmor,
     critRate,
     HITS_TO_SPECIAL,
     hasPet,
     equippedWeaponId,
   } = stats;
+
+  // PvP: o "NPC" é o oponente. Todo o funil (básico, special, habilidades,
+  // bloqueio do NPC) lê estes três valores, então o override num ponto só
+  // basta para o golpe respeitar a armadura e a tipagem de quem apanha.
+  const npcMaxHp = npcOverride?.maxHp ?? tableNpcMaxHp;
+  const npcArmor = npcOverride?.armor ?? tableNpcArmor;
+  const npcElementTypes = npcOverride
+    ? npcOverride.elementTypes
+    : getNpcElementTypes(npcType);
 
   /**
    * Vampirismo efetivo da batalha = equipamento + o universal da Forma
@@ -164,7 +174,6 @@ export function useBattleSystem(props: BattleSystemProps) {
   const behavior = (battleBehaviors[player.character] ||
     battleBehaviors.default)!;
 
-  const npcElementTypes = getNpcElementTypes(npcType);
 
   const elementDamageBonus = getElementDamageBonus(npcElementTypes);
 

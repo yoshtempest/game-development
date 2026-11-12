@@ -1,17 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useOnline } from "@/contexts/OnlineContext";
 import { usePlayer } from "@/contexts/PlayerContext";
-import { useBattleSocket } from "@/hooks/useBattleSocket";
+import {
+  useBattleSocket,
+  type BattleSocketMessage,
+} from "@/hooks/useBattleSocket";
 import { ChoiceBox } from "@/components/Game/Interactions/ChoiceBox";
 import { playerPath } from "@/utils/paths";
+import {
+  PVP_BEST_OF_OPTIONS,
+  parsePvpBestOf,
+  type PvpBestOf,
+} from "@/hooks/battle/pvp/usePvpMatch";
 import { EnterListener, CancelListener } from "./listeners";
 import styles from "./styles.module.css";
 
 type ChoiceState =
   | null
   | { kind: "interact"; targetId: string; targetName: string }
+  | { kind: "pvpBestOf"; targetId: string; targetName: string }
   | { kind: "guildInvite"; fromId: string; fromName: string };
+
+/** Rota do duelo; o state leva oponente, lado e tamanho da série. */
+const PVP_ROUTE = "/battle/pvp";
 
 export function SocialOverlay() {
   const navigate = useNavigate();
@@ -19,7 +31,7 @@ export function SocialOverlay() {
   const playerCtx = usePlayer();
   const player = playerCtx.player;
   const location = useLocation();
-  const { send, lastMessage } = useBattleSocket(online.roomId, online.playerId);
+  const { send, subscribe } = useBattleSocket(online.roomId, online.playerId);
 
   const [choice, setChoice] = useState<ChoiceState>(null);
   const [pendingInvite, setPendingInvite] = useState<{
@@ -29,7 +41,10 @@ export function SocialOverlay() {
   const [pendingPvp, setPendingPvp] = useState<{
     fromId: string;
     fromName: string;
+    bestOf: PvpBestOf;
   } | null>(null);
+  /** x1 que eu mandei e ainda espera resposta (o aceite chega sem `bestOf`). */
+  const sentPvpRef = useRef<{ to: string; bestOf: PvpBestOf } | null>(null);
 
   // Detecta jogador remoto à frente
   const frontTile = (() => {
@@ -48,44 +63,52 @@ export function SocialOverlay() {
       p.y === frontTile.y,
   );
 
-  // Recebe convite de x1
+  // Convites e respostas chegam por assinatura: com `lastMessage` um
+  // `roomState` logo depois apagava o convite antes de a ChoiceBox abrir.
+  const playerId = online.playerId;
+  const setGuildId = online.setGuildId;
   useEffect(() => {
-    if (!lastMessage || lastMessage.type !== "pvpInvite") return;
-    if (lastMessage.to !== online.playerId) return;
-    setPendingPvp({
-      fromId: String(lastMessage.from),
-      fromName: String((lastMessage.fromName as string) ?? "Jogador"),
+    const forMe = (msg: BattleSocketMessage) => msg.to === playerId;
+    const offPvpInvite = subscribe("pvpInvite", (msg) => {
+      if (!forMe(msg)) return;
+      setPendingPvp({
+        fromId: String(msg.from),
+        fromName: String((msg.fromName as string) ?? "Jogador"),
+        bestOf: parsePvpBestOf(msg.bestOf),
+      });
     });
-  }, [lastMessage, online.playerId]);
-
-  // Recebe convite de guilda
-  useEffect(() => {
-    if (!lastMessage || lastMessage.type !== "guildInvite") return;
-    if (lastMessage.to !== online.playerId) return;
-    setPendingInvite({
-      fromId: String(lastMessage.from),
-      fromName: (lastMessage.fromName as string) ?? "Jogador",
+    const offGuildInvite = subscribe("guildInvite", (msg) => {
+      if (!forMe(msg)) return;
+      setPendingInvite({
+        fromId: String(msg.from),
+        fromName: (msg.fromName as string) ?? "Jogador",
+      });
     });
-  }, [lastMessage, online.playerId]);
-
-  // Recebe resposta de convite
-  useEffect(() => {
-    if (!lastMessage || lastMessage.type !== "guildResponse") return;
-    if (lastMessage.to !== online.playerId) return;
-    if (lastMessage.accept) {
-      const mateId = String(lastMessage.from);
-      online.setGuildId(mateId);
-    }
-  }, [lastMessage, online]);
-
-  // Recebe resposta de x1
-  useEffect(() => {
-    if (!lastMessage || lastMessage.type !== "pvpResponse") return;
-    if (lastMessage.to !== online.playerId) return;
-    if (lastMessage.accept) {
-      void navigate("/battle/pvp");
-    }
-  }, [lastMessage, online.playerId, navigate]);
+    const offGuildResponse = subscribe("guildResponse", (msg) => {
+      if (!forMe(msg) || !msg.accept) return;
+      setGuildId(String(msg.from));
+    });
+    const offPvpResponse = subscribe("pvpResponse", (msg) => {
+      if (!forMe(msg)) return;
+      const sent = sentPvpRef.current;
+      if (!sent || sent.to !== String(msg.from)) return;
+      sentPvpRef.current = null;
+      if (!msg.accept) return;
+      void navigate(PVP_ROUTE, {
+        state: {
+          pvpOpponentId: sent.to,
+          pvpSide: "left",
+          pvpBestOf: sent.bestOf,
+        },
+      });
+    });
+    return () => {
+      offPvpInvite();
+      offGuildInvite();
+      offGuildResponse();
+      offPvpResponse();
+    };
+  }, [subscribe, playerId, setGuildId, navigate]);
 
   if (!online.connected) return null;
 
@@ -133,13 +156,34 @@ export function SocialOverlay() {
                 fromName: online.playerName,
               });
             } else if (idx === 2) {
-              send({
-                type: "pvpInvite",
-                to: choice.targetId,
-                from: online.playerId,
-                fromName: online.playerName,
+              setChoice({
+                kind: "pvpBestOf",
+                targetId: choice.targetId,
+                targetName: choice.targetName,
               });
+              return;
             }
+            setChoice(null);
+          }}
+        />
+      )}
+
+      {choice?.kind === "pvpBestOf" && (
+        <ChoiceBox
+          prompt={`x1 contra ${choice.targetName}`}
+          options={PVP_BEST_OF_OPTIONS.map((n) =>
+            n === 1 ? "Melhor de 1" : `Melhor de ${n}`,
+          )}
+          onSelect={(idx) => {
+            const bestOf = PVP_BEST_OF_OPTIONS[idx] ?? 1;
+            sentPvpRef.current = { to: choice.targetId, bestOf };
+            send({
+              type: "pvpInvite",
+              to: choice.targetId,
+              from: online.playerId,
+              fromName: online.playerName,
+              bestOf,
+            });
             setChoice(null);
           }}
         />
@@ -164,7 +208,11 @@ export function SocialOverlay() {
 
       {pendingPvp && (
         <ChoiceBox
-          prompt={`${pendingPvp.fromName} chamou você para um x1`}
+          prompt={`${pendingPvp.fromName} chamou você para um x1 (${
+            pendingPvp.bestOf === 1
+              ? "melhor de 1"
+              : `melhor de ${pendingPvp.bestOf}`
+          })`}
           options={["Aceitar", "Recusar"]}
           onSelect={(idx) => {
             send({
@@ -173,7 +221,15 @@ export function SocialOverlay() {
               from: online.playerId,
               accept: idx === 0,
             });
-            if (idx === 0) void navigate("/battle/pvp");
+            if (idx === 0) {
+              void navigate(PVP_ROUTE, {
+                state: {
+                  pvpOpponentId: pendingPvp.fromId,
+                  pvpSide: "right",
+                  pvpBestOf: pendingPvp.bestOf,
+                },
+              });
+            }
             setPendingPvp(null);
           }}
         />

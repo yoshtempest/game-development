@@ -1,3 +1,4 @@
+import type { CharacterId } from "@/data/characters/list";
 type BattleHUDState = {
   playerHP: number;
   playerMaxHp: number;
@@ -19,6 +20,14 @@ type NpcStats = {
   damage: number;
 };
 
+/** Oponente do duelo PvP, exibido no painel que normalmente é do NPC. */
+export type BattleHudOpponent = {
+  name: string;
+  character: CharacterId;
+  level: number;
+  maxHp: number;
+};
+
 export type BattleHudProps = {
   battle: BattleHUDState;
   npcStats: NpcStats;
@@ -34,4 +43,5 @@ export type BattleHudProps = {
   /** Escudo Machine Gama (vida extra) do Babidi. */
   machineGamaShield?: number;
   machineGamaShieldMax?: number;
+  opponent?: BattleHudOpponent | null;
 };

@@ -7,6 +7,8 @@ import { BattleNavbar } from "@/components/Game/Navbar/BattleNavbar";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { useFlags } from "@/contexts/FlagContext";
 import { useOnline } from "@/contexts/OnlineContext";
+import { parsePvpBestOf } from "@/hooks/battle/pvp/usePvpMatch";
+import type { PvpSide } from "@/hooks/battle/coop/types";
 import {
   BATTLE_CONFIGS,
   ROUTE_TO_BATTLE_KEY,
@@ -49,6 +51,14 @@ export default function BattlePage() {
   const originRoute = (location.state as { battleOrigin?: string } | null)
     ?.battleOrigin;
   const isAlfa = (location.state as { alfa?: boolean } | null)?.alfa === true;
+  const pvpState = location.state as {
+    pvpOpponentId?: string;
+    pvpSide?: PvpSide;
+    pvpBestOf?: number;
+  } | null;
+  const pvpOpponentId = pvpState?.pvpOpponentId;
+  const pvpSide: PvpSide = pvpState?.pvpSide === "right" ? "right" : "left";
+  const pvpBestOf = parsePvpBestOf(pvpState?.pvpBestOf);
   const npcLevel = (location.state as { npcLevel?: number } | null)?.npcLevel;
   const background =
     (originRoute ? getBattleBackgroundFromRoute(originRoute) : "") ||
@@ -62,6 +72,12 @@ export default function BattlePage() {
     return <div>Batalha não encontrada</div>;
   }
 
+  // O duelo só existe a partir de um x1 aceito: sem oponente (URL digitada,
+  // reload sem state) não há contra quem lutar.
+  if (isPvp && (!online.connected || !pvpOpponentId)) {
+    return <div>Duelo não encontrado — chame alguém pro x1 no modo online.</div>;
+  }
+
   return (
     <BattleProviders>
       <BattleScene
@@ -69,6 +85,9 @@ export default function BattlePage() {
         playerCount={playerCount}
         battleLeaderId={battleLeaderId}
         isPvp={isPvp}
+        pvpOpponentId={pvpOpponentId}
+        pvpSide={pvpSide}
+        pvpBestOf={pvpBestOf}
         npcLevel={npcLevel}
         redirectTo={config.redirectTo}
         onVictory={handleVictory}

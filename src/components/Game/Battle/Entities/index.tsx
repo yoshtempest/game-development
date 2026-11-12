@@ -90,6 +90,7 @@ export function BattleEntities({
   purpleHole = false,
   hakai = false,
   sigiloPhase,
+  hideMainNpc = false,
 }: Props & {
   sphere?: import("@/utils/types/character/natsuki").NatsukiSphere | null;
 }) {
@@ -114,7 +115,7 @@ export function BattleEntities({
         state={npc.state}
         direction={npc.direction}
         battle={battle}
-        isHidden={activeBombIds.has("main")}
+        isHidden={hideMainNpc || activeBombIds.has("main")}
         isUnderground={npc.hidden ?? false}
         isAlfa={isAlfa}
         cutInEnemie={cutInEnemie}

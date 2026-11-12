@@ -1,6 +1,10 @@
-import type { DamageKind } from "@/utils/types/battle/damageKind";
+import type {
+  DamageArmor,
+  DamageKind,
+} from "@/utils/types/battle/damageKind";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
+import type { ElementType } from "@/utils/types/battle/element";
 
 /**
  * Natureza do golpe do NPC que chega ao dono do alvo remoto. O líder decide
@@ -45,6 +49,21 @@ export type NpcHitIntent = {
   status?: NewPlayerStatus;
 };
 
+/** Lado da arena no duelo: quem convidou nasce à esquerda. */
+export type PvpSide = "left" | "right";
+
+/**
+ * Atributos defensivos do oponente no PvP. No duelo o NPC local é só um
+ * *proxy* do outro jogador, então o funil de dano do atacante precisa da
+ * armadura, do HP máximo e da tipagem **dele** — não das do dummy que ocupa o
+ * slot do NPC.
+ */
+export type PvpOpponentStats = {
+  maxHp: number;
+  armor: DamageArmor;
+  elementTypes: readonly ElementType[];
+};
+
 /**
  * Contrato entre a cena e a rede. `authoritative` só é true no líder: o guest
  * não roda IA nem simula projéteis, apenas espelha o NPC e resolve os golpes
@@ -62,4 +81,14 @@ export type BattleCoop = {
   /** O outro jogador ainda está de pé (define espectador × derrota). */
   remoteAlive: boolean;
   sendNpcHit: (hit: NpcHitIntent) => void;
+  /** Duelo PvP: o NPC local é o proxy do oponente (sem IA, sem recompensa). */
+  pvp: boolean;
+  pvpSide: PvpSide;
+  /** Override do NPC no funil de dano enquanto o oponente for conhecido. */
+  pvpOpponent: PvpOpponentStats | null;
+  /**
+   * Avisa a partida que o jogador local caiu no round. Ref porque o controle
+   * da partida (`usePvpMatch`) só existe depois da cena montada.
+   */
+  pvpDownRef: { current: () => void };
 };

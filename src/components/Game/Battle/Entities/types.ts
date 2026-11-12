@@ -135,4 +135,9 @@ export type Props = {
   purpleHole?: boolean;
   hakai?: boolean;
   sigiloPhase?: string;
+  /**
+   * PvP: o NPC é o proxy do oponente. A colisão/hitbox continuam no NPC, mas
+   * quem aparece na tela é o avatar do outro jogador.
+   */
+  hideMainNpc?: boolean;
 };

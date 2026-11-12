@@ -313,11 +313,12 @@ DamageKind (physical | magical | true) + DamageArmor (physical | magical)
 - **Summons**: a armadura é resolvida no spawn e guardada em
   `SummonedNpc.armor` (inclusive no frame do rewind/replay). Dano entre summons
   usa a do alvo, não a do NPC principal.
-- **Dano verdadeiro está pronto e sem uso**: nenhum golpe do jogo passa
-  `"true"` pelo funil hoje. A Expansão de Domínio declara `damageType: "true"`
-  no dado, mas é um _execute_ (`setNpcHP(0)`) — não existe conta de dano para a
-  armadura reduzir. Tratar a Expansão como "dano verdadeiro" é leitura errada
-  do que o código faz.
+- **Dano verdadeiro só aparece no PvP**: nenhum golpe de NPC ou habilidade
+  passa `"true"` pelo funil. O único uso é o receptor do duelo
+  (`usePvpProxy` → `battle.damagePlayer(amount, "true")`), porque a armadura
+  do defensor já foi aplicada no funil do atacante. A Expansão de Domínio
+  declara `damageType: "true"` no dado, mas é um _execute_ (`setNpcHP(0)`) —
+  não existe conta de dano para a armadura reduzir.
 - **Exceções intencionais** (não são armadura que o golpe deveria furar):
   execute da Expansão de Domínio, reflexo e o reflect do Babidi, ticks de
   sangramento e o dummy de treino.
@@ -339,6 +340,37 @@ Todo laser e feixe semelhante (Maugrelo, Vastolord, Kamehameha) obedece:
 A faixa horizontal de acerto é sempre `[min(fromX,toX), max(fromX,toX)]`,
 independente da ordem dos extremos. Novo laser = novo tipo de feixe seguindo
 estas três regras (origem, dano+push, clip-path de criação).
+
+## Online: co-op 2v1 e duelo PvP
+
+O `server/` repassa mensagens por sala (`relayRoom`); a decisão é do cliente.
+`useBattleNet` (montado **antes** de `useBattleScene`) é o único dono do
+socket da batalha; `useOnlineBattle` cuida do resto depois da cena. Eventos
+(dano, hit, fim, retry, convite) são lidos por `subscribe(type, …)` — nunca por
+`lastMessage`, que guarda só a última mensagem e já engoliu `battleEnd`,
+`battleStart` e convites.
+
+- **Co-op 2v1**: o líder (quem entrou na batalha) roda a IA do NPC e manda
+  snapshot; o guest espelha o NPC e resolve os golpes endereçados a ele
+  (`battleNpcHit`). Quem cai vira espectador; a derrota só vem com os dois no
+  chão (o líder decide e manda `battleEnd`). Parceiro sem pacote há 4 s
+  (`REMOTE_STALE_MS`) conta como fora da luta.
+- **PvP** (`/battle/pvp`, state `{ pvpOpponentId, pvpSide, pvpBestOf }`): não
+  há líder. O NPC local é **proxy** do oponente — IA desligada, posição/HP
+  espelhados do `battlePlayerState` dele, sprite trocado pelo avatar
+  (`hideMainNpc`). Assim todo caminho de dano existente (básico, special,
+  habilidades, summons, pet, sangramento) acerta o oponente sem código novo:
+  a queda de HP do proxy vira `pvpDamage` para o dono do HP
+  (`hooks/battle/pvp/usePvpProxy.ts`). Armadura, HP máximo e tipagem do
+  oponente entram no funil via `BattleCoop.pvpOpponent` → `npcOverride` no
+  `useBattleSystem` — não crie um segundo funil de dano para PvP.
+- Série/rounds/revanche/W.O. em `usePvpMatch`: quem cai manda `pvpDown` com o
+  número do round e os dois contam dos mesmos eventos. Morte e "morte do NPC"
+  têm ramo PvP em `useScene` (sem recompensa, sem rewind, sem penalidade).
+- `server/` valida `pvpDamage` (valor e taxa); mensagem nova de batalha
+  precisa entrar na whitelist do relay em `server/src/index.ts`.
+- Sala e guilda ficam no `sessionStorage` da aba e voltam após reload; o
+  servidor só tira o jogador da sala 10 s depois do último socket fechar.
 
 ## Convenções
 
