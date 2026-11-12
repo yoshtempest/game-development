@@ -3,6 +3,12 @@ import { useState, useRef, useEffect } from "react";
 import { useChargeParticles } from "@/hooks/battle/charge/useParticles";
 import { useChargeDash } from "@/hooks/battle/charge/dash/useDash";
 import { CHARGE_TIME } from "@/data/battle/charge";
+import {
+  YVEL_CHARGE_FREEZE_MAX_MS,
+  YVEL_CHARGE_FREEZE_TIME_ID,
+  pickUsefulYvelWeapon,
+} from "@/data/characters/yvel/yvelWeapons";
+import { applyTime, clearTime, freezeWorldSpec } from "@/gameRules/battle/time";
 
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { logPlay, logStop } from "@/utils/replay/audioEventLog";
@@ -41,6 +47,7 @@ export function useChargeAttack(props: Props) {
     playerMaxHp,
     vampirism,
     weapon,
+    equipWeapon,
     vastolordMultiplierRef,
   } = props;
 
@@ -78,6 +85,20 @@ export function useChargeAttack(props: Props) {
     vastolordMultiplierRef,
   });
 
+  /**
+   * Carga do yvel (issue #217): enquanto ele carrega, o mundo inteiro congela
+   * pela regra de time (NPC, summons, projéteis...) — o player segue livre
+   * porque não é `TimeKind`. Soltar, cancelar ou desmontar sempre limpa o
+   * efeito; o teto `YVEL_CHARGE_FREEZE_MAX_MS` cobre o caso de segurar
+   * indefinidamente.
+   */
+  const freezesWorld = player.character === "yvel";
+
+  function unfreezeWorld() {
+    if (!freezesWorld) return;
+    timeRef.current = clearTime(timeRef.current, YVEL_CHARGE_FREEZE_TIME_ID);
+  }
+
   const chargeStartRef = useRef(0);
   const isHoldingRef = useRef(false);
 
@@ -93,6 +114,12 @@ export function useChargeAttack(props: Props) {
     playSound("chargingAttack", true);
     logPlay("chargingAttack", true);
     setPlayerState("charging");
+    if (freezesWorld) {
+      timeRef.current = applyTime(
+        timeRef.current,
+        freezeWorldSpec(YVEL_CHARGE_FREEZE_TIME_ID, YVEL_CHARGE_FREEZE_MAX_MS),
+      );
+    }
   }
 
   function cancelCharge() {
@@ -101,6 +128,7 @@ export function useChargeAttack(props: Props) {
     stopSound("chargingAttack");
     logStop("chargingAttack");
     isHoldingRef.current = false;
+    unfreezeWorld();
     setPlayerState("idle");
   }
 
@@ -115,8 +143,17 @@ export function useChargeAttack(props: Props) {
       logStop("chargingAttack");
       playSound("chargeAttack");
       logPlay("chargeAttack");
+      unfreezeWorld();
       dashHook.execute(player);
       isHoldingRef.current = false;
+      if (weapon && equipWeapon) {
+        equipWeapon(
+          pickUsefulYvelWeapon(
+            Math.hypot(npcX - player.x, npcY - player.y),
+            weapon,
+          ),
+        );
+      }
     } else {
       cancelCharge();
     }

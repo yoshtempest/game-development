@@ -365,6 +365,7 @@ export function useBattleCombat({
     npcLevel,
     progress,
     weapon: yvelWeapon,
+    equipYvelWeapon,
     summons,
     setSummons,
     giveSummonRewards,
