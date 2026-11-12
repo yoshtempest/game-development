@@ -942,6 +942,8 @@ export function useBattleCombat({
     playSound,
     onUsed: onAbilityUsed,
     cooldownReduction: battle.char.stats.cooldownReduction,
+    energy: battle.energy,
+    spendEnergy: battle.spendEnergy,
   });
 
   // Expansão de Domínio do marshadow -------------------------------------------
@@ -1228,6 +1230,8 @@ export function useBattleCombat({
     playSound,
     onUsed: onAbilityUsed,
     cooldownReduction: battle.char.stats.cooldownReduction,
+    energy: battle.energy,
+    spendEnergy: battle.spendEnergy,
   });
 
   // Esferas do natsuki (blue/red) ---------------------------------------------

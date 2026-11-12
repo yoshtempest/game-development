@@ -573,6 +573,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     playerShield,
     setPlayerShield,
     energy: energy.enabled ? energy.energy : undefined,
+    spendEnergy: energy.spendEnergy,
     mana: battleMana?.playerMana,
     manaMax: battleMana?.playerMaxMana,
     npcHP,

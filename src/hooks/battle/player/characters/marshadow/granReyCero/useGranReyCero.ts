@@ -26,6 +26,7 @@ import {
   GRAN_REY_CERO_LOCK_WINDOW_MS,
   GRAN_REY_CERO_MAX_TICKS,
   GRAN_REY_CERO_PUSH_PX,
+  GRAN_REY_CERO_REIRYOKU_COST,
   GRAN_REY_CERO_TICK_MS,
   GRAN_REY_CERO_TRAVEL_MS,
 } from "@/data/characters/marshadow/granReyCero";
@@ -86,6 +87,8 @@ export function useGranReyCero({
   playSound,
   onUsed,
   cooldownReduction,
+  energy,
+  spendEnergy,
 }: Props): GranReyCeroApi {
   const { stopSound } = useSoundEffects();
   const { isMenuOpen } = useMenuPause();
@@ -98,6 +101,7 @@ export function useGranReyCero({
   const readyAtRef = useRef(0);
   const cooldownReductionRef = useLatestRef(cooldownReduction);
   const onUsedRef = useLatestRef(onUsed);
+  const spendEnergyRef = useLatestRef(spendEnergy);
   const rafRef = useRef<number | null>(null);
   const lastFrameRef = useRef(0);
   const fadingRef = useRef(false);
@@ -140,7 +144,10 @@ export function useGranReyCero({
     disabledRef,
     isPausedRef,
     battleEndedRef,
-    extraCanUse: () => readyAtRef.current <= Date.now() && !activeRef.current,
+    extraCanUse: () =>
+      readyAtRef.current <= Date.now() &&
+      !activeRef.current &&
+      (energy ?? GRAN_REY_CERO_REIRYOKU_COST) >= GRAN_REY_CERO_REIRYOKU_COST,
   });
 
   const clearTimers = useCallback(() => {
@@ -429,6 +436,7 @@ export function useGranReyCero({
   const press = useCallback(() => {
     if (activeRef.current) return;
     if (!usableRef.current) return;
+    if (!spendEnergyRef.current(GRAN_REY_CERO_REIRYOKU_COST)) return;
 
     onUsedRef.current?.();
     activeRef.current = true;
@@ -471,6 +479,7 @@ export function useGranReyCero({
     onUsedRef,
     playSound,
     showAbilityIntro,
+    spendEnergyRef,
     startSpecialIntro,
     usableRef,
   ]);
