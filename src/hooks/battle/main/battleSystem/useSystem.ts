@@ -49,6 +49,9 @@ import { usePlayerPullAnimation } from "@/hooks/battle/player/usePlayerPullAnima
 import { useMarshadowCutInEnemie } from "@/hooks/battle/player/characters/marshadow/useMarshadowCutInEnemie";
 import type { BattleSystemProps } from "./types";
 
+/** Dano por tick do sangramento no NPC quando quem aplicou não define outro. */
+const NPC_BLEED_BASE_TICK = 2;
+
 export function useBattleSystem(props: BattleSystemProps) {
   const {
     playerX,
@@ -214,6 +217,7 @@ export function useBattleSystem(props: BattleSystemProps) {
   const poisonUntilRef = useLatestRef(player.poisonUntil);
 
   const npcBleedUntilRef = useRef(0);
+  const npcBleedTickDamageRef = useRef(NPC_BLEED_BASE_TICK);
   const npcBleedXRef = useLatestRef(npcX);
   const npcBleedYRef = useLatestRef(npcY);
 
@@ -461,6 +465,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     npcBleedXRef,
     npcBleedYRef,
     npcBleedUntilRef,
+    npcBleedTickDamageRef,
   });
 
   usePlayerPullAnimation(setPlayer, isMenuRef);
@@ -473,12 +478,25 @@ export function useBattleSystem(props: BattleSystemProps) {
     isPausedRef,
   );
 
-  const applyNpcBleed = useCallback((durationMs: number) => {
-    npcBleedUntilRef.current = Math.max(
-      npcBleedUntilRef.current,
-      Date.now() + durationMs,
-    );
-  }, []);
+  /**
+   * Aplica sangramento no NPC principal. Com um sangramento ainda ativo, o
+   * tick mais forte prevalece: reaplicar um sangramento fraco (marshadow) não
+   * pode apagar o bônus de estrelas do hungryDeath no meio do efeito.
+   */
+  const applyNpcBleed = useCallback(
+    (durationMs: number, tickDamage: number = NPC_BLEED_BASE_TICK) => {
+      const now = Date.now();
+      const stillBleeding = npcBleedUntilRef.current > now;
+      npcBleedTickDamageRef.current = stillBleeding
+        ? Math.max(npcBleedTickDamageRef.current, tickDamage)
+        : tickDamage;
+      npcBleedUntilRef.current = Math.max(
+        npcBleedUntilRef.current,
+        now + durationMs,
+      );
+    },
+    [],
+  );
 
   // CutInEnemie do marshadow (forma padrão): sprite sobre o NPC atingido + chance
   // acumulativa de sangramento. Estado renderizado via `battle.cutInEnemie` e
@@ -508,6 +526,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     resetPetSkill();
     resetPetPassive();
     npcBleedUntilRef.current = 0;
+    npcBleedTickDamageRef.current = NPC_BLEED_BASE_TICK;
     marshadowCutIn.reset();
     energy.resetEnergy();
     battleMana?.resetMana();

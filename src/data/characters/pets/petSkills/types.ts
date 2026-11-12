@@ -14,7 +14,15 @@ type PetSkillDamage = {
 export type PetSkillEffect =
   | ({ kind: "damage" } & PetSkillDamage)
   | ({ kind: "jumpAttack" } & PetSkillDamage)
-  | ({ kind: "teleportBite" } & PetSkillDamage & { bleedMs: number })
+  | ({ kind: "teleportBite" } & PetSkillDamage & {
+        bleedMs: number;
+        /**
+         * Dano por tick do sangramento com o pet em 1 estrela. Cada estrela a
+         * mais multiplica por `PET_STAR_MULTIPLIER`, a mesma curva do dano base,
+         * para o sangramento acompanhar a progressão do pet (issue #178).
+         */
+        bleedTickDamage: number;
+      })
   | { kind: "summon"; npcType: string }
   | { kind: "shield"; amount: number }
   | { kind: "heal"; amount: number }
