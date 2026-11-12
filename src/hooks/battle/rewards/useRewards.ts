@@ -50,7 +50,7 @@ export function useBattleRewards({
 }: Props) {
   const { player } = usePlayer();
   const { addXP, addCoins, addHyperCoins } = useCharacterProgress();
-  const { addPetXP } = usePetProgress();
+  const { addPetXP, registerPetBattleWin } = usePetProgress();
   const { getEquippedInfo, addDrop } = useEquipment();
   const { addItem } = useInventory();
   const { progressDailyWeekly } = useQuests();
@@ -183,9 +183,15 @@ export function useBattleRewards({
     addXP(player.character, amount);
   }
 
+  /**
+   * XP do pet equipado na vitória. Também conta a vitória para a afinidade
+   * (#74): só aqui, e não em `giveSummonRewards`, para matar summon não
+   * inflar a afinidade dentro de uma única luta.
+   */
   function givePetXp() {
     const petInfo = getEquippedInfo(player.character, "pet");
     if (!petInfo) return;
+    registerPetBattleWin(petInfo.id);
     const petXpAmount = Math.floor(xpReward * PET_XP_MULTIPLIER);
     if (petXpAmount > 0)
       addPetXP(petInfo.id, petStarsFromEnhance(petInfo.enhance), petXpAmount);

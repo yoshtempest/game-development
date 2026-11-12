@@ -17,6 +17,8 @@ interface PetArtworkProps {
   eligible: number;
   isEquipped: boolean;
   canFuse: () => boolean;
+  /** Rank abaixo de Lendário: mostra o aviso no lugar do botão (#503). */
+  evolutionLocked: boolean;
   startFuse: (star: number) => void;
   executeFuse: () => void;
   equipPet: () => void;
@@ -33,6 +35,7 @@ export function PetArtwork({
   eligible,
   isEquipped,
   canFuse,
+  evolutionLocked,
   startFuse,
   executeFuse,
   equipPet,
@@ -72,6 +75,15 @@ export function PetArtwork({
           data-fallback={petFallbackImagePath(petNpc)}
           onError={handleImageError}
         />
+
+        {evolutionLocked && entry.owned && !fusing && (
+          <span
+            className={`${styles.actionBtn} ${styles.fuseBtn} ${styles.fuseLocked}`}
+            role="note"
+          >
+            EVOLUÇÃO SÓ PARA RANK LENDÁRIO+
+          </span>
+        )}
 
         {!fusing ? (
           canFuse() && (

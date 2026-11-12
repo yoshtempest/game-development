@@ -147,6 +147,7 @@ export const GAME_STATE_KEYS = [
   "library_return_position",
   "cafeteria_return_position",
   "pet_progress",
+  "pet_affinity",
   "profession_progress",
   "jeso_food_last_delivery",
   "char_unlock_dates",

@@ -11,6 +11,7 @@ import {
 } from "@/data/characters/pets/petSkills";
 
 import { PET_STAR_MAX } from "@/data/characters/pets/petProgress";
+import { canPetEvolve } from "@/gameRules/pets/evolution";
 
 function parseCollectionKey(key: string): { id: string; enhance: number } {
   const i = key.lastIndexOf("+");
@@ -124,7 +125,9 @@ export function usePetsMenu(
     return 0;
   }
 
+  /** Zero para pet abaixo de Lendário: a lista não anuncia fusão bloqueada. */
   function highestEligibleStar(entry: PetEntry): number {
+    if (!canPetEvolve(entry.rank)) return 0;
     for (let s = PET_STAR_MAX - 1; s >= 1; s--) {
       if ((entry.qtyByStar[s - 1] ?? 0) >= 2) return s;
     }
