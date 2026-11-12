@@ -151,5 +151,10 @@ export type NPCBattleState = {
     };
     maugrelo?: import("@/services/npc/attacks/maugrelo/state").MaugreloAI;
     hungryDog?: import("@/services/npc/attacks/hungryDog/state").HungryDogAI;
+    /**
+     * Cooldown do cuspe ácido do hungryDog comum. Separado do `lastAttackRef`
+     * para o cuspe não atrasar a mordida quando o jogador se aproxima.
+     */
+    hungryDogSpit?: { current: number };
   };
 };
