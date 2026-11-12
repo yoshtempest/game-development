@@ -8,6 +8,7 @@ import { useNpcAI } from "@/hooks/battle/npc/ai/useAi";
 import { useGrabThrow } from "@/hooks/battle/throw/useGrabThrow";
 import { useBabidiShield } from "@/hooks/battle/player/characters/babidi/useShield";
 import { useYvelWeaponSwitch } from "@/hooks/battle/player/characters/yvel/useYvelWeaponSwitch";
+import { useSamuelGrimoire } from "@/hooks/battle/player/characters/samurion/useGrimoire";
 import { useCooldownPauseTick } from "@/hooks/battle/utilities/useCooldowns";
 import {
   BATTLE_LIMITS,
@@ -149,6 +150,12 @@ export function useBattleCore({
     character: player.character,
     timeRef: refs.timeRef,
   });
+
+  const { weapon: samuelWeapon, cycleWeapon: cycleSamuelWeapon } =
+    useSamuelGrimoire({
+      character: player.character,
+      timeRef: refs.timeRef,
+    });
 
   const {
     isGrabbedRef,
@@ -740,6 +747,8 @@ export function useBattleCore({
     coop,
     yvelWeapon,
     switchWeapon,
+    samuelWeapon,
+    cycleSamuelWeapon,
     babidiShield,
     onBlockRef: refs.onBlockRef,
     onDamageTakenRef: refs.onDamageTakenRef,

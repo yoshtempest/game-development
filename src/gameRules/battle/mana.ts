@@ -73,5 +73,6 @@ export function getEnergyName(character: CharacterId): string {
   if (character === "natsuki") return "Energia Amaldiçoada";
   if (character === "ematron") return "Ki";
   if (character === "babidi") return "Energia Dimensional";
+  if (character === "samurion") return "Stamina";
   return "Mana";
 }

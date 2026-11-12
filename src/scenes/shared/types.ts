@@ -10,6 +10,7 @@ export type TileRouteFunction = (
  * a cena é a camada que compõe os hooks, então a dependência fica aqui e
  * não em `utils/types/` (que é a base e não deve conhecer React).
  */
+import type { SamuelWeapon } from "@/data/characters/samurion/grimoire";
 import type { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 import type { useNpcAI } from "@/hooks/battle/npc/ai/useAi";
 import type { useChargeAttack } from "@/hooks/battle/charge/attack/useAttack";
@@ -106,6 +107,10 @@ export type BattleSceneApi = {
   extraPunchSprite: string;
   yvelWeapon: YvelWeapon | undefined;
   switchWeapon: () => void;
+  /** Arma atual do Samuel (`undefined` para os demais personagens). */
+  samuelWeapon: SamuelWeapon | undefined;
+  /** Abre o grimório e avança a arma do Samuel, pagando stamina. */
+  grimoirePress: () => void;
   drikaArm?: string;
   sigiloPhase?: string;
   sigiloOpen?: boolean;
