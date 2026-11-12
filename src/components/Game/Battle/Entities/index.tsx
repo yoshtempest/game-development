@@ -91,6 +91,7 @@ export function BattleEntities({
   hakai = false,
   sigiloPhase,
   hideMainNpc = false,
+  layer = "full",
 }: Props & {
   sphere?: import("@/utils/types/character/natsuki").NatsukiSphere | null;
 }) {
@@ -107,72 +108,78 @@ export function BattleEntities({
 
   return (
     <>
-      <MainNpc
-        x={npc.x}
-        y={npc.y}
-        TILE_SIZE={TILE_SIZE}
-        npcType={npcType}
-        state={npc.state}
-        direction={npc.direction}
-        battle={battle}
-        isHidden={hideMainNpc || activeBombIds.has("main")}
-        isUnderground={npc.hidden ?? false}
-        isAlfa={isAlfa}
-        cutInEnemie={cutInEnemie}
-        npcBleeding={npcBleeding}
-        purpleHole={purpleHole}
-      />
+      {/* Camada remota: só o jogador do outro cliente e o que ele gera. NPC,
+          inimigos, projéteis do NPC e loot já existem na cena local. */}
+      {layer === "full" && (
+        <>
+          <MainNpc
+            x={npc.x}
+            y={npc.y}
+            TILE_SIZE={TILE_SIZE}
+            npcType={npcType}
+            state={npc.state}
+            direction={npc.direction}
+            battle={battle}
+            isHidden={hideMainNpc || activeBombIds.has("main")}
+            isUnderground={npc.hidden ?? false}
+            isAlfa={isAlfa}
+            cutInEnemie={cutInEnemie}
+            npcBleeding={npcBleeding}
+            purpleHole={purpleHole}
+          />
 
-      <NpcProjectile
-        projectiles={npc.projectiles}
-        groundY={player.y}
-        hiddenIds={activeBombIds}
-      />
+          <NpcProjectile
+            projectiles={npc.projectiles}
+            groundY={player.y}
+            hiddenIds={activeBombIds}
+          />
 
-      {npc.ai?.deise?.dashState === "dashing" && (
-        <DeiseDashAfterimage
-          npcX={npc.x}
-          npcY={npc.y}
-          direction={npc.direction}
-          npcType={npcType}
-          npcPhase={battle.npcPhase}
-          TILE_SIZE={TILE_SIZE}
-        />
+          {npc.ai?.deise?.dashState === "dashing" && (
+            <DeiseDashAfterimage
+              npcX={npc.x}
+              npcY={npc.y}
+              direction={npc.direction}
+              npcType={npcType}
+              npcPhase={battle.npcPhase}
+              TILE_SIZE={TILE_SIZE}
+            />
+          )}
+
+          <GroundPaper
+            papers={npc.groundPapers}
+            flyingPaper={npc.flyingPaper}
+            battleScaleX={battleScaleX}
+            battleScaleY={battleScaleY}
+          />
+
+          <StuckPapers
+            papers={npc.stuckPapers}
+            playerX={player.x}
+            playerY={player.y}
+            battleScaleX={battleScaleX}
+            battleScaleY={battleScaleY}
+          />
+
+          <Laser
+            laser={npc.laser}
+            battleScaleX={battleScaleX}
+            battleScaleY={battleScaleY}
+          />
+
+          <Coffin
+            coffins={coffins}
+            TILE_SIZE={TILE_SIZE}
+            battleScaleX={battleScaleX}
+            battleScaleY={battleScaleY}
+          />
+
+          <Summon
+            summons={summons}
+            hiddenIds={activeBombIds}
+            TILE_SIZE={TILE_SIZE}
+          />
+        </>
       )}
-
-      <GroundPaper
-        papers={npc.groundPapers}
-        flyingPaper={npc.flyingPaper}
-        battleScaleX={battleScaleX}
-        battleScaleY={battleScaleY}
-      />
-
-      <StuckPapers
-        papers={npc.stuckPapers}
-        playerX={player.x}
-        playerY={player.y}
-        battleScaleX={battleScaleX}
-        battleScaleY={battleScaleY}
-      />
-
-      <Laser
-        laser={npc.laser}
-        battleScaleX={battleScaleX}
-        battleScaleY={battleScaleY}
-      />
-
-      <Coffin
-        coffins={coffins}
-        TILE_SIZE={TILE_SIZE}
-        battleScaleX={battleScaleX}
-        battleScaleY={battleScaleY}
-      />
-
-      <Summon
-        summons={summons}
-        hiddenIds={activeBombIds}
-        TILE_SIZE={TILE_SIZE}
-      />
 
       <Ally allies={allies} TILE_SIZE={TILE_SIZE} />
 
@@ -198,6 +205,7 @@ export function BattleEntities({
         onBabidiShieldEnd={onBabidiShieldEnd}
         hakai={hakai}
         sigiloPhase={sigiloPhase}
+        levelUpParticles={layer === "full"}
       />
 
       <EnergyProjectile
@@ -338,14 +346,15 @@ export function BattleEntities({
         battleScaleY={battleScaleY}
       />
 
-      {lootBags.map((bag) => (
-        <LootBag
-          key={bag.id}
-          bag={bag}
-          TILE_SIZE={TILE_SIZE}
-          npcClass={npcClass}
-        />
-      ))}
+      {layer === "full" &&
+        lootBags.map((bag) => (
+          <LootBag
+            key={bag.id}
+            bag={bag}
+            TILE_SIZE={TILE_SIZE}
+            npcClass={npcClass}
+          />
+        ))}
 
       <NatsukiSphere
         sphere={sphere ?? null}

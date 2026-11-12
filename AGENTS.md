@@ -367,6 +367,16 @@ socket da batalha; `useOnlineBattle` cuida do resto depois da cena. Eventos
 - Série/rounds/revanche/W.O. em `usePvpMatch`: quem cai manda `pvpDown` com o
   número do round e os dois contam dos mesmos eventos. Morte e "morte do NPC"
   têm ramo PvP em `useScene` (sem recompensa, sem rewind, sem penalidade).
+- **Visuais de habilidade** (co-op e PvP): cada cliente publica
+  `battleVisuals` com o que as habilidades do próprio jogador geram e o outro
+  desenha (`useBattleVisualsSync` + `components/Game/Battle/RemoteVisuals`).
+  O payload é o próprio `battleEntitiesProps` menos as chaves da cena local
+  (`LOCAL_SCENE_ENTITY_KEYS` no `BattleScene`) mais os overlays de tela
+  (specialIntro, domínio, kokusen…), renderizado por `BattleEntities` com
+  `layer="remotePlayer"`. Efeito novo que entre no `BattleEntities` já viaja;
+  overlay de tela novo precisa entrar em `RemoteSceneVisuals`. Só imagem
+  atravessa: dano e regra seguem os caminhos de cada modo. Instantes
+  `Date.now()` do outro aparelho são rebaseados (`utils/rebaseEpochTimes.ts`).
 - `server/` valida `pvpDamage` (valor e taxa); mensagem nova de batalha
   precisa entrar na whitelist do relay em `server/src/index.ts`.
 - Sala e guilda ficam no `sessionStorage` da aba e voltam após reload; o

@@ -140,4 +140,10 @@ export type Props = {
    * quem aparece na tela é o avatar do outro jogador.
    */
   hideMainNpc?: boolean;
+  /**
+   * `"remotePlayer"`: camada do outro jogador online — renderiza o avatar dele
+   * e tudo que as habilidades dele geram, sem NPC, inimigos nem loot (esses já
+   * existem na cena local).
+   */
+  layer?: "full" | "remotePlayer";
 };

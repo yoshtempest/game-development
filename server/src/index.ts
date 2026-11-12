@@ -369,6 +369,7 @@ wss.on("connection", (ws) => {
       msg.type === "battleRetry" ||
       msg.type === "battleLeave" ||
       msg.type === "requestSync" ||
+      msg.type === "battleVisuals" ||
       msg.type === "pvpDamage" ||
       msg.type === "pvpDown" ||
       msg.type === "pvpRematch" ||

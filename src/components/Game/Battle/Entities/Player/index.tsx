@@ -37,6 +37,8 @@ type Props = {
   onBabidiShieldEnd?: (side: BabidiShieldSide, nonce: number) => void;
   hakai?: boolean;
   sigiloPhase?: string;
+  /** Partículas de level-up do personagem local; o avatar remoto não as tem. */
+  levelUpParticles?: boolean;
 };
 
 export function Player({
@@ -59,6 +61,7 @@ export function Player({
   onBabidiShieldEnd,
   hakai = false,
   sigiloPhase,
+  levelUpParticles = true,
 }: Props) {
   const blinkSilhouette =
     player.character === "natsuki" && blinkVisual
@@ -91,7 +94,7 @@ export function Player({
       babidiMachineGamaControl={babidiMachineGamaControl}
       babidiShieldSides={babidiShieldSides}
       onBabidiShieldEnd={onBabidiShieldEnd}
-      levelUpParticles
+      levelUpParticles={levelUpParticles}
       hakai={hakai}
       sigiloPhase={sigiloPhase}
     />

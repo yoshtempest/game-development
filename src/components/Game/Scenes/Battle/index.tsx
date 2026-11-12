@@ -56,6 +56,14 @@ import { OnlineBattleOverlay } from "@/components/Game/Battle/Overlay/OnlineBatt
 import { CoopSpectatorOverlay } from "@/components/Game/Battle/Overlay/CoopSpectator";
 import { PvpMatchOverlay } from "@/components/Game/Battle/Overlay/PvpMatch";
 import {
+  RemoteDomainBackground,
+  RemoteScreenOverlays,
+  RemoteWorldEffects,
+} from "@/components/Game/Battle/RemoteVisuals";
+import type { RemoteBattleVisuals } from "@/components/Game/Battle/RemoteVisuals/types";
+import { useBattleVisualsSync } from "@/hooks/battle/visuals/useBattleVisualsSync";
+import { omitKeys } from "@/utils/omitKeys";
+import {
   usePvpOpponentStats,
   usePvpProxy,
 } from "@/hooks/battle/pvp/usePvpProxy";
@@ -69,6 +77,30 @@ import type { Props } from "./types";
 import type { BattleCoop, NpcHitIntent } from "@/hooks/battle/coop/types";
 
 const MemoBattleEntities = memo(BattleEntities);
+
+/**
+ * Props do `BattleEntities` que pertencem à cena local (NPC, inimigos, loot,
+ * layout, callbacks). O resto é o que as habilidades do jogador geram e vai
+ * para o outro cliente.
+ */
+const LOCAL_SCENE_ENTITY_KEYS = [
+  "npc",
+  "player",
+  "battle",
+  "npcType",
+  "summons",
+  "coffins",
+  "lootBags",
+  "npcClass",
+  "TILE_SIZE",
+  "PLAYER_SIZE",
+  "isAlfa",
+  "killerQueenSprite",
+  "onBabidiShieldEnd",
+  "hideMainNpc",
+  "npcBleeding",
+  "purpleHole",
+] as const;
 const MemoBattleHUD = memo(BattleHUD);
 
 export function BattleScene(props: Props) {
@@ -389,11 +421,14 @@ export function BattleScene(props: Props) {
     subscribe: battleNet.subscribe,
   });
 
-  // A intro "jogador × NPC" mostraria o dummy que ocupa o slot do oponente.
+  // PvP: a intro "jogador × NPC" mostraria o dummy que ocupa o slot do
+  // oponente. Guest do co-op: o líder já está lutando e o NPC dele bate no
+  // guest — com a intro local aberta o guest apanhava sem poder agir.
   const skipIntroRef = useLatestRef(skipIntro);
+  const skipsIntro = isPvp || (coopActive && battleNet.isGuest);
   useEffect(() => {
-    if (isPvp) skipIntroRef.current();
-  }, [isPvp, skipIntroRef]);
+    if (skipsIntro) skipIntroRef.current();
+  }, [skipsIntro, skipIntroRef]);
 
   if (isPvp && pvpMatch.phase !== "fighting") {
     controlsDisabled = true;
@@ -700,6 +735,70 @@ export function BattleScene(props: Props) {
     online.room?.players.find((p) => p.id !== online.playerId)?.character ??
     "drika";
 
+  // ── Visuais de habilidade entre os dois clientes ─────────────────────────
+  // Cada cliente publica o que as habilidades do próprio jogador geram e
+  // desenha o que chega do outro. Só a imagem atravessa a rede: dano e regra
+  // continuam nos caminhos de cada modo (snapshot/hit no co-op, proxy no PvP).
+  const npcHeight =
+    TILE_SIZE * getBossSizeMultiplier(npcType, battle.npcPhase, isAlfa);
+  const buildVisuals = (): RemoteBattleVisuals => {
+    const localPlayerProps = battleEntitiesProps.player;
+    const effects = omitKeys(battleEntitiesProps, LOCAL_SCENE_ENTITY_KEYS);
+    return {
+      entities: {
+        ...effects,
+        player: {
+          x: localPlayerProps.x,
+          y: localPlayerProps.y,
+          state: localPlayerProps.state,
+          battleDirection: localPlayerProps.battleDirection,
+          character: localPlayerProps.character,
+          grabbedUntil: localPlayerProps.grabbedUntil,
+        },
+        battle: {
+          piercings: battle.piercings,
+          isExploding: battle.isExploding,
+        },
+        killerQueenSrc: killerQueen
+          ? killerQueenSprite(killerQueen.sprite)
+          : null,
+      },
+      scene: {
+        specialIntro: {
+          active: specialIntroActive,
+          character: specialIntroCharacter,
+          ability: specialIntroAbility ?? null,
+          form: specialIntroForm,
+        },
+        domain: {
+          burstActive: domainBurstActive,
+          backgroundActive: domainBackgroundActive,
+          shattering: domainShattering,
+          art: domainExpansionArt ?? null,
+        },
+        kokusen: { active: kokusenActive, frame: kokusenFrame },
+        divergentFistFrame,
+        blackFlash: { active: blackFlashActive, variant: blackFlashVariant },
+        target: { x: npc.x, y: npc.y, height: npcHeight },
+        sigilo: { pentagramVisible, selectedArmIcon },
+        charge: {
+          particles: charge.particles,
+          chargeReady: charge.chargeReady,
+          isCharging: charge.isCharging,
+        },
+        machineGama: babidiMachineGama,
+      },
+    };
+  };
+  const remoteVisuals = useBattleVisualsSync<RemoteBattleVisuals>({
+    enabled:
+      online.connected && (coopActive || isPvp) && battleNet.remoteId != null,
+    remoteId: battleNet.remoteId,
+    send: battleSocketSend,
+    subscribe: battleNet.subscribe,
+    build: buildVisuals,
+  });
+
   // Líder do co-op e os dois lados do duelo recebem o estado do outro jogador
   // direto (`battlePlayerState`); o guest do co-op o lê do snapshot do líder.
   const secondPlayer =
@@ -753,6 +852,11 @@ export function BattleScene(props: Props) {
         shattering={domainShattering}
         paused={battlePaused}
       />
+      <RemoteDomainBackground
+        visuals={remoteVisuals}
+        localActive={domainBackgroundActive}
+        paused={battlePaused}
+      />
 
       <MemoBattleHUD {...battleHudProps} />
       <ComboDisplay
@@ -800,6 +904,7 @@ export function BattleScene(props: Props) {
         />
       )}
 
+      <RemoteScreenOverlays visuals={remoteVisuals} paused={battlePaused} />
       <AlfaAbility active={alfaDigActive} npcType={npcType} />
 
       <div className="SceneMap">
@@ -823,7 +928,18 @@ export function BattleScene(props: Props) {
 
           <MemoBattleEntities {...battleEntitiesProps} />
 
-          {online.connected && secondPlayer && (
+          <RemoteWorldEffects
+            visuals={remoteVisuals}
+            position={secondPlayer}
+            localPlayer={player}
+            npc={npc}
+            npcType={npcType}
+            npcPhase={battle.npcPhase}
+            isNpcDying={battle.isNpcDying}
+            TILE_SIZE={TILE_SIZE}
+            PLAYER_SIZE={PLAYER_SIZE}
+          />
+          {online.connected && secondPlayer && !remoteVisuals && (
             <PlayerBattle
               character={(secondPlayer.character as CharacterId) ?? "drika"}
               x={secondPlayer.x}
