@@ -43,6 +43,7 @@ import { TheBlackKnightAttack } from "./theBlackKnight";
 import { TheChaosCreatorAttack } from "./theChaosCreator";
 import { TheDevourerOfWorldsAttack } from "./theDevourerOfWorlds";
 import { TheFirstNightmareAttack } from "./theFirstNightmare";
+import { RickPrimeAttack } from "./rickPrime";
 import { TheMasterPieceAttack } from "./theMasterPiece";
 import { TheStrongestManUnderTheHeavensAttack } from "./theStrongestManUnderTheHeavens";
 import { TimAttack } from "./tim";
@@ -134,6 +135,9 @@ export const npcAttacks = {
   theChaosCreator: new TheChaosCreatorAttack("theChaosCreator"),
   theFirstNightmare: new TheFirstNightmareAttack("theFirstNightmare"),
   ouroboros: new OuroborosAttack("ouroboros"),
+
+  /* Conselho dos vilões */
+  rickPrime: new RickPrimeAttack("rickPrime"),
 } satisfies Record<NpcType, NpcAttack>;
 
 /**

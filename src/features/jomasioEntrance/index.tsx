@@ -5,6 +5,12 @@ import { useQuests } from "@/contexts/QuestContext";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useProfessionProgress } from "@/contexts/ProfessionProgressContext";
 import { useProfessionBadge } from "@/contexts/ProfessionBadgeContext";
+
+import { useRickPrimeEncounter } from "@/hooks/scene/rickPrime/useRickPrimeEncounter";
+import {
+  useDoofusRick,
+  type DoofusRickSpot,
+} from "@/hooks/scene/doofusRick/useDoofusRick";
 import {
   useHasToolEquipped,
   useEquippedWeaponId,
@@ -54,6 +60,27 @@ type Props = {
 
 const MINE_COOLDOWN_MS = THREE_THOUSAND_MS;
 
+/**
+ * Tile do Rick Prime na entrada do Jomásio: canto esquerdo do pátio, livre
+ * das rochas (y=10) e fora do caminho entre o spawn (7,12) e a porta (7,7).
+ */
+const RICK_PRIME_TILE = { gridX: 3, gridY: 11 };
+
+/**
+ * Pontos onde o Doofus Rick pode estar a cada visita. Só o pátio de baixo
+ * (y=8..13) é alcançável — o de cima fica atrás da parede da linha 5 —, e
+ * os pontos evitam as rochas (y=10), o tile do Rick Prime e o corredor
+ * spawn → porta (x=7).
+ */
+const DOOFUS_RICK_SPOTS: readonly DoofusRickSpot[] = [
+  { gridX: 2, gridY: 13 },
+  { gridX: 5, gridY: 11 },
+  { gridX: 11, gridY: 12 },
+  { gridX: 12, gridY: 8 },
+  { gridX: 14, gridY: 13 },
+  { gridX: 15, gridY: 11 },
+];
+
 const ROCK_TILES = toRockTiles(jomasioEntranceRocks);
 
 const ROCK_LABELS = Object.fromEntries(
@@ -89,6 +116,24 @@ export function JomasioEntranceScene({ sceneId }: Props) {
   const hasToolEquipped = useHasToolEquipped();
   const equippedWeaponId = useEquippedWeaponId();
   const { showProfessionBadge } = useProfessionBadge();
+
+  const { rickPrimeNpc } = useRickPrimeEncounter(RICK_PRIME_TILE);
+  const { doofusRickNpc } = useDoofusRick(DOOFUS_RICK_SPOTS);
+
+  const sceneWithRicks = useMemo(
+    () =>
+      scene?.id === "one"
+        ? {
+            ...scene,
+            npcs: [
+              ...(scene.npcs ?? []),
+              rickPrimeNpc,
+              ...(doofusRickNpc ? [doofusRickNpc] : []),
+            ],
+          }
+        : scene,
+    [scene, rickPrimeNpc, doofusRickNpc],
+  );
 
   const [popup, setPopup] = useState<string | null>(null);
   const lastMineTimeRef = useRef(0);
@@ -250,14 +295,14 @@ export function JomasioEntranceScene({ sceneId }: Props) {
     showProfessionBadge,
   ]);
 
-  if (!scene) {
+  if (!sceneWithRicks) {
     return <div>Scene não encontrada</div>;
   }
 
   return (
     <>
       <SceneBase
-        scene={scene}
+        scene={sceneWithRicks}
         background={sceneBackgrounds.JomasioEntrance}
         interactions={interactions}
         interactionLabels={{

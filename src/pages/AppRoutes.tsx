@@ -164,6 +164,7 @@ export function AppRoutes() {
             <Route path="battle/piupiu" element={<BattlePage />} />
             <Route path="battle/rice" element={<BattlePage />} />
             <Route path="battle/goat" element={<BattlePage />} />
+            <Route path="battle/rickprime" element={<BattlePage />} />
 
             <Route
               path="/battle/tester/:npcId"

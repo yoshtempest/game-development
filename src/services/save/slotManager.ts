@@ -158,6 +158,7 @@ export const GAME_STATE_KEYS = [
   "ground_items",
   "footballcourt_dog_spots",
   "babidi_attack_mode",
+  "rick_prime_podcast",
 ] as const;
 
 export const slotManager = new SlotManager(lazilyResolvedDefaultStorage());
