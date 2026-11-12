@@ -252,6 +252,9 @@ export function useOnlineBattle({
         case "unblockable":
           currentBattle.npcUnblockableHit(hit.amount ?? 1);
           break;
+        case "execute":
+          currentBattle.damagePlayerHp(currentBattle.playerMaxHp);
+          break;
         case "status":
           if (hit.status) {
             setPlayerRef.current((p) => applyPlayerStatus(p, hit.status!));

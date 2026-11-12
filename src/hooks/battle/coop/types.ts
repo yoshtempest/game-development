@@ -25,7 +25,8 @@ export type NpcHitSource =
   | "ram"
   | "grab"
   | "throwStart"
-  | "drag";
+  | "drag"
+  | "execute";
 
 export type NpcHitIntent = {
   /** Jogador que deve resolver o golpe. */

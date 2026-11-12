@@ -71,7 +71,12 @@ type Props = {
     | "prePunch"
     | "punch"
     | "preKick"
-    | "kick";
+    | "kick"
+    | "compress"
+    | "combine"
+    | "problem"
+    | "taBom"
+    | "nuke";
   direction: "left" | "right";
   piercings?: { id: number; x: number; y: number }[];
   isExploding?: boolean;
