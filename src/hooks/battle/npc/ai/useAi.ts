@@ -8,6 +8,7 @@ import {
   getNpcState,
   applyObstacleCollision,
 } from "@/gameRules/battle/npc/npcPosition";
+import { stepNpcVertical } from "@/gameRules/battle/npc/npcPlatform";
 import type { NPCBattleState } from "@/utils/types/npc/npc";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
@@ -170,6 +171,12 @@ export function useNpcAI({
   const lastAttackRef = useRef(0);
   const summonTimerRef = useRef(0);
   const obstaclesRef = useLatestRef(obstacles ?? []);
+  /**
+   * Velocidade vertical do NPC em mapa com obstáculos. Fica em ref (e não no
+   * `NPCBattleState`) porque só a física de plataforma do host a usa — o
+   * snapshot do co-op e o rewind já carregam o `y` resultante.
+   */
+  const npcVelYRef = useRef(0);
 
   const { playSound, stopSound } = useSoundEffects();
   const loggedPlaySound = useCallback(
@@ -600,10 +607,31 @@ export function useNpcAI({
         obstaclesRef.current,
       );
 
+      // Ataque que devolve outro `y` (salto, subterrâneo, voo) é dono do eixo
+      // vertical neste tick; a física de plataforma só cuida de quem anda.
+      const attackOwnsY = result.y !== undefined && result.y !== n.y;
+      let finalY = collision.y;
+      if (attackOwnsY || obstaclesRef.current.length === 0) {
+        npcVelYRef.current = 0;
+      } else {
+        const vertical = stepNpcVertical({
+          x: collision.x,
+          y: collision.y,
+          velY: npcVelYRef.current,
+          blocked: nextX !== n.x && collision.x === n.x,
+          targetX,
+          targetY,
+          canJump: !rooted,
+          obstacles: obstaclesRef.current,
+        });
+        npcVelYRef.current = vertical.velY;
+        finalY = vertical.y;
+      }
+
       const next: NPCBattleState = {
         ...n,
         x: clampX(collision.x),
-        y: collision.y,
+        y: finalY,
         direction,
         hidden: result.hidden ?? n.hidden,
         state: result.state ?? getNpcState(distanceX, forceIdleRef.current),
