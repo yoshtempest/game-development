@@ -21,14 +21,18 @@ type MenuPause = {
  * (a lâmina do Gran Rey Cero, a esfera do natsuki, a explosão do Atomic)
  * sumia no meio do caminho — o cooldown já gasto virava "nada aconteceu".
  *
+ * A pausa de seletor (`isSelectorPauseOpen`, ex.: o arsenal do Unlimited
+ * Blade Works) entra aqui de propósito: ela precisa do mesmo congelamento do
+ * menu (IA, ticks, sons, prazos estendidos pelo `useMenuPauseShift`).
+ *
  * A pausa que interrompe a batalha de verdade (vitória, derrota, cutscene,
  * rewind) é o `isPaused` amplo do `useScene`: ela cancela tudo.
  */
 export function useMenuPause(): MenuPause {
   const { isNavOpen } = useNavbar();
-  const { isBattleNavOpen } = useBattleNavbar();
+  const { isBattleNavOpen, isSelectorPauseOpen } = useBattleNavbar();
 
-  const isMenuOpen = isNavOpen || isBattleNavOpen;
+  const isMenuOpen = isNavOpen || isBattleNavOpen || isSelectorPauseOpen;
   const isMenuOpenRef = useLatestRef(isMenuOpen);
 
   return { isMenuOpen, isMenuOpenRef };

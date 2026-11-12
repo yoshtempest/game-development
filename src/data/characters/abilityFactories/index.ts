@@ -101,6 +101,20 @@ export function hakaiAbility(characterId: CharacterId): ActiveAbility {
   });
 }
 
+/**
+ * Unlimited Blade Works do yvel (`kind: "unlimitedBladeWorks"`): não causa
+ * dano — abre a janela de troca livre de arma —, por isso não declara
+ * `damageType` (o `domainBurst` que o yvel usava era mágico).
+ */
+export function unlimitedBladeWorksAbility(): ActiveAbility {
+  const def = DOMAIN_EXPANSIONS.yvel;
+  return createActiveAbility({
+    id: "unlimitedBladeWorks",
+    name: def.name,
+    description: def.description,
+  });
+}
+
 /** Sigilo da Drika: troca o braço em uso, pagando 5% da vida atual. */
 export function sigiloAbility(): ActiveAbility {
   return createActiveAbility({

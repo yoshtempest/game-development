@@ -26,6 +26,7 @@ import { useNatsukiSpheres } from "@/hooks/battle/player/characters/natsuki/sphe
 import { useMuryokushoExpansion } from "@/hooks/battle/player/characters/natsuki/muryokushoExpansion/useMuryokushoExpansion";
 import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/hakaiExpansion/useHakaiExpansion";
 import { useBabidiDomainExpansion } from "@/hooks/battle/player/characters/babidi/domainExpansion/useBabidiDomainExpansion";
+import { useUnlimitedBladeWorks } from "@/hooks/battle/player/characters/yvel/useUnlimitedBladeWorks";
 import { useBabidiBombDrop } from "@/hooks/battle/player/characters/babidi/bombDrop/useBombDrop";
 import { useAtomic } from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
 import { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/mugetsuExpansion/useMugetsuExpansion";
@@ -176,6 +177,7 @@ export function useBattleCombat({
     timeScaleRef,
     yvelWeapon,
     switchWeapon,
+    equipYvelWeapon,
     babidiShield,
   } = useBattleCore({
     setup,
@@ -260,14 +262,6 @@ export function useBattleCombat({
   const onUtilityAbilityUsed = useCallback(() => {
     battle.setDelicia((d) => gainSpecial(d, battle.hitsToSpecial));
   }, [battle]);
-
-  const handleWeaponSwitch = useCallback(() => {
-    const mana = battleManaRef.current;
-    if (mana && !mana.consumeMana(YVEL_WEAPON_SWITCH_MANA_COST)) return;
-    if (!switchWeapon()) return;
-    // Troca de arma é habilidade do Yvel: concede carga da Expansão.
-    onAbilityUsed();
-  }, [battleManaRef, onAbilityUsed, switchWeapon]);
 
   const handleSigiloSelect = useCallback(
     (arm: string) => {
@@ -1049,6 +1043,35 @@ export function useBattleCombat({
     playSound,
   });
 
+  // Expansão de Domínio do yvel (Unlimited Blade Works) ----------------------
+  const yvelBladeWorks = useUnlimitedBladeWorks({
+    player,
+    charges: battle.delicia,
+    chargesMax: battle.hitsToSpecial,
+    setDelicia: battle.setDelicia,
+    freezeActionsUntilRef,
+    isPausedRef,
+    isMenuOpen,
+    battleEndedRef: battle.isEnding,
+    disabledRef: cloneDisabledRef,
+    equipWeapon: equipYvelWeapon,
+  });
+
+  /**
+   * Botão de troca do Yvel. Dentro da janela do Unlimited Blade Works ele abre
+   * o arsenal (sem mana e sem carga de Expansão — o domínio já foi pago com a
+   * barra inteira); fora dela, sorteia pagando mana e rende carga como
+   * qualquer habilidade.
+   */
+  const { openSelector: openBladeWorksSelector } = yvelBladeWorks;
+  const handleWeaponSwitch = useCallback(() => {
+    if (openBladeWorksSelector()) return;
+    const mana = battleManaRef.current;
+    if (mana && !mana.consumeMana(YVEL_WEAPON_SWITCH_MANA_COST)) return;
+    if (!switchWeapon()) return;
+    onAbilityUsed();
+  }, [battleManaRef, onAbilityUsed, openBladeWorksSelector, switchWeapon]);
+
   // Expansão de Domínio do natsuki (Muryōkūsho) ------------------------------
   // Domínio próprio: congela o mundo, segura a pose `rioiki.svg` por 5s e
   // drena 0,2% da vida MÁXIMA de todos os inimigos a cada 50ms. No fim, se
@@ -1296,6 +1319,10 @@ export function useBattleCombat({
       press: babidiDomainPress,
       usable: babidiDomainUsable,
     },
+    unlimitedBladeWorks: {
+      press: yvelBladeWorks.press,
+      usable: yvelBladeWorks.usable,
+    },
   } as const;
 
   const domainExpansionAbility =
@@ -1398,7 +1425,8 @@ export function useBattleCombat({
     domainExpansionPress: domainExpansionAbility?.press ?? domainBurstPress,
 
     domainExpansionUsable: domainExpansionAbility?.usable ?? domainBurstUsable,
-    domainBurstActive,
+    domainBurstActive: domainBurstActive || yvelBladeWorks.introActive,
+    yvelBladeWorks,
     domainBackgroundActive,
     domainShattering,
     granReyCeroEffect,
