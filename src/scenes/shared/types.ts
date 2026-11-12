@@ -41,6 +41,7 @@ import type {
   BabidiShieldSides,
 } from "@/utils/types/character/babidi";
 import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
+import type { LaricellAbilitiesApi } from "@/hooks/battle/player/characters/laricell/types";
 
 type Battle = ReturnType<typeof useBattleSystem>;
 type Npc = ReturnType<typeof useNpcAI>;
@@ -191,6 +192,8 @@ export type BattleSceneApi = {
    * "special" universal, que não existe mais.
    */
   activeAbilityPress: () => void;
+  /** Habilidades da Laricell (#517): botões A1–A4 + Mordida e o visual. */
+  laricell: LaricellAbilitiesApi;
   activeAbilityUsable: boolean;
   activeAbilityRemaining: number;
   mugetsuSweep: ReturnType<typeof useMugetsuExpansion>["mugetsuSweep"];

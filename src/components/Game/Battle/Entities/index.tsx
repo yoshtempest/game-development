@@ -22,6 +22,7 @@ import { ExtraPunch } from "./srGuaxinim/ExtraPunch";
 import { SpecialProjectile } from "./Projectiles/SpecialProjectile";
 import { EnergyProjectile } from "./Projectiles/EnergyProjectile";
 import { FishingNet } from "./Babidi/FishingNet";
+import { LaricellEffects } from "./Laricell";
 import { BabidiClone } from "./Babidi/Clone";
 import { MissileProjectile } from "./Projectiles/MissileProjectile";
 import { LootBag } from "./LootBag";
@@ -80,6 +81,7 @@ export function BattleEntities({
   babidiEnergyProjectiles = [],
   babidiMissileProjectiles = [],
   fishingNet = null,
+  laricellVisual = null,
   babidiClones = [],
   babidiBombDrop = null,
   babidiAttackVariant,
@@ -230,6 +232,14 @@ export function BattleEntities({
 
       <FishingNet
         net={fishingNet}
+        battleScaleX={battleScaleX}
+        battleScaleY={battleScaleY}
+      />
+
+      <LaricellEffects
+        visual={laricellVisual}
+        npc={npc}
+        player={player}
         battleScaleX={battleScaleX}
         battleScaleY={battleScaleY}
       />

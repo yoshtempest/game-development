@@ -5,6 +5,7 @@ import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
 import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
 import type { NpcHitIntent } from "@/hooks/battle/coop/types";
+import type { BattleBarrier, NpcBlind } from "@/utils/types/battle/npcControl";
 
 export type Props = {
   playerX: number;
@@ -34,6 +35,10 @@ export type Props = {
     y: number;
   } | null>;
   honoredFleeRef?: React.RefObject<boolean>;
+  /** Barreira (Parede de Gelo): o NPC não atravessa e projéteis se partem. */
+  barrierRef?: React.RefObject<BattleBarrier | null>;
+  /** Cegueira (Bomba de Fumaça): chance de cada golpe do NPC errar. */
+  npcBlindRef?: React.RefObject<NpcBlind | null>;
   npcHpRef?: React.RefObject<number>;
   npcMaxHpRef?: React.RefObject<number>;
   npcBlockedRef?: React.RefObject<boolean>;

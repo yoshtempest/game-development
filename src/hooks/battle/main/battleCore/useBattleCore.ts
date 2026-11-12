@@ -5,6 +5,8 @@ import { useBattleKillCounter } from "@/hooks/battle/death/useKillCounter";
 import { useNpcTargeting } from "@/hooks/battle/npc/useNpcTargeting";
 import { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 import { useNpcAI } from "@/hooks/battle/npc/ai/useAi";
+import { LaricellVampireConstants } from "@/data/characters/laricell/laricell";
+import type { BattleBarrier, NpcBlind } from "@/utils/types/battle/npcControl";
 import { useGrabThrow } from "@/hooks/battle/throw/useGrabThrow";
 import { useBabidiShield } from "@/hooks/battle/player/characters/babidi/useShield";
 import { useYvelWeaponSwitch } from "@/hooks/battle/player/characters/yvel/useYvelWeaponSwitch";
@@ -191,6 +193,14 @@ export function useBattleCore({
   }
 
   const npcRootedUntilRef = useRef(0);
+
+  // ── Controle de NPC da Laricell (issue #517) ─────────────────────────────
+  // Moram no core porque a IA (montada aqui) lê a parede e a cegueira a cada
+  // tick, e o vampirismo da Forma Vampira entra no `useBattleSystem`, também
+  // montado aqui; quem escreve nelas é o `useLaricellAbilities`, no combat.
+  const barrierRef = useRef<BattleBarrier | null>(null);
+  const npcBlindRef = useRef<NpcBlind | null>(null);
+  const [laricellVampireActive, setLaricellVampireActive] = useState(false);
   const rootedSummonsUntilRef = useRef<Record<string, number>>({});
 
   const [fishingNet, setFishingNet] = useState<{
@@ -420,6 +430,8 @@ export function useBattleCore({
     npcStaggerRef: refs.npcStaggerRef,
     rootedUntilRef: npcRootedUntilRef,
     fishingNetRef: fishingNetRef,
+    barrierRef,
+    npcBlindRef,
     honoredFleeRef,
     npcHpRef: targeting.npcAiHpRef,
     npcMaxHpRef: targeting.npcAiMaxHpRef,
@@ -605,6 +617,9 @@ export function useBattleCore({
     srGuaxinimOraMultiplierRef,
     vastolordMultiplierRef,
     vastolordActive,
+    bonusUniversalVampirism: laricellVampireActive
+      ? LaricellVampireConstants.UNIVERSAL_VAMPIRISM
+      : 0,
     divergentFistRef,
     onDivergentFistConsumedRef,
     petId,
@@ -644,6 +659,10 @@ export function useBattleCore({
     resetBattleNavbarRef,
     saveDataRef,
     npcRootedUntilRef,
+    barrierRef,
+    npcBlindRef,
+    laricellVampireActive,
+    setLaricellVampireActive,
     rootedSummonsUntilRef,
     refs,
     setModeRef,

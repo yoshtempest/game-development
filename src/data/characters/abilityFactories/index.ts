@@ -6,7 +6,14 @@ import {
   KILLER_QUEEN_COOLDOWN_MS,
   TOTAL_FREEZE_MS,
 } from "@/data/characters/srGuaxinim/srGuaxinim";
-import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/laricell/laricell";
+import {
+  STACK_EXPLOSION_COOLDOWN_MS,
+  LaricellBiteConstants,
+  LaricellEarringsConstants,
+  LaricellIceWallConstants,
+  LaricellSmokeConstants,
+  LaricellVampireConstants,
+} from "@/data/characters/laricell/laricell";
 import { YVEL_WEAPONS } from "@/data/characters/yvel/yvelWeapons";
 import { BabidiBombDropConstants } from "@/data/characters/babidi";
 import {
@@ -57,6 +64,62 @@ export function stackExplosionAbility(): ActiveAbility {
     name: "Explosão de Stacks",
     description: `Consome os stacks acumulados pelos ataques básicos numa explosão (5 de dano por stack). Cooldown de ${STACK_EXPLOSION_COOLDOWN_MS / 1000}s.`,
     cooldownMs: STACK_EXPLOSION_COOLDOWN_MS,
+  });
+}
+
+/** Parede de Gelo da Laricell (A1): barreira que bloqueia NPC e projéteis. */
+export function laricellIceWallAbility(): ActiveAbility {
+  return createActiveAbility({
+    id: "iceWall",
+    name: "Parede de Gelo",
+    description: `Ergue uma parede de gelo à frente por ${LaricellIceWallConstants.DURATION_MS / 1000}s: inimigos não atravessam e projéteis inimigos se partem nela. Cooldown de ${LaricellIceWallConstants.COOLDOWN_MS / 1000}s.`,
+    cooldownMs: LaricellIceWallConstants.COOLDOWN_MS,
+    requires: "indisponível na Forma Vampira",
+  });
+}
+
+/** Brincos Explosivos da Laricell (A2): explosão em área com pavio. */
+export function laricellEarringsAbility(): ActiveAbility {
+  return createActiveAbility({
+    id: "explodingEarrings",
+    name: "Brincos Explosivos",
+    description: `Arremessa os brincos no inimigo; ${LaricellEarringsConstants.FUSE_MS / 1000}s depois eles explodem em área (${LaricellEarringsConstants.MULTIPLIER}x de dano mágico). Cooldown de ${LaricellEarringsConstants.COOLDOWN_MS / 1000}s.`,
+    cooldownMs: LaricellEarringsConstants.COOLDOWN_MS,
+    damageType: "magical",
+    requires: "indisponível na Forma Vampira",
+  });
+}
+
+/** Bomba de Fumaça da Laricell (A3): cega os inimigos. */
+export function laricellSmokeBombAbility(): ActiveAbility {
+  return createActiveAbility({
+    id: "smokeBomb",
+    name: "Bomba de Fumaça",
+    description: `Cega os inimigos por ${LaricellSmokeConstants.DURATION_MS / 1000}s: cada golpe deles tem ${LaricellSmokeConstants.MISS_CHANCE * 100}% de chance de errar. Cooldown de ${LaricellSmokeConstants.COOLDOWN_MS / 1000}s.`,
+    cooldownMs: LaricellSmokeConstants.COOLDOWN_MS,
+    requires: "indisponível na Forma Vampira",
+  });
+}
+
+/** Forma Vampira da Laricell (A4): troca A1–A3 pela Mordida e ganha vampirismo. */
+export function laricellVampireFormAbility(): ActiveAbility {
+  return createActiveAbility({
+    id: "vampireForm",
+    name: "Forma Vampira",
+    description: `Desperta a linhagem vampira por ${LaricellVampireConstants.DURATION_MS / 1000}s: +${LaricellVampireConstants.UNIVERSAL_VAMPIRISM}% de vampirismo universal e as habilidades viram a Mordida. Cooldown de ${LaricellVampireConstants.COOLDOWN_MS / 1000}s.`,
+    cooldownMs: LaricellVampireConstants.COOLDOWN_MS,
+  });
+}
+
+/** Mordida da Laricell: só existe enquanto a Forma Vampira dura. */
+export function laricellBiteAbility(): ActiveAbility {
+  return createActiveAbility({
+    id: "vampireBite",
+    name: "Mordida",
+    description: `Morde o inimigo à frente (${LaricellBiteConstants.MULTIPLIER}x de dano mágico); a cura vem do vampirismo da forma. Cooldown de ${LaricellBiteConstants.COOLDOWN_MS / 1000}s.`,
+    cooldownMs: LaricellBiteConstants.COOLDOWN_MS,
+    damageType: "magical",
+    requires: "Forma Vampira ativa",
   });
 }
 
