@@ -8,6 +8,7 @@ export type CharacterPassiveId =
   | "babidiCloneBurst"
   | "clearCut"
   | "combo"
+  | "berserk"
   | "notImplemented";
 
 export type CharacterPassiveKind =
@@ -18,6 +19,7 @@ export type CharacterPassiveKind =
   | { kind: "babidiCloneBurst" }
   | { kind: "clearCut " }
   | { kind: "combo"; windowMs: number }
+  | { kind: "berserk" }
   | { kind: "notImplemented" };
 
 export type CharacterPassive = {
