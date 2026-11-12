@@ -1,0 +1,15 @@
+/* Sprites de NPC já olham para a esquerda (o NPCBattle só espelha quando ele
+   vira à direita), então no lado direito o retrato encara o player sem flip. */
+.npcPortrait {
+  position: absolute;
+  z-index: 10;
+  bottom: 20%;
+  right: 0%;
+  height: 30vh;
+}
+
+@media (orientation: portrait) {
+  .npcPortrait {
+    height: 30vw;
+  }
+}

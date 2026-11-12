@@ -22,6 +22,8 @@ export type Props = {
   bestTime: number;
   getReplayData: () => ReplayData | null;
   isAlfa: boolean;
+  /** PvP não tem NPC: o outro mostra só o lado do player. */
+  isPvp: boolean;
   titleProgressSnapshot: TitlesData["progress"];
   showDefeat: boolean;
   handleRetry: () => void;
