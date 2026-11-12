@@ -53,6 +53,8 @@ export function DamageNumbers({
               "PARRY!"
             ) : n.type === "miss" ? (
               "MISS!"
+            ) : n.type === "blind" ? (
+              "BLIND!"
             ) : n.type === "heal" ? (
               `+${label}`
             ) : n.type === "armor" ? (
