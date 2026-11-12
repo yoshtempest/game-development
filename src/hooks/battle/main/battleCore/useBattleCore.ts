@@ -7,7 +7,6 @@ import { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 import { useNpcAI } from "@/hooks/battle/npc/ai/useAi";
 import { useGrabThrow } from "@/hooks/battle/throw/useGrabThrow";
 import { useBabidiShield } from "@/hooks/battle/player/characters/babidi/useShield";
-import { useStatCallbacks } from "@/hooks/battle/effects/statCallbacks/useStatCallbacks";
 import { useYvelWeaponSwitch } from "@/hooks/battle/player/characters/yvel/useYvelWeaponSwitch";
 import { useCooldownPauseTick } from "@/hooks/battle/utilities/useCooldowns";
 import { BATTLE_LIMITS, BLOCK_ATTACK_PUSH_DISTANCE } from "@/gameRules/movement/constants";
@@ -520,22 +519,6 @@ export function useBattleCore({
 
   const babidiShield = useBabidiShield(player.character);
 
-  const {
-    onBlockRef,
-    onDamageTakenRef,
-    onDodgeRef,
-    onDamageDealtRef,
-    onAttackRef,
-    onSpecialRef,
-  } = useStatCallbacks({
-    playerCharacter: player.character,
-    incrementBlockCounter,
-    incrementDamageTaken,
-    incrementDodgeCounter,
-    incrementDamageDealt,
-    onBlockSide: babidiShield.register,
-  });
-
   const executePetSkillRef = useRef<() => void>(() => {});
 
   // Preenchido pelo useSrGuaxinimOraPunch com o multiplicador atual (escala ORA).
@@ -584,12 +567,15 @@ export function useBattleCore({
     machineGamaShieldRef,
     onMachineGamaBreak: () => machineGamaBreakRef.current(),
     onBeforeNpcHitRef: targeting.onBeforeNpcHitRef,
-    onBlockRef,
-    onDamageTakenRef,
-    onDodgeRef,
-    onDamageDealtRef,
-    onAttackRef,
-    onSpecialRef,
+    // Os callbacks de estatística moram no bag compartilhado: as refs
+    // precisam existir no primeiro render, mas quem as preenche é o
+    // `useBattleCombatActions` (que sabe das stats), montado depois do core.
+    onBlockRef: refs.onBlockRef,
+    onDamageTakenRef: refs.onDamageTakenRef,
+    onDodgeRef: refs.onDodgeRef,
+    onDamageDealtRef: refs.onDamageDealtRef,
+    onAttackRef: refs.onAttackRef,
+    onSpecialRef: refs.onSpecialRef,
     onKokusenRef,
     onBlackFlashRef,
     onCriticalPushRef,
@@ -731,12 +717,12 @@ export function useBattleCore({
     yvelWeapon,
     switchWeapon,
     babidiShield,
-    onBlockRef,
-    onDamageTakenRef,
-    onDodgeRef,
-    onDamageDealtRef,
-    onAttackRef,
-    onSpecialRef,
+    onBlockRef: refs.onBlockRef,
+    onDamageTakenRef: refs.onDamageTakenRef,
+    onDodgeRef: refs.onDodgeRef,
+    onDamageDealtRef: refs.onDamageDealtRef,
+    onAttackRef: refs.onAttackRef,
+    onSpecialRef: refs.onSpecialRef,
     machineGamaShieldRef,
     executePetSkillRef,
     srGuaxinimOraMultiplierRef,

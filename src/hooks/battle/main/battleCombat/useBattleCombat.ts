@@ -3,19 +3,15 @@ import { useBattleCore } from "@/hooks/battle/main/battleCore/useBattleCore";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useThrowAnimation } from "@/hooks/battle/throw/useThrowAnimation";
 import { useSpecialIntro } from "@/hooks/battle/modals/specialIntro/useSpecialIntro";
-import { usePlayerBattleActions } from "@/hooks/battle/player/playerActions/usePlayerActions";
-import { getBabidiAttackMode } from "@/utils/character/babidiAttackMode";
 import { useBabidiEnergyAttack } from "@/hooks/battle/player/characters/babidi/energyAttack/useEnergyAttack";
 import { useBabidiMissile } from "@/hooks/battle/player/characters/babidi/missile/useMissile";
 import { useBattleControls } from "@/hooks/battle/controls/useControls";
-import { useComboSystem } from "@/hooks/battle/effects/useComboSystem";
 import { useBattleDamage } from "@/hooks/battle/main/battleDamage/useBattleDamage";
 import { useBattleEntities } from "@/hooks/battle/main/battleEntities/useBattleEntities";
-import { useChargeAttack } from "@/hooks/battle/charge/attack/useAttack";
+import { useBattleCombatActions } from "@/hooks/battle/main/battleCombatActions/useBattleCombatActions";
 import { usePhaseTransition } from "@/hooks/battle/death/phaseTransition/usePhaseTransition";
 import { useSigilo } from "@/hooks/battle/player/characters/drika/useSigilo";
 import { useBattleSync } from "@/hooks/battle/sync/useSync";
-import { useActiveSkills } from "@/hooks/battle/utilities/activeSkills/useActiveSkills";
 import { useStatusDots } from "@/hooks/battle/effects/statusDots/useStatusDots";
 import { useTrainingEffects } from "@/hooks/battle/effects/useTrainingEffects";
 import { useSrGuaxinimBattle } from "@/hooks/battle/player/characters/srGuaxinim/battle/useSrGuaxinimBattle";
@@ -51,7 +47,6 @@ import {
   useCooldownPauseTick,
 } from "@/hooks/battle/utilities/useCooldowns";
 import { runPetSkill } from "@/gameRules/battle/petSkill/petSkill";
-import { clampX } from "@/gameRules/movement/clampX";
 import type { BabidiTarget } from "@/utils/types/character/babidi";
 import type { BattleCombatProps } from "@/hooks/battle/main/battleCore/types";
 
@@ -145,6 +140,10 @@ export function useBattleCombat({
     petLevel,
     petStars,
     giveSummonRewards,
+    incrementBlockCounter,
+    incrementDamageTaken,
+    incrementDodgeCounter,
+    incrementDamageDealt,
     machineGamaShieldRef,
     machineGamaBreakRef,
     executePetSkillRef,
@@ -313,24 +312,83 @@ export function useBattleCombat({
       setFishingNetRemaining,
     });
 
+  // Babidi: o básico é um projétil de energia. O press dispara via `fireRef`
+  // (preenchido pelo hook de ataque do babidi, mais abaixo) e a colisão resolve
+  // o dano via `onHitRef` (preenchido pelo usePlayerBattleActions com
+  // playerHit/damageSummon).
+  const babidiFireRef = useRef<
+    ((player: Player, targets: BabidiTarget[]) => boolean) | null
+  >(null);
+
+  const babidiOnHitRef = useRef<((target: BabidiTarget) => void) | null>(null);
+  const babidiMissileFireRef = useRef<
+    ((player: { x: number; y: number }) => boolean) | null
+  >(null);
+  const babidiMissileFireBurstRef = useRef<
+    ((player: { x: number; y: number }) => void) | null
+  >(null);
+  const babidiMissileOnHitRef = useRef<((target: BabidiTarget) => void) | null>(
+    null,
+  );
+
   const {
+    comboCount,
+    comboRank,
+    comboProgress: comboProgressValue,
+    nextRank,
+    registerHit,
+    resetCombo,
     handleCursedEnergyConversion,
     handleBlink,
     handleActivateDivergentFist,
-  } = useActiveSkills({
-    cursedEnergyEnabled,
+    handlePlayerHit,
+    handleSpecialHit,
+    handleExtraPunch,
+    hitTargetList,
+    charge,
+  } = useBattleCombatActions({
     battle,
-    battleManaRef,
+    refs,
+    npc,
     player,
-    honoredOneActiveRef,
     setPlayer,
+    playerClass,
+    npcType,
+    npcClass: npcData.class,
+    npcLevel,
+    progress,
+    weapon: yvelWeapon,
+    summons,
+    setSummons,
+    giveSummonRewards,
+    setPlayerState,
+    ematronComboMultiplierRef,
+    ematronComboActiveRef,
+    ematronComboAirActiveRef,
+    ematronComboStepIndexRef,
+    forcePunchRef,
+    babidiFireRef,
+    babidiOnHitRef,
+    babidiMissileFireRef,
+    babidiMissileOnHitRef,
+    vastolordMultiplierRef,
+    cursedEnergyEnabled,
+    battleManaRef,
+    honoredOneActiveRef,
     playSound,
     triggerBlink,
     divergentFistActive,
     divergentFistRef,
-    forcePunchRef,
     setDivergentFistActive,
+    incrementBlockCounter,
+    incrementDamageTaken,
+    incrementDodgeCounter,
+    incrementDamageDealt,
+    babidiShield,
   });
+
+  // O projétil especial (esfera do natsuki) dispara o golpe do player ao fundir.
+  onFireRef.current = handleSpecialHit;
 
   executePetSkillRef.current = () => {
     if (!petSkillDef || battle.isEnding.current) return;
@@ -360,14 +418,6 @@ export function useBattleCombat({
     });
   };
 
-  const {
-    comboCount,
-    comboRank,
-    progress: comboProgressValue,
-    nextRank,
-    registerHit,
-    resetCombo,
-  } = useComboSystem({ npcMaxHp: battle.npcMaxHp });
   const weaponInfo = getEquippedInfo(player.character, "weapon");
   const weaponEnchantment = weaponInfo
     ? getWeaponEnchantment(weaponInfo.id)
@@ -407,79 +457,6 @@ export function useBattleCombat({
   });
 
   dragBattleRef.current = battle;
-
-  // Babidi: o básico é um projétil de energia. O press dispara via `fireRef`
-  // (preenchido pelo hook criado logo abaixo) e a colisão resolve o dano via
-  // `onHitRef` (preenchido pelo usePlayerBattleActions com playerHit/damageSummon).
-  const babidiFireRef = useRef<
-    ((player: Player, targets: BabidiTarget[]) => boolean) | null
-  >(null);
-
-  const babidiOnHitRef = useRef<((target: BabidiTarget) => void) | null>(null);
-  const babidiMissileFireRef = useRef<
-    ((player: { x: number; y: number }) => boolean) | null
-  >(null);
-  const babidiMissileFireBurstRef = useRef<
-    ((player: { x: number; y: number }) => void) | null
-  >(null);
-  const babidiMissileOnHitRef = useRef<((target: BabidiTarget) => void) | null>(
-    null,
-  );
-
-  const { handlePlayerHit, handleSpecialHit, handleExtraPunch, hitTargetList } =
-    usePlayerBattleActions({
-      player,
-      npc,
-      summons,
-      setSummons,
-      npcHP: battle.npcHP,
-      npcClass: npcData.class,
-      playerClass,
-      weapon: yvelWeapon,
-      progress,
-      npcLevel,
-      battle,
-      giveSummonRewards,
-      spawnDamageRef: refs.spawnDamageRef,
-      registerHitRef: refs.registerHitRef,
-      setPlayerHP: battle.setPlayerHP,
-      playerHP: battle.playerHP,
-      playerMaxHp: battle.playerMaxHp,
-      vampirism: battle.vampirism,
-      onNpcPush: (targetX) =>
-        npc.updateNpc({
-          x: clampX(targetX),
-        }),
-      onComboAdvance: (forwardDistance, targetX) =>
-        setPlayer((p) => {
-          if (p.mode !== "battle" || forwardDistance <= 0) return p;
-          const direction = targetX >= p.x ? 1 : -1;
-          const stepToX = clampX(p.x + direction * forwardDistance);
-          const toX =
-            direction === 1
-              ? Math.min(stepToX, targetX)
-              : Math.max(stepToX, targetX);
-          if (toX === p.x) return p;
-          return {
-            ...p,
-            pullFromX: p.x,
-            pullToX: toX,
-            pullStartTime: Date.now(),
-          };
-        }),
-      ematronComboMultiplierRef,
-      ematronComboActiveRef,
-      ematronComboAirActiveRef,
-      ematronComboStepIndexRef,
-      babidiFireRef,
-      babidiOnHitRef,
-      babidiMissileFireRef,
-      babidiMissileOnHitRef,
-      babidiAttackMode: getBabidiAttackMode(),
-    });
-
-  // O projétil especial (esfera do natsuki) dispara o golpe do player ao fundir.
-  onFireRef.current = handleSpecialHit;
 
   const babidiEnergy = useBabidiEnergyAttack({
     PLAYER_SIZE,
@@ -574,38 +551,6 @@ export function useBattleCombat({
     clearAllies,
     setIsPhaseTransitioning,
     disabled: npcType === "trueVandinha",
-  });
-
-  const charge = useChargeAttack({
-    player,
-    setPlayer,
-    npcX: npc.x,
-    npcY: npc.y,
-    npcType,
-    npcArmor: battle.npcArmor,
-    npcClass: npcData.class,
-    char: battle.char,
-    playerClass,
-    critRate: battle.critRate,
-    titleDamageBonus: battle.titleDamageBonus,
-    elementDamageBonus: battle.elementDamageBonus,
-    setNpcHP: battle.setNpcHP,
-    playerCooldown: battle.playerCooldown,
-    isEnding: battle.isEnding,
-    timeRef: refs.timeRef,
-    spawnDamageRef: refs.spawnDamageRef,
-    registerHitRef: refs.registerHitRef,
-    setPlayerState,
-    summons,
-    setSummons,
-    setDelicia: battle.setDelicia,
-    hitsToSpecial: battle.hitsToSpecial,
-    setPlayerHP: battle.setPlayerHP,
-    playerHP: battle.playerHP,
-    playerMaxHp: battle.playerMaxHp,
-    vampirism: battle.vampirism,
-    weapon: yvelWeapon,
-    vastolordMultiplierRef,
   });
 
   useBattleSync({

@@ -5,6 +5,7 @@ import { ProjectileHpConstants } from "@/data/projectile";
 
 import type { SpawnDamageFn } from "@/utils/types/battle/spawnDamageFn";
 import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
+import type { BabidiShieldSide } from "@/utils/types/character/babidi";
 
 export function useBattleRefs() {
   // A natureza do golpe viaja junto: melee e projétil declaram no registry de
@@ -43,6 +44,19 @@ export function useBattleRefs() {
     damage: ProjectileHpConstants.PLAYER_MELEE_DAMAGE,
     type: "projectile",
   }));
+  /**
+   * Callbacks de estatística (bloqueio, dano tomado, esquiva, dano causado,
+   * ataque e special). O `useBattleSystem` — que fica no core e precisa das
+   * refs no primeiro render — e o `useBattleCombatActions` — que é quem sabe
+   * das stats — conversam por aqui: as refs nascem no bag, quem as preenche
+   * é o hook de ações, que roda depois do core.
+   */
+  const onBlockRef = useRef<(side?: BabidiShieldSide) => void>(() => {});
+  const onDamageTakenRef = useRef<(amount: number) => void>(() => {});
+  const onDodgeRef = useRef<() => void>(() => {});
+  const onDamageDealtRef = useRef<(amount: number) => void>(() => {});
+  const onAttackRef = useRef<() => void>(() => {});
+  const onSpecialRef = useRef<() => void>(() => {});
 
   return {
     npcRangedAttackRef,
@@ -56,5 +70,11 @@ export function useBattleRefs() {
     registerHitRef,
     playerCooldown,
     playerHitDamageRef,
+    onBlockRef,
+    onDamageTakenRef,
+    onDodgeRef,
+    onDamageDealtRef,
+    onAttackRef,
+    onSpecialRef,
   };
 }
