@@ -8,6 +8,10 @@ import {
 } from "@/data/characters/srGuaxinim/srGuaxinim";
 import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/laricell/laricell";
 import { YVEL_WEAPONS } from "@/data/characters/yvel/yvelWeapons";
+import {
+  DRIKA_ARMS,
+  DRIKA_SIGILO_HP_COST_RATIO,
+} from "@/data/characters/drika/drikaArms";
 import { BabidiBombDropConstants } from "@/data/characters/babidi";
 import {
   BLINK_ENERGY_COST,
@@ -101,13 +105,12 @@ export function hakaiAbility(characterId: CharacterId): ActiveAbility {
   });
 }
 
-/** Sigilo da Drika: troca o braço em uso, pagando 5% da vida atual. */
+/** Sigilo da Drika: troca o braço em uso, pagando parte da vida atual. */
 export function sigiloAbility(): ActiveAbility {
   return createActiveAbility({
     id: "sigilo",
     name: "Sigilo",
-    description:
-      "Troca o braço em uso, pagando 5% da vida atual. Escolha entre 4 braços.",
+    description: `Morde o dedo e desenha o pentagrama com sangue: troca o braço em uso, pagando ${Math.round(DRIKA_SIGILO_HP_COST_RATIO * 100)}% da vida atual. Escolha entre ${DRIKA_ARMS.length} braços.`,
   });
 }
 
