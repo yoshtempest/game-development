@@ -14,4 +14,10 @@ export type Props = {
   onNpcDeath: () => void;
 
   isEnding: React.RefObject<boolean>;
+  /**
+   * Segura a morte do NPC principal (troca de fase ou vitória) enquanto
+   * `true` — companheiro ainda de pé (`hasCompanionAlive`). Quando vira
+   * `false` o effect roda de novo e a morte segue o fluxo normal.
+   */
+  holdNpcDeath?: boolean;
 };

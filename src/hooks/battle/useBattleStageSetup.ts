@@ -15,7 +15,12 @@ import { useSettings } from "@/hooks/settings/useSetting";
 import { useTombstones } from "@/contexts/TombstoneContext";
 import { useNpcSetup } from "@/hooks/battle/npc/useSetup";
 import { getNpcStatMultiplier } from "@/gameRules/npc/npcStats";
-import { getNpcLevel } from "@/data/npc";
+import {
+  getNpcLevel,
+  getBattleCompanions,
+  COMPANION_SPAWN_GAP,
+} from "@/data/npc";
+import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { useBattleRewards } from "@/hooks/battle/rewards/useRewards";
 import { useSummons } from "@/hooks/battle/summon/useSummons";
 import { useAllies } from "@/hooks/battle/summon/useAllies";
@@ -216,6 +221,20 @@ export function useBattleStageSetup({
     summonNpc(npcType);
     summonNpc(npcType);
   }, [isAlfa, npcType, summonNpc]);
+
+  /**
+   * Companheiros (`BATTLE_COMPANIONS`) entram junto com o NPC principal, uma
+   * vez por montagem — o retry respawna no `useDefeatFlow`, depois do
+   * `clearSummons`.
+   */
+  const companionsSpawnedRef = useRef(false);
+  useEffect(() => {
+    if (companionsSpawnedRef.current) return;
+    companionsSpawnedRef.current = true;
+    for (const companion of getBattleCompanions(npcType)) {
+      summonNpc(companion, BATTLE_SPAWN.npc.x - COMPANION_SPAWN_GAP);
+    }
+  }, [npcType, summonNpc]);
 
   const onSummonWrapperRef = useLatestRef(
     buildSummonWrapper({

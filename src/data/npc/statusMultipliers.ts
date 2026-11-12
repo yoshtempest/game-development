@@ -51,6 +51,13 @@ export const NPC_STATUS_MULTIPLIERS: Partial<
   vandinhaFragment: { damage: 1.3, physicalArmor: 1, magicalArmor: 1, hp: 1.3 },
   trueVandinha: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 1 },
   deise: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 0.8 },
+  /**
+   * Decisão para revisar: as Irmãs Planetárias lutam juntas, então cada uma
+   * tem 70% da vida de um boss solo — somadas ainda dão mais vida que um
+   * boss, mas a luta não dobra de duração.
+   */
+  planetarySisters: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 0.7 },
+  netali: { damage: 0.9, physicalArmor: 1, magicalArmor: 1, hp: 0.7 },
 };
 
 export function getNpcStatusMultipliers(npcType: string): NpcStatusMultipliers {

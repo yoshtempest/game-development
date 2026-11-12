@@ -16,6 +16,7 @@ const NPC_DISPLAY_NAMES: Record<NpcType, string> = {
   srGuaxinim: "Sr. Guaxinim",
   neimito: "Neimito",
   planetarySisters: "Irmãs Planetárias",
+  netali: "Netali",
   manim: "Manim",
   maurao: "Maurão",
   maugrelo: "Maugrelo",

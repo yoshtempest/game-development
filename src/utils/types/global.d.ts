@@ -734,7 +734,8 @@ declare global {
     x: number;
     y: number;
     direction: NPCDirection;
-    state: "idle" | "walk" | "run" | "attack";
+    /** `debuff`: pose do grito de summon (`SUMMON_SHOUTS`, ex.: "VERB TO BE" da Netali). */
+    state: "idle" | "walk" | "run" | "attack" | "debuff";
     hp: number;
     maxHp: number;
     isDying: boolean;

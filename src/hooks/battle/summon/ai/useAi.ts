@@ -14,6 +14,8 @@ import {
 import { applyHitstop, getTime, scaleCooldown } from "@/gameRules/battle/time";
 
 import { clampX } from "@/gameRules/movement/clampX";
+import { SUMMON_SHOUTS } from "@/data/npc";
+import type { NewPlayerStatus } from "@/utils/types/battle/status";
 /** Velocidade acima da qual o hungryDog é considerado correndo (usa run.svg). */
 const HUNGRY_DOG_RUN_SPEED = 1.5;
 
@@ -34,8 +36,11 @@ export function useSummonAI({
   rootedSummonsUntilRef,
   honoredFleeRef,
   onSummonKilled,
+  applyStatus,
 }: Props) {
   const summonLastAttacksRef = useRef<Record<string, number>>({});
+  /** Instante do último grito por summon (cooldown + duração da pose `debuff`). */
+  const summonLastShoutRef = useRef<Record<string, number>>({});
 
   // Timers de remoção dos summons mortos, por id (500ms da animação de dying).
   // Guardar em ref evita que o re-run imediato do effect (a marcação de
@@ -59,6 +64,7 @@ export function useSummonAI({
   const summonsRef = useLatestRef(summons);
   const setSummonsRef = useLatestRef(setSummons);
   const onSummonKilledRef = useLatestRef(onSummonKilled);
+  const applyStatusRef = useLatestRef(applyStatus);
 
   useEffect(() => {
     // `[].map()` devolve array novo — sem o compare o React re-renderizaria a
@@ -107,7 +113,11 @@ export function useSummonAI({
       // setState de outros componentes (contadores de título, HP do player) —
       // o "Cannot update a component while rendering a different component".
       // O tick coleta os golpes na passada pura e aplica depois do commit.
-      const attackEvents: { damage: number; attackerX: number }[] = [];
+      const attackEvents: {
+        damage: number;
+        attackerX: number;
+        status?: NewPlayerStatus;
+      }[] = [];
 
       const next = apply(summonsRef.current, (s) => {
         if (s.isDying || s.hp <= 0) {
@@ -129,6 +139,36 @@ export function useSummonAI({
         const dx = px - s.x;
 
         const direction: "left" | "right" = dx > 0 ? "right" : "left";
+
+        const shout = SUMMON_SHOUTS[s.npcType];
+        if (shout) {
+          const now = Date.now();
+          const lastShout = summonLastShoutRef.current[s.id] ?? 0;
+          if (now - lastShout < shout.durationMs) {
+            return s.state === "debuff" ? s : { ...s, state: "debuff" };
+          }
+          if (
+            Math.abs(dx) <= shout.range &&
+            now - lastShout >= scaleCooldown(time, shout.cooldownMs)
+          ) {
+            summonLastShoutRef.current[s.id] = now;
+            const damage = computeSummonDamage(
+              s,
+              npcLevelRef.current,
+              difficultyRef.current,
+              playerClassRef.current,
+              playerCharacterRef.current,
+            );
+            if (damage !== null) {
+              attackEvents.push({
+                damage,
+                attackerX: s.x,
+                status: shout.status,
+              });
+            }
+            return { ...s, direction, state: "debuff" };
+          }
+        }
 
         const rooted =
           (rootedSummonsUntilRef?.current?.[s.id] ?? 0) > Date.now();
@@ -172,8 +212,9 @@ export function useSummonAI({
         };
       });
 
-      for (const { damage, attackerX } of attackEvents) {
+      for (const { damage, attackerX, status } of attackEvents) {
         damagePlayerRef.current(damage, SUMMON_DAMAGE_KIND, attackerX);
+        if (status) applyStatusRef.current?.(status);
         spawnDamageRef.current?.(
           damage,
           playerXRef.current,
@@ -205,6 +246,7 @@ export function useSummonAI({
     freezeUntilRef,
     rootedSummonsUntilRef,
     honoredFleeRef,
+    applyStatusRef,
   ]);
 
   useEffect(() => {

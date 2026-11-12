@@ -183,6 +183,7 @@ O escopo atual abrange:
 | RN41 | Quem cai num round avisa a partida; os dois cair em até 0,7 s é empate (ninguém pontua). Vence a série quem chegar a maioria simples (1, 2 ou 3 rounds) |
 | RN42 | Oponente que sai do duelo ou fica 4 s sem dar sinal antes de a série acabar perde por W.O.; sair depois da série decidida não muda o resultado |
 | RN43 | O duelo é amistoso: não dá XP, loot, progresso de missão nem penalidade de derrota; o Rewind fica desligado e a Forma Vastolord (passiva) vale |
+| RN44 | Companheiro de batalha (`BATTLE_COMPANIONS`, ex.: Netali ao lado da Marquesa nas Irmãs Planetárias) entra como summon com barra de vida própria; enquanto ele estiver vivo, o NPC principal com HP 0 fica caído e a troca de fase/vitória espera — a luta só avança quando os dois caem |
 
 ### 3.4 Restrições de Hardware
 
