@@ -33,6 +33,7 @@ import { MuyMachoAttack } from "./muyMacho";
 import { NecromancerAttack } from "./necromancer";
 import { NeimitoAttack } from "./neimito";
 import { PiupiuAttack } from "./piupiu";
+import { NetaliAttack } from "./netali";
 import { PlanetarySistersAttack } from "./planetarySisters";
 import { RiceAttack } from "./rice";
 import { SlimitaAttack } from "./slimita";
@@ -75,7 +76,8 @@ export const npcAttacks = {
   denis: new DenisAttack("denis"),
   srGuaxinim: new SrGuaxinimAttack(),
   neimito: new NeimitoAttack("neimito"),
-  planetarySisters: new PlanetarySistersAttack("planetarySisters"),
+  planetarySisters: new PlanetarySistersAttack(),
+  netali: new NetaliAttack(),
   manim: new ManimAttack("manim"),
   maurao: new MauraoAttack(),
   maugrelo: new MaugreloAttack(),

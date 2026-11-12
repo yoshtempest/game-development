@@ -2,6 +2,8 @@ import type { Props } from "./types";
 import { useCallback, useState } from "react";
 import { computeElapsedBattleTime } from "@/hooks/battle/time/computeElapsedBattleTime";
 import { incrementDeath, recordDefeat } from "@/utils/rewards";
+import { getBattleCompanions, COMPANION_SPAWN_GAP } from "@/data/npc";
+import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 
 export function useDefeatFlow({
   player,
@@ -110,6 +112,9 @@ export function useDefeatFlow({
     if (isAlfa && npcType !== "hungryDog") {
       summonNpc(npcType);
       summonNpc(npcType);
+    }
+    for (const companion of getBattleCompanions(npcType)) {
+      summonNpc(companion, BATTLE_SPAWN.npc.x - COMPANION_SPAWN_GAP);
     }
     battle.resetBattle();
     npc.resetNpc();

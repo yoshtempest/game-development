@@ -62,6 +62,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     difficulty,
     onPlayerDeath,
     onNpcDeath,
+    holdNpcDeath,
     timeRef,
     npcStaggerRef,
     playerCooldown,
@@ -436,6 +437,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     onPlayerDeath,
     onNpcDeath,
     isEnding,
+    holdNpcDeath,
   });
 
   useStatusDotTicks({

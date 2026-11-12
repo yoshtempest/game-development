@@ -44,6 +44,7 @@ export const NPC_TYPINGS = {
   srGuaxinim: ["Normalis", "Psychicus"],
   neimito: ["Pyrus", "Psychicus"],
   planetarySisters: ["Normalis"],
+  netali: ["Normalis"],
   manim: ["Psychicus", "Normalis"],
   maurao: ["Pyrus", "Darkus"],
   maugrelo: ["Normalis", "Pyrus"],
