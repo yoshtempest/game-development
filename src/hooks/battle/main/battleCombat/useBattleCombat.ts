@@ -42,6 +42,7 @@ import { CHARGE_ATTACK_MIN_LEVEL } from "@/data/battle/charge";
 import { KILLER_QUEEN_COOLDOWN_MS } from "@/data/characters/srGuaxinim/srGuaxinim";
 import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/laricell/laricell";
 import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
+import { SAMUEL_GRIMOIRE_STAMINA_COST } from "@/data/characters/samurion/stamina";
 import {
   ABILITY_COOLDOWN_TICK_MS,
   useCooldownPauseTick,
@@ -176,6 +177,8 @@ export function useBattleCombat({
     timeScaleRef,
     yvelWeapon,
     switchWeapon,
+    samuelWeapon,
+    cycleSamuelWeapon,
     babidiShield,
   } = useBattleCore({
     setup,
@@ -268,6 +271,19 @@ export function useBattleCombat({
     // Troca de arma é habilidade do Yvel: concede carga da Expansão.
     onAbilityUsed();
   }, [battleManaRef, onAbilityUsed, switchWeapon]);
+
+  /**
+   * Grimório do Samuel: a stamina só sai se a troca acontecer. O inverso do
+   * Yvel (que cobra antes) porque a stamina regenera rápido e é gasta o tempo
+   * todo — cobrar uma invocação que o hitstop recusou seria punição invisível.
+   */
+  const handleGrimoire = useCallback(() => {
+    const mana = battleManaRef.current;
+    if (mana && mana.playerMana < SAMUEL_GRIMOIRE_STAMINA_COST) return;
+    if (!cycleSamuelWeapon()) return;
+    mana?.consumeMana(SAMUEL_GRIMOIRE_STAMINA_COST);
+    onAbilityUsed();
+  }, [battleManaRef, cycleSamuelWeapon, onAbilityUsed]);
 
   const handleSigiloSelect = useCallback(
     (arm: string) => {
@@ -1315,6 +1331,8 @@ export function useBattleCombat({
     charge,
     yvelWeapon,
     switchWeapon: handleWeaponSwitch,
+    samuelWeapon,
+    grimoirePress: handleGrimoire,
     drikaArm,
     sigiloPhase,
     sigiloOpen,

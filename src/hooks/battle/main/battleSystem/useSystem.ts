@@ -45,6 +45,7 @@ import {
 import { useStatusDotTicks } from "@/hooks/battle/time/ticks/useStatusDotsTicks";
 import { useNpcBleedTicks } from "@/hooks/battle/time/ticks/useNpcBleedTicks";
 import { useManaRegenTick } from "@/hooks/battle/time/ticks/useManaRegenTick";
+import { useSamuelStamina } from "@/hooks/battle/player/characters/samurion/useStamina";
 import { usePlayerPullAnimation } from "@/hooks/battle/player/usePlayerPullAnimation";
 import { useMarshadowCutInEnemie } from "@/hooks/battle/player/characters/marshadow/useMarshadowCutInEnemie";
 import type { BattleSystemProps } from "./types";
@@ -469,9 +470,17 @@ export function useBattleSystem(props: BattleSystemProps) {
     battleManaRef,
     isEnding,
     isMenuRef,
-    player.character !== "natsuki",
+    player.character !== "natsuki" && player.character !== "samurion",
     isPausedRef,
   );
+
+  useSamuelStamina({
+    player,
+    battleManaRef,
+    isEndingRef: isEnding,
+    isMenuRef,
+    isPausedRef,
+  });
 
   const applyNpcBleed = useCallback((durationMs: number) => {
     npcBleedUntilRef.current = Math.max(

@@ -7,6 +7,8 @@ import {
   DIVERGENT_FIST_COST,
 } from "@/gameRules/battle/cursedEnergy";
 import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
+import { SAMUEL_GRIMOIRE_STAMINA_COST } from "@/data/characters/samurion/stamina";
+import { SAMUEL_WEAPON_LABELS } from "@/data/characters/samurion/grimoire";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { npcPath, playerAbilityBackgroundPath } from "@/utils/paths";
 import { PetSkillButton } from "@/components/Game/Battle/Buttons/PetSkill";
@@ -45,6 +47,8 @@ export function BattleAbilities({
     pet,
     switchWeapon,
     yvelWeapon,
+    samuelWeapon,
+    grimoirePress,
     openSigilo,
     sphere,
     bluePress,
@@ -179,6 +183,31 @@ export function BattleAbilities({
                   battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST)
               }
               onClick={switchWeapon}
+            />
+          );
+        })()}
+
+      {player.character === "samurion" &&
+        (() => {
+          const grimoireDisabled =
+            controlsDisabled ||
+            (battleMana != null &&
+              battleMana.playerMana < SAMUEL_GRIMOIRE_STAMINA_COST);
+          abilitySlotsRef.current.push({
+            click: grimoirePress,
+            disabled: grimoireDisabled,
+            hold: false,
+            abilityId: "grimoire",
+          });
+          return (
+            <GenericAbilityButton
+              characterId="samurion"
+              abilityId="grimoire"
+              label={
+                samuelWeapon ? SAMUEL_WEAPON_LABELS[samuelWeapon] : undefined
+              }
+              disabled={grimoireDisabled}
+              onClick={grimoirePress}
             />
           );
         })()}

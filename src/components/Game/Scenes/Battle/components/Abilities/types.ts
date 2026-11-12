@@ -18,6 +18,8 @@ type SceneSlice = Pick<
   | "pet"
   | "switchWeapon"
   | "yvelWeapon"
+  | "samuelWeapon"
+  | "grimoirePress"
   | "openSigilo"
   | "sphere"
   | "bluePress"
