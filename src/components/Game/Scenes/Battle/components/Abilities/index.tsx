@@ -26,6 +26,7 @@ import { StackExplosionButton } from "@/components/Game/Battle/Buttons/Laricell/
 import { DomainExpansionButton } from "@/components/Game/Battle/Buttons/DomainExpansion";
 import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
+import { EmoteButton } from "@/components/Game/Battle/Buttons/Emote";
 import { useRef } from "react";
 import { useAbilityShortcuts } from "@/hooks/battle/useAbilityShortcuts";
 
@@ -92,6 +93,9 @@ export function BattleAbilities({
     genkiDamaUsable,
     kamehamehaPress,
     kamehamehaUsable,
+    emoteAvailable,
+    emoteUsable,
+    emotePress,
   } = scene;
 
   const battleMana = useBattleMana();
@@ -502,6 +506,21 @@ export function BattleAbilities({
               ready={domainExpansionUsable}
               disabled={controlsDisabled}
               onClick={domainExpansionPress}
+            />
+          );
+        })()}
+
+      {emoteAvailable &&
+        (() => {
+          abilitySlotsRef.current.push({
+            click: emotePress,
+            disabled: controlsDisabled || !emoteUsable,
+            hold: false,
+          });
+          return (
+            <EmoteButton
+              disabled={controlsDisabled || !emoteUsable}
+              onClick={emotePress}
             />
           );
         })()}

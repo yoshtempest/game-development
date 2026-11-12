@@ -114,6 +114,8 @@ export const NPC_CATEGORY: Record<string, NpcCategory> = {
 export const STATE_FOLDER: Partial<Record<PlayerState, string | null>> = {
   idle: "idle",
   idleCrounched: "idle",
+  idle2: "idle",
+  idle3: "idle",
   attack: "attack",
   crit: "attack",
   preAttack: "attack",

@@ -30,6 +30,7 @@ import {
   type CameraFocus,
 } from "@/hooks/battle/effects/cameraSequence/useCameraSequence";
 import { buildBattleSceneApi } from "@/hooks/battle/utilities/buildBattleSceneApi";
+import { useEmote } from "@/hooks/battle/player/emote/useEmote";
 import { getCharacterPassive } from "@/data/characters/passives";
 import { aggregateRewards } from "@/gameRules/battle/loot/buildLootBags";
 import { CHARACTERS } from "@/data/characters/list";
@@ -958,6 +959,12 @@ export function useBattleScene({
     maugreloPhase2State: npc.ai?.maugrelo?.phase2State,
   });
 
+  const { emoteAvailable, emoteUsable, emotePress } = useEmote({
+    player,
+    setPlayer,
+    blocked: vastolordActive,
+  });
+
   return buildBattleSceneApi({
     player,
     npc,
@@ -1122,5 +1129,8 @@ export function useBattleScene({
     redUsable,
     purplePress,
     purpleUsable,
+    emoteAvailable,
+    emoteUsable,
+    emotePress,
   });
 }

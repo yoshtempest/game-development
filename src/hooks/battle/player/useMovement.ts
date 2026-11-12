@@ -384,7 +384,7 @@ export function useBattleMovement(
         return { ...p, state: "fallingAttack" };
       }
       if (p.state === "blocked") return { ...p, state: "blockAttack" };
-      if (p.state !== "idle") return p;
+      if (!ALL_PREDICATES.isReady(p.state)) return p;
       if (p.character === "srGuaxinim") {
         return { ...p, state: "attack" };
       }
@@ -411,7 +411,7 @@ export function useBattleMovement(
       if (ALL_PREDICATES.isInvulnerable(p.state)) return p;
       if (ALL_PREDICATES.isAirFalling(p.state))
         return { ...p, state: "preAbilityInAir" };
-      if (p.state !== "idle") return p;
+      if (!ALL_PREDICATES.isReady(p.state)) return p;
       return { ...p, state: "preAbility" };
     });
   }
