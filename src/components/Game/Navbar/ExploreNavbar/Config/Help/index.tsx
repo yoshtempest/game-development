@@ -1,3 +1,5 @@
+import { useNotifications } from "@/contexts/NotificationContext";
+
 import styles from "@/components/Game/Navbar/ExploreNavbar/Config/styles.module.css";
 import InstallButton from "@/components/PWA";
 import { UpdateButton } from "@/components/Game/Navbar/ExploreNavbar/Config/UpdateButton";
@@ -15,6 +17,17 @@ export function HelpSection({
   showQuestIndicator,
   sharedXp,
 }: Props) {
+  const { enabled, permission, toggleNotifications } = useNotifications();
+
+  const notificationLabel =
+    permission === "unsupported"
+      ? "Indisponível"
+      : permission === "denied"
+        ? "Bloqueado"
+        : enabled
+          ? "ON"
+          : "OFF";
+
   return (
     <div className={styles.flexColumn}>
       <h2 className={styles.marginTop}>Ajuda:</h2>
@@ -72,6 +85,18 @@ export function HelpSection({
         )}
 
         <InstallButton />
+      </div>
+      <div
+        className={`${styles.tutorialButton} ${
+          selectedColumn === 2 && selectedIndex === 5 ? styles.selected : ""
+        }`}
+        onClick={toggleNotifications}
+      >
+        {selectedColumn === 2 && selectedIndex === 5 && (
+          <span className={styles.cursor}>▼</span>
+        )}
+
+        <h2>Notificações: {notificationLabel}</h2>
       </div>
     </div>
   );

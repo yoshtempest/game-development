@@ -8,6 +8,7 @@ import { useMenuSFX } from "@/hooks/menu/useMenuSFX";
 import { useSettings } from "@/hooks/settings/useSetting";
 import { useUpdate } from "@/contexts/UpdateContext";
 import { usePWA } from "@/contexts/PWAContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 import type { ConfigTab } from "@/data/config/tabs";
 import { CONFIG_TABS, CONFIG_TAB_COUNT } from "@/data/config/tabs";
 import { useLatestRef } from "@/hooks/useLatestRef";
@@ -41,6 +42,7 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
     setSharedXp,
   } = useSettings();
   const { checkForUpdate } = useUpdate();
+  const { toggleNotifications } = useNotifications();
   const {
     install,
     isInstalled,
@@ -98,6 +100,7 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
   const setShowAbilityIntroRef = useLatestRef(setShowAbilityIntro);
   const setSharedXpRef = useLatestRef(setSharedXp);
   const checkForUpdateRef = useLatestRef(checkForUpdate);
+  const toggleNotificationsRef = useLatestRef(toggleNotifications);
   const installRef = useLatestRef(install);
   const isInstalledRef = useLatestRef(isInstalled);
   const methodRef = useLatestRef(method);
@@ -154,6 +157,7 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
     setShowQuestIndicatorRef,
     setSharedXpRef,
     checkForUpdateRef,
+    toggleNotificationsRef,
     isInstalledRef,
     methodRef,
     installRef,
