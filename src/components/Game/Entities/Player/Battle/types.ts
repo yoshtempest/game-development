@@ -31,6 +31,8 @@ export interface PlayerBattleProps {
   /** Nick do jogador remoto acima do sprite (online). */
   nameTag?: string;
   babidiMachineGamaControl?: boolean;
+  /** Modo Tóxico do babidi em curso: sprite `inFight/toxicForm/` ou tint verde. */
+  babidiToxicForm?: boolean;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
   babidiShieldSides?: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */

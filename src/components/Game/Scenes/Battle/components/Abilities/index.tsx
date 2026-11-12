@@ -74,6 +74,9 @@ export function BattleAbilities({
     babidiBombDropPress,
     babidiBombDropUsable,
     babidiBombDropRemaining,
+    babidiToxicFormPress,
+    babidiToxicFormUsable,
+    babidiToxicFormRemaining,
     fishingNetPress,
     fishingNetUsable,
     fishingNetRemaining,
@@ -451,6 +454,12 @@ export function BattleAbilities({
             hold: false,
             abilityId: "fishingNet",
           });
+          abilitySlotsRef.current.push({
+            click: babidiToxicFormPress,
+            disabled: controlsDisabled || !babidiToxicFormUsable,
+            hold: false,
+            abilityId: "toxicForm",
+          });
           return (
             <>
               <GenericAbilityButton
@@ -468,6 +477,15 @@ export function BattleAbilities({
                 remaining={fishingNetRemaining}
                 disabled={controlsDisabled || !fishingNetUsable}
                 onClick={fishingNetPress}
+              />
+              <GenericAbilityButton
+                characterId="babidi"
+                abilityId="toxicForm"
+                accent="#6cff3a"
+                ready={babidiToxicFormUsable}
+                remaining={babidiToxicFormRemaining}
+                disabled={controlsDisabled || !babidiToxicFormUsable}
+                onClick={babidiToxicFormPress}
               />
               {babidiMachineGamaControl && (
                 <GenericAbilityButton

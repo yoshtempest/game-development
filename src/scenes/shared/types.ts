@@ -242,6 +242,11 @@ export type BattleSceneApi = {
   babidiBombDropPress: () => void;
   babidiBombDropUsable: boolean;
   babidiBombDropRemaining: number;
+  /** Modo Tóxico do babidi em curso (sprite verde + veneno no básico). */
+  babidiToxicFormActive: boolean;
+  babidiToxicFormPress: () => void;
+  babidiToxicFormUsable: boolean;
+  babidiToxicFormRemaining: number;
   /** Variante de mão do sprite do ataque básico do babidi (pose do golpe atual). */
   babidiAttackVariant: BabidiAttackVariant;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */

@@ -84,6 +84,7 @@ export function BattleEntities({
   babidiBombDrop = null,
   babidiAttackVariant,
   babidiMachineGamaControl = false,
+  babidiToxicFormActive = false,
   babidiShieldSides,
   onBabidiShieldEnd,
   sphere = null,
@@ -202,6 +203,7 @@ export function BattleEntities({
         mugetsuBlink={mugetsuBlink}
         babidiAttackVariant={babidiAttackVariant}
         babidiMachineGamaControl={babidiMachineGamaControl}
+        babidiToxicForm={babidiToxicFormActive}
         babidiShieldSides={babidiShieldSides}
         onBabidiShieldEnd={onBabidiShieldEnd}
         hakai={hakai}
