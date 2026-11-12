@@ -11,10 +11,22 @@ type PetSkillDamage = {
   damageType?: DamageKind;
 };
 
+/**
+ * `tsunami` (Leviathan) acerta todos os inimigos vivos de uma vez: empurra
+ * `pushDistance` px para longe do player, dá dano e rola `freezeChance` de
+ * congelar cada um. `blindTornado` (Peru) não dá dano: soma `missChance` à
+ * chance de erro dos golpes de cada inimigo atingido contra o player por
+ * `durationMs`.
+ */
 export type PetSkillEffect =
   | ({ kind: "damage" } & PetSkillDamage)
   | ({ kind: "jumpAttack" } & PetSkillDamage)
   | ({ kind: "teleportBite" } & PetSkillDamage & { bleedMs: number })
+  | ({ kind: "tsunami" } & PetSkillDamage & {
+        pushDistance: number;
+        freezeChance: number;
+      })
+  | { kind: "blindTornado"; missChance: number; durationMs: number }
   | { kind: "summon"; npcType: string }
   | { kind: "shield"; amount: number }
   | { kind: "heal"; amount: number }

@@ -47,6 +47,8 @@ import { useNpcBleedTicks } from "@/hooks/battle/time/ticks/useNpcBleedTicks";
 import { useManaRegenTick } from "@/hooks/battle/time/ticks/useManaRegenTick";
 import { usePlayerPullAnimation } from "@/hooks/battle/player/usePlayerPullAnimation";
 import { useMarshadowCutInEnemie } from "@/hooks/battle/player/characters/marshadow/useMarshadowCutInEnemie";
+import { NO_PET_BLIND } from "@/gameRules/battle/petSkill/blind";
+import type { PetBlind } from "@/gameRules/battle/petSkill/blind";
 import type { BattleSystemProps } from "./types";
 
 export function useBattleSystem(props: BattleSystemProps) {
@@ -382,6 +384,14 @@ export function useBattleSystem(props: BattleSystemProps) {
     onTrigger: () => onPetSkillRef?.current?.(),
   });
 
+  /**
+   * Cegueira do Tornado de Terra (pet Peru) no NPC principal e em cada summon
+   * inimigo. Nasce aqui porque o funil de golpe do NPC (`useNpcBattle`) é
+   * deste hook; o pet escreve e a IA dos summons lê pelo retorno.
+   */
+  const npcPetBlindRef = useRef<PetBlind>(NO_PET_BLIND);
+  const summonsPetBlindRef = useRef<Record<string, PetBlind>>({});
+
   const npcBattle = useNpcBattle({
     npcLevel,
     npcClass,
@@ -423,6 +433,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     tenacityReduction: stats.tenacityReduction,
     luckBonus: stats.luckBonus,
     statMultiplier: npcStatMultiplier,
+    petBlindRef: npcPetBlindRef,
   });
 
   const { isNpcDying } = useBattleLifecycle({
@@ -590,6 +601,8 @@ export function useBattleSystem(props: BattleSystemProps) {
     triggerTeleportBite,
     triggerPetInvoke,
     applyNpcBleed,
+    npcPetBlindRef,
+    summonsPetBlindRef,
     petSkill: petSkillDef
       ? {
           definition: petSkillDef,

@@ -25,6 +25,7 @@ import {
 } from "@/gameRules/battle/time";
 
 import { clampX } from "@/gameRules/movement/clampX";
+import { getPetBlindMissChance } from "@/gameRules/battle/petSkill/blind";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 
 export function useNpcBattle({
@@ -68,6 +69,7 @@ export function useNpcBattle({
   tenacityReduction,
   luckBonus,
   statMultiplier = 1,
+  petBlindRef,
 }: Props) {
   const { playSound } = useSoundEffects();
 
@@ -246,7 +248,11 @@ export function useNpcBattle({
       const tx = playerX;
       const ty = playerY;
 
-      const missChance = 0.005 + titleEnemyMissChance / 100 + luckBonus;
+      const missChance =
+        0.005 +
+        titleEnemyMissChance / 100 +
+        luckBonus +
+        getPetBlindMissChance(petBlindRef?.current);
       if (Math.random() < missChance) {
         spawnDamageRef.current?.(0, tx, ty, "miss");
         if (!skipCooldown) {
@@ -330,6 +336,7 @@ export function useNpcBattle({
       npcHpRef,
       npcMaxHpRef,
       tenacityReductionRef,
+      petBlindRef,
     ],
   );
 
@@ -345,6 +352,13 @@ export function useNpcBattle({
       // do projétil (`gameRules/npc/projectile/crouchDodge`). Repetir a regra
       // aqui desfazia tanto o projétil terrestre quanto o
       // `canCrouchDodge: false` declarado no dado.
+
+      if (Math.random() < getPetBlindMissChance(petBlindRef?.current)) {
+        spawnDamageRef.current?.(0, playerX, playerY, "miss");
+        npcCooldown.current = false;
+        setTimeout(() => (npcCooldown.current = true), NPC_MELEE_COOLDOWN);
+        return;
+      }
 
       const npc = getNpcStats(
         npcLevel,
@@ -441,6 +455,7 @@ export function useNpcBattle({
       npcHpRef,
       npcMaxHpRef,
       tenacityReductionRef,
+      petBlindRef,
     ],
   );
 

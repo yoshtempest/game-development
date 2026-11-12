@@ -14,6 +14,7 @@ import {
 import { applyHitstop, getTime, scaleCooldown } from "@/gameRules/battle/time";
 
 import { clampX } from "@/gameRules/movement/clampX";
+import { getPetBlindMissChance } from "@/gameRules/battle/petSkill/blind";
 /** Velocidade acima da qual o hungryDog é considerado correndo (usa run.svg). */
 const HUNGRY_DOG_RUN_SPEED = 1.5;
 
@@ -33,6 +34,7 @@ export function useSummonAI({
   freezeUntilRef,
   rootedSummonsUntilRef,
   honoredFleeRef,
+  petBlindRef,
   onSummonKilled,
 }: Props) {
   const summonLastAttacksRef = useRef<Record<string, number>>({});
@@ -108,6 +110,7 @@ export function useSummonAI({
       // o "Cannot update a component while rendering a different component".
       // O tick coleta os golpes na passada pura e aplica depois do commit.
       const attackEvents: { damage: number; attackerX: number }[] = [];
+      let missEvents = 0;
 
       const next = apply(summonsRef.current, (s) => {
         if (s.isDying || s.hp <= 0) {
@@ -158,7 +161,13 @@ export function useSummonAI({
               playerCharacterRef.current,
             );
 
-            if (damage !== null) {
+            const blindMiss =
+              Math.random() <
+              getPetBlindMissChance(petBlindRef?.current?.[s.id], now);
+
+            if (blindMiss) {
+              missEvents += 1;
+            } else if (damage !== null) {
               attackEvents.push({ damage, attackerX: s.x });
             }
           }
@@ -171,6 +180,15 @@ export function useSummonAI({
           state: Math.abs(dx) > 80 ? (running ? "run" : "walk") : "idle",
         };
       });
+
+      for (let i = 0; i < missEvents; i++) {
+        spawnDamageRef.current?.(
+          0,
+          playerXRef.current,
+          playerYRef.current,
+          "miss",
+        );
+      }
 
       for (const { damage, attackerX } of attackEvents) {
         damagePlayerRef.current(damage, SUMMON_DAMAGE_KIND, attackerX);
@@ -205,6 +223,7 @@ export function useSummonAI({
     freezeUntilRef,
     rootedSummonsUntilRef,
     honoredFleeRef,
+    petBlindRef,
   ]);
 
   useEffect(() => {

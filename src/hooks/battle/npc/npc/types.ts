@@ -1,3 +1,4 @@
+import type { PetBlind } from "@/gameRules/battle/petSkill/blind";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import type { BabidiShieldSide } from "@/utils/types/character/babidi";
 
@@ -53,5 +54,10 @@ export type Props = {
   npcPhase: number;
   tenacityReduction: number;
   luckBonus: number;
+  /**
+   * Cegueira do Tornado de Terra (pet Peru) no NPC principal: soma à chance de
+   * erro de `npcMeleeHit`/`npcRangedHit` enquanto não vence.
+   */
+  petBlindRef?: React.RefObject<PetBlind>;
   statMultiplier?: number;
 };
