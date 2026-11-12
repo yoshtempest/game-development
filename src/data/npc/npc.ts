@@ -55,6 +55,9 @@ export const NPC_CLASSES = {
   technoblade: "legendary",
   ouroboros: "supreme",
 
+  /* Shibuya (evento diário) */
+  mahoraga: "boss",
+
   /* Training */
   dummy: "common",
 

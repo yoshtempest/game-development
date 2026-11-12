@@ -22,7 +22,18 @@ import { usePetBattle } from "@/hooks/battle/player/pets/pet/usePet";
 import { useDamageNumbers } from "@/hooks/battle/damage/numbers/useNumbers";
 import { useExternalDamage } from "@/hooks/battle/damage/external/useExternal";
 import { useBlockGauge } from "@/hooks/battle/effects/useBlockGauge";
-import { getBlockArmor, scaleArmor } from "@/gameRules/battle/damage/armor";
+import {
+  addArmor,
+  getBlockArmor,
+  scaleArmor,
+} from "@/gameRules/battle/damage/armor";
+import {
+  EMPTY_MAHORAGA_ADAPTATION,
+  getMahoragaAdaptationArmor,
+  registerMahoragaHit,
+} from "@/gameRules/battle/mahoragaAdaptation";
+import type { MahoragaAdaptation } from "@/gameRules/battle/mahoragaAdaptation";
+import type { DamageKind } from "@/utils/types/battle/damageKind";
 import {
   getHalfHealReduction,
   HALFHEAL_DURATION_MS,
@@ -136,7 +147,32 @@ export function useBattleSystem(props: BattleSystemProps) {
   // bloqueio do NPC) lê estes três valores, então o override num ponto só
   // basta para o golpe respeitar a armadura e a tipagem de quem apanha.
   const npcMaxHp = npcOverride?.maxHp ?? tableNpcMaxHp;
-  const npcArmor = npcOverride?.armor ?? tableNpcArmor;
+
+  /**
+   * Adaptação do Mahoraga (issue #444): golpe repetido da mesma natureza vira
+   * armadura extra naquela coluna. Somar no `npcArmor` aqui é o que faz todo
+   * funil que já lê a armadura do NPC respeitar a adaptação. Não volta no
+   * rewind de propósito — a roda já girou.
+   */
+  const [mahoragaAdaptation, setMahoragaAdaptation] =
+    useState<MahoragaAdaptation>(EMPTY_MAHORAGA_ADAPTATION);
+  const isMahoraga = npcType === "mahoraga" && !npcOverride;
+  const baseNpcArmor = npcOverride?.armor ?? tableNpcArmor;
+  const npcArmor = useMemo(
+    () =>
+      isMahoraga
+        ? addArmor(baseNpcArmor, getMahoragaAdaptationArmor(mahoragaAdaptation))
+        : baseNpcArmor,
+    [isMahoraga, baseNpcArmor, mahoragaAdaptation],
+  );
+  const adaptiveOnDamageDealtRef = useLatestRef(
+    (amount: number, kind?: DamageKind) => {
+      if (isMahoraga && kind) {
+        setMahoragaAdaptation((prev) => registerMahoragaHit(prev, kind));
+      }
+      onDamageDealtRef?.current?.(amount);
+    },
+  );
   const npcElementTypes = npcOverride
     ? npcOverride.elementTypes
     : getNpcElementTypes(npcType);
@@ -302,7 +338,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     registerHitRef,
     setPlayer,
     onBeforeNpcHitRef,
-    onDamageDealtRef,
+    onDamageDealtRef: adaptiveOnDamageDealtRef,
     onAttackRef,
     onSpecialRef,
     onKokusenRef,

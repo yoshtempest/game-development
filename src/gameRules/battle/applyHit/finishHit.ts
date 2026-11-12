@@ -2,9 +2,14 @@ import { applyHitstop } from "@/gameRules/battle/time";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
 import type { VampirismSource } from "@/gameRules/battle/vampirism/applyVampirism";
 import type { BaseHitParams } from "./types";
+import type { DamageKind } from "@/utils/types/battle/damageKind";
 
 export function finishHit(
-  params: BaseHitParams & { npcX: number; npcY: number },
+  params: BaseHitParams & {
+    npcX: number;
+    npcY: number;
+    damageKind: DamageKind;
+  },
   damage: number,
   dmgType: DamageType,
   hitstop: number,
@@ -14,7 +19,7 @@ export function finishHit(
 ) {
   params.spawnDamageRef.current?.(damage, params.npcX, params.npcY, dmgType);
   params.registerHitRef.current?.(damage);
-  params.onDamageDealtRef?.current?.(damage);
+  params.onDamageDealtRef?.current?.(damage, params.damageKind);
   onActionRef?.current?.();
   params.timeRef.current = applyHitstop(params.timeRef.current, hitstop);
 

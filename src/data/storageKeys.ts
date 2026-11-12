@@ -45,3 +45,5 @@ export const FOOTBALLCOURT_DOGS_KEY = "footballcourt_dog_spots";
 export const ONLINE_ROOM_SESSION_KEY = "jomasio_online_room_id";
 /** Parceiro de guilda da aba (sessionStorage), par do `ONLINE_ROOM_SESSION_KEY`. */
 export const ONLINE_GUILD_SESSION_KEY = "jomasio_online_guild_id";
+export const MAHORAGA_EVENT_KEY = "mahoraga_event_last_day";
+export const MAHORAGA_NOTIFIED_KEY = "mahoraga_event_notified_day";

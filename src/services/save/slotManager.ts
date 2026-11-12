@@ -158,6 +158,7 @@ export const GAME_STATE_KEYS = [
   "ground_items",
   "footballcourt_dog_spots",
   "babidi_attack_mode",
+  "mahoraga_event_last_day",
 ] as const;
 
 export const slotManager = new SlotManager(lazilyResolvedDefaultStorage());

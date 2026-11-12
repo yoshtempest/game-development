@@ -27,6 +27,8 @@ import {
   rollNpcCardDrop,
 } from "./drops";
 import { buildLootBags } from "@/gameRules/battle/loot/buildLootBags";
+import { getMahoragaDharmaDrop } from "@/gameRules/battle/loot/mahoragaDrop";
+import { ITEMS } from "@/data/items";
 import { getCoinReward } from "@/data/battle/lootbags";
 import type { LootBagContents } from "@/utils/types/battle/loot";
 import type { InventoryItem } from "@/utils/types/player/inventory";
@@ -52,7 +54,7 @@ export function useBattleRewards({
   const { addXP, addCoins, addHyperCoins } = useCharacterProgress();
   const { addPetXP } = usePetProgress();
   const { getEquippedInfo, addDrop } = useEquipment();
-  const { addItem } = useInventory();
+  const { addItem, items: inventoryItems } = useInventory();
   const { progressDailyWeekly } = useQuests();
   const { sharedXp } = useSettings();
   const { hasFlag } = useFlags();
@@ -166,6 +168,19 @@ export function useBattleRewards({
     return cardDrop;
   }
 
+  /**
+   * Drop garantido do Mahoraga (esfera do Dharma → leme). Fica fora do
+   * `rollMultiple` de propósito: a issue pede **um** drop por vitória com 100%
+   * de chance, então bônus de rolagem extra não pode duplicar a esfera.
+   */
+  function collectDharmaDrop(): ItemDropInfo | null {
+    if (npcType !== "mahoraga") return null;
+    const id = getMahoragaDharmaDrop(inventoryItems);
+    if (!id) return null;
+    const def = ITEMS[id];
+    return { id, name: def.name, image: def.image, qty: 1 };
+  }
+
   function giveXp(amount: number) {
     if (sharedXp) {
       const unlocked = getUnlockedCharacters(hasFlag);
@@ -212,6 +227,9 @@ export function useBattleRewards({
 
     const cardDrop = collectCardDrop(noopAddItem);
     if (cardDrop) itemDrops.push(cardDrop);
+
+    const dharmaDrop = collectDharmaDrop();
+    if (dharmaDrop) itemDrops.push(dharmaDrop);
 
     return buildLootBags({
       npcClass,
