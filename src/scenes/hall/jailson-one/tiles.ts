@@ -1,7 +1,11 @@
 import { createConditionalTile } from "@/scenes/shared/factories";
 
-import { HALL_ROUTES, PROFESSOR_ROOM_ROUTES } from "@/scenes/shared/routes";
-import { hasAnyQuest, hasQuest } from "@/scenes/shared/helpers";
+import {
+  GUARD_BATTLE_ROUTES,
+  HALL_ROUTES,
+  PROFESSOR_ROOM_ROUTES,
+} from "@/scenes/shared/routes";
+import { hasAnyQuest, hasFlag, hasQuest } from "@/scenes/shared/helpers";
 
 export const jailsonOneTiles = [
   createConditionalTile(
@@ -36,11 +40,10 @@ export const jailsonOneTiles = [
   createConditionalTile(
     15,
     8,
-    (_player, quests) => {
-      if (hasQuest(quests, "x1_manim")) {
-        return PROFESSOR_ROOM_ROUTES.ONE;
-      }
-      return null;
+    (_player, quests, flags) => {
+      if (!hasQuest(quests, "x1_manim")) return null;
+      if (!hasFlag(flags, "vigiaJoao")) return GUARD_BATTLE_ROUTES.JOAO;
+      return PROFESSOR_ROOM_ROUTES.ONE;
     },
     {
       blockedMessage:

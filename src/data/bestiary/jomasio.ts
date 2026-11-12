@@ -31,6 +31,27 @@ export const jomasioData = createBestiary({
     location: "Jomasio",
     attacks: ["Agarro", "E te Jooj"],
   },
+  vigiaJoao: {
+    name: "Vigia João",
+    description:
+      "Vigia da Sala dos Professores. Leva a sério o 'entrada bloqueada a alunos sem autorização'.",
+    location: "Jomasio",
+    attacks: ["Cassetete", "Daqui Você Não Passa"],
+  },
+  vigiaJoaquim: {
+    name: "Vigia Joaquim",
+    description:
+      "Vigia da Biblioteca. Lento, mas ninguém faz barulho perto dele e sai andando.",
+    location: "Jomasio",
+    attacks: ["Cassetete", "Shhh!"],
+  },
+  vigiaLando: {
+    name: "Vigia Landô",
+    description:
+      "Vigia da passagem secreta para a quadra. Ninguém sabe como ele descobriu a passagem antes dos alunos.",
+    location: "Jomasio",
+    attacks: ["Cassetete", "Investida"],
+  },
   hungryDeath: {
     name: "Morto de Fome",
     description:

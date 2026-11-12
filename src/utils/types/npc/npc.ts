@@ -115,6 +115,22 @@ export type NPCBattleState = {
       grabPhase: "get" | "throw" | null;
       startTime: number;
     };
+    vigiaJoao?: {
+      hitCount: number;
+      pushUntil: number;
+    };
+    vigiaJoaquim?: {
+      lastShush: number;
+      shushUntil: number;
+    };
+    vigiaLando?: {
+      dashPhase: "idle" | "windUp" | "dashing";
+      phaseStart: number;
+      dashStartX: number;
+      dashTargetX: number;
+      dashHitDone: boolean;
+      lastDash: number;
+    };
     hungryDeath?: {
       grabPhase: "grabbing" | null;
       grabStartTime: number;
