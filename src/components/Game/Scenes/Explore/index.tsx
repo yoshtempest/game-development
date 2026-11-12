@@ -5,6 +5,11 @@ import { useStableCallback } from "@/hooks/useStableCallback";
 import { useGameLayout } from "@/hooks/game/useGameLayout";
 import { SmoothCamera } from "@/components/Game/Map/SmoothCamera";
 import { Player } from "@/components/Game/Entities/Player";
+import { PetFollower } from "@/components/Game/Entities/PetFollower";
+import { MountToggle } from "@/components/Game/Interactions/MountToggle";
+import { useExplorePet } from "@/hooks/scene/pet/useExplorePet";
+import { usePetFollower } from "@/hooks/scene/pet/usePetFollower";
+import { isPetHidden } from "@/gameRules/movement/petFollow";
 import { NPC } from "@/components/Game/Entities/Npc";
 import { Tombstone } from "@/components/Game/Entities/Tombstone";
 import { Plate } from "@/components/Game/Map/Plate";
@@ -181,6 +186,13 @@ export function ExploreScene({
   const { resolvedDialogueData, npcContext } = useSceneDialogue(dialogueData);
 
   const dialogueSystem = useDialogue(resolvedDialogueData, handleFinish);
+  const explorePet = useExplorePet({ enabled: !dialogueSystem.isOpen });
+  const petTrail = usePetFollower({
+    gridX: player.gridX,
+    gridY: player.gridY,
+    direction: player.direction,
+    height: player.height,
+  });
   const { play: playSansTalking } = useSansTalking(dialogueSystem.isOpen);
   const hasStarted = useRef(false);
 
@@ -605,6 +617,20 @@ export function ExploreScene({
 
         {/* <LevelSteps heightMap={heightMap} TILE_SIZE={TILE_SIZE} /> */}
 
+        {explorePet.pet && !explorePet.mounted && !isPetHidden(petTrail) && (
+          <PetFollower
+            npcType={explorePet.pet.npcType}
+            stars={explorePet.pet.stars}
+            gridX={petTrail.follower.gridX}
+            gridY={petTrail.follower.gridY}
+            height={petTrail.follower.height}
+            direction={petTrail.follower.direction}
+            moving={player.moving}
+            TILE_SIZE={TILE_SIZE}
+            PLAYER_SIZE={PLAYER_SIZE}
+          />
+        )}
+
         <Player
           character={player.character}
           direction={player.direction}
@@ -627,6 +653,13 @@ export function ExploreScene({
           />
         )}
       </SmoothCamera>
+
+      {explorePet.canMount && !dialogueSystem.isOpen && (
+        <MountToggle
+          mounted={explorePet.mounted}
+          onToggle={explorePet.toggleMount}
+        />
+      )}
 
       {interactionHint && !dialogueSystem.isOpen && (
         <InteractionPrompt text={interactionHint} />

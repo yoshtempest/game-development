@@ -122,6 +122,7 @@ O escopo atual abrange:
 | RF45 | O duelo mostra o placar da série, o round atual e, no fim, vitória/derrota com as opções Revanche e Sair                                         | Média      |
 | RF46 | A revanche só começa quando os dois jogadores pedem                                                                                              | Média      |
 | RF47 | No co-op 2v1, quem cai vira espectador; a derrota só acontece quando os dois jogadores caem                                                      | Alta       |
+| RF48 | Na exploração o pet equipado segue o jogador um tile atrás; pet de montaria pode ser montado e desmontado a qualquer momento (tecla R ou botão) | Média      |
 
 ### 3.2 Requisitos Não Funcionais
 

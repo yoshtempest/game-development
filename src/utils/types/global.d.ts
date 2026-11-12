@@ -549,6 +549,12 @@ declare global {
     mode: PlayerMode;
     movementSpeed: number;
     hasPeru?: boolean;
+    /**
+     * Escolha do jogador de descer da montaria (#513). Fica separado de
+     * `hasPeru` porque `hasPeru` é derivado (pet de montaria equipado E
+     * montado): trocar de pet não pode apagar a preferência.
+     */
+    petDismounted?: boolean;
     moving?: boolean;
     machineGamaControl?: boolean;
     grabbedUntil?: number;

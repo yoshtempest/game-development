@@ -15,6 +15,7 @@ export const KEYBOARD_ACTIONS = {
   professions: ["p", "P"] as const,
   titles: ["t", "T"] as const,
   equipment: ["e", "E"] as const,
+  mountPet: ["r", "R"] as const,
 
   battleDown: ["Shift"] as const,
 } as const;

@@ -1,0 +1,14 @@
+.button {
+  position: absolute;
+  top: var(--small);
+  left: var(--small);
+  z-index: 100;
+
+  background: var(--overlay-75);
+  color: var(--text-color);
+  padding: var(--size-6) var(--small);
+  border-radius: var(--size-4);
+  border: var(--size-1) solid var(--white-20);
+  font-size: var(--fs-14);
+  cursor: pointer;
+}

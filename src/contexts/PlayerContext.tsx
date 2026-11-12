@@ -29,6 +29,7 @@ import { CHARACTER_KEY, PLAYER_CLASS_KEY } from "@/data/storageKeys";
 import { slotKey } from "@/services/save/slotManager";
 import { isCharacter } from "@/data/characters/list";
 import { useSettings } from "@/hooks/settings/useSetting";
+import { getPetRole } from "@/data/characters/pets/petSkills";
 
 /**
  * Estado que muda com alta frequência (a cada movimento/ataque do player).
@@ -442,11 +443,14 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const equippedPet = getEquippedInfo(player.character, "pet");
-    const hasTurkeyPet = equippedPet?.id === "pet_turkey";
+    const isMounted =
+      equippedPet != null &&
+      getPetRole(equippedPet.id) === "montaria" &&
+      !player.petDismounted;
     setPlayer((prev) =>
-      prev.hasPeru === hasTurkeyPet ? prev : { ...prev, hasPeru: hasTurkeyPet },
+      prev.hasPeru === isMounted ? prev : { ...prev, hasPeru: isMounted },
     );
-  }, [getEquippedInfo, player.character, setPlayer]);
+  }, [getEquippedInfo, player.character, player.petDismounted, setPlayer]);
 
   // ── Valores dos contextos ───────────────────────────────────────────
 
