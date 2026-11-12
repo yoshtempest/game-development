@@ -32,7 +32,7 @@ import { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/
 import { useDomainExpansionBurst } from "@/hooks/battle/utilities/domainExpansionBurst/useDomainExpansionBurst";
 import { VASTOLORD_KILL_EXTEND_MS } from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
 import { getAbilityDamageType } from "@/data/characters/abilities";
-import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
+import { getDomainExpansion } from "@/data/characters/domainExpansions";
 import { getProjectileDestructionHpByKind } from "@/gameRules/npc/projectile/projectileHp";
 import { gainAbilityCharge, gainSpecial } from "@/gameRules/battle/special";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
@@ -1029,7 +1029,12 @@ export function useBattleCombat({
   // O uso consome as 40 cargas e causa dano especial em TODOS os inimigos da
   // arena de uma vez. Sem cutin de intro de propósito: a arte em
   // `habilities/<skill>/background.svg` só existe para o marshadow.
-  const domainConfig = DOMAIN_EXPANSIONS[player.character];
+  // Na Forma Vastolord o marshadow troca o Mugetsu pelo domínio da forma
+  // (#498), que roda pelo burst com fatores próprios.
+  const domainConfig = getDomainExpansion(
+    player.character,
+    vastolordActive ? "vastolord" : null,
+  );
   const {
     active: domainBurstActive,
     press: domainBurstPress,
@@ -1045,7 +1050,11 @@ export function useBattleCombat({
     isMenuOpen,
     battleEndedRef: battle.isEnding,
     disabledRef: cloneDisabledRef,
-    onBurst: handleDomainBurst,
+    onBurst: () =>
+      handleDomainBurst(
+        domainConfig.burstMainMultiplier,
+        domainConfig.burstSummonMultiplier,
+      ),
     playSound,
   });
 

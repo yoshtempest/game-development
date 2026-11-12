@@ -48,7 +48,7 @@ import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { TrainingOverlay } from "@/components/Game/Battle/Overlay/Training";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
-import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
+import { getDomainExpansion } from "@/data/characters/domainExpansions";
 import { SigiloSelector } from "@/components/Game/Battle/SigiloSelector";
 import { BabidiMachineGama } from "@/components/Game/Battle/Entities/Babidi/MachineGama";
 import { RemoteResultOverlay } from "@/components/Game/Battle/Overlay/RemoteResult";
@@ -443,7 +443,10 @@ export function BattleScene(props: Props) {
 
   // Domínio do personagem atual: nome/cor/efeito saem de DOMAIN_EXPANSIONS e
   // alimentam o botão universal e o overlay do burst.
-  const domainConfig = DOMAIN_EXPANSIONS[player.character];
+  const domainConfig = getDomainExpansion(
+    player.character,
+    vastolordActive ? "vastolord" : null,
+  );
   // A intro é o `background.svg` (SpecialIntro) e o preenchimento é o
   // `expansion.svg` (DomainExpansionBackground) — só quem tem `hasBackgroundArt`.
   const domainExpansionArt = domainConfig.hasBackgroundArt

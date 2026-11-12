@@ -30,7 +30,23 @@ export type DomainExpansionDefinition = {
    * no `DomainExpansionBackground`. Os demais ficam com a cor do `accent`.
    */
   hasBackgroundArt?: boolean;
+  /**
+   * Só para `kind: "burst"`: fator do dano especial no NPC principal. Ausente
+   * cai no `DOMAIN_BURST_MAIN_MULTIPLIER` universal — é o que mantém os 11
+   * domínios genéricos com o mesmo peso. Existe para variantes de forma (ex.:
+   * Vastolord) que reaproveitam o burst mas precisam bater mais forte.
+   */
+  burstMainMultiplier?: number;
+  /** Só para `kind: "burst"`: fator do dano especial em cada summon. */
+  burstSummonMultiplier?: number;
 };
+
+/**
+ * Formas que trocam a Expansão de Domínio do personagem enquanto estão ativas.
+ * Hoje só a Forma Vastolord do marshadow (#498); forma nova entra na union e
+ * em `DOMAIN_EXPANSION_FORM_VARIANTS`.
+ */
+export type DomainExpansionForm = "vastolord";
 
 /**
  * Duração da saída do `expansion.svg` quando algum inimigo sobrevive ao
@@ -132,3 +148,60 @@ export const DOMAIN_EXPANSIONS: Record<CharacterId, DomainExpansionDefinition> =
       kind: "burst",
     },
   };
+
+/**
+ * Fator do dano especial do domínio da Forma Vastolord no NPC principal.
+ *
+ * Decisão para revisar (#498): 3x a proporção especial/básico (o burst
+ * genérico usa 2x). O multiplicador da forma (x4) já entra pelo funil de dano,
+ * então o golpe fica forte sem virar o execute do Mugetsu — que segue
+ * indisponível na forma justamente por apagar a luta de uma vez.
+ */
+export const VASTOLORD_DOMAIN_MAIN_MULTIPLIER = 3;
+/** Fator do domínio Vastolord em cada summon (o burst genérico usa 1x). */
+export const VASTOLORD_DOMAIN_SUMMON_MULTIPLIER = 2;
+
+/**
+ * Domínios alternativos por forma. A forma vence o domínio base enquanto
+ * estiver ativa; personagem/forma sem entrada cai em `DOMAIN_EXPANSIONS`.
+ *
+ * A Forma Vastolord reaproveita o burst universal (cargas, lock, overlay e o
+ * funil `handleDomainBurst`) em vez de um hook próprio: o domínio herda de
+ * graça o vampirismo, a extensão por abate e a armadura do alvo, que o funil
+ * já aplica.
+ */
+export const DOMAIN_EXPANSION_FORM_VARIANTS: Partial<
+  Record<
+    CharacterId,
+    Partial<Record<DomainExpansionForm, DomainExpansionDefinition>>
+  >
+> = {
+  marshadow: {
+    vastolord: {
+      name: "Hueco Mundo",
+      description:
+        "Só na Forma Vastolord: o deserto sem lua engole a arena e uma onda de reiatsu atinge todos os inimigos, causando dano especial pesado.",
+      accent: "#dc2626",
+      kind: "burst",
+      burstMainMultiplier: VASTOLORD_DOMAIN_MAIN_MULTIPLIER,
+      burstSummonMultiplier: VASTOLORD_DOMAIN_SUMMON_MULTIPLIER,
+    },
+  },
+};
+
+/**
+ * Resolve o domínio em uso: a variante da forma ativa, se houver, senão o
+ * domínio base do personagem. Ponto único para botão, overlay e efeito — se
+ * um deles ler `DOMAIN_EXPANSIONS` direto, o botão mostra um domínio e o
+ * golpe roda outro.
+ */
+export function getDomainExpansion(
+  character: CharacterId,
+  form: DomainExpansionForm | null,
+): DomainExpansionDefinition {
+  if (form) {
+    const variant = DOMAIN_EXPANSION_FORM_VARIANTS[character]?.[form];
+    if (variant) return variant;
+  }
+  return DOMAIN_EXPANSIONS[character];
+}
