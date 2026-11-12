@@ -8,29 +8,9 @@ import { getEquipmentStatsBonus } from "@/gameRules/battle/equipment";
 import { getMaxMana } from "@/gameRules/battle/mana";
 import { getRankMultiplier } from "@/gameRules/rank";
 import { ONE_THOUSAND_MS } from "@/data/ms";
+import { computeMaxHp } from "@/gameRules/battle/entities/player";
 
 const REGEN_TICK_MS = ONE_THOUSAND_MS;
-
-/**
- * `statsResistance` alimenta a vida desde que HP virou stat derivado dela — o
- * parametro foi renomeado junto para o nome não mentir sobre a origem do valor.
- */
-function computeMaxHp(
-  statsResistance: number,
-  equipmentHp: number,
-  titleHp: number,
-  titleAllStatsPct: number,
-  rankMultiplier: number,
-  hungerMultiplier: number,
-): number {
-  const allStatsPct = 1 + titleAllStatsPct / 100;
-  const effectiveHp =
-    (statsResistance + equipmentHp + titleHp) *
-    allStatsPct *
-    rankMultiplier *
-    hungerMultiplier;
-  return 90 + Math.round(effectiveHp) * 10;
-}
 
 /**
  * Regenera o HP fora de batalha, um tick por segundo.
