@@ -1,6 +1,6 @@
 export const DIFFICULTY: NpcDifficulty[] = ["easy", "medium", "hard"];
 export const COLUMN_COUNT = 5;
-export const BOTTOM_COUNT = 5;
+export const BOTTOM_COUNT = 6;
 // 5 linhas na aba "batalha": 2 toggles + intro de habilidade + treino + card.
 export const BATTLE_COUNT = 5;
 

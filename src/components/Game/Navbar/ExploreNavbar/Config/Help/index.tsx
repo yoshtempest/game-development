@@ -1,12 +1,15 @@
 import styles from "@/components/Game/Navbar/ExploreNavbar/Config/styles.module.css";
 import InstallButton from "@/components/PWA";
 import { UpdateButton } from "@/components/Game/Navbar/ExploreNavbar/Config/UpdateButton";
+import type { GameLanguage } from "@/data/settings/language";
+import { LANGUAGE_LABEL } from "@/data/settings/language";
 
 type Props = {
   selectedColumn: number;
   selectedIndex: number;
   showQuestIndicator: boolean;
   sharedXp: boolean;
+  language: GameLanguage;
 };
 
 export function HelpSection({
@@ -14,6 +17,7 @@ export function HelpSection({
   selectedIndex,
   showQuestIndicator,
   sharedXp,
+  language,
 }: Props) {
   return (
     <div className={styles.flexColumn}>
@@ -73,6 +77,22 @@ export function HelpSection({
 
         <InstallButton />
       </div>
+      <div
+        className={`${styles.tutorialButton} ${
+          selectedColumn === 2 && selectedIndex === 5 ? styles.selected : ""
+        }`}
+      >
+        {selectedColumn === 2 && selectedIndex === 5 && (
+          <span className={styles.cursor}>▼</span>
+        )}
+
+        <h2>Idioma: {LANGUAGE_LABEL[language]}</h2>
+      </div>
+      <p className={styles.languageHint}>
+        {language === "en"
+          ? "Use \"Traduzir esta página\" (Translate this page) no menu do navegador."
+          : "Em English, a tradução é feita pelo próprio navegador."}
+      </p>
     </div>
   );
 }

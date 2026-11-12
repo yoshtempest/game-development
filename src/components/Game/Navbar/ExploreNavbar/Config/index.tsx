@@ -25,6 +25,7 @@ export function Config() {
     showHighlight,
     showAbilityIntro,
     sharedXp,
+    language,
     activeTab,
     isOnTab,
     cycleDifficulty,
@@ -81,6 +82,7 @@ export function Config() {
             selectedIndex={selectedIndex}
             showQuestIndicator={showQuestIndicator}
             sharedXp={sharedXp}
+            language={language}
           />
 
           <VolumeSection
