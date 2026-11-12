@@ -1,6 +1,9 @@
 import { soundEffectPath, transitionPath } from "@/utils/paths";
 
+import { STATUS_LIST } from "@/gameRules/battle/status/statusEffects";
+
 import { POTION_CONFIG } from "@/utils/buffs/xpBuff";
+import type { PlayerStatus } from "@/utils/types/battle/status";
 
 /** Fome restaurada por comida. */
 export const FOOD_RESTORE: Record<string, number> = {
@@ -25,6 +28,34 @@ export const ENERGETIC_RESTORE: Record<
 export const MANA_RESTORE: Record<string, number> = {
   mana_potion_small: 50,
   mana_potion_great: 100,
+};
+
+/**
+ * Fração da vida máxima que a poção de cura devolve. Proporcional (e não
+ * absoluta) para continuar relevante conforme a vida cresce com o nível.
+ */
+export const HEALING_POTION_HEAL_RATIO = 0.3;
+
+/** Poções de cura: fração da vida máxima restaurada (batalha ou exploração). */
+export const HEAL_RESTORE: Record<string, number> = {
+  healing_potion: HEALING_POTION_HEAL_RATIO,
+};
+
+/** Quanto tempo a imunidade de uma poção de resistência dura. */
+export const STATUS_RESISTANCE_DURATION_MS = 60_000;
+
+/**
+ * Poções de resistência: status que cada uma cura e contra os quais deixa o
+ * player imune por `STATUS_RESISTANCE_DURATION_MS`. A imunidade é aplicada
+ * em `applyPlayerStatus`, o ponto único de entrada de status.
+ */
+export const STATUS_RESISTANCE: Record<string, readonly PlayerStatus[]> = {
+  assopra: ["burn"],
+  cha_camomila: ["poison"],
+  beterraba: ["bleed"],
+  freeze_resistance: ["freeze"],
+  paralyze_resistance: ["paralyze"],
+  all_resistance: STATUS_LIST,
 };
 
 export const GOOD_POWDER_ENCOUNTERS = [

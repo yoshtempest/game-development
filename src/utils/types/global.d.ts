@@ -18,6 +18,7 @@ import type {
 import type { Condition } from "@/utils/types/maps/conditions";
 import type { Character as CharacterDef } from "@/utils/types/player/player";
 import type { DamageKind as DamageKindDef } from "@/utils/types/battle/damageKind";
+import type { PlayerStatus as PlayerStatusDef } from "@/utils/types/battle/status";
 
 export {};
 
@@ -560,6 +561,13 @@ declare global {
     confusedUntil: number;
     frozenUntil: number;
     halfHealUntil: number;
+    /**
+     * Imunidade a status concedida por poção de resistência: timestamp até
+     * quando cada status é ignorado por `applyPlayerStatus`. Fica fora de
+     * `BATTLE_DEFAULT_STATE` de propósito — poção bebida na exploração precisa
+     * continuar valendo quando a batalha começa e reseta o resto do player.
+     */
+    statusImmuneUntil?: Partial<Record<PlayerStatusDef, number>>;
     pullFromX: number;
     pullToX: number;
     pullStartTime: number;
