@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useBattleCore } from "@/hooks/battle/main/battleCore/useBattleCore";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useThrowAnimation } from "@/hooks/battle/throw/useThrowAnimation";
@@ -11,6 +11,7 @@ import { useSummonAI } from "@/hooks/battle/summon/ai/useAi";
 import { useAllyAI } from "@/hooks/battle/summon/allyAI/useAllyAI";
 import { useBattleControls } from "@/hooks/battle/controls/useControls";
 import { useComboSystem } from "@/hooks/battle/effects/useComboSystem";
+import { useBattleDamage } from "@/hooks/battle/main/battleDamage/useBattleDamage";
 import { useChargeAttack } from "@/hooks/battle/charge/attack/useAttack";
 import { usePhaseTransition } from "@/hooks/battle/death/phaseTransition/usePhaseTransition";
 import { usePlayerSpecialProjectile } from "@/hooks/battle/player/playerSpecialProjectile/usePlayerSpecialProjectile";
@@ -34,44 +35,22 @@ import { useBabidiDomainExpansion } from "@/hooks/battle/player/characters/babid
 import { useBabidiBombDrop } from "@/hooks/battle/player/characters/babidi/bombDrop/useBombDrop";
 import { BabidiFishingNetConstants } from "@/data/characters/babidi";
 import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
-import type { AtomicBoomPayload } from "@/utils/types/battle/atomic";
-import {
-  useAtomic,
-  ATOMIC_TARGET_MULTIPLIER,
-  ATOMIC_AREA_MULTIPLIER,
-} from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
+import { useAtomic } from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
 import { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/mugetsuExpansion/useMugetsuExpansion";
-import {
-  DOMAIN_BURST_MAIN_MULTIPLIER,
-  DOMAIN_BURST_SUMMON_MULTIPLIER,
-  useDomainExpansionBurst,
-} from "@/hooks/battle/utilities/domainExpansionBurst/useDomainExpansionBurst";
-import {
-  VASTOLORD_DAMAGE_EXTEND_MS,
-  VASTOLORD_DAMAGE_EXTEND_RATIO,
-  VASTOLORD_KILL_EXTEND_MS,
-} from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
+import { useDomainExpansionBurst } from "@/hooks/battle/utilities/domainExpansionBurst/useDomainExpansionBurst";
+import { VASTOLORD_KILL_EXTEND_MS } from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
 import { getAbilityDamageType } from "@/data/characters/abilities";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
-import { combatService } from "@/services/combat";
 import { getProjectileDestructionHpByKind } from "@/gameRules/npc/projectile/projectileHp";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
-import { damageSummon } from "@/gameRules/battle/damageSummon";
 import { gainAbilityCharge } from "@/gameRules/battle/special";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
-import {
-  getWeaponEnchantment,
-  rollEnchantmentProc,
-} from "@/gameRules/battle/equipment";
-import {
-  ENCHANTMENT_DURATION_MS,
-  type Enchantment,
-} from "@/data/equipment/enchantments";
+import { getWeaponEnchantment } from "@/gameRules/battle/equipment";
+import type { Enchantment } from "@/data/equipment/enchantments";
 import { CHARGE_ATTACK_MIN_LEVEL } from "@/data/battle/charge";
 import { KILLER_QUEEN_COOLDOWN_MS } from "@/data/characters/srGuaxinim/srGuaxinim";
 import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/laricell/laricell";
 import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
-import { cursedEnergyFromDamage } from "@/gameRules/battle/cursedEnergy";
 import { PET_ROOT_DURATION_MS } from "@/data/characters/pets/petSkills";
 import {
   ABILITY_COOLDOWN_TICK_MS,
@@ -122,8 +101,6 @@ export function useBattleCombat({
     battle,
     npc,
     targeting,
-    alfaIntroActive,
-    isDragging,
     isGrabbedRef,
     grabFlipped,
     grabFlippedRef,
@@ -148,6 +125,7 @@ export function useBattleCombat({
     playerClass,
     setPlayerState,
     lastBlockPressRef,
+    alfaIntroActive,
     progress,
     playerLevel,
     getEquippedInfo,
@@ -157,6 +135,7 @@ export function useBattleCombat({
     npcPhaseRef,
     setNpcPhase,
     isPhaseTransitioning,
+    isDragging,
     setIsPhaseTransitioning,
     summons,
     setSummons,
@@ -364,50 +343,30 @@ export function useBattleCombat({
     bleed: 0,
   });
 
-  // Passiva da Forma Vastolord: a cada 10% do dano base causado a qualquer
-  // inimigo, a duração da forma aumenta 0.1s. Dano é acumulado num ref e
-  // convertido em extensões (com sobra) dentro de registerHit.
-  const vastolordBaseDamage = useMemo(
-    () =>
-      combatService.calculatePlayerDamage(
-        battle.char.stats.strength,
-        playerClass,
-      ),
-    [battle.char, playerClass],
-  );
-  const vastolordDamageAccumulatorRef = useRef(0);
+  const {
+    handleGenkiDamaExplode,
+    handleAtomicBoom,
+    handleDomainBurst,
+    specialDamageRatio,
+  } = useBattleDamage({
+    battle,
+    registerHit,
+    refs,
+    npc,
+    player,
+    playerClass,
+    progress,
+    summons,
+    setSummons,
+    giveSummonRewards,
+    battleManaRef,
+    cursedEnergyEnabled,
+    vastolordActive,
+    extendVastolordRef,
+    weaponEnchantmentRef,
+    npcEnchantUntilRef,
+  });
 
-  refs.registerHitRef.current = (damage: number) => {
-    registerHit(damage);
-
-    if (vastolordActive) {
-      vastolordDamageAccumulatorRef.current += damage;
-      const threshold = vastolordBaseDamage * VASTOLORD_DAMAGE_EXTEND_RATIO;
-      if (threshold >= 1) {
-        while (vastolordDamageAccumulatorRef.current >= threshold) {
-          vastolordDamageAccumulatorRef.current -= threshold;
-          extendVastolordRef.current(VASTOLORD_DAMAGE_EXTEND_MS);
-        }
-      }
-    }
-
-    if (cursedEnergyEnabled) {
-      battleManaRef.current?.restoreMana(cursedEnergyFromDamage(damage));
-    }
-
-    const enchantment = weaponEnchantmentRef.current;
-    if (!rollEnchantmentProc(enchantment) || !enchantment) return;
-
-    const until = Date.now() + ENCHANTMENT_DURATION_MS[enchantment];
-    npcEnchantUntilRef.current[enchantment] = until;
-
-    if (enchantment === "freeze") {
-      refs.npcStaggerRef.current = Math.max(refs.npcStaggerRef.current, until);
-    }
-
-    refs.spawnDamageRef.current?.(0, npc.x, npc.y, enchantment);
-  };
-  refs.spawnDamageRef.current = battle.spawnDamageNumber;
   dragBattleRef.current = battle;
 
   // Babidi: o básico é um projétil de energia. O press dispara via `fireRef`
@@ -607,12 +566,6 @@ export function useBattleCombat({
     battleManaRef,
     npc,
     npcRootedUntilRef,
-    fishingNetRef,
-    fishingNetTimerRef,
-    fishingNetPushTimerRef,
-    fishingNetReadyAtRef,
-    setFishingNet,
-    setFishingNetRemaining,
     startAbility,
     onAbilityUsed,
   ]);
@@ -800,7 +753,7 @@ export function useBattleCombat({
 
   useEffect(() => {
     playerProjectileRef.current = playerProjectile;
-  }, [playerProjectile, playerProjectileRef]);
+  }, [playerProjectile]);
 
   const {
     specialIntroActive,
@@ -1012,55 +965,6 @@ export function useBattleCombat({
     battleEndedRef: battle.isEnding,
   });
 
-  const handleGenkiDamaExplode = useCallback(
-    (x: number, y: number, radius: number, multiplier: number) => {
-      if (battle.isEnding.current) return;
-
-      const genkiDamaDamageKind = getAbilityDamageType("genkiDama");
-
-      if (Math.hypot(npc.x - x, npc.y - y) <= radius) {
-        battle.playerHit(multiplier, true, true, genkiDamaDamageKind);
-      }
-
-      for (const summon of summons) {
-        if (Math.hypot(summon.x - x, summon.y - y) > radius) continue;
-        damageSummon({
-          target: { id: summon.id, x: summon.x, y: summon.y },
-          multiplier,
-          // Habilidade ativa (Genki Dama): só o vampirismo universal paga.
-          source: "other",
-          damageKind: genkiDamaDamageKind,
-          player,
-          playerClass,
-          progress,
-          playerHP: battle.playerHP,
-          playerMaxHp: battle.playerMaxHp,
-          vampirism: battle.vampirism,
-          summons,
-          setSummons,
-          giveSummonRewards,
-          spawnDamageRef: refs.spawnDamageRef,
-          registerHitRef: refs.registerHitRef,
-          setPlayerHP: battle.setPlayerHP,
-          deliciaSetter: battle.setDelicia,
-          hitsToSpecial: battle.hitsToSpecial,
-        });
-      }
-    },
-    [
-      battle,
-      npc.x,
-      npc.y,
-      player,
-      playerClass,
-      progress,
-      refs,
-      setSummons,
-      summons,
-      giveSummonRewards,
-    ],
-  );
-
   const handleGenkiDamaExplodeRef = useLatestRef(handleGenkiDamaExplode);
 
   const {
@@ -1167,80 +1071,6 @@ export function useBattleCombat({
   // crítico/armadura/elemento), então fatorá-lo pela proporção produz o dano
   // equivalente ao de um especial (sem consumir delícia/cooldown). A mesma
   // proporção alimenta a Expansão de Domínio (burst) dos demais personagens.
-  const specialDamageRatio = useMemo(() => {
-    const special = combatService.calculateSpecialDamage(
-      battle.char.stats.spirit,
-      playerClass,
-    );
-    const basic = combatService.calculatePlayerDamage(
-      battle.char.stats.strength,
-      playerClass,
-    );
-    return basic > 0 ? special / basic : 1;
-  }, [battle.char.stats.spirit, battle.char.stats.strength, playerClass]);
-
-  const handleAtomicBoom = useCallback(
-    (payload: AtomicBoomPayload) => {
-      if (battle.isEnding.current) return;
-
-      const { targetId, hitMain, hitSummonIds } = payload;
-
-      // NPC principal: dano especial — 2x se for o alvo (maior vida máxima).
-      if (hitMain) {
-        const factor =
-          targetId === "main"
-            ? ATOMIC_TARGET_MULTIPLIER
-            : ATOMIC_AREA_MULTIPLIER;
-        battle.playerHit(
-          factor * specialDamageRatio,
-          true,
-          true,
-          getAbilityDamageType("iAmAtomic"),
-        );
-      }
-
-      for (const summon of summons) {
-        if (!hitSummonIds.includes(summon.id)) continue;
-        const factor =
-          targetId === summon.id
-            ? ATOMIC_TARGET_MULTIPLIER
-            : ATOMIC_AREA_MULTIPLIER;
-        damageSummon({
-          target: { id: summon.id, x: summon.x, y: summon.y },
-          multiplier: factor * specialDamageRatio,
-          // Habilidade ativa: só o vampirismo universal paga.
-          source: "other",
-          damageKind: getAbilityDamageType("iAmAtomic"),
-          player,
-          playerClass,
-          progress,
-          playerHP: battle.playerHP,
-          playerMaxHp: battle.playerMaxHp,
-          vampirism: battle.vampirism,
-          summons,
-          setSummons,
-          giveSummonRewards,
-          spawnDamageRef: refs.spawnDamageRef,
-          registerHitRef: refs.registerHitRef,
-          setPlayerHP: battle.setPlayerHP,
-          deliciaSetter: battle.setDelicia,
-          hitsToSpecial: battle.hitsToSpecial,
-        });
-      }
-    },
-    [
-      specialDamageRatio,
-      battle,
-      giveSummonRewards,
-      player,
-      playerClass,
-      progress,
-      refs,
-      setSummons,
-      summons,
-    ],
-  );
-
   const handleAtomicBoomRef = useLatestRef(handleAtomicBoom);
   const marshadowCutInTriggerLatest = useLatestRef(
     battle.marshadowCutInTrigger,
@@ -1360,53 +1190,6 @@ export function useBattleCombat({
   // O uso consome as 40 cargas e causa dano especial em TODOS os inimigos da
   // arena de uma vez. Sem cutin de intro de propósito: a arte em
   // `habilities/<skill>/background.svg` só existe para o marshadow.
-  const handleDomainBurst = useCallback(() => {
-    if (battle.isEnding.current) return;
-
-    const burstKind = getAbilityDamageType("domainBurst");
-
-    battle.playerHit(
-      DOMAIN_BURST_MAIN_MULTIPLIER * specialDamageRatio,
-      true,
-      true,
-      burstKind,
-    );
-
-    for (const summon of summons) {
-      damageSummon({
-        target: { id: summon.id, x: summon.x, y: summon.y },
-        multiplier: DOMAIN_BURST_SUMMON_MULTIPLIER * specialDamageRatio,
-        // Habilidade ativa: só o vampirismo universal paga.
-        source: "other",
-        damageKind: burstKind,
-        player,
-        playerClass,
-        progress,
-        playerHP: battle.playerHP,
-        playerMaxHp: battle.playerMaxHp,
-        vampirism: battle.vampirism,
-        summons,
-        setSummons,
-        giveSummonRewards,
-        spawnDamageRef: refs.spawnDamageRef,
-        registerHitRef: refs.registerHitRef,
-        setPlayerHP: battle.setPlayerHP,
-        deliciaSetter: battle.setDelicia,
-        hitsToSpecial: battle.hitsToSpecial,
-      });
-    }
-  }, [
-    battle,
-    giveSummonRewards,
-    player,
-    playerClass,
-    progress,
-    refs,
-    setSummons,
-    specialDamageRatio,
-    summons,
-  ]);
-
   const domainConfig = DOMAIN_EXPANSIONS[player.character];
   const {
     active: domainBurstActive,
