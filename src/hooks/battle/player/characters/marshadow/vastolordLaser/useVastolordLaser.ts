@@ -10,10 +10,7 @@ import { clampX } from "@/gameRules/movement/clampX";
 import { combatService } from "@/services/combat";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
-import {
-  applyVampirism,
-  getVampirismPercent,
-} from "@/gameRules/battle/vampirism/applyVampirism";
+import { accumulateVampirism } from "@/gameRules/battle/vampirism/accumulateVampirism";
 import { getAbilityDamageType } from "@/data/characters/abilities";
 
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
@@ -102,14 +99,8 @@ export function useVastolordLaser({
    */
   const shownAccRef = useRef(new Map<string, number>());
   /**
-   * Dano mitigado acumulado ainda não convertido em cura.
-   *
-   * Cada tick tira uma fração do dano base (1%), e `applyVampirism` arredonda a
-   * cura: com 10% de vampirismo universal, um tick de 0.5 de dano rendia
-   * `Math.round(0.05) === 0`. Chamado por tick, o feixe inteiro nunca curava
-   * (issue #398). O dano é somado aqui e só vai ao funil quando o lote já rende
-   * pelo menos 1 de cura; a sobra (o que o arredondamento não pagou) continua
-   * no acumulador para o próximo lote.
+   * Dano mitigado ainda não convertido em cura: cada tick tira 1% do dano base,
+   * pouco demais para curar sozinho (issue #398). Ver `accumulateVampirism`.
    */
   const vampDamageAccRef = useRef(0);
   const tickTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -251,28 +242,18 @@ export function useVastolordLaser({
 
       /**
        * Converte o dano do tick em cura pelo funil único (`applyVampirism`,
-       * fonte `other` = só o universal, que a Forma Vastolord injeta), mas em
-       * lote: ver `vampDamageAccRef`.
+       * fonte `other` = só o universal, que a Forma Vastolord injeta), em lote
+       * via `accumulateVampirism`.
        */
       const healFromBeam = (dealt: number) => {
-        const percent = getVampirismPercent("other", vampirism);
-        if (percent <= 0) return;
-        const pending = vampDamageAccRef.current + dealt;
-        if ((pending * percent) / 100 < 1) {
-          vampDamageAccRef.current = pending;
-          return;
-        }
-        const healed = applyVampirism({
-          damage: pending,
+        vampDamageAccRef.current = accumulateVampirism({
+          pending: vampDamageAccRef.current,
+          damage: dealt,
           source: "other",
           vampirism,
           playerMaxHp,
           setPlayerHP,
         });
-        vampDamageAccRef.current = Math.max(
-          0,
-          pending - (healed * 100) / percent,
-        );
       };
 
       // NPC principal: dano + empurrão para longe do jogador (clampado).
