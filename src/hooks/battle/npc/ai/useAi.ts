@@ -90,6 +90,7 @@ export function useNpcAI({
   onProjectileMiss,
   onStuckPaperExplode,
   onApplyDebuff,
+  onSystemMessage,
   onBurstHit,
   playerProjectileRef,
   projectileHpRef,
@@ -196,6 +197,7 @@ export function useNpcAI({
   const onProjectileMissRef = useLatestRef(onProjectileMiss);
   const onStuckPaperExplodeRef = useLatestRef(onStuckPaperExplode);
   const onApplyDebuffRef = useLatestRef(onApplyDebuff);
+  const onSystemMessageRef = useLatestRef(onSystemMessage);
   const onBurstHitRef = useLatestRef(onBurstHit);
 
   // ── Roteamento de golpes (co-op) ─────────────────────────────────────────
@@ -577,6 +579,7 @@ export function useNpcAI({
         onLaserHit: handleLaserHit,
         onStuckPaperExplode: handleStuckPaperExplode,
         onApplyDebuff: handleApplyDebuff,
+        onSystemMessage: (text) => onSystemMessageRef.current?.(text),
       });
 
       const rooted = (rootedUntilRef?.current ?? 0) > Date.now();
@@ -670,6 +673,7 @@ export function useNpcAI({
     handleStuckPaperExplode,
     handleLaserHit,
     handleApplyDebuff,
+    onSystemMessageRef,
   ]);
 
   const updateNpc = (partial: Partial<NPCBattleState>) => {

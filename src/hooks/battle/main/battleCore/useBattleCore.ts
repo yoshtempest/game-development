@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
+import { useToast } from "@/contexts/ToastContext";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { useBattleKillCounter } from "@/hooks/battle/death/useKillCounter";
 import { useNpcTargeting } from "@/hooks/battle/npc/useNpcTargeting";
@@ -25,7 +26,14 @@ import type { DamageKind } from "@/utils/types/battle/damageKind";
 import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import { VASTOLORD_KILL_EXTEND_MS } from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
+import { npcPath } from "@/utils/paths";
 import type { BattleCombatProps } from "./types";
+
+/**
+ * Rosto do Sistema nas falas que interrompem a batalha. É o mesmo sprite que
+ * as quests semanais usam para o Sistema, para o jogador reconhecer a voz.
+ */
+const SYSTEM_TOAST_ICON = npcPath("/system/default.svg");
 
 /**
  * Núcleo da batalha (`useBattleCore`): a base sobre a qual o restante do
@@ -144,6 +152,8 @@ export function useBattleCore({
     inventoryItems,
     quests,
   } = setup;
+
+  const { showToast } = useToast();
 
   const { weapon: yvelWeapon, switchWeapon } = useYvelWeaponSwitch({
     character: player.character,
@@ -414,6 +424,9 @@ export function useBattleCore({
     },
     onApplyDebuff: (status: NewPlayerStatus) => {
       setPlayer((p) => applyPlayerStatus(p, status));
+    },
+    onSystemMessage: (text: string) => {
+      showToast({ icon: SYSTEM_TOAST_ICON, text });
     },
     obstacles,
     timeRef: refs.timeRef,
