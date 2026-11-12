@@ -14,6 +14,8 @@ export type CommonParams = {
   indestructible?: boolean;
   /** Natureza do dano ao acertar: define a coluna de armadura furada. */
   damageType?: DamageKind;
+  /** Status com chance de ser aplicado no player ao acertar. */
+  onHitStatus?: ProjectileOnHitStatus;
 };
 
 export type PullParams = CommonParams & {

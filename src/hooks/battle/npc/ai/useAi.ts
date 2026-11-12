@@ -357,7 +357,7 @@ export function useNpcAI({
     projectileTarget?.direction ?? playerDirection,
     npc.x,
     npc.y,
-    (damageKind) => {
+    (damageKind, status) => {
       if (npcTypeRef.current === "vandinhaFragment") {
         playSound("breakDish");
         logPlay("breakDish");
@@ -367,6 +367,7 @@ export function useNpcAI({
         logPlay("knifeCut");
       }
       handleProjectileHit(damageKind);
+      if (status) handleApplyDebuff(status);
     },
     timeRef,
     handlePullPlayer,

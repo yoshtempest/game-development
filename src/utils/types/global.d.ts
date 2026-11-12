@@ -18,6 +18,7 @@ import type {
 import type { Condition } from "@/utils/types/maps/conditions";
 import type { Character as CharacterDef } from "@/utils/types/player/player";
 import type { DamageKind as DamageKindDef } from "@/utils/types/battle/damageKind";
+import type { NewPlayerStatus as NewPlayerStatusDef } from "@/utils/types/battle/status";
 
 export {};
 
@@ -302,6 +303,18 @@ declare global {
     damageType?: DamageKindDef;
   };
 
+  /**
+   * Status que o projétil pode aplicar no player ao acertar. Mora no dado do
+   * projétil (e não no NPC) porque o acerto é resolvido longe da IA, no loop
+   * de projéteis — só o projétil sabe que acertou. A rolagem da chance é feita
+   * uma vez por acerto, e a aplicação passa por `applyPlayerStatus`.
+   */
+  type ProjectileOnHitStatus = {
+    status: NewPlayerStatusDef;
+    /** Probabilidade (0–1) de aplicar o status a cada acerto. */
+    chance: number;
+  };
+
   type ProjectileCommon = ProjectileHp & {
     variant: "common";
     x: number;
@@ -315,6 +328,7 @@ declare global {
     state: "walk" | "idle";
     canCrouchDodge?: boolean;
     landsOnGround?: boolean;
+    onHitStatus?: ProjectileOnHitStatus;
   };
 
   type ProjectilePull = ProjectileHp & {
