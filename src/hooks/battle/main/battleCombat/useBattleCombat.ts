@@ -29,6 +29,7 @@ import { useBabidiDomainExpansion } from "@/hooks/battle/player/characters/babid
 import { useBabidiBombDrop } from "@/hooks/battle/player/characters/babidi/bombDrop/useBombDrop";
 import { useAtomic } from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
 import { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/mugetsuExpansion/useMugetsuExpansion";
+import { useBankai } from "@/hooks/battle/player/characters/marshadow/bankai/useBankai";
 import { useDomainExpansionBurst } from "@/hooks/battle/utilities/domainExpansionBurst/useDomainExpansionBurst";
 import { VASTOLORD_KILL_EXTEND_MS } from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
 import { getAbilityDamageType } from "@/data/characters/abilities";
@@ -73,6 +74,7 @@ export function useBattleCombat({
   babidiPassiveDebuff = false,
   babidiPassiveActive = false,
   vastolordMultiplierRef,
+  bankaiActiveRef,
   vastolordActive,
   transformationFrame,
   extendVastolordRef,
@@ -200,6 +202,7 @@ export function useBattleCombat({
     babidiPassiveDebuff,
     babidiPassiveActive,
     vastolordMultiplierRef,
+    bankaiActiveRef,
     vastolordActive,
     transformationFrame,
     extendVastolordRef,
@@ -944,6 +947,20 @@ export function useBattleCombat({
     cooldownReduction: battle.char.stats.cooldownReduction,
   });
 
+  // Bankai do marshadow (#424) -------------------------------------------------
+  // Só o relógio mora no hook; o 1.5x entra pelo `vastolordMultiplierRef`.
+  const bankai = useBankai({
+    player,
+    freezeActionsUntilRef,
+    isPausedRef,
+    battleEndedRef: battle.isEnding,
+    disabledRef: cloneDisabledRef,
+    vastolordActive,
+    bankaiActiveRef,
+    onUsed: onAbilityUsed,
+    cooldownReduction: battle.char.stats.cooldownReduction,
+  });
+
   // Expansão de Domínio do marshadow -------------------------------------------
   // Causa 100% da vida máxima de tudo que o mugetsuEffect toca. A vitória só é
   // disparada quando a varredura chega na outra ponta do mapa — por isso o
@@ -1405,6 +1422,11 @@ export function useBattleCombat({
     granReyCeroPress,
     granReyCeroUsable,
     granReyCeroRemaining,
+    bankaiActive: bankai.active,
+    bankaiActiveRemainingMs: bankai.activeRemainingMs,
+    bankaiPress: bankai.press,
+    bankaiUsable: bankai.usable,
+    bankaiRemaining: bankai.remaining,
     disintegrating,
     babidiEnergyProjectiles: babidiEnergy.projectiles,
     babidiMissileProjectiles: [

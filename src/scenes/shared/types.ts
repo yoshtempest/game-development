@@ -230,6 +230,14 @@ export type BattleSceneApi = {
   purplePress: () => void;
   purpleUsable: boolean;
   granReyCeroRemaining: number;
+  /** Bankai do marshadow ativa (multiplicador de dano no funil). */
+  bankaiActive: boolean;
+  /** Tempo restante da Bankai, em ms. */
+  bankaiActiveRemainingMs: number;
+  bankaiPress: () => void;
+  bankaiUsable: boolean;
+  /** Cooldown restante do botão da Bankai, em segundos. */
+  bankaiRemaining: number;
   /** Projéteis de energia do ataque básico do babidi em voo. */
   babidiEnergyProjectiles: BabidiEnergyProjectile[];
   babidiMissileProjectiles: import("@/utils/types/character/babidi").BabidiMissileProjectile[];
