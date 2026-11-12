@@ -21,6 +21,7 @@ export function Summon({ summons, hiddenIds, TILE_SIZE }: Props) {
           isHidden={hiddenIds.has(s.id)}
           isDying={s.isDying}
           hp={s.hp}
+          pushCount={s.pushCount}
         />
       ))}
     </>

@@ -749,6 +749,8 @@ declare global {
      * não reduzir, e os golpes de área que varrem summons.
      */
     armor: DamageArmor;
+    /** Total de knockbacks sofridos; dispara `pushed.svg` (`usePushedPose`). */
+    pushCount?: number;
   };
 
   export type SoundId =

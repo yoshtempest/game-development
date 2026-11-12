@@ -16,4 +16,6 @@ export type MainNpcProps = {
   cutInEnemie?: CutInEnemieOverlay | null;
   npcBleeding?: boolean;
   purpleHole?: boolean;
+  /** Total de knockbacks do NPC (pose `pushed.svg`). */
+  pushCount?: number;
 };
