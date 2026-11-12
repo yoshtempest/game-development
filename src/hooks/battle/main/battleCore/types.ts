@@ -2,8 +2,8 @@ import type { BattleObstacle } from "@/utils/types/maps/battle";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
 import type { BattleCoop } from "@/hooks/battle/coop/types";
 import type { useBlinkAnimation } from "@/hooks/battle/player/characters/natsuki/blinkAnimation/useBlinkAnimation";
-import { useBattleStageSetup } from "@/hooks/battle/useBattleStageSetup";
-import { useBattleRefs } from "@/hooks/battle/utilities/useRefs";
+import type { useBattleStageSetup } from "@/hooks/battle/useBattleStageSetup";
+import type { useBattleRefs } from "@/hooks/battle/utilities/useRefs";
 import { type RefObject } from "react";
 
 export type BattleCombatProps = {

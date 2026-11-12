@@ -62,10 +62,6 @@ export default function Home() {
     return remove;
   }, [pushControls, handleConfirm]);
 
-  const handleMultiplayer = useCallback(() => {
-    navigate("/online");
-  }, [navigate]);
-
   return (
     <div
       className="Master"
@@ -79,7 +75,7 @@ export default function Home() {
         className={styles.logo}
       />
       <p className={styles.continue}>Faça o L para continuar</p>
-      <button className={styles.multiplayerButton} onClick={handleMultiplayer}>
+      <button className={styles.multiplayerButton} onClick={() => navigate("/online")}>
         Multiplayer
       </button>
       <ParticlesBackground />
