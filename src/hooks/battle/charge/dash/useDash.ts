@@ -16,6 +16,7 @@ import { getNpcElementTypes } from "@/data/types/npcElementTypes";
 import { combatService } from "@/services/combat";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
+import { isSamurionBerserkActive } from "@/gameRules/player/samurionBerserk";
 import { applyHitstop } from "@/gameRules/battle/time";
 
 import { clampX } from "@/gameRules/movement/clampX";
@@ -193,7 +194,7 @@ export function useChargeDash(props: Props) {
           titleDamageBonus,
         );
         const berserkRaw =
-          dashCharacter === "samurion" && dashCharRef.current.level >= 20
+          isSamurionBerserkActive(dashCharacter, dashCharRef.current.level)
             ? rawDmg *
               combatService.getBerserkMultiplier(
                 playerHpRef.current,
