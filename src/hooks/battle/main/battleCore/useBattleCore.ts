@@ -19,6 +19,9 @@ import {
 } from "@/hooks/battle/npc/blocking/useBlocking";
 import { INTRO_MS } from "@/services/npc/attacks/hungryDog/state";
 import { clampX } from "@/gameRules/movement/clampX";
+import { getBehindPlayerX } from "@/gameRules/npc/movement";
+import { rollEvilMortyEvasion } from "@/gameRules/npc/evilMortyEvasion";
+import { EVIL_MORTY_TELEPORT_OFFSET } from "@/data/npc/evilMorty";
 import { applyPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import { ProjectileHpConstants } from "@/data/projectile";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
@@ -497,7 +500,38 @@ export function useBattleCore({
     );
   });
 
+  /**
+   * Defesa do jogador contra cada golpe que passa pelo `runHitPrelude`.
+   *
+   * Evil Morty: rola teleporte (vira "miss" e ele reaparece atrás do jogador)
+   * e, se falhar, o escudo (anula tudo). Os dois resolvem sem dano, então o
+   * resultado é `blocked` com `remainingDamage: 0` — o prelúdio rearma o
+   * cooldown do golpe como em qualquer bloqueio.
+   *
+   * Piupiu: bloqueio por gauge, só de perto.
+   */
   targeting.onBeforeNpcHitRef.current = (getDamage) => {
+    if (npcType === "evilMorty") {
+      const evasion = rollEvilMortyEvasion(npcPhaseRef.current);
+      if (evasion === "teleport") {
+        refs.spawnDamageRef.current?.(0, npc.x, npc.y, "miss");
+        npc.updateNpc({
+          x: getBehindPlayerX(
+            player.x,
+            player.battleDirection,
+            EVIL_MORTY_TELEPORT_OFFSET,
+          ),
+        });
+        return { blocked: true, remainingDamage: 0 };
+      }
+      if (evasion === "shield") {
+        npc.updateNpc({ state: "block" });
+        refs.spawnDamageRef.current?.(0, npc.x, npc.y, "blocked");
+        return { blocked: true, remainingDamage: 0 };
+      }
+      return { blocked: false };
+    }
+
     if (npcType !== "piupiu") return { blocked: false };
     const distanceX = Math.abs(npc.x - player.x);
     const distanceY = Math.abs(npc.y - player.y);

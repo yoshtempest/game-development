@@ -82,6 +82,11 @@ export function getSpritePath(
     return npcPath(`/trueVandinha/${state}.svg`);
   }
 
+  if (npcType === "evilMorty") {
+    const phaseState = state === "pitch" ? "idle" : state;
+    return npcPath(`/evilMorty/phase${npcPhase}/${phaseState}.svg`);
+  }
+
   return npcPath(`/${npcType}/${state}.svg`);
 }
 

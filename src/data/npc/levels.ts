@@ -13,6 +13,7 @@ export const NPC_LEVELS: Partial<Record<NpcType, number>> = {
   hungryKing: 11,
   neimito: 13,
   planetarySisters: 14,
+  evilMorty: 60,
 };
 
 export function getNpcLevel(npcType: string): number {

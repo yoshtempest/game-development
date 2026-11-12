@@ -429,6 +429,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     playerHP,
     npcHP,
     npcClass,
+    npcType,
     setNpcPhase,
     npcPhaseRef,
     setNpcHP,

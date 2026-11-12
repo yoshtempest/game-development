@@ -96,6 +96,7 @@ export const NPC_TYPINGS = {
   theChaosCreator: ["Darkus"],
   theFirstNightmare: ["Draco", "Umbra"],
   theDevourerOfWorlds: ["Draco", "Darkus"],
+  evilMorty: ["Psychicus", "Metallum"],
 
   /* Pets (sem NPC de batalha próprio) */
   turkey: ["Normalis", "Subterra"],
