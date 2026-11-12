@@ -39,9 +39,12 @@ import {
   applyPlayerStatus,
   clearPlayerStatuses,
   STATUS_DURATIONS_MS,
-  BURN_TICK_DAMAGE,
+  BLEED_TICK_DAMAGE_RATIO,
+  BURN_TICK_DAMAGE_RATIO,
+  POISON_TICK_DAMAGE_RATIO,
   type NewPlayerStatus,
 } from "@/gameRules/battle/status/statusEffects";
+import { getNpcPercentDamage } from "@/gameRules/npc/npcPercentDamage";
 import { useStatusDotTicks } from "@/hooks/battle/time/ticks/useStatusDotsTicks";
 import { useNpcBleedTicks } from "@/hooks/battle/time/ticks/useNpcBleedTicks";
 import { useManaRegenTick } from "@/hooks/battle/time/ticks/useManaRegenTick";
@@ -125,6 +128,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     getElementDamageBonus,
     playerMaxHp,
     npcMaxHp: tableNpcMaxHp,
+    npcDamage,
     npcArmor: tableNpcArmor,
     critRate,
     HITS_TO_SPECIAL,
@@ -185,9 +189,17 @@ export function useBattleSystem(props: BattleSystemProps) {
 
   const halfHealReduction = getHalfHealReduction(player.character);
   const equippedResistances = getEquippedResistances(player.character);
+  const bleedTickDamage = getNpcPercentDamage(
+    npcDamage,
+    BLEED_TICK_DAMAGE_RATIO,
+  );
   const burnTickDamage = reduceTickDamage(
-    BURN_TICK_DAMAGE,
+    getNpcPercentDamage(npcDamage, BURN_TICK_DAMAGE_RATIO),
     equippedResistances.heat,
+  );
+  const poisonTickDamage = getNpcPercentDamage(
+    npcDamage,
+    POISON_TICK_DAMAGE_RATIO,
   );
   const onHalfHeal =
     halfHealReduction > 0
@@ -444,7 +456,9 @@ export function useBattleSystem(props: BattleSystemProps) {
     isPausedRef,
     setPlayerHP,
     spawnDamageRef,
+    bleedTickDamage,
     burnTickDamage,
+    poisonTickDamage,
     bleedXRef,
     bleedYRef,
     bleedUntilRef,
