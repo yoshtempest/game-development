@@ -51,6 +51,10 @@ export type Props = {
   onProjectileMiss?: (x: number) => void;
   onStuckPaperExplode?: () => void;
   onApplyDebuff?: (status: NewPlayerStatus) => void;
+  /** Dano absoluto pelo funil `npcFixedHit` (ver `BehaviorContext.onFixedHit`). */
+  onFixedHit?: (amount: number) => void;
+  /** Derrota roteirizada: dano igual à vida máxima, sem bloqueio nem parry. */
+  onExecutePlayer?: () => void;
   /** Hit da burst do hungryKing (fase 2): 10% do dano base + push de 50px. */
   onBurstHit?: (pushDir: number) => void;
   /** Esfera do Natsuki no estado atual (para colisão com projéteis inimigos). */

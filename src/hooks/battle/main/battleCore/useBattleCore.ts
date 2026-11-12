@@ -415,6 +415,8 @@ export function useBattleCore({
     onApplyDebuff: (status: NewPlayerStatus) => {
       setPlayer((p) => applyPlayerStatus(p, status));
     },
+    onFixedHit: (amount: number) => battle.npcFixedHit(amount),
+    onExecutePlayer: () => battle.damagePlayerHp(battle.playerMaxHp),
     obstacles,
     timeRef: refs.timeRef,
     npcStaggerRef: refs.npcStaggerRef,

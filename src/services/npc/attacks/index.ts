@@ -76,7 +76,7 @@ export const npcAttacks = {
   srGuaxinim: new SrGuaxinimAttack(),
   neimito: new NeimitoAttack("neimito"),
   planetarySisters: new PlanetarySistersAttack("planetarySisters"),
-  manim: new ManimAttack("manim"),
+  manim: new ManimAttack(),
   maurao: new MauraoAttack(),
   maugrelo: new MaugreloAttack(),
 

@@ -52,7 +52,12 @@ export type NPCBattleState = {
     | "prePunch"
     | "punch"
     | "preKick"
-    | "kick";
+    | "kick"
+    | "compress"
+    | "combine"
+    | "problem"
+    | "taBom"
+    | "nuke";
   direction: NPCDirection;
   jumpLandingX?: number;
   /** Oculta o NPC (ex: alfa cavando no subsolo). Persiste até ser limpo. */
@@ -151,5 +156,6 @@ export type NPCBattleState = {
     };
     maugrelo?: import("@/services/npc/attacks/maugrelo/state").MaugreloAI;
     hungryDog?: import("@/services/npc/attacks/hungryDog/state").HungryDogAI;
+    manim?: import("@/services/npc/attacks/manim/state").ManimAI;
   };
 };

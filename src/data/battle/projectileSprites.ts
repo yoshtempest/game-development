@@ -14,6 +14,7 @@ export const spriteMap: Record<string, string> = {
   knife: npcPathProjectile("/knife.svg"),
   paper: npcPathProjectile("/paper.svg"),
   burst: npcPathProjectile("/burst.svg"),
+  manimPotion: npcPathProjectile("/manimPotion.svg"),
   burstExplosion: npcPathProjectile("/burstExplosion.svg"),
   blueSphere: playerProjectilePath("/blueSphere.svg"),
   redSphere: playerProjectilePath("/redSphere.svg"),
