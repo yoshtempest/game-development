@@ -31,6 +31,7 @@ import {
   reduceTickDamage,
 } from "@/gameRules/battle/equipment";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
+import { ARENA_BURN_FRACTION } from "@/data/battle/arenaHazards";
 import { getProfessionWeaponDamageMultiplier } from "@/gameRules/professions/weapon";
 import { useEnergy } from "@/hooks/battle/effects/energy/useEnergy";
 import { useBattleMana } from "@/contexts/BattleManaContext";
@@ -43,6 +44,7 @@ import {
   type NewPlayerStatus,
 } from "@/gameRules/battle/status/statusEffects";
 import { useStatusDotTicks } from "@/hooks/battle/time/ticks/useStatusDotsTicks";
+import { useArenaBurnTicks } from "@/hooks/battle/time/ticks/useArenaBurnTicks";
 import { useNpcBleedTicks } from "@/hooks/battle/time/ticks/useNpcBleedTicks";
 import { useManaRegenTick } from "@/hooks/battle/time/ticks/useManaRegenTick";
 import { usePlayerPullAnimation } from "@/hooks/battle/player/usePlayerPullAnimation";
@@ -189,6 +191,14 @@ export function useBattleSystem(props: BattleSystemProps) {
     BURN_TICK_DAMAGE,
     equippedResistances.heat,
   );
+  const arenaBurnFraction = ARENA_BURN_FRACTION[npcType] ?? 0;
+  const arenaBurnTickDamage =
+    arenaBurnFraction > 0
+      ? reduceTickDamage(
+          Math.ceil(playerMaxHp * arenaBurnFraction),
+          equippedResistances.heat,
+        )
+      : 0;
   const onHalfHeal =
     halfHealReduction > 0
       ? () => {
@@ -450,6 +460,17 @@ export function useBattleSystem(props: BattleSystemProps) {
     bleedUntilRef,
     burnUntilRef,
     poisonUntilRef,
+  });
+
+  useArenaBurnTicks({
+    tickDamage: arenaBurnTickDamage,
+    isEnding,
+    isMenuRef,
+    isPausedRef,
+    setPlayerHP,
+    spawnDamageRef,
+    playerXRef: bleedXRef,
+    playerYRef: bleedYRef,
   });
 
   useNpcBleedTicks({

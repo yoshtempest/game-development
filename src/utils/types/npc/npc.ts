@@ -151,5 +151,6 @@ export type NPCBattleState = {
     };
     maugrelo?: import("@/services/npc/attacks/maugrelo/state").MaugreloAI;
     hungryDog?: import("@/services/npc/attacks/hungryDog/state").HungryDogAI;
+    denis?: import("@/services/npc/attacks/denis/state").DenisAI;
   };
 };

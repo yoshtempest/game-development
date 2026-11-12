@@ -28,6 +28,7 @@ export function getBattleBackgroundFromRoute(route: string): string {
   if (route.startsWith("/library")) return sceneBackgrounds.LibraryBattle;
   if (route.startsWith("/pcroom")) return sceneBackgrounds.PcRoomBattle;
   if (route.startsWith("/hellroom")) return sceneBackgrounds.HellRoomBattle;
+  if (route.startsWith("/director")) return sceneBackgrounds.DirectorBattle;
   if (route.startsWith("/footballcourt")) {
     return sceneBackgrounds.FootballCourtBattle;
   }
@@ -146,6 +147,20 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     background: sceneBackgrounds.PcRoomBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
   },
+  /**
+   * Denis (#301) ateia fogo na papelada da diretoria: a arena queima a batalha
+   * inteira (`ARENA_BURN_FRACTION`). Volta para a diretoria ao vencer.
+   */
+  director: {
+    npcType: "denis",
+    redirectTo: "/director/one",
+    onVictory: ({ setFlag }) => {
+      setFlag("denis");
+    },
+    victoryDescription: "Você apagou o fogo e o Denis, mané como sempre",
+    background: sceneBackgrounds.DirectorBattle,
+    audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+  },
   pcroomThree: {
     npcType: "hungryKing",
     redirectTo: "/pcroom/seven",
@@ -261,6 +276,7 @@ export const ROUTE_TO_BATTLE_KEY: Record<string, string> = {
   "/cafeteria/battle": "cafeteria",
   "/cantina/battle": "cantina",
   "/hellroom/battle": "hellroom",
+  "/director/battle": "director",
   "/footballcourt/battle": "footballCourt",
   "/hall/jailson/battle": "hallJailson",
   "/hall/center/battle": "hallCenter",

@@ -47,6 +47,11 @@ export type BehaviorContext = {
   onLaserHit?: (npcX?: number) => void;
   onStuckPaperExplode?: () => void;
   onApplyDebuff?: (status: NewPlayerStatus) => void;
+  /**
+   * Fala do Sistema durante a batalha (toast). Existe para roteiros em que o
+   * jogo "interrompe" o NPC — ex.: a expansão de domínio cancelada do Denis.
+   */
+  onSystemMessage?: (text: string) => void;
   /** true quando o NPC da batalha é um alfa (sprites de alfa, special etc). */
   isAlfa?: boolean;
   /** Spawna um aliado surgindo da direita, fora da vista (entry correndo). */

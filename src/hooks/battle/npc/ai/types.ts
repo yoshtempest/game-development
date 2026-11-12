@@ -51,6 +51,8 @@ export type Props = {
   onProjectileMiss?: (x: number) => void;
   onStuckPaperExplode?: () => void;
   onApplyDebuff?: (status: NewPlayerStatus) => void;
+  /** Fala do Sistema disparada pelo ataque do NPC (ver `BehaviorContext`). */
+  onSystemMessage?: (text: string) => void;
   /** Hit da burst do hungryKing (fase 2): 10% do dano base + push de 50px. */
   onBurstHit?: (pushDir: number) => void;
   /** Esfera do Natsuki no estado atual (para colisão com projéteis inimigos). */

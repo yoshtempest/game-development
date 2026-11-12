@@ -108,6 +108,7 @@ export function AppRoutes() {
             <Route path="director">
               <Route index element={<Navigate to="/director/one" />} />
               <Route path=":id" element={<DirectorPage />} />
+              <Route path="battle" element={<BattlePage />} />
             </Route>
 
             <Route path="library">
