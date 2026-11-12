@@ -7,14 +7,12 @@ import { usePlayerBattleActions } from "@/hooks/battle/player/playerActions/useP
 import { getBabidiAttackMode } from "@/utils/character/babidiAttackMode";
 import { useBabidiEnergyAttack } from "@/hooks/battle/player/characters/babidi/energyAttack/useEnergyAttack";
 import { useBabidiMissile } from "@/hooks/battle/player/characters/babidi/missile/useMissile";
-import { useSummonAI } from "@/hooks/battle/summon/ai/useAi";
-import { useAllyAI } from "@/hooks/battle/summon/allyAI/useAllyAI";
 import { useBattleControls } from "@/hooks/battle/controls/useControls";
 import { useComboSystem } from "@/hooks/battle/effects/useComboSystem";
 import { useBattleDamage } from "@/hooks/battle/main/battleDamage/useBattleDamage";
+import { useBattleEntities } from "@/hooks/battle/main/battleEntities/useBattleEntities";
 import { useChargeAttack } from "@/hooks/battle/charge/attack/useAttack";
 import { usePhaseTransition } from "@/hooks/battle/death/phaseTransition/usePhaseTransition";
-import { usePlayerSpecialProjectile } from "@/hooks/battle/player/playerSpecialProjectile/usePlayerSpecialProjectile";
 import { useSigilo } from "@/hooks/battle/player/characters/drika/useSigilo";
 import { useBattleSync } from "@/hooks/battle/sync/useSync";
 import { useActiveSkills } from "@/hooks/battle/utilities/activeSkills/useActiveSkills";
@@ -33,8 +31,6 @@ import { useMuryokushoExpansion } from "@/hooks/battle/player/characters/natsuki
 import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/hakaiExpansion/useHakaiExpansion";
 import { useBabidiDomainExpansion } from "@/hooks/battle/player/characters/babidi/domainExpansion/useBabidiDomainExpansion";
 import { useBabidiBombDrop } from "@/hooks/battle/player/characters/babidi/bombDrop/useBombDrop";
-import { BabidiFishingNetConstants } from "@/data/characters/babidi";
-import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { useAtomic } from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
 import { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/mugetsuExpansion/useMugetsuExpansion";
 import { useDomainExpansionBurst } from "@/hooks/battle/utilities/domainExpansionBurst/useDomainExpansionBurst";
@@ -42,7 +38,6 @@ import { VASTOLORD_KILL_EXTEND_MS } from "@/hooks/battle/player/characters/marsh
 import { getAbilityDamageType } from "@/data/characters/abilities";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { getProjectileDestructionHpByKind } from "@/gameRules/npc/projectile/projectileHp";
-import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { gainAbilityCharge } from "@/gameRules/battle/special";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
 import { getWeaponEnchantment } from "@/gameRules/battle/equipment";
@@ -51,7 +46,6 @@ import { CHARGE_ATTACK_MIN_LEVEL } from "@/data/battle/charge";
 import { KILLER_QUEEN_COOLDOWN_MS } from "@/data/characters/srGuaxinim/srGuaxinim";
 import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/laricell/laricell";
 import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
-import { PET_ROOT_DURATION_MS } from "@/data/characters/pets/petSkills";
 import {
   ABILITY_COOLDOWN_TICK_MS,
   useCooldownPauseTick,
@@ -274,6 +268,51 @@ export function useBattleCombat({
     },
     [selectDrikaArmRaw, onAbilityUsed],
   );
+
+  // O projétil especial dispara o golpe do player quando funde. As entidades
+  // nascem antes de `usePlayerBattleActions` existir, então o alvo vai por ref.
+  const onFireRef = useRef<() => void>(() => {});
+
+  const { playerProjectile, fishingNetPress, fishingNetMissiles, rootDurationMs } =
+    useBattleEntities({
+      battle,
+      refs,
+      npc,
+      player,
+      playerClass,
+      npcType,
+      npcLevel,
+      difficulty,
+      isAlfa,
+      summons,
+      setSummons,
+      allies,
+      setAllies,
+      isPausedRef,
+      lootActiveRef,
+      honoredFleeRef,
+      npcRootedUntilRef,
+      rootedSummonsUntilRef,
+      PLAYER_SIZE,
+      timeScaleRef,
+      setTimeScale,
+      playerProjectileRef,
+      onFireRef,
+      vastolordActive,
+      extendVastolordRef,
+      addVastolordLaserChargeRef,
+      battleManaRef,
+      startAbility,
+      onAbilityUsed,
+      fishingNet,
+      fishingNetRef,
+      fishingNetTimerRef,
+      fishingNetPushTimerRef,
+      fishingNetReadyAtRef,
+      setFishingNet,
+      setFishingNetRemaining,
+    });
+
   const {
     handleCursedEnergyConversion,
     handleBlink,
@@ -316,7 +355,7 @@ export function useBattleCombat({
       summonsBleedUntilRef,
       npcRootedUntilRef,
       rootedSummonsUntilRef,
-      rootDurationMs: PET_ROOT_DURATION_MS,
+      rootDurationMs,
       playSound,
     });
   };
@@ -439,6 +478,9 @@ export function useBattleCombat({
       babidiAttackMode: getBabidiAttackMode(),
     });
 
+  // O projétil especial (esfera do natsuki) dispara o golpe do player ao fundir.
+  onFireRef.current = handleSpecialHit;
+
   const babidiEnergy = useBabidiEnergyAttack({
     PLAYER_SIZE,
     timeRef: refs.timeRef,
@@ -462,156 +504,6 @@ export function useBattleCombat({
   babidiMissileFireRef.current = (player) => babidiMissile.fire(player);
   babidiMissileFireBurstRef.current = (player) =>
     babidiMissile.fireBurst(player, 4, 35);
-
-  // Mísseis automáticos enquanto o NPC está preso pela fishingNet: surgem ao
-  // redor do NPC (de dentro de um portal) e voam em sua direção, causando 20%
-  // do dano mágico do personagem, independentemente do uso manual do míssil.
-  const fishingNetMissile = useBabidiMissile({
-    PLAYER_SIZE,
-    npcType,
-    npcPhase: battle.npcPhase ?? 1,
-    isAlfa,
-    timeRef: refs.timeRef,
-    npc: { x: npc.x, y: npc.y },
-    summons,
-    onProjectileHit: (target) => {
-      if (target.id === "main") {
-        battle.playerHit(0.2, true, true, "magical");
-      }
-    },
-    maxMissiles: 10,
-    randomSpawn: true,
-  });
-
-  const fishingNetMissileRef = useRef(fishingNetMissile);
-  fishingNetMissileRef.current = fishingNetMissile;
-
-  useEffect(() => {
-    if (!fishingNet) return;
-    const interval = setInterval(() => {
-      const spriteHeight = PLAYER_SIZE / PLAYER_SPRITE_DIVISOR;
-      fishingNetMissileRef.current.fire({
-        x: npc.x,
-        y: npc.y + spriteHeight * 1.6,
-      });
-    }, 100);
-    return () => clearInterval(interval);
-  }, [fishingNet, npc.x, npc.y, PLAYER_SIZE]);
-
-  const fishingNetPress = useCallback(() => {
-    if (Date.now() < fishingNetReadyAtRef.current) return;
-    const mana = battleManaRef.current;
-    const spend = mana
-      ? Math.ceil(mana.playerMaxMana * BabidiFishingNetConstants.COST_RATIO)
-      : 0;
-    if (mana && spend > 0 && !mana.consumeMana(spend)) return;
-    if (!battle.playerMaxHp) return;
-    startAbility();
-    onAbilityUsed();
-    if (fishingNetTimerRef.current) {
-      clearTimeout(fishingNetTimerRef.current);
-      fishingNetTimerRef.current = null;
-    }
-    if (fishingNetPushTimerRef.current) {
-      clearInterval(fishingNetPushTimerRef.current);
-      fishingNetPushTimerRef.current = null;
-    }
-
-    // A rede cai sobre o alvo. Se o alvo estiver acima do chão (em y), a rede
-    // empurra o inimigo até o chão de y da batalha enquanto cai.
-    const groundY = BATTLE_SPAWN.npc.y;
-    const enemyAboveGround = npc.y < groundY;
-    const finalEnemyY = enemyAboveGround ? groundY : npc.y;
-    const net = {
-      x: npc.x,
-      y: finalEnemyY - 60,
-    };
-    setFishingNet(net);
-    fishingNetRef.current = net;
-
-    if (enemyAboveGround) {
-      const startY = npc.y;
-      const fallMs = BabidiFishingNetConstants.FALL_MS;
-      const pushStart = Date.now();
-      fishingNetPushTimerRef.current = setInterval(() => {
-        const t = Math.min(1, (Date.now() - pushStart) / fallMs);
-        const y = startY + (groundY - startY) * t;
-        npc.updateNpc({ y });
-        if (t >= 1) {
-          if (fishingNetPushTimerRef.current) {
-            clearInterval(fishingNetPushTimerRef.current);
-            fishingNetPushTimerRef.current = null;
-          }
-        }
-      }, 16);
-    }
-
-    const rootMs = BabidiFishingNetConstants.ROOT_MS;
-    npcRootedUntilRef.current = Date.now() + rootMs;
-    const cooldownMs = applyCooldownReduction(
-      BabidiFishingNetConstants.COOLDOWN_MS,
-      battle.char.stats.cooldownReduction,
-    );
-    fishingNetReadyAtRef.current = Date.now() + cooldownMs;
-    setFishingNetRemaining(cooldownMs / 1000);
-    fishingNetTimerRef.current = setTimeout(() => {
-      setFishingNet(null);
-      fishingNetRef.current = null;
-      npcRootedUntilRef.current = 0;
-      fishingNetTimerRef.current = null;
-    }, rootMs);
-  }, [
-    battle.playerMaxHp,
-    battle.char.stats.cooldownReduction,
-    battleManaRef,
-    npc,
-    npcRootedUntilRef,
-    startAbility,
-    onAbilityUsed,
-  ]);
-
-  const freezeSummonsUntilRef = useRef(0);
-
-  useSummonAI({
-    summons,
-    setSummons,
-    isPaused: isPausedRef.current || lootActiveRef.current,
-    playerX: player.x,
-    playerY: player.y,
-    playerClass,
-    playerCharacter: player.character,
-    npcLevel,
-    difficulty,
-    damagePlayer: battle.damagePlayer,
-    spawnDamageRef: refs.spawnDamageRef,
-    timeRef: refs.timeRef,
-    freezeUntilRef: freezeSummonsUntilRef,
-    rootedSummonsUntilRef,
-    honoredFleeRef,
-    onSummonKilled: () => {
-      if (vastolordActive) {
-        extendVastolordRef.current(VASTOLORD_KILL_EXTEND_MS);
-        addVastolordLaserChargeRef.current();
-      }
-    },
-  });
-
-  useAllyAI({
-    allies,
-    setAllies,
-    enemySummons: summons,
-    setEnemySummons: setSummons,
-    isPaused: isPausedRef.current,
-    isEnding: battle.isEnding.current,
-    enemyNpc: { x: npc.x, y: npc.y, npcType },
-    npcHp: battle.npcHP,
-    npcArmor: battle.npcArmor,
-    setNpcHP: battle.setNpcHP,
-    npcLevel,
-    difficulty,
-    spawnDamageRef: refs.spawnDamageRef,
-    timeRef: refs.timeRef,
-  });
 
   const {
     oraPress,
@@ -742,18 +634,6 @@ export function useBattleCombat({
   });
 
   useThrowAnimation({ setPlayer, setIsThrown, isMenuRef: isMenuOpenRef });
-
-  const { playerProjectile } = usePlayerSpecialProjectile({
-    player,
-    PLAYER_SIZE,
-    onFire: handleSpecialHit,
-    timeScaleRef,
-    setTimeScale,
-  });
-
-  useEffect(() => {
-    playerProjectileRef.current = playerProjectile;
-  }, [playerProjectile]);
 
   const {
     specialIntroActive,
@@ -1570,7 +1450,7 @@ export function useBattleCombat({
     babidiEnergyProjectiles: babidiEnergy.projectiles,
     babidiMissileProjectiles: [
       ...babidiMissile.missiles,
-      ...fishingNetMissile.missiles,
+      ...fishingNetMissiles,
     ],
     fishingNet,
     fishingNetPress,
