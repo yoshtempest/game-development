@@ -183,6 +183,8 @@ O escopo atual abrange:
 | RN41 | Quem cai num round avisa a partida; os dois cair em até 0,7 s é empate (ninguém pontua). Vence a série quem chegar a maioria simples (1, 2 ou 3 rounds) |
 | RN42 | Oponente que sai do duelo ou fica 4 s sem dar sinal antes de a série acabar perde por W.O.; sair depois da série decidida não muda o resultado |
 | RN43 | O duelo é amistoso: não dá XP, loot, progresso de missão nem penalidade de derrota; o Rewind fica desligado e a Forma Vastolord (passiva) vale |
+| RN44 | A Killer Queen (SrGuaxinim) não para o tempo: o jogador anda, corre e age enquanto ela marca os alvos, os inimigos continuam agindo e cada bomba acompanha o alvo vivo até a detonação |
+| RN45 | O Retrocesso Temporal (passiva do SrGuaxinim, uma vez por batalha) dispara na morte uma cinemática — explosão e arremesso, portal dimensional, espaço galáctico com aproximação da câmera e flash — com a batalha inteira congelada; ao fim do flash o estado volta de uma vez para 10 s antes da morte (sem replay frame a frame) |
 
 ### 3.4 Restrições de Hardware
 

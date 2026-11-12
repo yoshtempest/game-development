@@ -6,12 +6,8 @@ export type Props = {
   setPlayer: React.Dispatch<React.SetStateAction<Player>>;
   /** NPC principal + summons: alvos que levam dano de área. */
   enemies: EnemyTarget[];
-  /** Projéteis do NPC: congelados e transformados em bomba. */
+  /** Projéteis do NPC: transformados em bomba (seguem andando até a detonação). */
   projectiles: Projectile[];
-  /** Efeitos de time da batalha (regra `gameRules/battle/time`). */
-  timeRef: React.RefObject<TimeEffect[]>;
-  /** O player não é `TimeKind`: o lock de ação dele é o `freezeActionsUntilRef`. */
-  freezePlayerUntilRef: React.RefObject<number>;
   /** Aplica o dano de área da explosão nos projéteis que viraram bomba. */
   onBombProjectiles: (strikes: ProjectileStrike[]) => void;
   onAreaDamage: (
