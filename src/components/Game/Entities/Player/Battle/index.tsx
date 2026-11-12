@@ -11,6 +11,8 @@ import { ChargingKiEffect } from "./ChargingKiEffect";
 import { BattleSprite } from "./BattleSprite";
 import { AtomicHalo } from "./AtomicHalo";
 import { BabidiShield } from "./BabidiShield";
+import { StatusOverlay } from "./StatusOverlay";
+import { STATUS_SPRITE_TINTS } from "@/data/battle/statusOverlays";
 import { LevelUpParticles } from "@/components/Game/LevelUpParticles";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import { ProjectileConstants } from "@/data/projectile";
@@ -18,9 +20,13 @@ import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { computeEntityShadow } from "@/utils/shadow/entityShadow";
 
 import type { BabidiShieldSides } from "@/utils/types/character/babidi";
+import type { PlayerStatusApplication } from "@/gameRules/battle/status/statusEffects";
 
 /** Nenhum shield do babidi ativo, usado quando a prop não vem. */
 const NO_BABIDI_SHIELD: BabidiShieldSides = { left: 0, right: 0 };
+
+/** Sem status ativo (clone, avatar remoto): referência estável para o default. */
+const NO_ACTIVE_STATUSES: readonly PlayerStatusApplication[] = [];
 
 export function PlayerBattle(props: PlayerBattleProps) {
   const {
@@ -50,7 +56,12 @@ export function PlayerBattle(props: PlayerBattleProps) {
     babidiShieldSides = NO_BABIDI_SHIELD,
     onBabidiShieldEnd,
     hakai = false,
+    activeStatuses = NO_ACTIVE_STATUSES,
   } = props;
+
+  const poisonTint = activeStatuses.some(({ status }) =>
+    STATUS_SPRITE_TINTS.has(status),
+  );
 
   const isChargingKi = character === "ematron" && state === "chargingKi";
 
@@ -123,6 +134,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
       transformOrigin={transformOrigin}
       onError={handleSpriteError}
       isIdle={state === "idle"}
+      poisonTint={poisonTint}
     />
   );
 
@@ -177,6 +189,8 @@ export function PlayerBattle(props: PlayerBattleProps) {
         )}
 
         {sprite}
+
+        <StatusOverlay statuses={activeStatuses} />
 
         {/* Bloqueio do babidi: um shield por lado atacado, remontado a cada golpe
             (nonce) para repetir o blink. O `key` por lado+nonce é o que garante

@@ -1,4 +1,5 @@
 import { PlayerBattle } from "@/components/Game/Entities/Player/Battle";
+import { getActivePlayerStatusApplications } from "@/gameRules/battle/status/statusEffects";
 import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/blinkAnimation/types";
 import type {
   BabidiShieldSide,
@@ -72,8 +73,11 @@ export function Player({
         : "black"
       : null;
 
+  const activeStatuses = getActivePlayerStatusApplications(player);
+
   return (
     <PlayerBattle
+      activeStatuses={activeStatuses}
       character={player.character}
       x={player.x}
       y={player.y}
