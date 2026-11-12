@@ -1,4 +1,5 @@
 import type { HandleBlockingParams } from "./types";
+import type { VampirismSource } from "@/gameRules/battle/vampirism/applyVampirism";
 import {
   NPC_BLOCK_COOLDOWN,
   NPC_GUARD_BREAK_COOLDOWN,
@@ -36,8 +37,15 @@ export type NpcBlockResult =
 /**
  * Chamado antes de o dano do jogador ser aplicado no NPC. Recebe um getter
  * do dano real do golpe (computado sob demanda) e decide se o NPC bloqueia.
+ *
+ * `source` distingue o ataque básico (`"basic"`) do resto: passivas do NPC
+ * que reagem só ao básico (ex.: veneno do Rick Tóxico) leem daqui, porque
+ * este é o único gancho comum a todo golpe do jogador antes do dano.
  */
-export type OnBeforeNpcHit = (getDamage: () => number) => NpcBlockResult;
+export type OnBeforeNpcHit = (
+  getDamage: () => number,
+  source?: VampirismSource,
+) => NpcBlockResult;
 
 export function handleNpcBlocking({
   dmg,

@@ -59,6 +59,7 @@ export const NPC_CATEGORY: Record<string, NpcCategory> = {
   srGuaxinim: "enemies",
   technoblade: "enemies",
   trueVandinha: "enemies",
+  rickToxico: "enemies",
   vandinhaFragment: "enemies",
   yangKai: "enemies",
   theStrongestManUnderTheHeavens: "enemies",

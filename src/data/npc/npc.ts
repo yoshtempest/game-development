@@ -55,6 +55,9 @@ export const NPC_CLASSES = {
   technoblade: "legendary",
   ouroboros: "supreme",
 
+  /* Mundo tóxico */
+  rickToxico: "legendary",
+
   /* Training */
   dummy: "common",
 

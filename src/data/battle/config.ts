@@ -246,6 +246,15 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     background: sceneBackgrounds.CombatTutorial,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
   },
+  rickToxico: {
+    npcType: "rickToxico",
+    onVictory: ({ navigate }) => {
+      void navigate(-1);
+    },
+    victoryDescription: "Você derrotou o Rick Tóxico",
+    background: sceneBackgrounds.ToxicSwampBattle,
+    audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+  },
   trueVandinha: {
     npcType: "trueVandinha",
     onVictory: ({ navigate }) => {
@@ -278,6 +287,7 @@ export const ROUTE_TO_BATTLE_KEY: Record<string, string> = {
   "/battle/technoblade": "technoblade",
   "/battle/vandinhafragment": "vandinha",
   "/battle/truevandinha": "trueVandinha",
+  "/battle/ricktoxico": "rickToxico",
   "/training": "training",
   "/battle/pvp": "pvp",
 };
