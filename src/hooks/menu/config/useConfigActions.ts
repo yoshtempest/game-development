@@ -32,6 +32,7 @@ interface UseConfigActionsParams {
   setLanguageRef: RefObject<(v: GameLanguage) => void>;
   navigateRef: RefObject<(path: string) => void>;
   onConfirmRef: RefObject<(() => void) | undefined>;
+  onContentConfirmRef: RefObject<((index: number) => void) | undefined>;
   setScreen: (s: "menu" | "tutorial") => void;
 }
 
@@ -64,6 +65,7 @@ export function useConfigActions({
   setLanguageRef,
   navigateRef,
   onConfirmRef,
+  onContentConfirmRef,
   setScreen,
 }: UseConfigActionsParams) {
   const handleConfirm = useCallback((): boolean => {
@@ -127,6 +129,10 @@ export function useConfigActions({
       }
     }
 
+    if (activeTabRef.current === "conteudo") {
+      onContentConfirmRef.current?.(idx);
+    }
+
     onConfirmRef.current?.();
 
     return true;
@@ -158,6 +164,7 @@ export function useConfigActions({
     setLanguageRef,
     navigateRef,
     onConfirmRef,
+    onContentConfirmRef,
   ]);
 
   const handleCancel = useCallback((): boolean => {
