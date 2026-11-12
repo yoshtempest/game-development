@@ -815,6 +815,7 @@ declare global {
     | "equip"
     | "unequip"
     | "unlockedTitle"
+    | "petUnlocked"
     | "eating"
     | "drinkingPotion"
     | "jhowsimarJooj"
