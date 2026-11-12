@@ -44,14 +44,18 @@ export function EquipmentDrops({ equipmentDrops }: Props) {
           return (
             <div key={eq.id} className="dropItem">
               {rank?.src && (
-                <img loading="lazy" decoding="async"
+                <img
+                  loading="lazy"
+                  decoding="async"
                   className="dropIcon"
                   src={rankBadgePath(rank.src)}
                   alt={RANK_LABELS[eq.rank]}
                   title={RANK_LABELS[eq.rank]}
                 />
               )}
-              <img loading="lazy" decoding="async"
+              <img
+                loading="lazy"
+                decoding="async"
                 className="dropIcon"
                 src={FILTER_LABELS[eq.slot]}
                 alt={SLOT_LABELS[eq.slot]}

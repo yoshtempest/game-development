@@ -37,7 +37,10 @@ import { JumpDangerZone } from "@/components/Game/Battle/Jump/dangerZone";
 import { ComboAction } from "@/components/Game/Battle/Buttons/ComboAction";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
 import { useBattleAudio } from "@/hooks/battle/useBattleAudio";
-import { useBattleViewport, getBattleBackgroundStyle } from "@/hooks/battle/useBattleViewport";
+import {
+  useBattleViewport,
+  getBattleBackgroundStyle,
+} from "@/hooks/battle/useBattleViewport";
 import { usePlayerActions } from "@/contexts/PlayerContext";
 import { useTitles } from "@/contexts/TitleContext";
 import { memo, useCallback, useEffect, useMemo, useRef } from "react";
@@ -405,7 +408,8 @@ export function BattleScene(props: Props) {
     transformationFrame,
   });
 
-  const { worldOffsetX, worldOffsetY, zoom, shake, adjustedBgX, adjustedBgY } = camera;
+  const { worldOffsetX, worldOffsetY, zoom, shake, adjustedBgX, adjustedBgY } =
+    camera;
 
   const damageTargets = [
     {
@@ -424,7 +428,6 @@ export function BattleScene(props: Props) {
       h: TILE_SIZE * getBossSizeMultiplier(s.npcType),
     })),
   ];
-
 
   useEffect(() => {
     setBattleCollision({
@@ -608,13 +611,13 @@ export function BattleScene(props: Props) {
     "drika";
 
   const secondPlayer = isBattleHost
-    ? (remotePlayerState
-        ? {
-            ...remotePlayerState,
-            x: interpRemotePlayer?.x ?? remotePlayerState.x,
-            y: interpRemotePlayer?.y ?? remotePlayerState.y,
-          }
-        : null)
+    ? remotePlayerState
+      ? {
+          ...remotePlayerState,
+          x: interpRemotePlayer?.x ?? remotePlayerState.x,
+          y: interpRemotePlayer?.y ?? remotePlayerState.y,
+        }
+      : null
     : interpolatedRemoteSnapshot?.player
       ? {
           x: interpolatedRemoteSnapshot.player.x,
@@ -831,10 +834,13 @@ export function BattleScene(props: Props) {
         showVictory={showVictory}
         npcType={npcType}
         npcLevel={npcLevel}
-        xpReward={isBattleGuest ? (remoteRewards?.xpReward ?? xpReward) : xpReward}
+        xpReward={
+          isBattleGuest ? (remoteRewards?.xpReward ?? xpReward) : xpReward
+        }
         lastRewards={
           isBattleGuest
-            ? ((remoteRewards?.lastRewards as typeof lastRewards) ?? lastRewards)
+            ? ((remoteRewards?.lastRewards as typeof lastRewards) ??
+              lastRewards)
             : lastRewards
         }
         handleContinue={handleContinueSync}

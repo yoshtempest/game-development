@@ -11,7 +11,9 @@ export function Hero() {
     <section className={styles.hero}>
       <div className={styles.heroOverlay} />
       <div className={styles.heroContent}>
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={rootAssetPath("logo.svg")}
           alt="Jomasio Adventures"
           className={styles.logo}

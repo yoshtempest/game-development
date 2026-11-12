@@ -81,7 +81,9 @@ export function MugetsuTargetDisintegration({
       {/* Espessura do corte: a fatia central do sprite em silhueta preta fica
           parada enquanto as metades giram para fora — é o fundo do corte que o
           vão revela. */}
-      <img loading="lazy" decoding="async"
+      <img
+        loading="lazy"
+        decoding="async"
         className={styles.core}
         src={src}
         alt=""
@@ -89,7 +91,9 @@ export function MugetsuTargetDisintegration({
         onError={handleSpriteError}
       />
       <div className={`${styles.half} ${styles.left}`}>
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           className={styles.sprite}
           src={src}
           alt=""
@@ -98,7 +102,9 @@ export function MugetsuTargetDisintegration({
         />
       </div>
       <div className={`${styles.half} ${styles.right}`}>
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           className={styles.sprite}
           src={src}
           alt=""

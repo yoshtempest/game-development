@@ -47,13 +47,10 @@ export function useBabidiBombDrop({
       BabidiBombDropConstants.COST_RATIO,
   );
 
-  const commitVisual = useCallback(
-    (next: BabidiBombDropVisual | null) => {
-      visualRef.current = next;
-      setVisual(next);
-    },
-    [],
-  );
+  const commitVisual = useCallback((next: BabidiBombDropVisual | null) => {
+    visualRef.current = next;
+    setVisual(next);
+  }, []);
 
   const clearTimers = useCallback(() => {
     for (const timer of timersRef.current) clearTimeout(timer);

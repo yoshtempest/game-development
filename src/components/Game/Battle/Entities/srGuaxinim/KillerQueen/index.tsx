@@ -33,7 +33,9 @@ export function KillerQueen({
   if (!killerQueen?.active || !killerQueenSprite) return null;
 
   return (
-    <img loading="lazy" decoding="async"
+    <img
+      loading="lazy"
+      decoding="async"
       src={killerQueenSprite(killerQueen.sprite)}
       style={{
         position: "absolute",

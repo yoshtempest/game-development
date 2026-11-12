@@ -42,7 +42,12 @@ export function RightPanel() {
               key={tab}
               className={`${styles.filterTab} ${isActive ? styles.filterTabActive : ""} ${isSelected ? "EquipmentSelected" : ""}`}
             >
-              <img loading="lazy" decoding="async" className={styles.equipmentImage} src={FILTER_LABELS[tab]} />
+              <img
+                loading="lazy"
+                decoding="async"
+                className={styles.equipmentImage}
+                src={FILTER_LABELS[tab]}
+              />
             </div>
           );
         })}
@@ -66,7 +71,12 @@ export function RightPanel() {
               className={`${styles.collectedCard} ${isSelected ? "EquipmentSelected" : ""}`}
             >
               <div className="EquipmentItemRow">
-                <img loading="lazy" decoding="async" className="slotTag" src={FILTER_LABELS[entry.item.slot]} />
+                <img
+                  loading="lazy"
+                  decoding="async"
+                  className="slotTag"
+                  src={FILTER_LABELS[entry.item.slot]}
+                />
                 {entry.arrow === "up" && (
                   <ArrowUp size={14} className={styles.arrowUp} />
                 )}

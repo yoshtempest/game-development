@@ -23,7 +23,9 @@ export function BabidiClone({ clone, battleScaleX, battleScaleY }: Props) {
 
   if (clone.exploded) {
     return (
-      <img loading="lazy" decoding="async"
+      <img
+        loading="lazy"
+        decoding="async"
         src={npcPathProjectile("/explosion.svg")}
         alt="explosion"
         style={{
@@ -56,8 +58,20 @@ export function BabidiClone({ clone, battleScaleX, battleScaleY }: Props) {
             transform: `translate(-50%, -100%) scaleX(${clone.flipped ? -1 : 1})`,
           }}
         >
-          <img loading="lazy" decoding="async" className={`${styles.half} ${styles.left}`} src={src} alt="" />
-          <img loading="lazy" decoding="async" className={`${styles.half} ${styles.right}`} src={src} alt="" />
+          <img
+            loading="lazy"
+            decoding="async"
+            className={`${styles.half} ${styles.left}`}
+            src={src}
+            alt=""
+          />
+          <img
+            loading="lazy"
+            decoding="async"
+            className={`${styles.half} ${styles.right}`}
+            src={src}
+            alt=""
+          />
         </div>
       )}
       <div
@@ -70,7 +84,9 @@ export function BabidiClone({ clone, battleScaleX, battleScaleY }: Props) {
           pointerEvents: "none",
         }}
       >
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={src}
           alt="babidi clone"
           className={styles.clone}

@@ -16,8 +16,9 @@ type CombatTutorialActions = {
 
 type CombatTutorialContextValue = CombatTutorialState & CombatTutorialActions;
 
-const CombatTutorialStateContext =
-  createContext<CombatTutorialState | null>(null);
+const CombatTutorialStateContext = createContext<CombatTutorialState | null>(
+  null,
+);
 const CombatTutorialActionsContext =
   createContext<CombatTutorialActions | null>(null);
 
@@ -57,7 +58,9 @@ export function useCombatTutorialState() {
 export function useCombatTutorialActions() {
   const ctx = useContext(CombatTutorialActionsContext);
   if (!ctx)
-    throw new Error("useCombatTutorialActions precisa do CombatTutorialProvider");
+    throw new Error(
+      "useCombatTutorialActions precisa do CombatTutorialProvider",
+    );
   return ctx;
 }
 

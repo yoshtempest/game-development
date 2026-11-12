@@ -28,7 +28,9 @@ export function PortalSelect({ index, onPick }: Props) {
   return (
     <div className="overlay">
       <div className={`modal ${styles.modal}`}>
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           className={styles.background}
           src={playerAbilityBackgroundPath("babidi", "portals")}
           alt=""
@@ -50,7 +52,9 @@ export function PortalSelect({ index, onPick }: Props) {
                 }`}
                 onClick={() => onPick(i)}
               >
-                <img loading="lazy" decoding="async"
+                <img
+                  loading="lazy"
+                  decoding="async"
                   className={styles.sprite}
                   src={babidiPortalPath(kind)}
                   alt=""

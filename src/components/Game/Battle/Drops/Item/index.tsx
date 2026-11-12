@@ -15,7 +15,9 @@ export function ItemDrops({ itemDrops }: Props) {
       <div className="dropsList">
         {itemDrops.map((item) => (
           <div key={item.id} className="dropItem">
-            <img loading="lazy" decoding="async"
+            <img
+              loading="lazy"
+              decoding="async"
               className="dropIcon"
               src={item.image ?? itemPath(`${item.id}.svg`)}
               alt={item.name}

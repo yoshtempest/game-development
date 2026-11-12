@@ -23,12 +23,14 @@ export function FishingNet({ net, battleScaleX, battleScaleY }: Props) {
   return (
     <div
       className={styles.net}
-      style={{
-        left: net.x * battleScaleX,
-        top: net.y * battleScaleY,
-        "--fall-distance": `${fallDistance}px`,
-        animationDuration: `${BabidiFishingNetConstants.FALL_MS}ms`,
-      } as CSSProperties}
+      style={
+        {
+          left: net.x * battleScaleX,
+          top: net.y * battleScaleY,
+          "--fall-distance": `${fallDistance}px`,
+          animationDuration: `${BabidiFishingNetConstants.FALL_MS}ms`,
+        } as CSSProperties
+      }
     >
       <img loading="lazy" decoding="async" src={src} alt="fishing net" />
     </div>

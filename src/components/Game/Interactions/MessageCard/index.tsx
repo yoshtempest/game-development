@@ -51,7 +51,9 @@ export function MessageCard({
         className={styles.cardContainer}
         onClick={(e) => e.stopPropagation()}
       >
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           className={styles.cardImage}
           src={resolveAsset(historyPath("messageCard.svg"))}
           alt=""

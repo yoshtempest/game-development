@@ -28,7 +28,13 @@ export function QuestCard({ quest, selected }: Props) {
       className={styles.container}
     >
       <div className={styles.row}>
-        <img loading="lazy" decoding="async" src={quest.image ?? ""} className={styles.image} width={50} />
+        <img
+          loading="lazy"
+          decoding="async"
+          src={quest.image ?? ""}
+          className={styles.image}
+          width={50}
+        />
         <h3>{quest.name}</h3>
         {quest.frequency && (
           <span className={styles.freqBadge} data-freq={quest.frequency}>
@@ -44,7 +50,14 @@ export function QuestCard({ quest, selected }: Props) {
         </span>
         <span className={styles.reward}>
           {quest.rewards}
-          {icon && <img loading="lazy" decoding="async" src={icon} className={styles.rewardIcon} />}
+          {icon && (
+            <img
+              loading="lazy"
+              decoding="async"
+              src={icon}
+              className={styles.rewardIcon}
+            />
+          )}
         </span>
       </div>
     </div>

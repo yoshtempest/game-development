@@ -25,7 +25,13 @@ export function LootPickup({ notifications, scaleX, scaleY }: Props) {
         >
           {n.entries.map((entry) => (
             <div key={entry.name} className={styles.entry}>
-              <img loading="lazy" decoding="async" className={styles.icon} src={entry.icon} alt={entry.name} />
+              <img
+                loading="lazy"
+                decoding="async"
+                className={styles.icon}
+                src={entry.icon}
+                alt={entry.name}
+              />
               <span className={styles.qty}>x{entry.qty}</span>
               <span className={styles.name}>{entry.name}</span>
             </div>

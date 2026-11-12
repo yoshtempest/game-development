@@ -6,8 +6,16 @@ import { useBattleSocket } from "@/hooks/useBattleSocket";
 export default function Online() {
   const navigate = useNavigate();
   const online = useOnline();
-  const { rooms, connected, room, createRoom, joinRoom, leaveRoom, refreshRooms, playerId } =
-    online;
+  const {
+    rooms,
+    connected,
+    room,
+    createRoom,
+    joinRoom,
+    leaveRoom,
+    refreshRooms,
+    playerId,
+  } = online;
   const { send, lastMessage } = useBattleSocket(online.roomId, online.playerId);
   const [name, setName] = useState("");
 
@@ -87,7 +95,11 @@ export default function Online() {
             ))}
           </ul>
           {isHost && (
-            <button type="button" onClick={handlePlay} style={{ marginRight: 8 }}>
+            <button
+              type="button"
+              onClick={handlePlay}
+              style={{ marginRight: 8 }}
+            >
               Jogar
             </button>
           )}

@@ -19,7 +19,9 @@ test.describe("multiplayer: duas abas", () => {
     await guest.waitForTimeout(2000);
 
     await expect(guest).toHaveURL(/jomasioentrance/);
-    await expect(host.locator("text=Jogadores:")).not.toBeVisible().catch(() => {});
+    await expect(host.locator("text=Jogadores:"))
+      .not.toBeVisible()
+      .catch(() => {});
 
     await hostCtx.close();
     await guestCtx.close();
@@ -39,14 +41,20 @@ test.describe("multiplayer: duas abas", () => {
 
     await expect(host.locator("#root")).toBeVisible();
     await expect(guest.locator("#root")).toBeVisible();
-    await expect(host.locator("body")).not.toContainText("Batalha não encontrada");
-    await expect(guest.locator("body")).not.toContainText("Batalha não encontrada");
+    await expect(host.locator("body")).not.toContainText(
+      "Batalha não encontrada",
+    );
+    await expect(guest.locator("body")).not.toContainText(
+      "Batalha não encontrada",
+    );
 
     await hostCtx.close();
     await guestCtx.close();
   });
 
-  test("latência artificial (throttling) não quebra render", async ({ browser }) => {
+  test("latência artificial (throttling) não quebra render", async ({
+    browser,
+  }) => {
     test.setTimeout(60000);
     const ctx = await browser.newContext();
     const page = await ctx.newPage();

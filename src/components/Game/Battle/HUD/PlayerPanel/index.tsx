@@ -56,7 +56,9 @@ export function PlayerHUDPanel({
   return (
     <div className={styles.container} style={{ left: 10, top: 10 }}>
       <div>
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={
             playerForm === "vastolordForm"
               ? playerPath(`/${character}/inFight/vastolordForm/face.svg`)

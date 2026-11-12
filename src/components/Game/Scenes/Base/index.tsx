@@ -19,7 +19,6 @@ import { useTombstones } from "@/contexts/TombstoneContext";
 import { findInteraction } from "./findInteraction";
 import type { SceneBaseProps } from "./types";
 
-
 export function SceneBase({
   scene,
   className,

@@ -153,13 +153,17 @@ export function ReplayList({ isOnTab }: Props) {
               className={`${styles.card} ${isSelected ? styles.selected : ""}`}
             >
               <div className={styles.cardSprites}>
-                <img loading="lazy" decoding="async"
+                <img
+                  loading="lazy"
+                  decoding="async"
                   src={playerPath(`/${r.playerCharacter}/face.svg`)}
                   alt=""
                   className={styles.sprite}
                 />
                 <span className={styles.vsText}>VS</span>
-                <img loading="lazy" decoding="async"
+                <img
+                  loading="lazy"
+                  decoding="async"
                   src={npcPath(`/${r.npcType}/face.svg`)}
                   alt=""
                   className={styles.sprite}

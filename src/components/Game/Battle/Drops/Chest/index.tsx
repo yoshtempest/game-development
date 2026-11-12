@@ -18,7 +18,9 @@ export function ChestDrops({ chestDrop, keyDrop }: Props) {
       <div className="dropsList">
         {chestDrop && (
           <div className="dropItem">
-            <img loading="lazy" decoding="async"
+            <img
+              loading="lazy"
+              decoding="async"
               className="dropIcon"
               src={chestDrop.image}
               alt={chestDrop.name}
@@ -29,7 +31,9 @@ export function ChestDrops({ chestDrop, keyDrop }: Props) {
         )}
         {keyDrop && (
           <div className="dropItem">
-            <img loading="lazy" decoding="async"
+            <img
+              loading="lazy"
+              decoding="async"
               className="dropIcon"
               src={keyDrop.image}
               alt={keyDrop.name}

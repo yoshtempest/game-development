@@ -62,7 +62,9 @@ export function PetArtwork({
         )}
       </div>
       <div className={styles.petArtwork}>
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={petImagePath(petNpc, selectedStar)}
           alt={entry.name}
           className={styles.petImage}

@@ -90,16 +90,16 @@ export function SocialOverlay() {
   if (!online.connected) return null;
 
   // HUD de guilda (canto inferior esquerdo)
-  const guildMate = online.room?.players.find(
-    (p) => p.id === online.guildId,
-  );
+  const guildMate = online.room?.players.find((p) => p.id === online.guildId);
 
   return (
     <>
       {guildMate && (
         <div className={styles.guildOverlay}>
           <img
-            src={playerPath(`${guildMate.character ?? "drika"}/expressions/default.svg`)}
+            src={playerPath(
+              `${guildMate.character ?? "drika"}/expressions/default.svg`,
+            )}
             alt={guildMate.name}
             width={32}
             height={32}
@@ -108,9 +108,7 @@ export function SocialOverlay() {
           <div className={styles.guildInfo}>
             <p>Você</p>
             <p>{online.playerName}</p>
-            <p>
-              {guildMate.name}
-            </p>
+            <p>{guildMate.name}</p>
           </div>
         </div>
       )}

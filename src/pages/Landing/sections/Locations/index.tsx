@@ -17,7 +17,9 @@ export function Locations() {
         <div className={styles.locationsGrid}>
           {locations.map((loc) => (
             <div key={loc.name} className={styles.locationCard}>
-              <img loading="lazy" decoding="async"
+              <img
+                loading="lazy"
+                decoding="async"
                 src={loc.image}
                 alt={loc.name}
                 className={styles.locationImage}

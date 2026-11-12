@@ -9,7 +9,10 @@ const MAX_RETRIES = 6;
 
 type BattleSocketListener = (msg: BattleSocketMessage) => void;
 
-export function useBattleSocket(roomId: string | null, playerId: string | null) {
+export function useBattleSocket(
+  roomId: string | null,
+  playerId: string | null,
+) {
   const [connected, setConnected] = useState(false);
   const [reconnecting, setReconnecting] = useState(false);
   const [lastMessage, setLastMessage] = useState<BattleSocketMessage | null>(
@@ -39,7 +42,12 @@ export function useBattleSocket(roomId: string | null, playerId: string | null) 
       setReconnecting(false);
       retriesRef.current = 0;
       ws.send(
-        JSON.stringify({ type: "joinRoom", roomId, playerId, playerName: "Jogador" }),
+        JSON.stringify({
+          type: "joinRoom",
+          roomId,
+          playerId,
+          playerName: "Jogador",
+        }),
       );
     };
 
@@ -86,9 +94,7 @@ export function useBattleSocket(roomId: string | null, playerId: string | null) 
       const ws = wsRef.current;
       if (ws) {
         try {
-          ws.send(
-            JSON.stringify({ type: "leaveRoom", roomId, playerId }),
-          );
+          ws.send(JSON.stringify({ type: "leaveRoom", roomId, playerId }));
         } catch {
           // ignore
         }

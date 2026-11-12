@@ -46,7 +46,9 @@ export function GranReyCero({
   const top = granReyCeroEffectTop(tipY, PLAYER_SIZE) * battleScaleY;
 
   return (
-    <img loading="lazy" decoding="async"
+    <img
+      loading="lazy"
+      decoding="async"
       src={playerPathMarshadowHabilities("granReyCero/granReyCeroEffect.svg")}
       alt=""
       draggable={false}

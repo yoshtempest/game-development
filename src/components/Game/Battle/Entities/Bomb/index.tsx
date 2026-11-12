@@ -37,7 +37,9 @@ export function Bomb({
   return (
     <>
       {bombTargets.map((b) => (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           key={b.id}
           src={
             b.phase === "explosion" && explosionSprite

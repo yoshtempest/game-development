@@ -28,7 +28,9 @@ export function useBabidiPassive({
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const intervalsRef = useRef<ReturnType<typeof setInterval>[]>([]);
   const cloneIdsRef = useRef<string[]>([]);
-  const clonePositionsRef = useRef<Record<string, { x: number; y: number }>>({});
+  const clonePositionsRef = useRef<Record<string, { x: number; y: number }>>(
+    {},
+  );
 
   const clearAll = useCallback(() => {
     console.log("babidi passive clearAll called");
@@ -119,7 +121,11 @@ export function useBabidiPassive({
                 const clone = prev[idx];
                 if (!clone) return prev;
                 const next = [...prev];
-                next[idx] = { ...clone, state: "run", flipped: targetX < startX };
+                next[idx] = {
+                  ...clone,
+                  state: "run",
+                  flipped: targetX < startX,
+                };
                 return next;
               });
               const stepMs = 16;

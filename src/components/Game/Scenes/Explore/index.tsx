@@ -572,7 +572,9 @@ export function ExploreScene({
         {itemPickupTiles?.map(
           (tile) =>
             tile.visible && (
-              <img loading="lazy" decoding="async"
+              <img
+                loading="lazy"
+                decoding="async"
                 key={`item-${tile.x}-${tile.y}`}
                 src={tile.image ?? chestPath("default.svg")}
                 alt=""

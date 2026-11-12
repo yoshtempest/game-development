@@ -103,7 +103,8 @@ export function useBabidiDomainExpansion({
     activeRef.current = true;
     setActive(true);
     setShattering(false);
-    const machineGamaHp = playerMaxHp * BabidiDomainConstants.MACHINE_GAMA_HP_MULTIPLIER;
+    const machineGamaHp =
+      playerMaxHp * BabidiDomainConstants.MACHINE_GAMA_HP_MULTIPLIER;
     setMachineGamaShield(machineGamaHp);
     shieldRef.current = machineGamaHp;
 

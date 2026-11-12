@@ -46,9 +46,16 @@ export function NPCHUDPanel({
       </div>
       <div>
         {npcLevel !== undefined && (
-          <img loading="lazy" decoding="async" src={rankBadgePath(playerRank)} className={styles.rankBadge} />
+          <img
+            loading="lazy"
+            decoding="async"
+            src={rankBadgePath(playerRank)}
+            className={styles.rankBadge}
+          />
         )}
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={npcPath(`/${npcType}/face.svg`)}
           alt="Npc HUD"
           className="hudImage"

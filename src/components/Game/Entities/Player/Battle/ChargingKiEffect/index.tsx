@@ -8,7 +8,9 @@ interface ChargingKiEffectProps {
 
 export function ChargingKiEffect({ width, height }: ChargingKiEffectProps) {
   return (
-    <img loading="lazy" decoding="async"
+    <img
+      loading="lazy"
+      decoding="async"
       src={playerPathEmatronHabilities("/chargingKi/chargingKiEffect.svg")}
       className={styles.chargingKiEffect}
       style={{

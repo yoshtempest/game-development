@@ -20,7 +20,9 @@ export const Tombstone = memo(function Tombstone({
   fading,
 }: Props) {
   return (
-    <img loading="lazy" decoding="async"
+    <img
+      loading="lazy"
+      decoding="async"
       src={getTombstoneSrc(variant)}
       alt=""
       style={{

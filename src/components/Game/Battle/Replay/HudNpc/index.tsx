@@ -23,7 +23,9 @@ export function HudNpc({ npcType, npcLevel, nhp, nmaxhp }: Props) {
         </p>
         <HealthBar hp={nhp} maxHp={nmaxhp} reversed />
       </div>
-      <img loading="lazy" decoding="async"
+      <img
+        loading="lazy"
+        decoding="async"
         src={npcPath(`/${npcType}/face.svg`)}
         alt="Npc HUD"
         className="hudImage"

@@ -137,7 +137,9 @@ export default function Talking({
         {isComplete && <span className="talkingNextHint" />}
       </div>
       {resolvedSrc && (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           key={resolvedSrc}
           className={`talkingImage ${imageClassName ?? ""}`.trim()}
           src={resolvedSrc}

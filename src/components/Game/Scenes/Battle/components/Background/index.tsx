@@ -1,7 +1,6 @@
 import type { CSSProperties } from "react";
 import type { Props } from "./types";
 
-
 export function BattleBackground({
   effectiveBackground,
   zoom,

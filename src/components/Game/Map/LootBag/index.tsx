@@ -27,7 +27,9 @@ export const LootBag = memo(function LootBag({
       const itemData = ITEMS[itemId];
       const src = itemData?.image ?? itemPath(`${itemId}.svg`);
       return (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           className={styles.lootBag}
           src={src}
           alt={itemData?.name ?? itemId}
@@ -43,7 +45,9 @@ export const LootBag = memo(function LootBag({
   }
 
   return (
-    <img loading="lazy" decoding="async"
+    <img
+      loading="lazy"
+      decoding="async"
       className={styles.lootBag}
       src={LOOTBAG_SPRITE}
       alt="Saco de loot"

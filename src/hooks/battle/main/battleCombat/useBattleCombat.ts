@@ -261,7 +261,9 @@ export function useBattleCombat({
     y: number;
   } | null>(null);
   const fishingNetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const fishingNetPushTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const fishingNetPushTimerRef = useRef<ReturnType<typeof setInterval> | null>(
+    null,
+  );
   const [fishingNetRemaining, setFishingNetRemaining] = useState(0);
   const fishingNetReadyAtRef = useRef(0);
   const machineGamaShieldRef = useRef(0);
@@ -290,7 +292,10 @@ export function useBattleCombat({
   useEffect(() => {
     const id = setInterval(() => {
       if (!fishingNetCooldownTick()) return;
-      const next = Math.max(0, (fishingNetReadyAtRef.current - Date.now()) / 1000);
+      const next = Math.max(
+        0,
+        (fishingNetReadyAtRef.current - Date.now()) / 1000,
+      );
       setFishingNetRemaining((prev) => (prev === next ? prev : next));
     }, ABILITY_COOLDOWN_TICK_MS);
     return () => clearInterval(id);
@@ -942,7 +947,8 @@ export function useBattleCombat({
     onProjectileHit: (target) => babidiMissileOnHitRef.current?.(target),
   });
   babidiMissileFireRef.current = (player) => babidiMissile.fire(player);
-  babidiMissileFireBurstRef.current = (player) => babidiMissile.fireBurst(player, 4, 35);
+  babidiMissileFireBurstRef.current = (player) =>
+    babidiMissile.fireBurst(player, 4, 35);
 
   // Mísseis automáticos enquanto o NPC está preso pela fishingNet: surgem ao
   // redor do NPC (de dentro de um portal) e voam em sua direção, causando 20%
@@ -1965,7 +1971,11 @@ export function useBattleCombat({
     const interval = setInterval(() => {
       battle.setDelicia((d) => {
         if (d <= 0) {
-          setPlayer((p) => ({ ...p, machineGamaControl: false, state: "falling" }));
+          setPlayer((p) => ({
+            ...p,
+            machineGamaControl: false,
+            state: "falling",
+          }));
           return 0;
         }
         return d - 1;

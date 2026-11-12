@@ -27,7 +27,9 @@ export function GenkiDama({ visual, battleScaleX, battleScaleY }: Props) {
   return (
     <>
       {visual.phase === "preparing" && (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={spriteMap.genkiDamaChargeEffect}
           className={styles.chargeEffect}
           style={{
@@ -39,7 +41,9 @@ export function GenkiDama({ visual, battleScaleX, battleScaleY }: Props) {
           }}
         />
       )}
-      <img loading="lazy" decoding="async"
+      <img
+        loading="lazy"
+        decoding="async"
         src={spriteMap.genkiDama}
         className={styles.genkiDama}
         style={{

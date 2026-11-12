@@ -38,7 +38,9 @@ export function BlinkAfterimage({ visual, PLAYER_SIZE, character }: Props) {
         transform: "translate(-50%, -100%)",
       }}
     >
-      <img loading="lazy" decoding="async"
+      <img
+        loading="lazy"
+        decoding="async"
         src={src}
         style={{
           animationDuration: `${BLINK_AFTERIMAGE_MS}ms`,

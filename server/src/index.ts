@@ -118,8 +118,17 @@ app.post("/api/online/rooms/:id/state", (req, res) => {
     res.status(404).json({ error: "sala não encontrada" });
     return;
   }
-  const { playerId, scene, x, y, character, direction, moving, hasPeru, guildId } =
-    req.body ?? {};
+  const {
+    playerId,
+    scene,
+    x,
+    y,
+    character,
+    direction,
+    moving,
+    hasPeru,
+    guildId,
+  } = req.body ?? {};
   if (!playerId || !room.players.has(String(playerId))) {
     res.status(400).json({ error: "jogador não está na sala" });
     return;
@@ -160,7 +169,10 @@ app.get("/api/health", (_req, res) => {
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server, path: "/ws" });
 
-const socketMeta = new WeakMap<WebSocket, { playerId?: string; roomId?: string }>();
+const socketMeta = new WeakMap<
+  WebSocket,
+  { playerId?: string; roomId?: string }
+>();
 
 /**
  * Vários componentes abrem um socket para a mesma sala (GameApp, SocialOverlay,
@@ -222,7 +234,9 @@ wss.on("connection", (ws) => {
     if (msg.type === "joinRoom") {
       const room = rooms.get(msg.roomId);
       if (!room) {
-        ws.send(JSON.stringify({ type: "error", message: "sala não encontrada" }));
+        ws.send(
+          JSON.stringify({ type: "error", message: "sala não encontrada" }),
+        );
         return;
       }
       meta.playerId = msg.playerId;
@@ -282,7 +296,9 @@ wss.on("connection", (ws) => {
       if (!metaAny.inputTimes) metaAny.inputTimes = [];
       metaAny.inputTimes = metaAny.inputTimes.filter((t) => now - t < 1000);
       if (metaAny.inputTimes.length > 60) {
-        ws.send(JSON.stringify({ type: "error", message: "rate limit excedido" }));
+        ws.send(
+          JSON.stringify({ type: "error", message: "rate limit excedido" }),
+        );
         return;
       }
       metaAny.inputTimes.push(now);

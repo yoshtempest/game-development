@@ -1,4 +1,8 @@
-import { DRIKA_ARMS, DRIKA_ARM_ICONS, DRIKA_ARM_LABELS } from "@/data/characters/drika/drikaArms";
+import {
+  DRIKA_ARMS,
+  DRIKA_ARM_ICONS,
+  DRIKA_ARM_LABELS,
+} from "@/data/characters/drika/drikaArms";
 import { playerPath } from "@/utils/paths";
 
 type Props = {

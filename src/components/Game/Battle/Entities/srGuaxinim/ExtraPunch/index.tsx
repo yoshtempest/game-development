@@ -19,7 +19,9 @@ export function ExtraPunch({
   return (
     <>
       {extraPunches.map((p) => (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           key={p.id}
           src={extraPunchSprite}
           style={{

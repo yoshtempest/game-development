@@ -17,11 +17,7 @@ type Props = {
 };
 
 /** Portal aéreo, bomba caindo e explosão da Energia Dimensional do babidi. */
-export function BabidiBombDrop({
-  visual,
-  battleScaleX,
-  battleScaleY,
-}: Props) {
+export function BabidiBombDrop({ visual, battleScaleX, battleScaleY }: Props) {
   if (!visual) return null;
 
   const fallDistance = (visual.targetY - visual.portalY) * battleScaleY;
@@ -42,7 +38,9 @@ export function BabidiBombDrop({
             top: visual.portalY * battleScaleY,
           }}
         >
-          <img loading="lazy" decoding="async"
+          <img
+            loading="lazy"
+            decoding="async"
             src={playerAbilityPath("babidi", "portals", "airPortal.svg")}
             alt=""
           />
@@ -50,22 +48,28 @@ export function BabidiBombDrop({
       )}
 
       {visual.phase === "falling" && (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           className={styles.bomb}
           src={playerProjectilePath("/babidiBomb.svg")}
           alt=""
-          style={{
-            ...sizes,
-            left: visual.targetX * battleScaleX,
-            top: visual.targetY * battleScaleY,
-            "--fall-distance": `${fallDistance}px`,
-            animationDuration: `${BabidiBombDropConstants.FALL_MS}ms`,
-          } as CSSProperties}
+          style={
+            {
+              ...sizes,
+              left: visual.targetX * battleScaleX,
+              top: visual.targetY * battleScaleY,
+              "--fall-distance": `${fallDistance}px`,
+              animationDuration: `${BabidiBombDropConstants.FALL_MS}ms`,
+            } as CSSProperties
+          }
         />
       )}
 
       {visual.phase === "exploding" && (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           className={styles.explosion}
           src={npcPathProjectile("/explosion.svg")}
           alt=""

@@ -43,9 +43,8 @@ export default function BattlePage() {
   );
   const playerCount = !isPvp && !training && guildMate ? 2 : 1;
 
-  const battleLeaderId = (
-    location.state as { battleLeaderId?: string } | null
-  )?.battleLeaderId;
+  const battleLeaderId = (location.state as { battleLeaderId?: string } | null)
+    ?.battleLeaderId;
 
   const originRoute = (location.state as { battleOrigin?: string } | null)
     ?.battleOrigin;

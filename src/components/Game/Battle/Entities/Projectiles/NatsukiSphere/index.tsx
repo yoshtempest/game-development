@@ -32,7 +32,9 @@ export function NatsukiSphere({ sphere, battleScaleX, battleScaleY }: Props) {
     const redSprite = playerProjectilePath("redSphere.svg");
     return (
       <>
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={blueSprite}
           alt="Esfera azul"
           style={{
@@ -45,7 +47,9 @@ export function NatsukiSphere({ sphere, battleScaleX, battleScaleY }: Props) {
             pointerEvents: "none",
           }}
         />
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={redSprite}
           alt="Esfera vermelha"
           style={{
@@ -75,7 +79,9 @@ export function NatsukiSphere({ sphere, battleScaleX, battleScaleY }: Props) {
         opacity: sphere.opacity,
       }}
     >
-      <img loading="lazy" decoding="async"
+      <img
+        loading="lazy"
+        decoding="async"
         className={styles.image}
         src={src}
         alt="Esfera do Natsuki"
@@ -88,7 +94,9 @@ export function NatsukiSphere({ sphere, battleScaleX, battleScaleY }: Props) {
         }}
       />
       {screenMix && (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           className={styles.silhouette}
           src={src}
           alt="Esfera do Natsuki (silhueta)"

@@ -63,7 +63,9 @@ export function VictoryModal({
     <div className="overlay">
       <div className={`modal ${styles.modal}`}>
         <div className={styles.header}>
-          <img loading="lazy" decoding="async"
+          <img
+            loading="lazy"
+            decoding="async"
             src={playerPath(`/${character}/expressions/default.svg`)}
             alt={character}
             className={styles.characterImage}

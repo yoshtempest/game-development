@@ -54,8 +54,14 @@ export function Mission() {
             className={`${"tab"} ${activeTab === key ? "tabActive" : ""} ${selectedIndex === i ? "tabSelected" : ""}`}
             onClick={() => switchTab(key)}
           >
-            <img loading="lazy" decoding="async" src={TAB_ICONS[key]} alt={key} className={styles.tabIcon} />(
-            {tabCountMap[key]})
+            <img
+              loading="lazy"
+              decoding="async"
+              src={TAB_ICONS[key]}
+              alt={key}
+              className={styles.tabIcon}
+            />
+            ({tabCountMap[key]})
           </button>
         ))}
         {(activeTab === "daily" || activeTab === "weekly") && (

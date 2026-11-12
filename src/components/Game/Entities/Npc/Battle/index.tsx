@@ -199,7 +199,9 @@ export function NPCBattle({
             pointerEvents: "none",
           }}
         >
-          <img loading="lazy" decoding="async"
+          <img
+            loading="lazy"
+            decoding="async"
             src={resolvedSrc}
             style={{
               width: "100%",
@@ -225,7 +227,9 @@ export function NPCBattle({
       >
         {/* 🧍 NPC (oculto quando vira alvo de bomba da killerQueen) */}
         {!isHidden && (
-          <img loading="lazy" decoding="async"
+          <img
+            loading="lazy"
+            decoding="async"
             src={resolvedSrc}
             onError={handleSpriteError}
             style={{
@@ -254,7 +258,9 @@ export function NPCBattle({
 
         {/* 🗡️ PIERCINGS */}
         {piercings.map((p) => (
-          <img loading="lazy" decoding="async"
+          <img
+            loading="lazy"
+            decoding="async"
             key={p.id}
             src={npcPathProjectile("/piercing.svg")}
             style={{
@@ -271,7 +277,9 @@ export function NPCBattle({
 
         {/* ✂️ CUT-IN ENEMIE do marshadow: strike sobre o NPC (1s, ângulo aleatório) */}
         {cutInEnemie && (
-          <img loading="lazy" decoding="async"
+          <img
+            loading="lazy"
+            decoding="async"
             key={cutInEnemie.key}
             src={MARSHADOW_CUT_IN_ENEMIE_SRC}
             style={{
@@ -288,7 +296,9 @@ export function NPCBattle({
 
         {/* 🩸 BLOOD ICON: NPC em sangramento mostra o ícone acima da imagem */}
         {npcBleeding && (
-          <img loading="lazy" decoding="async"
+          <img
+            loading="lazy"
+            decoding="async"
             src={BLOOD_ICON_SRC}
             style={{
               position: "absolute",
@@ -303,7 +313,6 @@ export function NPCBattle({
           />
         )}
       </div>
-
     </>
   );
 }

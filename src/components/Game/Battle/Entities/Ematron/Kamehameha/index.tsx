@@ -37,7 +37,9 @@ export function Kamehameha({ effect, battleScaleX, battleScaleY }: Props) {
           effect.facing === "right" ? "left bottom" : "right bottom",
       }}
     >
-      <img loading="lazy" decoding="async"
+      <img
+        loading="lazy"
+        decoding="async"
         src={playerPathEmatronHabilities("/kamehameha/kamehamehaEffect.svg")}
         alt=""
         draggable={false}

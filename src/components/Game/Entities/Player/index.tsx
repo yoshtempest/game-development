@@ -70,7 +70,9 @@ export const Player = memo(function Player({
           pointerEvents: "none",
         }}
       >
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={src}
           style={{
             width: "100%",
@@ -94,39 +96,39 @@ export const Player = memo(function Player({
           transition: `left ${EXPLORE_MOVE_INTERVAL}ms, top ${EXPLORE_MOVE_INTERVAL}ms`,
         }}
       >
-      <motion.img
-        src={src}
-        animate={
-          moving
-            ? {
-                y: 0,
-                rotate: 0,
-                scaleY: 1,
-              }
-            : {
-                y: [0, 1, 0],
-                x: [0, 1, 0],
-                rotate: [0, 0.5, 0, -0.5, 0],
-                scaleY: [1, 1.005, 1],
-              }
-        }
-        transition={
-          moving
-            ? {
-                duration: 0.15,
-                ease: "easeOut",
-              }
-            : {
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }
-        }
-        style={{ width: "100%", height: "100%", objectFit: "contain" }}
-      />
-      <LevelUpParticles character={character} size={PLAYER_SIZE} />
-      <ProfessionBadge />
-    </div>
+        <motion.img
+          src={src}
+          animate={
+            moving
+              ? {
+                  y: 0,
+                  rotate: 0,
+                  scaleY: 1,
+                }
+              : {
+                  y: [0, 1, 0],
+                  x: [0, 1, 0],
+                  rotate: [0, 0.5, 0, -0.5, 0],
+                  scaleY: [1, 1.005, 1],
+                }
+          }
+          transition={
+            moving
+              ? {
+                  duration: 0.15,
+                  ease: "easeOut",
+                }
+              : {
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }
+          }
+          style={{ width: "100%", height: "100%", objectFit: "contain" }}
+        />
+        <LevelUpParticles character={character} size={PLAYER_SIZE} />
+        <ProfessionBadge />
+      </div>
     </>
   );
 });

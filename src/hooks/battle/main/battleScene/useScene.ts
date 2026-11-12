@@ -223,7 +223,9 @@ export function useBattleScene({
     setPlayer,
     getPlayerMaxHp: () => combatRef.current?.battle?.playerMaxHp ?? 0,
     setPlayerHP: (hp) => combatRef.current?.battle?.setPlayerHP?.(hp),
-    getNpc: () => (combatRef.current?.npc as NPCBattleState | undefined) ?? ({ x: 0, y: 0 } as NPCBattleState),
+    getNpc: () =>
+      (combatRef.current?.npc as NPCBattleState | undefined) ??
+      ({ x: 0, y: 0 } as NPCBattleState),
     onExplode: (x: number, y: number) => {
       void x;
       void y;

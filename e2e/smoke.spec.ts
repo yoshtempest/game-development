@@ -12,27 +12,41 @@ test.describe("smoke: rotas", () => {
     await expect(page.locator("#root")).toBeVisible();
     // aguarda o carregamento da cena (mapa/imagens)
     await page.waitForTimeout(2000);
-    await expect(page.locator("body")).not.toContainText("Batalha não encontrada");
+    await expect(page.locator("body")).not.toContainText(
+      "Batalha não encontrada",
+    );
   });
 
   test("renderiza batalha /training", async ({ page }) => {
     await page.goto("/#/training");
     await expect(page.locator("#root")).toBeVisible();
     await page.waitForTimeout(2000);
-    await expect(page.locator("body")).not.toContainText("Batalha não encontrada");
+    await expect(page.locator("body")).not.toContainText(
+      "Batalha não encontrada",
+    );
   });
 
   test("renderiza batalhas adicionais", async ({ page }) => {
-    for (const route of ["/#/battle/hungry", "/#/battle/goat", "/#/battle/piupiu"]) {
+    for (const route of [
+      "/#/battle/hungry",
+      "/#/battle/goat",
+      "/#/battle/piupiu",
+    ]) {
       await page.goto(route);
       await expect(page.locator("#root")).toBeVisible();
       await page.waitForTimeout(1500);
-      await expect(page.locator("body")).not.toContainText("Batalha não encontrada");
+      await expect(page.locator("body")).not.toContainText(
+        "Batalha não encontrada",
+      );
     }
   });
 
   test("renderiza rotas de exploração adicionais", async ({ page }) => {
-    for (const route of ["/#/cantina/one", "/#/cafeteria/one", "/#/library/one"]) {
+    for (const route of [
+      "/#/cantina/one",
+      "/#/cafeteria/one",
+      "/#/library/one",
+    ]) {
       await page.goto(route);
       await expect(page.locator("#root")).toBeVisible();
       await page.waitForTimeout(1500);

@@ -97,7 +97,9 @@ export function BattleIntro({
   return (
     <div className="overlay">
       <div className={styles.left}>
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={playerPath(`/${playerCharacter}/expressions/default.svg`)}
           alt=""
         />
@@ -110,7 +112,9 @@ export function BattleIntro({
 
       <div className={styles.right}>
         {isAlfa && <div className={styles.alfaBadge}>ALFA</div>}
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={npcPath(`/${npcType}/right.svg`)}
           alt=""
           onError={(e) => {

@@ -35,8 +35,15 @@ export function BabidiAttackCard({
       style={{ cursor: "pointer" }}
     >
       <div className={styles.imageContainer}>
-        <img loading="lazy" decoding="async" src={playerPath(mode.image)} className={styles.image} />
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
+          src={playerPath(mode.image)}
+          className={styles.image}
+        />
+        <img
+          loading="lazy"
+          decoding="async"
           src={playerProjectilePath(mode.projectile)}
           className={styles.projectileImage}
         />

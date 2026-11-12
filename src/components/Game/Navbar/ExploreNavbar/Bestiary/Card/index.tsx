@@ -56,7 +56,9 @@ export function BestiaryCard({
       } ${encountered ? styles.cardEncountered : styles.cardUnknown}`}
     >
       <div className={styles.spriteBox}>
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={spriteSrc("default")}
           alt={name}
           className={`${styles.sprite} ${encountered ? "" : styles.silhouette}`}
@@ -81,7 +83,9 @@ export function BestiaryCard({
             <div className={styles.nameRow}>
               <div className={styles.name}>{name}</div>
               {getNpcElementTypes(npcType).map((element) => (
-                <img loading="lazy" decoding="async"
+                <img
+                  loading="lazy"
+                  decoding="async"
                   key={element}
                   src={elementBadgePath(`${element.toLowerCase()}.svg`)}
                   alt={element}

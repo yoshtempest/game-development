@@ -217,7 +217,11 @@ export function useOnlineBattle({
       if (hit.to !== playerId) return;
       const currentBattle = battleRef.current;
 
-      const pushAway = (npcX: number | undefined, distance: number, ms: number) => {
+      const pushAway = (
+        npcX: number | undefined,
+        distance: number,
+        ms: number,
+      ) => {
         if (npcX == null) return;
         setPlayerRef.current((p) => {
           const direction = npcX > p.x ? -1 : 1;
@@ -359,12 +363,7 @@ export function useOnlineBattle({
       });
     }, 100);
     return () => clearInterval(id);
-  }, [
-    isBattleHost,
-    online.connected,
-    battleSocketSend,
-    battlePlayerStateRef,
-  ]);
+  }, [isBattleHost, online.connected, battleSocketSend, battlePlayerStateRef]);
 
   // Mudança de estado (ataque, pulo, direção) não pode esperar o próximo tick de
   // 100 ms: sem isso a animação remota chega atrasada e "trava" no meio do golpe.
@@ -391,8 +390,12 @@ export function useOnlineBattle({
   useEffect(() => {
     if (!isPvp || !isBattleHost) return;
     if (!remotePlayerState) return;
-    setOpponentMaxHP((prev) => (prev === 1000 ? remotePlayerState.hp || 1000 : prev));
-    setOpponentHP((prev) => (remotePlayerState.hp ? remotePlayerState.hp : prev));
+    setOpponentMaxHP((prev) =>
+      prev === 1000 ? remotePlayerState.hp || 1000 : prev,
+    );
+    setOpponentHP((prev) =>
+      remotePlayerState.hp ? remotePlayerState.hp : prev,
+    );
   }, [isPvp, isBattleHost, remotePlayerState]);
 
   // Guest: oponente é o host (HP via snapshot, só PvP)
@@ -412,13 +415,25 @@ export function useOnlineBattle({
     if (state !== "attack" && state !== "preAttack") return;
     const key = `${state}-${player.x}-${player.y}`;
     if (lastAttackProcessedRef.current === key) return;
-    const dist = Math.hypot(player.x - remotePlayerState.x, player.y - remotePlayerState.y);
+    const dist = Math.hypot(
+      player.x - remotePlayerState.x,
+      player.y - remotePlayerState.y,
+    );
     if (dist > 180) return;
     lastAttackProcessedRef.current = key;
     const amount = 15;
     setOpponentHP((hp) => Math.max(0, hp - amount));
     battleSocketSend({ type: "opponentDamage", amount });
-  }, [isPvp, isBattleHost, online.connected, player.state, player.x, player.y, remotePlayerState, battleSocketSend]);
+  }, [
+    isPvp,
+    isBattleHost,
+    online.connected,
+    player.state,
+    player.x,
+    player.y,
+    remotePlayerState,
+    battleSocketSend,
+  ]);
 
   // Teste de dano: host pressiona 'P' para causar dano no oponente (só PvP)
   useEffect(() => {
@@ -544,15 +559,20 @@ export function useOnlineBattle({
   const showVictory = isBattleGuest
     ? remoteResult === "victory"
     : showVictoryBase;
-  const showDefeat = isBattleGuest
-    ? remoteResult === "defeat"
-    : showDefeatBase;
+  const showDefeat = isBattleGuest ? remoteResult === "defeat" : showDefeatBase;
 
   useEffect(() => {
     if (!isBattleHost) return;
     if (showVictory) notifyResult("victory", { xpReward, lastRewards });
     else if (showDefeat) notifyResult("defeat", { xpReward, lastRewards });
-  }, [isBattleHost, showVictory, showDefeat, notifyResult, xpReward, lastRewards]);
+  }, [
+    isBattleHost,
+    showVictory,
+    showDefeat,
+    notifyResult,
+    xpReward,
+    lastRewards,
+  ]);
 
   // PvP: vitória quando o oponente é derrotado
   useEffect(() => {
@@ -560,7 +580,14 @@ export function useOnlineBattle({
     if (opponentHP <= 0) {
       notifyResult("victory", { xpReward, lastRewards });
     }
-  }, [isBattleHost, online.connected, opponentHP, notifyResult, xpReward, lastRewards]);
+  }, [
+    isBattleHost,
+    online.connected,
+    opponentHP,
+    notifyResult,
+    xpReward,
+    lastRewards,
+  ]);
 
   return {
     onlineConnected: online.connected,

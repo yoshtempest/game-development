@@ -47,7 +47,7 @@ export const OUTRO_LINES: Record<string, OutroLines> = {
   levi: {
     victory: "Morre, praga",
     defeat: "...",
-  }
+  },
 };
 
 export function getOutroLine(

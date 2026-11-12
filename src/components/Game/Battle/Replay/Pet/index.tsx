@@ -15,7 +15,9 @@ export function ReplayPet({ frame, tileSize }: Props) {
   const petSrc = getSpritePath(frame.petType, frame.petst ?? "idle", 1);
 
   return (
-    <img loading="lazy" decoding="async"
+    <img
+      loading="lazy"
+      decoding="async"
       src={petSrc}
       className={styles.sprite}
       style={{

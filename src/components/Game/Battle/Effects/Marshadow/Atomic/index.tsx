@@ -65,7 +65,9 @@ export function AtomicEffects({
             }%))`,
           }}
         >
-          <img loading="lazy" decoding="async"
+          <img
+            loading="lazy"
+            decoding="async"
             src={explosionSrc(explosion.phase)}
             alt=""
             className={styles.explosion}
@@ -97,7 +99,9 @@ export function AtomicEffects({
               }%))`,
             }}
           >
-            <img loading="lazy" decoding="async"
+            <img
+              loading="lazy"
+              decoding="async"
               src={MARSHADOW_CUT_IN_ENEMIE_SRC}
               alt=""
               className={styles.cut}

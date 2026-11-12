@@ -2,7 +2,9 @@ import { playerPathMarshadowHabilities } from "@/utils/paths";
 
 export function AtomicHalo() {
   return (
-    <img loading="lazy" decoding="async"
+    <img
+      loading="lazy"
+      decoding="async"
       src={playerPathMarshadowHabilities("/atomic/halo.svg")}
       alt=""
       style={{

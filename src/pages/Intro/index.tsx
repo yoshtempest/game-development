@@ -11,7 +11,13 @@ export default function Intro() {
 
   return (
     <div className={`Master ${styles.image}`}>
-      <img loading="lazy" decoding="async" src={rootAssetPath("logo.svg")} alt="logo" className="logo" />
+      <img
+        loading="lazy"
+        decoding="async"
+        src={rootAssetPath("logo.svg")}
+        alt="logo"
+        className="logo"
+      />
 
       <div className={styles.menu}>
         {options.map((option, index) => (

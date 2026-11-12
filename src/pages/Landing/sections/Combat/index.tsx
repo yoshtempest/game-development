@@ -50,7 +50,9 @@ export function Combat() {
           <div className={styles.bossesGrid}>
             {bosses.map((boss) => (
               <div key={boss.name} className={styles.bossCard}>
-                <img loading="lazy" decoding="async"
+                <img
+                  loading="lazy"
+                  decoding="async"
                   src={boss.image}
                   alt={boss.name}
                   className={styles.bossImage}

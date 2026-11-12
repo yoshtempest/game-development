@@ -18,7 +18,9 @@ export function Characters() {
         <div className={styles.charactersGrid}>
           {characters.map((char) => (
             <div key={char.name} className={styles.characterCard}>
-              <img loading="lazy" decoding="async"
+              <img
+                loading="lazy"
+                decoding="async"
                 src={char.image}
                 alt={char.name}
                 className={styles.characterImage}

@@ -23,7 +23,10 @@ import { useProximityLoopSound } from "@/hooks/battle/npc/useProximityLoopSound"
 import { getTime, NPC_TIME_ID } from "@/gameRules/battle/time";
 
 import { clampX } from "@/gameRules/movement/clampX";
-import { pickNpcTarget, type NpcTarget } from "@/gameRules/battle/npc/targeting";
+import {
+  pickNpcTarget,
+  type NpcTarget,
+} from "@/gameRules/battle/npc/targeting";
 import type { NpcHitIntent } from "@/hooks/battle/coop/types";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
@@ -511,11 +514,7 @@ export function useNpcAI({
       const selected = caught
         ? localTarget
         : candidates.length > 0
-          ? pickNpcTarget(
-              n.x,
-              candidates,
-              currentTargetRef.current?.id ?? null,
-            )
+          ? pickNpcTarget(n.x, candidates, currentTargetRef.current?.id ?? null)
           : null;
       currentTargetRef.current = selected;
       setActiveTarget((previous) =>
@@ -524,10 +523,18 @@ export function useNpcAI({
 
       const attack = getNpcAttack(npcTypeRef.current);
 
-      const targetX = caught && net ? net.x : (selected?.x ?? playerXRef.current);
-      const targetY = caught && net ? net.y : (selected?.y ?? playerYRef.current);
-      const targetState = caught && net ? playerStateRef.current : (selected?.state ?? playerStateRef.current);
-      const targetDirection = caught && net ? playerDirectionRef.current : (selected?.direction ?? playerDirectionRef.current);
+      const targetX =
+        caught && net ? net.x : (selected?.x ?? playerXRef.current);
+      const targetY =
+        caught && net ? net.y : (selected?.y ?? playerYRef.current);
+      const targetState =
+        caught && net
+          ? playerStateRef.current
+          : (selected?.state ?? playerStateRef.current);
+      const targetDirection =
+        caught && net
+          ? playerDirectionRef.current
+          : (selected?.direction ?? playerDirectionRef.current);
 
       // Snapshot antes do `execute`: os ataques mutam `state`/`ai` no próprio
       // objeto, então a comparação do commit precisa dos valores originais.

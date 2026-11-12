@@ -1,8 +1,4 @@
-import {
-  EIGHT_HUNDRED_MS,
-  FOUR_HUNDRED_MS,
-  SIXTEEN_MS,
-} from "@/data/ms";
+import { EIGHT_HUNDRED_MS, FOUR_HUNDRED_MS, SIXTEEN_MS } from "@/data/ms";
 import type { BabidiPortalKind } from "@/legacy/babidiPortals/types";
 
 /**

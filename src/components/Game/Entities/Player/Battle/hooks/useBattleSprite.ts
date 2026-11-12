@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { idleFrameSprite, playerAbilityPath, resolveBattleSprite } from "@/utils/paths";
+import {
+  idleFrameSprite,
+  playerAbilityPath,
+  resolveBattleSprite,
+} from "@/utils/paths";
 import { resolveSpriteState } from "@/gameRules/battle/playerStates";
 import { getIdleFrames, IDLE_FRAME_MS } from "@/data/sprites/idleFrames";
 
@@ -71,10 +75,16 @@ export function useBattleSprite({
                     ? "falling.svg"
                     : mgState === "preAttack"
                       ? "preAttack.svg"
-                      : mgState === "attack" || mgState === "ability" || mgState === "preAbility"
+                      : mgState === "attack" ||
+                          mgState === "ability" ||
+                          mgState === "preAbility"
                         ? "attack.svg"
                         : "idle.svg";
-    baseSrc = playerAbilityPath("babidi", "domainExpansion", `machineGama/${file}`);
+    baseSrc = playerAbilityPath(
+      "babidi",
+      "domainExpansion",
+      `machineGama/${file}`,
+    );
   }
 
   // Sequência idle do personagem (e forma):1 frame = parado, >1 = animado.

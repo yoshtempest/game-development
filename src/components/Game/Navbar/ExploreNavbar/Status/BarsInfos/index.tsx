@@ -43,7 +43,9 @@ export function BarsInfos() {
       <div className={styles.statusContainer}>
         <div className={styles.statusHeader}>
           <div className={styles.statusName}>
-            <img loading="lazy" decoding="async"
+            <img
+              loading="lazy"
+              decoding="async"
               src={statusIconPath("xp.svg")}
               alt="XP"
               className={styles.statusIcon}

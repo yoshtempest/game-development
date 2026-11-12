@@ -15,7 +15,9 @@ export function ReplayNpcSprite({ npcType, frame, tileSize }: Props) {
   const npcSrc = getSpritePath(npcType, frame.ns, frame.npcPhase);
 
   return (
-    <img loading="lazy" decoding="async"
+    <img
+      loading="lazy"
+      decoding="async"
       src={npcSrc}
       className={styles.sprite}
       style={{

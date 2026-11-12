@@ -32,7 +32,9 @@ export function DropItem({ isOpen, item, onDrop, onClose }: Props) {
         <div className={styles.title}>Largar item</div>
 
         <div className={styles.itemPreview}>
-          <img loading="lazy" decoding="async"
+          <img
+            loading="lazy"
+            decoding="async"
             className={styles.itemIcon}
             src={itemData.image ?? itemPath(`${item.id}.svg`)}
             alt={itemData.name}
@@ -46,9 +48,7 @@ export function DropItem({ isOpen, item, onDrop, onClose }: Props) {
           <span className={styles.qtyMax}>/ {maxQty}</span>
         </div>
 
-        <div className="hint">
-          [W/S] Quantidade · [L] Largar · [B] Cancelar
-        </div>
+        <div className="hint">[W/S] Quantidade · [L] Largar · [B] Cancelar</div>
       </div>
     </div>
   );

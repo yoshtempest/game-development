@@ -1,4 +1,3 @@
-
 export default {
   multipass: true,
   floatPrecision: 3,

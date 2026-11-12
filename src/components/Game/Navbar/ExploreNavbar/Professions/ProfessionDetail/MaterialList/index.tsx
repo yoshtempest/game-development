@@ -32,7 +32,15 @@ function MaterialRow({
 }) {
   return (
     <div className={styles.materialRow}>
-      {image && <img loading="lazy" decoding="async" className={styles.materialImg} src={image} alt={name} />}
+      {image && (
+        <img
+          loading="lazy"
+          decoding="async"
+          className={styles.materialImg}
+          src={image}
+          alt={name}
+        />
+      )}
       <span className={styles.materialName}>{name}</span>
       <span
         className={`${styles.materialQty} ${

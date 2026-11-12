@@ -31,7 +31,11 @@ export function EquipmentList() {
     <div className="StatusColumn">
       <div className="statusMainContainer">
         <div className="statusHeader">
-          <img loading="lazy" decoding="async" src={equipmentIconPath("all.svg")} />
+          <img
+            loading="lazy"
+            decoding="async"
+            src={equipmentIconPath("all.svg")}
+          />
           <h2 className="StatusTitle">Equipamentos</h2>
         </div>
         <button
@@ -47,7 +51,12 @@ export function EquipmentList() {
           const item = getEquippedItem(character, slot);
           return (
             <p key={slot} className={styles.fontSize}>
-              <img loading="lazy" decoding="async" className="slotTag" src={FILTER_LABELS[slot]} />
+              <img
+                loading="lazy"
+                decoding="async"
+                className="slotTag"
+                src={FILTER_LABELS[slot]}
+              />
               {item ? (
                 <span style={{ color: RANK_COLORS[item.rank] }}>
                   {item.name}

@@ -47,7 +47,9 @@ export function LootBagModal({
             return (
               <div key={item.id} className={styles.slot}>
                 <div className={styles.slotContent}>
-                  <img loading="lazy" decoding="async"
+                  <img
+                    loading="lazy"
+                    decoding="async"
                     className={styles.slotIcon}
                     src={itemData.image ?? itemPath(`${item.id}.svg`)}
                     alt={itemData.name}

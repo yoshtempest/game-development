@@ -38,7 +38,9 @@ export function CharacterCard({
     >
       {isSelected && <span className={`cursor ${styles.cursor}`}>▼</span>}
 
-      <img loading="lazy" decoding="async"
+      <img
+        loading="lazy"
+        decoding="async"
         src={
           isEquipped
             ? playerPath(`/${character.image}/expressions/victory.svg`)
@@ -55,7 +57,9 @@ export function CharacterCard({
               : "???"}
             {character.selectable &&
               getCharacterElementTypes(character.image)?.map((element) => (
-                <img loading="lazy" decoding="async"
+                <img
+                  loading="lazy"
+                  decoding="async"
                   key={element}
                   src={elementBadgePath(`${element.toLowerCase()}.svg`)}
                   alt={element}
@@ -67,7 +71,9 @@ export function CharacterCard({
         </h2>
         {character.selectable && (
           <div className={styles.rankRow}>
-            <img loading="lazy" decoding="async"
+            <img
+              loading="lazy"
+              decoding="async"
               src={rankBadgePath(srcRank(getRank(progress.level)))}
               className={styles.rankBadge}
             />

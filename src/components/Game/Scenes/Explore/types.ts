@@ -1,4 +1,3 @@
-
 import type { ReactNode } from "react";
 import type { ItemPickupTile } from "@/utils/types/maps/exploreScene";
 
@@ -29,4 +28,5 @@ export type ExploreSceneExtraProps = {
   tombstoneLocationId?: string;
 };
 
-export type ExploreSceneComponentProps = ExploreSceneProps & ExploreSceneExtraProps;
+export type ExploreSceneComponentProps = ExploreSceneProps &
+  ExploreSceneExtraProps;

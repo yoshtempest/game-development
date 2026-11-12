@@ -141,7 +141,9 @@ export function PlayerBattle(props: PlayerBattleProps) {
           pointerEvents: "none",
         }}
       >
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={src}
           style={{
             width: "100%",

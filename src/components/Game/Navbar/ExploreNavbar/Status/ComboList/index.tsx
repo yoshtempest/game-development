@@ -14,7 +14,9 @@ export function ComboList({
   return (
     <div className={styles.section}>
       <div className={styles.flexRow}>
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={playerPath(`/${characterId}/face.svg`)}
           className={styles.faceImage}
         />
@@ -40,7 +42,9 @@ export function ComboList({
 
           <div className={styles.sprites}>
             {combo.states.map((state) => (
-              <img loading="lazy" decoding="async"
+              <img
+                loading="lazy"
+                decoding="async"
                 key={state}
                 src={resolveBattleSprite(characterId, state)}
                 alt={state}

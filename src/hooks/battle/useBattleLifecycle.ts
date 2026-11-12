@@ -18,7 +18,9 @@ export function useBattleLifecycle({
   lastMessage: BattleSocketMessage | null;
 }) {
   const [remoteResult, setRemoteResult] = useState<BattleResult>(null);
-  const [remoteRewards, setRemoteRewards] = useState<BattleRewards | null>(null);
+  const [remoteRewards, setRemoteRewards] = useState<BattleRewards | null>(
+    null,
+  );
 
   // Guest: recebe resultado
   useEffect(() => {

@@ -35,7 +35,9 @@ export function BabidiShield({ side, nonce, onEnd }: Props) {
   }, [onEnd, side, nonce]);
 
   return (
-    <img loading="lazy" decoding="async"
+    <img
+      loading="lazy"
+      decoding="async"
       src={playerPath("/babidi/inFight/shield.svg")}
       alt=""
       className={styles.shield}

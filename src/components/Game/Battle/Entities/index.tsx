@@ -167,7 +167,11 @@ export function BattleEntities({
         battleScaleY={battleScaleY}
       />
 
-      <Summon summons={summons} hiddenIds={activeBombIds} TILE_SIZE={TILE_SIZE} />
+      <Summon
+        summons={summons}
+        hiddenIds={activeBombIds}
+        TILE_SIZE={TILE_SIZE}
+      />
 
       <Ally allies={allies} TILE_SIZE={TILE_SIZE} />
 

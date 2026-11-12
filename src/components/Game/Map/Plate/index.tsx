@@ -15,7 +15,9 @@ export const Plate = memo(function Plate({
   src,
 }: Props) {
   return (
-    <img loading="lazy" decoding="async"
+    <img
+      loading="lazy"
+      decoding="async"
       src={src}
       alt=""
       style={{

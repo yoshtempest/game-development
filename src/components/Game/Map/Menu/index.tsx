@@ -56,14 +56,18 @@ export function MapOverlay({ currentRoute, character }: Props) {
                 key={`${x}-${y}`}
                 className={`${styles.cell} ${isCurrent ? styles.current : ""}`}
               >
-                <img loading="lazy" decoding="async"
+                <img
+                  loading="lazy"
+                  decoding="async"
                   className={styles.sceneImage}
                   src={cell.image}
                   alt={cell.label}
                 />
                 <span className={styles.label}>{cell.label}</span>
                 {isCurrent && (
-                  <img loading="lazy" decoding="async"
+                  <img
+                    loading="lazy"
+                    decoding="async"
                     className={`${styles.face} ${cellHasQuest ? styles.faceShifted : ""}`}
                     src={playerPath(`${character}/face.svg`)}
                     alt="Jogador"

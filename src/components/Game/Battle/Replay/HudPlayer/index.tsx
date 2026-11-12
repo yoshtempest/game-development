@@ -30,14 +30,16 @@ export function HudPlayer({
   return (
     <div className={styles.container}>
       <div className="hudFlexColumn">
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={playerPath(`/${pchar}/face.svg`)}
           alt="Player HUD"
           className="hudImage"
         />
         <BlockGauge blockGauge={blockGauge} blockLimit={blockLimit} />
       </div>
-      
+
       <div className={styles.info}>
         <h2 className={`${"hudName"} ${styles.name}`}>{playerName}</h2>
         <div className="hudFlexRow">
@@ -51,7 +53,7 @@ export function HudPlayer({
                 }}
               />
             </div>
-          )}   
+          )}
         </div>
         <Deliciometro delicia={del} hitsToSpecial={hits} />
       </div>

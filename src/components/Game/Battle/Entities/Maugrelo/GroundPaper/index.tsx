@@ -58,7 +58,9 @@ export function GroundPaper({
   return (
     <>
       {flyingPaper && (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={npcPathProjectile("/paper.svg")}
           style={{
             position: "absolute",
@@ -72,7 +74,9 @@ export function GroundPaper({
       )}
 
       {papers.map((gp) => (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           key={gp.id}
           className={
             gp.sprite === "paper" && gp.armedAt != null ? styles.blink : ""

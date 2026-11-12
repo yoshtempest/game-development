@@ -32,7 +32,9 @@ function ToastEntry({ toast, onDismiss }: ToastEntryProps) {
   return (
     <div className={styles.toast} onClick={() => onDismiss(toast.id)}>
       {!broken && (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           className={styles.icon}
           src={src}
           alt=""

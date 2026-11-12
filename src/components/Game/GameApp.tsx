@@ -100,7 +100,9 @@ export function GameApp() {
     const path = location.pathname;
     const battleKey = ROUTE_TO_BATTLE_KEY[path];
     const isCoopBattle =
-      battleKey !== undefined && battleKey !== "pvp" && battleKey !== "training";
+      battleKey !== undefined &&
+      battleKey !== "pvp" &&
+      battleKey !== "training";
 
     if (!isCoopBattle) {
       lastBattleRouteRef.current = null;
@@ -108,7 +110,9 @@ export function GameApp() {
     }
     if (!connected || !socketConnected || !guildMate) return;
     // Quem chegou como convidado (state.battleLeaderId) não reanuncia.
-    if ((location.state as { battleLeaderId?: string } | null)?.battleLeaderId) {
+    if (
+      (location.state as { battleLeaderId?: string } | null)?.battleLeaderId
+    ) {
       return;
     }
     if (lastBattleRouteRef.current === path) return;

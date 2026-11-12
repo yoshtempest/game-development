@@ -22,7 +22,9 @@ export function CharacterElements({ character }: Props) {
       <ul className={styles.types}>
         {types.map((type) => (
           <li key={type}>
-            <img loading="lazy" decoding="async"
+            <img
+              loading="lazy"
+              decoding="async"
               src={elementBadgePath(`${type.toLowerCase()}.svg`)}
               className={styles.badge}
               alt={type}

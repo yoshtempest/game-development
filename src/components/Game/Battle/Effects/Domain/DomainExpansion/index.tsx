@@ -32,7 +32,9 @@ export function DomainExpansionEffects({
   const left = (sweep.x - MUGETSU_EFFECT_WIDTH / 2) * battleScaleX;
 
   return (
-    <img loading="lazy" decoding="async"
+    <img
+      loading="lazy"
+      decoding="async"
       src={playerPathMarshadowHabilities("/domainExpansion/mugetsuEffect.svg")}
       alt=""
       draggable={false}

@@ -32,7 +32,9 @@ export function LeftPanel() {
 
   return (
     <div className={styles.leftPanel}>
-      <img loading="lazy" decoding="async"
+      <img
+        loading="lazy"
+        decoding="async"
         src={playerPath(`/${character}/face.svg`)}
         alt={character}
         className={styles.portrait}
@@ -67,7 +69,13 @@ export function LeftPanel() {
               >
                 <div className={styles.chainLeft} />
                 <Lock size={14} className={styles.lockIcon} />
-                <img loading="lazy" decoding="async" className={styles.slotIcon} src={slotIcon} alt={label} />
+                <img
+                  loading="lazy"
+                  decoding="async"
+                  className={styles.slotIcon}
+                  src={slotIcon}
+                  alt={label}
+                />
                 <div className={styles.chainRight} />
               </div>
             );
@@ -78,7 +86,13 @@ export function LeftPanel() {
               key={key}
               className={`${styles.equippedCard} ${isSelected ? "EquipmentSelected" : ""}`}
             >
-              <img loading="lazy" decoding="async" className={styles.slotIcon} src={slotIcon} alt={label} />
+              <img
+                loading="lazy"
+                decoding="async"
+                className={styles.slotIcon}
+                src={slotIcon}
+                alt={label}
+              />
               {item ? (
                 <>
                   <div className="EquipmentItemRow">

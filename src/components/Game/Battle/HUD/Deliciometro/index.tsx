@@ -40,7 +40,12 @@ export function Deliciometro({ delicia, hitsToSpecial = 9 }: Props) {
           padding: `${1 + charge * 2}px`,
         }}
       />
-      <img loading="lazy" decoding="async" src={rootAssetPath("deliciometro.svg")} className={styles.image} />
+      <img
+        loading="lazy"
+        decoding="async"
+        src={rootAssetPath("deliciometro.svg")}
+        className={styles.image}
+      />
       <div
         className={styles.needle}
         style={{

@@ -8,10 +8,7 @@ import {
 } from "@/gameRules/battle/cursedEnergy";
 import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
-import {
-  npcPath,
-  playerAbilityBackgroundPath,
-} from "@/utils/paths";
+import { npcPath, playerAbilityBackgroundPath } from "@/utils/paths";
 import { PetSkillButton } from "@/components/Game/Battle/Buttons/PetSkill";
 import { WeaponSwitchButton } from "@/components/Game/Battle/Buttons/WeaponSwitch";
 import { CursedEnergyButton } from "@/components/Game/Battle/Buttons/Natsuki/CursedEnergy";
@@ -32,8 +29,11 @@ import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/Gr
 import { useRef } from "react";
 import { useAbilityShortcuts } from "@/hooks/battle/useAbilityShortcuts";
 
-
-export function BattleAbilities({ scene, controlsDisabled, isBattleNavOpen }: Props) {
+export function BattleAbilities({
+  scene,
+  controlsDisabled,
+  isBattleNavOpen,
+}: Props) {
   const abilitySlotsRef = useRef<AbilitySlot[]>([]);
   abilitySlotsRef.current = [];
 
@@ -114,9 +114,7 @@ export function BattleAbilities({ scene, controlsDisabled, isBattleNavOpen }: Pr
     <div
       className="abilityButtons"
       onClick={(e) => {
-        const btn = (e.target as HTMLElement | null)?.closest(
-          ".abilityButton",
-        );
+        const btn = (e.target as HTMLElement | null)?.closest(".abilityButton");
         if (!btn) return;
         const buttons = Array.from(
           e.currentTarget.querySelectorAll(".abilityButton"),
@@ -128,9 +126,7 @@ export function BattleAbilities({ scene, controlsDisabled, isBattleNavOpen }: Pr
         triggerAbilityCameraFocus(player.character, slot.abilityId);
       }}
       onPointerDown={(e) => {
-        const btn = (e.target as HTMLElement | null)?.closest(
-          ".abilityButton",
-        );
+        const btn = (e.target as HTMLElement | null)?.closest(".abilityButton");
         if (!btn) return;
         const buttons = Array.from(
           e.currentTarget.querySelectorAll(".abilityButton"),
@@ -290,8 +286,7 @@ export function BattleAbilities({ scene, controlsDisabled, isBattleNavOpen }: Pr
                   energyMax={battleMana?.playerMaxMana ?? 100}
                   disabled={
                     controlsDisabled ||
-                    (battleMana?.playerMana ?? 0) <
-                      CURSED_ENERGY_HEAL_RATIO ||
+                    (battleMana?.playerMana ?? 0) < CURSED_ENERGY_HEAL_RATIO ||
                     battle.playerHP >= battle.playerMaxHp
                   }
                   onClick={convertCursedEnergy}

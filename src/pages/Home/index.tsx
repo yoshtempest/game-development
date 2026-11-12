@@ -62,13 +62,26 @@ export default function Home() {
     return remove;
   }, [pushControls, handleConfirm]);
 
+  const handleMultiplayer = useCallback(() => {
+    navigate("/online");
+  }, [navigate]);
+
   return (
     <div
       className="Master"
       style={{ backgroundImage: `url(${sceneBackgrounds.Home})` }}
     >
-      <img loading="lazy" decoding="async" src={rootAssetPath("logo.svg")} alt="logo" className={styles.logo} />
+      <img
+        loading="lazy"
+        decoding="async"
+        src={rootAssetPath("logo.svg")}
+        alt="logo"
+        className={styles.logo}
+      />
       <p className={styles.continue}>Faça o L para continuar</p>
+      <button className={styles.multiplayerButton} onClick={handleMultiplayer}>
+        Multiplayer
+      </button>
       <ParticlesBackground />
     </div>
   );

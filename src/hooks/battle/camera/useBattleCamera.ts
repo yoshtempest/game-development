@@ -4,7 +4,6 @@ import { ProjectileConstants } from "@/data/projectile";
 import { VASTOLORD_ROAR_SCREAM_FRAMES } from "@/data/characters/marshadow/vastolordForm";
 import type { BattleCameraParams } from "./types";
 
-
 export function useBattleCamera(params: BattleCameraParams) {
   const {
     containerWidth,
@@ -32,7 +31,8 @@ export function useBattleCamera(params: BattleCameraParams) {
 
   const bgXMin = initialBgPosRef.current.x;
   const maxOffsetX = screenWidth - containerWidth;
-  const bgXMax = initialBgPosRef.current.x + (maxOffsetX * 200) / containerWidth;
+  const bgXMax =
+    initialBgPosRef.current.x + (maxOffsetX * 200) / containerWidth;
 
   const targetBgX = Math.max(
     bgXMin,

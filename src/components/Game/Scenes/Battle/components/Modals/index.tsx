@@ -1,4 +1,3 @@
-
 import { BattleClear } from "@/components/Game/Battle/Modal/Clear";
 import { BattleOutro } from "@/components/Game/Battle/Modal/Outro";
 import { BattleHighlight } from "@/components/Game/Battle/Modal/Highlight";
@@ -48,7 +47,10 @@ export function BattleModals(props: Props) {
       )}
 
       {!showOutro && showHighlight && highlightData && !isTraining && (
-        <BattleHighlight replay={highlightData} onClose={handleCloseHighlight} />
+        <BattleHighlight
+          replay={highlightData}
+          onClose={handleCloseHighlight}
+        />
       )}
 
       {!showOutro && !showHighlight && showVictory && !isTraining && (

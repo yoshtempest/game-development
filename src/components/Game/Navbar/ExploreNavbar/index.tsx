@@ -51,7 +51,13 @@ export function Navbar() {
               }`}
               onClick={() => onSelect(index)}
             >
-              <img loading="lazy" decoding="async" className={styles.icon} src={item.icon} alt="" />
+              <img
+                loading="lazy"
+                decoding="async"
+                className={styles.icon}
+                src={item.icon}
+                alt=""
+              />
               {item.label}
             </li>
           ))}

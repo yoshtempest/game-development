@@ -60,7 +60,9 @@ export function RankDetails({
   return (
     <div className={styles.rightPanel}>
       <div className={styles.detailHeader}>
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           className={styles.detailIcon}
           src={professionIcon(profession.id)}
           alt=""

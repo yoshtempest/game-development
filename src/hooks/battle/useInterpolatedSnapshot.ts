@@ -30,8 +30,16 @@ export function useInterpolatedSnapshot(snapshot: BattleSnapshot | null) {
           t: Date.now(),
           player: target.player
             ? {
-                x: lerp(current.player?.x ?? target.player.x, target.player.x, LERP),
-                y: lerp(current.player?.y ?? target.player.y, target.player.y, LERP),
+                x: lerp(
+                  current.player?.x ?? target.player.x,
+                  target.player.x,
+                  LERP,
+                ),
+                y: lerp(
+                  current.player?.y ?? target.player.y,
+                  target.player.y,
+                  LERP,
+                ),
                 hp: target.player.hp,
                 state: target.player.state,
                 direction: target.player.direction,

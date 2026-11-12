@@ -61,7 +61,5 @@ export function pickNpcTarget(
   if (current.id === nearest.id) return current;
 
   const currentDistance = aggroDistance(npcX, current);
-  return nearestDistance + switchMarginPx < currentDistance
-    ? nearest
-    : current;
+  return nearestDistance + switchMarginPx < currentDistance ? nearest : current;
 }

@@ -32,7 +32,9 @@ function PetImg({
   scale?: number;
 }) {
   return (
-    <img loading="lazy" decoding="async"
+    <img
+      loading="lazy"
+      decoding="async"
       src={petImagePath(petNpc, stars)}
       alt="pet"
       className={className}

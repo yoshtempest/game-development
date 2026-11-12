@@ -18,7 +18,9 @@ export function ListItem({ item, isSelected, rejected }: Props) {
     >
       {itemData && (
         <div className={styles.itemRow}>
-          <img loading="lazy" decoding="async"
+          <img
+            loading="lazy"
+            decoding="async"
             className={styles.icon}
             src={itemData.image ?? itemPath(`${item.id}.svg`)}
             alt={itemData.name}
