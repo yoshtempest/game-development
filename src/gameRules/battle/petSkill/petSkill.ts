@@ -6,6 +6,7 @@ import type { PetSkillDefinition } from "@/data/characters/pets/petSkills";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import type { PetSkillRunDeps } from "@/gameRules/battle/petSkill/types";
 import { calcPetDamage } from "@/gameRules/battle/petSkill/calcPetDamage";
+import { runRaparigaCat } from "@/gameRules/battle/petSkill/runRaparigaCat";
 import { ONE_THOUSAND_MS } from "@/data/ms";
 
 /**
@@ -177,6 +178,9 @@ export function runPetSkill(
       }
       break;
     }
+    case "summonCat":
+      runRaparigaCat(def.npcType, deps);
+      break;
     case "shield":
       battle.setPlayerShield((shield) => shield + effect.amount);
       break;

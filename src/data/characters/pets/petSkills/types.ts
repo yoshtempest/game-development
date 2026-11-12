@@ -16,6 +16,8 @@ export type PetSkillEffect =
   | ({ kind: "jumpAttack" } & PetSkillDamage)
   | ({ kind: "teleportBite" } & PetSkillDamage & { bleedMs: number })
   | { kind: "summon"; npcType: string }
+  /** Rapariga: sorteia um gato de `RAPARIGA_CATS` e aplica o efeito dele. */
+  | { kind: "summonCat" }
   | { kind: "shield"; amount: number }
   | { kind: "heal"; amount: number }
   | { kind: "healPercent"; perStar: number[] };
