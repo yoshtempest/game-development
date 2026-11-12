@@ -127,6 +127,7 @@ export function BattleEntities({
             cutInEnemie={cutInEnemie}
             npcBleeding={npcBleeding}
             purpleHole={purpleHole}
+            pushCount={npc.pushCount}
           />
 
           <NpcProjectile
