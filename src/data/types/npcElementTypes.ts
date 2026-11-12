@@ -85,6 +85,9 @@ export const NPC_TYPINGS = {
   technoblade: ["Normalis", "Metallum"],
   ouroboros: ["Natura", "Psychicus"],
 
+  /* Mundo tóxico */
+  rickToxico: ["Natura", "Darkus"],
+
   /* Training */
   dummy: ["Normalis"],
 

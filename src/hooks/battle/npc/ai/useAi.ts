@@ -1,6 +1,8 @@
 import type { Props } from "./types";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { getNpcAttack } from "@/services/npc";
+import { startRickToxicoSmoke } from "@/services/npc/attacks/rickToxico";
+import { RICK_FLASK_POISON_CHANCE } from "@/data/npc/rickToxico";
 import { useProjectile } from "@/hooks/battle/npc/useProjectile";
 import { isParryPress } from "@/hooks/battle/npc/isParryPress";
 import {
@@ -367,6 +369,15 @@ export function useNpcAI({
         logPlay("knifeCut");
       }
       handleProjectileHit(damageKind);
+      if (npcTypeRef.current === "rickToxico") {
+        startRickToxicoSmoke(
+          npcRef.current,
+          projectileTarget?.x ?? playerXRef.current,
+        );
+        if (Math.random() < RICK_FLASK_POISON_CHANCE) {
+          handleApplyDebuff("poison");
+        }
+      }
     },
     timeRef,
     handlePullPlayer,

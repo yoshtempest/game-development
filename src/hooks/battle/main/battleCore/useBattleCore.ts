@@ -20,6 +20,7 @@ import {
 import { INTRO_MS } from "@/services/npc/attacks/hungryDog/state";
 import { clampX } from "@/gameRules/movement/clampX";
 import { applyPlayerStatus } from "@/gameRules/battle/status/statusEffects";
+import { RICK_PASSIVE_POISON_CHANCE } from "@/data/npc/rickToxico";
 import { ProjectileHpConstants } from "@/data/projectile";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
@@ -497,7 +498,14 @@ export function useBattleCore({
     );
   });
 
-  targeting.onBeforeNpcHitRef.current = (getDamage) => {
+  targeting.onBeforeNpcHitRef.current = (getDamage, source) => {
+    if (
+      npcType === "rickToxico" &&
+      source === "basic" &&
+      Math.random() < RICK_PASSIVE_POISON_CHANCE
+    ) {
+      setPlayer((p) => applyPlayerStatus(p, "poison"));
+    }
     if (npcType !== "piupiu") return { blocked: false };
     const distanceX = Math.abs(npc.x - player.x);
     const distanceY = Math.abs(npc.y - player.y);

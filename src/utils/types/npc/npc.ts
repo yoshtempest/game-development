@@ -110,6 +110,18 @@ export type NPCBattleState = {
       lastMeleeAttack: number;
       lastRangedAttack: number;
     };
+    /**
+     * Rick Tóxico: alterna a cor do frasco a cada arremesso e guarda a nuvem
+     * de fumaça deixada pelo último frasco que acertou. A fumaça é posicional
+     * (`smokeX`) para o jogador poder sair dela em vez de tomar todos os ticks.
+     */
+    rickToxico?: {
+      nextFlask: "pinkFlask" | "yellowFlask";
+      lastThrow: number;
+      smokeX: number;
+      smokeUntil: number;
+      lastSmokeTick: number;
+    };
     jhowsimar?: {
       attackCount: number;
       grabPhase: "get" | "throw" | null;
