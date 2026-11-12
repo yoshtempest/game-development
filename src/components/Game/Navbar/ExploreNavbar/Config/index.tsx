@@ -3,10 +3,12 @@ import { useConfigSelection } from "@/hooks/menu/config/useConfigSelection";
 import { useAudio } from "@/hooks/audio/useAudio";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useSettings } from "@/hooks/settings/useSetting";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { useContentPacks } from "@/hooks/menu/config/useContentPacks";
 import { VictorTutorial } from "@/components/Game/Navbar/ExploreNavbar/Config/VictorTutorial";
 import { CONFIG_TABS, CONFIG_TAB_LABELS } from "@/data/config/tabs";
 import { BattleTab } from "./BattleTab";
+import { ContentTab } from "./ContentTab";
 import { DifficultySection } from "./Difficulty";
 import { DialogueSpeedSection } from "./DialogueSpeed";
 import { HelpSection } from "./Help";
@@ -16,6 +18,11 @@ export function Config() {
   const { sfxVolume, bgmVolume, setSfxVolume, setBgmVolume } = useAudio();
   const { difficulty } = usePlayer();
   const { dialogueSpeed } = useSettings();
+  const contentConfirmRef = useRef<(index: number) => void>(() => undefined);
+  const handleContentConfirm = useCallback(
+    (index: number) => contentConfirmRef.current(index),
+    [],
+  );
   const {
     selectedIndex,
     selectedColumn,
@@ -29,7 +36,12 @@ export function Config() {
     isOnTab,
     cycleDifficulty,
     cycleDialogueSpeed,
-  } = useConfigSelection(true);
+  } = useConfigSelection(true, undefined, handleContentConfirm);
+  const content = useContentPacks(activeTab === "conteudo");
+
+  useEffect(() => {
+    contentConfirmRef.current = content.confirmRow;
+  }, [content.confirmRow]);
   const configRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -101,6 +113,19 @@ export function Config() {
           showHighlight={showHighlight}
           showAbilityIntro={showAbilityIntro}
           selectedIndex={selectedIndex}
+        />
+      )}
+
+      {activeTab === "conteudo" && (
+        <ContentTab
+          isSupported={content.isSupported}
+          packs={content.packs}
+          estimate={content.estimate}
+          downloading={content.downloading}
+          error={content.error}
+          selectedIndex={selectedIndex}
+          isOnTab={isOnTab}
+          onConfirmRow={content.confirmRow}
         />
       )}
 
