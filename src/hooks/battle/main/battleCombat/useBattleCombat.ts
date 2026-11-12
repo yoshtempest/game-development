@@ -100,6 +100,7 @@ import {
 import { INTRO_MS } from "@/services/npc/attacks/hungryDog/state";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import { clampX } from "@/gameRules/movement/clampX";
+import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
 import type { BabidiTarget } from "@/utils/types/character/babidi";
 import type { BattleCombatProps } from "./types";
 
@@ -137,6 +138,7 @@ export function useBattleCombat({
   divergentFistActive,
   divergentFistRef,
   setDivergentFistActive,
+  coop,
 }: BattleCombatProps) {
   const {
     player,
@@ -327,6 +329,40 @@ export function useBattleCombat({
     true: ProjectileHpConstants.DEFAULT_HP,
   });
 
+  // ── Alvos do co-op ───────────────────────────────────────────────────────
+  // A IA escolhe um alvo por golpe (área é a exceção, roteada à parte). A lista
+  // sempre tem o jogador local; o líder acrescenta o parceiro vindo da rede.
+  // `localAliveRef` é preenchido logo depois do `useBattleSystem`, mas já
+  // existe aqui para a IA descartar o aggro assim que o HP local zera.
+  const localAliveRef = useRef(true);
+  const coopRemoteTarget = coop?.remoteTarget ?? null;
+  const coopLocalPlayerId = coop?.localPlayerId;
+
+  const npcTargets = useMemo<NpcTarget[]>(() => {
+    const list: NpcTarget[] = [
+      {
+        id: coopLocalPlayerId ?? "local",
+        x: player.x,
+        y: player.y,
+        state: player.state,
+        direction: player.battleDirection,
+        character: player.character,
+        isLocal: true,
+        alive: true,
+      },
+    ];
+    if (coopRemoteTarget) list.push(coopRemoteTarget);
+    return list;
+  }, [
+    coopLocalPlayerId,
+    coopRemoteTarget,
+    player.x,
+    player.y,
+    player.state,
+    player.battleDirection,
+    player.character,
+  ]);
+
   const npc = useNpcAI({
     playerX: player.x,
     playerY: player.y,
@@ -336,6 +372,10 @@ export function useBattleCombat({
     npcClass: npcData.class,
     npcType,
     npcPhaseRef,
+    targets: npcTargets,
+    localAliveRef,
+    npcAuthority: coop?.authoritative ?? true,
+    onRemoteHit: coop?.sendNpcHit,
     onProjectileHit: (damageKind) =>
       refs.npcRangedAttackRef.current(damageKind),
     onMeleeHit: (multiplier, damageKind) => {
@@ -638,6 +678,10 @@ export function useBattleCombat({
     weapon: yvelWeapon,
     surviveLethalHitRef: honoredLethalRef,
   });
+
+  // O alvo local só existe enquanto o jogador está de pé. A IA lê esse ref a
+  // cada tick para não continuar perseguindo um corpo caído no co-op.
+  localAliveRef.current = battle.playerHP > 0;
 
   const {
     arm: drikaArm,

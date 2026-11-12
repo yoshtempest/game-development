@@ -44,7 +44,12 @@ export function useInterpolatedSnapshot(snapshot: BattleSnapshot | null) {
                 y: lerp(current.npc?.y ?? target.npc.y, target.npc.y, LERP),
                 hp: target.npc.hp,
                 state: target.npc.state,
+                direction: target.npc.direction,
+                hidden: target.npc.hidden,
                 phase: target.npc.phase,
+                // Projéteis não são interpolados: o guest só desenha a lista
+                // mais recente do líder.
+                projectiles: target.npc.projectiles,
               }
             : undefined,
         };

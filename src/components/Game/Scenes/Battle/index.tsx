@@ -40,7 +40,7 @@ import { useBattleAudio } from "@/hooks/battle/useBattleAudio";
 import { useBattleViewport, getBattleBackgroundStyle } from "@/hooks/battle/useBattleViewport";
 import { usePlayerActions } from "@/contexts/PlayerContext";
 import { useTitles } from "@/contexts/TitleContext";
-import { memo, useEffect, useMemo, useRef } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { TrainingOverlay } from "@/components/Game/Battle/Overlay/Training";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
@@ -54,6 +54,7 @@ import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
 import { playerAbilityPath } from "@/utils/paths";
 
 import type { Props } from "./types";
+import type { BattleCoop, NpcHitIntent } from "@/hooks/battle/coop/types";
 
 const MemoBattleEntities = memo(BattleEntities);
 const MemoBattleHUD = memo(BattleHUD);
@@ -88,10 +89,40 @@ export function BattleScene(props: Props) {
 
   const { TILE_SIZE, PLAYER_SIZE, MAP_COLS, MAP_ROWS } = useGameLayout();
 
-  // Camada de rede (líder/guest) - montada ANTES de useBattleScene
-  // para que o NPC guest enxergue o jogador remoto via snapshot.
+  // A camada de rede precisa existir ANTES de `useBattleScene`: a IA do NPC no
+  // líder enxerga o parceiro como alvo, e o guest precisa saber que não tem
+  // autoridade já no primeiro tick.
+  const online = useOnline();
   const battleNet = useBattleNet({ battleLeaderId, isPvp });
   const { isGuest: netIsGuest } = battleNet;
+  const battleSocketSend = battleNet.send;
+
+  const sendNpcHit = useCallback(
+    (hit: NpcHitIntent) => {
+      battleSocketSend({ type: "battleNpcHit", ...hit });
+    },
+    [battleSocketSend],
+  );
+
+  // Contrato da cena com a IA: só o líder simula; o guest espelha o NPC e
+  // resolve localmente os golpes endereçados a ele.
+  const coop = useMemo<BattleCoop>(
+    () => ({
+      authoritative: !battleNet.isGuest,
+      localPlayerId: online.playerId,
+      remoteTarget: battleNet.remoteTarget,
+      remoteAlive: battleNet.remoteAlive,
+      sendNpcHit,
+    }),
+    [
+      battleNet.isGuest,
+      battleNet.remoteTarget,
+      battleNet.remoteAlive,
+      online.playerId,
+      sendNpcHit,
+    ],
+  );
+
   const {
     player,
     npc,
@@ -253,13 +284,12 @@ export function BattleScene(props: Props) {
     isAlfa,
     PLAYER_SIZE,
     dialogueOpen: tvDialogueOpen,
+    coop,
   });
 
   cutsceneApiRef.current = { player, npc, battle };
 
   let controlsDisabled = _controlsDisabled;
-
-  const online = useOnline();
 
   const onlineBattle = useOnlineBattle({
     player,

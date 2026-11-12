@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import type { BattleSocketMessage } from "@/hooks/useBattleSocket";
+import type { NPCBattleState, NPCDirection } from "@/utils/types/npc/npc";
 
 export type BattleSnapshot = {
   t: number;
@@ -8,7 +9,7 @@ export type BattleSnapshot = {
     x: number;
     y: number;
     hp: number;
-    state?: string;
+    state?: PlayerState;
     /** Direção do avatar remoto (o sprite não pode ficar fixo em "down"). */
     direction?: Direction;
     character?: string;
@@ -17,8 +18,8 @@ export type BattleSnapshot = {
     x: number;
     y: number;
     hp: number;
-    state?: string;
-    direction?: Direction;
+    state?: NPCBattleState["state"];
+    direction?: NPCDirection;
     hidden?: boolean;
     phase?: number;
     /**

@@ -1,10 +1,14 @@
 import { useEffect } from "react";
 
+// Arrays fora do componente: recriá-los a cada render fazia o efeito ser
+// remontado (e o listener perdido) sem nenhuma mudança real de dependência.
+const ENTER_KEYS = ["Enter", "l", "L"];
+const CANCEL_KEYS = ["Escape", "b", "B"];
+
 export function EnterListener({ onEnter }: { onEnter: () => void }) {
-  const enter = ["Enter", "l", "L"];
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (enter.includes(e.key)) onEnter();
+      if (ENTER_KEYS.includes(e.key)) onEnter();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -14,9 +18,8 @@ export function EnterListener({ onEnter }: { onEnter: () => void }) {
 
 export function CancelListener({ onCancel }: { onCancel: () => void }) {
   useEffect(() => {
-    const escape = ["Escape", "b", "B"];
     const handler = (e: KeyboardEvent) => {
-      if (escape.includes(e.key)) onCancel();
+      if (CANCEL_KEYS.includes(e.key)) onCancel();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);

@@ -314,6 +314,7 @@ wss.on("connection", (ws) => {
       msg.type === "battleSnapshot" ||
       msg.type === "battlePlayerState" ||
       msg.type === "battleNpcDamage" ||
+      msg.type === "battleNpcHit" ||
       msg.type === "battleEnd" ||
       msg.type === "battleRetry" ||
       msg.type === "battleLeave" ||
@@ -322,24 +323,14 @@ wss.on("connection", (ws) => {
     ) {
       const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
       if (!room) return;
+      // Repassa o payload inteiro: o cliente decide o que é campo de sincronia
+      // (state/direction/phase/projectiles/hit). Listar campos aqui já custou
+      // bug de avatar remoto congelado em "down" e de hit de NPC sumindo.
       relayRoom(room.id, {
+        ...msg,
         type: msg.type,
         roomId: room.id,
-        to: msg.to,
-        from: msg.from,
-        route: msg.route,
-        state: msg.state,
-        result: msg.result,
-        xpReward: msg.xpReward,
-        lastRewards: msg.lastRewards,
-        amount: msg.amount,
-        t: msg.t,
-        x: msg.x,
-        y: msg.y,
-        hp: msg.hp,
-        character: msg.character,
-        player: msg.player,
-        npc: msg.npc,
+        from: meta.playerId,
       });
       return;
     }

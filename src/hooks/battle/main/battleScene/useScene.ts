@@ -55,6 +55,7 @@ export function useBattleScene({
   playerCount,
   PLAYER_SIZE,
   dialogueOpen = false,
+  coop,
 }: BattleSceneProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -508,6 +509,7 @@ export function useBattleScene({
     divergentFistActive,
     divergentFistRef,
     setDivergentFistActive,
+    coop,
   });
 
   combatRef.current = combat;

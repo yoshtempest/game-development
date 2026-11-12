@@ -55,14 +55,18 @@ export function useOnlineBattle({
     isPvp,
     remotePlayer: remotePlayerState,
     interpRemotePlayer,
+    remoteSnapshot: remoteBattleSnapshot,
   } = net;
 
   const [guestHasSnapshot, setGuestHasSnapshot] = useState(false);
+  const playerId = online.playerId;
 
-  const { snapshot: remoteBattleSnapshot } = useBattleSnapshot({
+  // ── Snapshot do líder ────────────────────────────────────────────────────
+  // O envio vive aqui porque o estado autoritativo (player/NPC/HPs) só existe
+  // depois da cena; a recepção fica no `useBattleNet` (montado antes dela).
+  useBattleSnapshot({
     isHost: isBattleHost,
     send: battleSocketSend,
-    lastMessage: battleSocketLast,
     getState: () => ({
       t: Date.now(),
       player: {
@@ -73,16 +77,66 @@ export function useOnlineBattle({
         direction: player.battleDirection,
         character: player.character,
       },
-      npc: { x: npc.x, y: npc.y, hp: battle.npcHP, phase: battle.npcPhase ?? 1 },
+      npc: {
+        x: npc.x,
+        y: npc.y,
+        hp: battle.npcHP,
+        state: npc.state,
+        direction: npc.direction,
+        hidden: npc.hidden,
+        phase: battle.npcPhase ?? 1,
+        projectiles: npc.projectiles,
+      },
     }),
   });
+
   const interpolatedRemoteSnapshot = useInterpolatedSnapshot(
     isBattleHost ? null : remoteBattleSnapshot,
   );
 
-  if (isBattleGuest && remoteBattleSnapshot) {
+  useEffect(() => {
+    if (!isBattleGuest || !remoteBattleSnapshot) return;
     setGuestHasSnapshot(true);
-  }
+  }, [isBattleGuest, remoteBattleSnapshot]);
+
+  // ── Guest: espelha o NPC autoritativo do líder ───────────────────────────
+  // O guest não roda IA (`npcAuthority: false`); posição/estado/direção vêm do
+  // snapshot. A posição usa o snapshot interpolado por RAF para o NPC não
+  // andar em degraus de 100 ms.
+  const setNpc = npc.setNpc;
+  const setNpcProjectiles = npc.setProjectiles;
+  const interpolatedNpc = interpolatedRemoteSnapshot?.npc;
+
+  useEffect(() => {
+    if (!isBattleGuest || isPvp || !interpolatedNpc) return;
+    setNpc((previous) => {
+      const x = clampX(interpolatedNpc.x);
+      const y = interpolatedNpc.y;
+      const state = interpolatedNpc.state ?? previous.state;
+      const direction = interpolatedNpc.direction ?? previous.direction;
+      const hidden = interpolatedNpc.hidden ?? previous.hidden;
+      if (
+        previous.x === x &&
+        previous.y === y &&
+        previous.state === state &&
+        previous.direction === direction &&
+        previous.hidden === hidden
+      ) {
+        return previous;
+      }
+      return { ...previous, x, y, state, direction, hidden };
+    });
+  }, [isBattleGuest, isPvp, interpolatedNpc, setNpc]);
+
+  useEffect(() => {
+    if (!isBattleGuest || isPvp) return;
+    setNpcProjectiles(remoteBattleSnapshot?.npc?.projectiles ?? []);
+  }, [
+    isBattleGuest,
+    isPvp,
+    remoteBattleSnapshot?.npc?.projectiles,
+    setNpcProjectiles,
+  ]);
 
   // PvP do protótipo: o guest espelha o avatar do host (os dois controlam a
   // mesma luta). No co-op isso está errado — cada jogador tem o próprio avatar,
@@ -106,8 +160,6 @@ export function useOnlineBattle({
       }
     }
   }
-
-  void interpolatedRemoteSnapshot;
 
   // ── Co-op: autoridade compartilhada ──────────────────────────────────────
   // O líder manda no NPC; o guest manda no próprio HP/posição. O guest adota o
@@ -141,14 +193,145 @@ export function useOnlineBattle({
     battleSocketSend({ type: "battleNpcDamage", amount: prev - npcHP });
   }, [isBattleGuest, isPvp, npcHP, battleSocketSend]);
 
-  // Líder aplica o dano relatado pelo guest no NPC autoritativo.
+  // Líder aplica o dano relatado pelo guest no NPC autoritativo. Por assinatura
+  // (e não `lastMessage`): um `battlePlayerState` logo depois engoliria o dano.
   useEffect(() => {
     if (!isBattleHost || isPvp) return;
-    if (battleSocketLast?.type !== "battleNpcDamage") return;
-    const amount = Number(battleSocketLast.amount ?? 0);
-    if (!Number.isFinite(amount) || amount <= 0) return;
-    setNpcHP((hp) => Math.max(0, hp - amount));
-  }, [isBattleHost, isPvp, battleSocketLast, setNpcHP]);
+    return battleSocketSubscribe("battleNpcDamage", (message) => {
+      const amount = Number(message.amount ?? 0);
+      if (!Number.isFinite(amount) || amount <= 0) return;
+      setNpcHP((hp) => Math.max(0, hp - amount));
+    });
+  }, [isBattleHost, isPvp, battleSocketSubscribe, setNpcHP]);
+
+  // ── Guest: resolve um golpe decidido pelo líder ──────────────────────────
+  // O líder manda a *intenção* (natureza/multiplicador); o cliente dono do
+  // alvo resolve armadura, esquiva, bloqueio e status com os próprios dados.
+  const battleRef = useLatestRef(battle);
+  const setPlayerRef = useLatestRef(setPlayer);
+
+  useEffect(() => {
+    if (!isBattleGuest || isPvp || !playerId) return;
+    return battleSocketSubscribe("battleNpcHit", (message) => {
+      const hit = message as unknown as NpcHitIntent;
+      if (hit.to !== playerId) return;
+      const currentBattle = battleRef.current;
+
+      const pushAway = (npcX: number | undefined, distance: number, ms: number) => {
+        if (npcX == null) return;
+        setPlayerRef.current((p) => {
+          const direction = npcX > p.x ? -1 : 1;
+          return {
+            ...p,
+            pullFromX: p.x,
+            pullToX: clampX(p.x + direction * distance),
+            pullStartTime: Date.now(),
+            pullDuration: ms,
+          };
+        });
+      };
+
+      switch (hit.source) {
+        case "melee":
+          currentBattle.npcMeleeHit(hit.multiplier, hit.damageKind, true);
+          break;
+        case "ranged":
+          currentBattle.npcRangedHit(hit.damageKind, true);
+          break;
+        case "burst":
+          currentBattle.npcBurstHit(hit.pushDir ?? 1);
+          break;
+        case "fixed":
+          currentBattle.npcFixedHit(hit.amount ?? 1);
+          break;
+        case "laser":
+          currentBattle.npcFixedHit(hit.amount ?? 1);
+          pushAway(hit.npcX, 5, 0);
+          break;
+        case "throw":
+          currentBattle.npcThrowHit(hit.multiplier ?? 1);
+          break;
+        case "unblockable":
+          currentBattle.npcUnblockableHit(hit.amount ?? 1);
+          break;
+        case "status":
+          if (hit.status) {
+            setPlayerRef.current((p) => applyPlayerStatus(p, hit.status!));
+          }
+          break;
+        case "push":
+          pushAway(hit.npcX, 200, 300);
+          break;
+        case "pull":
+          if (hit.npcX != null) {
+            setPlayerRef.current((p) => {
+              const direction = hit.npcX! > p.x ? 1 : -1;
+              return {
+                ...p,
+                pullFromX: p.x,
+                pullToX: clampX(p.x + direction * 200),
+                pullStartTime: Date.now(),
+              };
+            });
+          }
+          break;
+        case "ram":
+          if (hit.toX != null) {
+            setPlayerRef.current((p) => ({
+              ...p,
+              x: clampX(hit.toX!),
+              battleDirection: hit.direction ?? p.battleDirection,
+            }));
+          }
+          break;
+        case "throwStart":
+          if (hit.npcX != null) {
+            setPlayerRef.current((p) => {
+              const direction = hit.npcX! > p.x ? -1 : 1;
+              return {
+                ...p,
+                throwStartTime: Date.now(),
+                throwFromX: p.x,
+                throwToX: clampX(p.x + direction * 300),
+                battleDirection: hit.direction ?? p.battleDirection,
+                state: "fallen",
+              };
+            });
+          }
+          break;
+        case "drag":
+          if (hit.npcX != null && hit.npcY != null) {
+            setPlayerRef.current((p) => ({
+              ...p,
+              x: clampX(hit.npcX! - 8),
+              y: hit.npcY! + 4,
+              state: "fallen",
+              battleDirection: hit.npcX! >= p.x ? "right" : "left",
+            }));
+            // O arrasto do alfa aplica 1 hit fixo no início, como no dono.
+            currentBattle.npcFixedHit(hit.amount ?? 1);
+          }
+          break;
+        case "grab":
+          if (hit.flipped != null) {
+            setPlayerRef.current((p) => ({
+              ...p,
+              grabbedUntil: Date.now() + 4000,
+            }));
+          }
+          break;
+        default:
+          break;
+      }
+    });
+  }, [
+    isBattleGuest,
+    isPvp,
+    playerId,
+    battleSocketSubscribe,
+    battleRef,
+    setPlayerRef,
+  ]);
 
   const [opponentHP, setOpponentHP] = useState(1000);
   const [opponentMaxHP, setOpponentMaxHP] = useState(1000);
@@ -203,20 +386,6 @@ export function useOnlineBattle({
     battleSocketSend,
     battlePlayerStateRef,
   ]);
-
-  // Host recebe estado do guest
-  useEffect(() => {
-    if (!isBattleHost) return;
-    if (battleSocketLast?.type !== "battlePlayerState") return;
-    setRemotePlayerState({
-      x: Number(battleSocketLast.x ?? 0),
-      y: Number(battleSocketLast.y ?? 0),
-      hp: Number(battleSocketLast.hp ?? 0),
-      state: battleSocketLast.state as string | undefined,
-      direction: battleSocketLast.direction as Direction | undefined,
-      character: battleSocketLast.character as string | undefined,
-    });
-  }, [isBattleHost, battleSocketLast]);
 
   // Host: sincroniza HP do oponente a partir do guest (só PvP)
   useEffect(() => {
@@ -305,7 +474,16 @@ export function useOnlineBattle({
         direction: player.battleDirection,
         character: player.character,
       },
-      npc: { x: npc.x, y: npc.y, hp: battle.npcHP, phase: battle.npcPhase ?? 1 },
+      npc: {
+        x: npc.x,
+        y: npc.y,
+        hp: battle.npcHP,
+        state: npc.state,
+        direction: npc.direction,
+        hidden: npc.hidden,
+        phase: battle.npcPhase ?? 1,
+        projectiles: npc.projectiles,
+      },
     });
   }, [
     isBattleHost,
@@ -319,6 +497,10 @@ export function useOnlineBattle({
     battle.playerHP,
     npc.x,
     npc.y,
+    npc.state,
+    npc.direction,
+    npc.hidden,
+    npc.projectiles,
     battle.npcHP,
     battle.npcPhase,
   ]);
@@ -379,8 +561,6 @@ export function useOnlineBattle({
       notifyResult("victory", { xpReward, lastRewards });
     }
   }, [isBattleHost, online.connected, opponentHP, notifyResult, xpReward, lastRewards]);
-
-  void remoteResult;
 
   return {
     onlineConnected: online.connected,

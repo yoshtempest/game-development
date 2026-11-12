@@ -25,6 +25,27 @@ import { getTime, NPC_TIME_ID } from "@/gameRules/battle/time";
 import { clampX } from "@/gameRules/movement/clampX";
 import { pickNpcTarget, type NpcTarget } from "@/gameRules/battle/npc/targeting";
 import type { NpcHitIntent } from "@/hooks/battle/coop/types";
+import type { DamageKind } from "@/utils/types/battle/damageKind";
+import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
+
+/**
+ * Mesmo alvo = mesmo id e mesmas propriedades visíveis. Usado para não
+ * re-renderizar o hook a cada tick quando o alvo não mudou de posição/estado.
+ */
+function isSameTarget(a: NpcTarget | null, b: NpcTarget | null): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return (
+    a.id === b.id &&
+    a.x === b.x &&
+    a.y === b.y &&
+    a.state === b.state &&
+    a.direction === b.direction &&
+    a.character === b.character &&
+    a.isLocal === b.isLocal &&
+    a.alive === b.alive
+  );
+}
 
 export function useNpcAI({
   playerX,
@@ -73,6 +94,7 @@ export function useNpcAI({
   playerCooldownRef,
   playerHitDamageRef,
   targets,
+  localAliveRef,
   npcAuthority = true,
   onRemoteHit,
 }: Props) {
@@ -94,16 +116,22 @@ export function useNpcAI({
   // callbacks de golpe decidirem se o hit é local ou remoto.
   const [activeTarget, setActiveTarget] = useState<NpcTarget | null>(null);
   const targetsRef = useLatestRef(targets ?? []);
-  const activeTargetRef = useLatestRef(activeTarget);
   const currentTargetRef = useRef<NpcTarget | null>(null);
   const onRemoteHitRef = useLatestRef(onRemoteHit);
   const npcAuthorityRef = useLatestRef(npcAuthority);
 
-  // ── Se o guest não tem autoridade, pular o execute do ataque.
-  // O projectile system já vem com `enabled: npcAuthority` (false no guest),
-  // e os wrappers routeSingle/routeArea enviam hits via onRemoteHit em vez de
-  // aplicá-los localmente.
-  const skipExecute = !npcAuthorityRef.current;
+  // O alvo local pode cair sem a lista de `targets` ser reconstruída no mesmo
+  // render; o ref de vida é a fonte mais nova para descartar o aggro.
+  const getEffectiveTargets = useCallback((): NpcTarget[] => {
+    const list = targetsRef.current;
+    const localAlive = localAliveRef?.current;
+    if (localAlive == null) return list;
+    return list.map((target) =>
+      target.isLocal && target.alive !== localAlive
+        ? { ...target, alive: localAlive }
+        : target,
+    );
+  }, [localAliveRef, targetsRef]);
 
   const activeProjectile = projectiles[0] ?? null;
   const projectileRef = useLatestRef(activeProjectile);
@@ -183,7 +211,7 @@ export function useNpcAI({
 
   const routeArea = useCallback(
     (hit: Omit<NpcHitIntent, "to">) => {
-      const list = targetsRef.current;
+      const list = getEffectiveTargets();
       if (list.length === 0) return true;
       let localAlive = false;
       for (const target of list) {
@@ -197,7 +225,7 @@ export function useNpcAI({
       }
       return localAlive;
     },
-    [onRemoteHitRef, targetsRef],
+    [getEffectiveTargets, onRemoteHitRef],
   );
 
   const handleMeleeHit = useCallback(
@@ -290,10 +318,13 @@ export function useNpcAI({
     onStuckPaperExplodeRef.current?.();
   }, [routeArea, onStuckPaperExplodeRef]);
 
-  const handleLaserHit = useCallback(() => {
-    if (!routeArea({ source: "laser", amount: 1 })) return;
-    onLaserHitRef.current?.();
-  }, [routeArea, onLaserHitRef]);
+  const handleLaserHit = useCallback(
+    (npcX?: number) => {
+      if (!routeArea({ source: "laser", amount: 1, npcX })) return;
+      onLaserHitRef.current?.(npcX);
+    },
+    [routeArea, onLaserHitRef],
+  );
 
   const handleApplyDebuff = useCallback(
     (status: NewPlayerStatus) => {
@@ -360,7 +391,7 @@ export function useNpcAI({
       playSound("paperPreExplode");
       logPlay("paperPreExplode");
     },
-    playerCharacter,
+    projectileTarget?.character ?? playerCharacter,
     npcClass,
     handleBurstHit,
     playerProjectileRef,
@@ -466,37 +497,37 @@ export function useNpcAI({
         return;
       }
 
-      // Se o guest não tem autoridade, pular o execute do ataque.
-      // O NPC ainda se move (posição vinda do snapshot do líder), mas não
-      // gera danos/efeitos localmente; os hits são roteados via onRemoteHit.
-      if (skipExecute) {
-        // Aún assim, atualizar posição baseada no alvo local para manter o NPC
-        // visível, mas sem gerar efeitos de ataque.
-        const attack = getNpcAttack(npcTypeRef.current);
-        // Pular o execute, mas ainda assim computed some state para o NPC não
-        // ficar totalmente congelado. Apenas avançamos o tick sem aplicar
-        // dano/efeitos.
-        const animBase: NPCBattleState = { ...n };
-        const result = { direction: n.direction, state: n.state, hidden: n.hidden };
-        // Usar resultado vazio para commit, mantendo NPC vivo mas inativo.
-        commit(animBase, {
-          ...n,
-          direction: result.direction,
-          state: result.state,
-          hidden: result.hidden,
-        });
-        // Pular o resto do processamento deste tick.
-        return;
-      }
+      // ── Escolha do alvo ─────────────────────────────────────────────────
+      // Com dois jogadores, o NPC persegue o mais próximo (com histerese). O
+      // estado escolhido alimenta o projétil e os wrappers de golpe; a ref é
+      // lida de forma síncrona no mesmo tick.
+      //
+      // Preso pela fishingNet, o NPC ataca a rede (efeito local de quem
+      // lançou): o golpe continua local para não ser roteado ao parceiro.
+      const net = fishingNetRef?.current ?? null;
+      const caught = (rootedUntilRef?.current ?? 0) > Date.now() && !!net;
+      const candidates = getEffectiveTargets();
+      const localTarget = candidates.find((target) => target.isLocal) ?? null;
+      const selected = caught
+        ? localTarget
+        : candidates.length > 0
+          ? pickNpcTarget(
+              n.x,
+              candidates,
+              currentTargetRef.current?.id ?? null,
+            )
+          : null;
+      currentTargetRef.current = selected;
+      setActiveTarget((previous) =>
+        isSameTarget(previous, selected) ? previous : selected,
+      );
 
       const attack = getNpcAttack(npcTypeRef.current);
 
-      // Enquanto preso pela fishingNet, o NPC direciona seus ataques à rede
-      // (que absorve o dano no lugar do jogador) para tentar se libertar.
-      const net = fishingNetRef?.current ?? null;
-      const caught = (rootedUntilRef?.current ?? 0) > Date.now() && !!net;
-      const targetX = caught && net ? net.x : playerXRef.current;
-      const targetY = caught && net ? net.y : playerYRef.current;
+      const targetX = caught && net ? net.x : (selected?.x ?? playerXRef.current);
+      const targetY = caught && net ? net.y : (selected?.y ?? playerYRef.current);
+      const targetState = caught && net ? playerStateRef.current : (selected?.state ?? playerStateRef.current);
+      const targetDirection = caught && net ? playerDirectionRef.current : (selected?.direction ?? playerDirectionRef.current);
 
       // Snapshot antes do `execute`: os ataques mutam `state`/`ai` no próprio
       // objeto, então a comparação do commit precisa dos valores originais.
@@ -506,40 +537,39 @@ export function useNpcAI({
         npc: n,
         playerX: targetX,
         playerY: targetY,
-        playerState: playerStateRef.current,
-        playerDirection: playerDirectionRef.current,
+        playerState: targetState,
+        playerDirection: targetDirection,
         targetX,
         targetY,
         npcPhase: npcPhaseRef.current,
         projectile: projectileRef.current,
         setProjectile,
         lastAttackRef,
-        onProjectileHit: onProjectileHitRef.current,
-        onMeleeHit: onMeleeHitRef.current,
+        onProjectileHit: handleProjectileHit,
+        onMeleeHit: handleMeleeHit,
         setForceIdle,
         onSummon: onSummonRef.current,
-        onPullPlayer: onPullPlayerRef.current,
+        onPullPlayer: handlePullPlayer,
         isAlfa: isAlfaRef.current,
         onSummonFromRight: (npcType) => onSummonFromRightRef.current?.(npcType),
-        onDragPlayer: (npcX, npcY) => onDragPlayerRef.current?.(npcX, npcY),
+        onDragPlayer: handleDragPlayer,
         summonTimerRef,
         playSound: loggedPlaySound,
         npcHp: npcHpRef?.current ?? 0,
         npcMaxHp: npcMaxHpRef?.current ?? 1,
-        onGrabPlayer: (flipped) => onGrabPlayerRef.current?.(flipped),
-        onThrowStart: (x, d) => onThrowStartRef.current?.(x, d),
-        onThrowPlayer: (mult) => onThrowPlayerRef.current?.(mult),
-        onPushPlayer: (x) => onPushPlayerRef.current?.(x),
-        onRamPushPlayer: (direction, toX) =>
-          onRamPushPlayerRef.current?.(direction, toX),
+        onGrabPlayer: handleGrabPlayer,
+        onThrowStart: handleThrowStart,
+        onThrowPlayer: handleThrowPlayer,
+        onPushPlayer: handlePushPlayer,
+        onRamPushPlayer: handleRamPushPlayer,
         isPlayerParrying: () =>
           isParryPress(lastBlockPressRef, lastAttackPressRef),
-        onGroundPaperHit: onGroundPaperHitRef.current,
+        onGroundPaperHit: handleGroundPaperHit,
         onPaperExplode: onPaperExplodeRef.current,
         onArmorBuff: onArmorBuffRef.current,
-        onLaserHit: onLaserHitRef.current,
-        onStuckPaperExplode: onStuckPaperExplodeRef.current,
-        onApplyDebuff: onApplyDebuffRef.current,
+        onLaserHit: handleLaserHit,
+        onStuckPaperExplode: handleStuckPaperExplode,
+        onApplyDebuff: handleApplyDebuff,
       });
 
       const rooted = (rootedUntilRef?.current ?? 0) > Date.now();
@@ -550,9 +580,8 @@ export function useNpcAI({
       const scaledX = n.x + (result.x - n.x) * npcTime.speed;
       const nextX = rooted ? n.x : scaledX;
       const nextY = result.y ?? n.y;
-      const direction =
-        result.direction ?? getNpcDirection(nextX, playerXRef.current);
-      const distanceX = Math.abs(n.x - playerXRef.current);
+      const direction = result.direction ?? getNpcDirection(nextX, targetX);
+      const distanceX = Math.abs(n.x - targetX);
 
       updateProximitySound(n.x, n.y);
 
@@ -604,26 +633,13 @@ export function useNpcAI({
     npcTypeRef,
     npcRef,
     obstaclesRef,
-    onGrabPlayerRef,
-    onMeleeHitRef,
-    onProjectileHitRef,
-    onPullPlayerRef,
     onSummonRef,
     isAlfaRef,
     onSummonFromRightRef,
-    onDragPlayerRef,
-    onThrowPlayerRef,
-    onThrowStartRef,
-    onPushPlayerRef,
-    onRamPushPlayerRef,
     lastBlockPressRef,
     lastAttackPressRef,
-    onGroundPaperHitRef,
     onPaperExplodeRef,
     onArmorBuffRef,
-    onLaserHitRef,
-    onStuckPaperExplodeRef,
-    onApplyDebuffRef,
     playerXRef,
     playerYRef,
     playerStateRef,
@@ -631,10 +647,22 @@ export function useNpcAI({
     projectileRef,
     setProjectile,
     npcAuthorityRef,
-    activeTargetRef,
-    targetsRef,
     currentTargetRef,
-    onRemoteHitRef,
+    getEffectiveTargets,
+    handleProjectileHit,
+    handleMeleeHit,
+    handlePullPlayer,
+    handlePushPlayer,
+    handleRamPushPlayer,
+    handleGrabPlayer,
+    handleThrowStart,
+    handleThrowPlayer,
+    handleDragPlayer,
+    handleBurstHit,
+    handleGroundPaperHit,
+    handleStuckPaperExplode,
+    handleLaserHit,
+    handleApplyDebuff,
   ]);
 
   const updateNpc = (partial: Partial<NPCBattleState>) => {

@@ -1,5 +1,6 @@
 import type { BattleObstacle } from "@/utils/types/maps/battle";
 import type { BattleManaApi } from "@/contexts/BattleManaContext";
+import type { BattleCoop } from "@/hooks/battle/coop/types";
 import type { useBlinkAnimation } from "@/hooks/battle/player/characters/natsuki/blinkAnimation/useBlinkAnimation";
 import { useBattleStageSetup } from "@/hooks/battle/useBattleStageSetup";
 import { useBattleRefs } from "@/hooks/battle/utilities/useRefs";
@@ -47,4 +48,6 @@ export type BattleCombatProps = {
   divergentFistActive: boolean;
   divergentFistRef: RefObject<boolean>;
   setDivergentFistActive: React.Dispatch<React.SetStateAction<boolean>>;
+  /** Contrato de rede do co-op: autoridade, alvo remoto e envio de golpes. */
+  coop?: BattleCoop;
 };
