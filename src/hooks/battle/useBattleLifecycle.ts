@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { BattleSocketMessage } from "@/hooks/useBattleSocket";
 
 export type BattleResult = "victory" | "defeat" | null;
@@ -8,36 +8,54 @@ export type BattleRewards = {
   lastRewards?: unknown;
 };
 
+type Subscribe = (
+  type: string,
+  listener: (msg: BattleSocketMessage) => void,
+) => () => void;
+
+/**
+ * Resultado da batalha anunciado pelo líder. A recepção é por assinatura: com
+ * `lastMessage` um `battleSnapshot` (20 Hz) chegando logo depois engolia o
+ * `battleEnd` e o guest ficava preso na arena.
+ */
 export function useBattleLifecycle({
   isHost,
   send,
-  lastMessage,
+  subscribe,
 }: {
   isHost: boolean;
   send: (msg: BattleSocketMessage) => void;
-  lastMessage: BattleSocketMessage | null;
+  subscribe: Subscribe;
 }) {
   const [remoteResult, setRemoteResult] = useState<BattleResult>(null);
   const [remoteRewards, setRemoteRewards] = useState<BattleRewards | null>(
     null,
   );
 
-  // Guest: recebe resultado
   useEffect(() => {
     if (isHost) return;
-    if (lastMessage?.type === "battleEnd") {
-      setRemoteResult((lastMessage.result as BattleResult) ?? null);
+    return subscribe("battleEnd", (msg) => {
+      setRemoteResult((msg.result as BattleResult) ?? null);
       setRemoteRewards({
-        xpReward: lastMessage.xpReward as number | undefined,
-        lastRewards: lastMessage.lastRewards,
+        xpReward: msg.xpReward as number | undefined,
+        lastRewards: msg.lastRewards,
       });
-    }
-  }, [isHost, lastMessage]);
+    });
+  }, [isHost, subscribe]);
 
-  const notifyResult = (result: BattleResult, rewards?: BattleRewards) => {
-    if (!isHost) return;
-    send({ type: "battleEnd", result, ...rewards });
-  };
+  const notifyResult = useCallback(
+    (result: BattleResult, rewards?: BattleRewards) => {
+      if (!isHost) return;
+      send({ type: "battleEnd", result, ...rewards });
+    },
+    [isHost, send],
+  );
 
-  return { remoteResult, remoteRewards, notifyResult };
+  /** Limpa o resultado recebido quando o líder reinicia a luta. */
+  const clearRemoteResult = useCallback(() => {
+    setRemoteResult(null);
+    setRemoteRewards(null);
+  }, []);
+
+  return { remoteResult, remoteRewards, notifyResult, clearRemoteResult };
 }

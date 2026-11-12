@@ -89,6 +89,7 @@ app.post("/api/online/rooms/:id/join", (req, res) => {
     res.status(400).json({ error: "playerId é obrigatório" });
     return;
   }
+  cancelRemoval(room.id, String(playerId));
   room.players.set(String(playerId), {
     id: String(playerId),
     name: String(playerName ?? "Jogador"),
@@ -106,7 +107,10 @@ app.post("/api/online/rooms/:id/leave", (req, res) => {
     return;
   }
   const { playerId } = req.body ?? {};
-  if (playerId) room.players.delete(String(playerId));
+  if (playerId) {
+    cancelRemoval(room.id, String(playerId));
+    room.players.delete(String(playerId));
+  }
   if (room.players.size === 0) rooms.delete(room.id);
   else broadcastRoom(room);
   res.json({ ok: true });
@@ -183,7 +187,7 @@ const socketMeta = new WeakMap<
 function hasOtherSocket(
   roomId: string,
   playerId: string,
-  except: WebSocket,
+  except: WebSocket | null,
 ): boolean {
   for (const client of wss.clients) {
     if (client === except) continue;
@@ -192,6 +196,44 @@ function hasOtherSocket(
     if (meta?.roomId === roomId && meta?.playerId === playerId) return true;
   }
   return false;
+}
+
+/**
+ * Tolerância entre o último socket de um jogador fechar e ele sair da sala.
+ * Trocar de página (Online → jogo, batalha → exploração) ou dar reload fecha um
+ * socket antes do próximo abrir; remover na hora apagava a sala recém-criada
+ * antes de o host chegar ao jogo e ninguém conseguia encontrá-la.
+ */
+const DISCONNECT_GRACE_MS = 10_000;
+
+const pendingRemovals = new Map<string, ReturnType<typeof setTimeout>>();
+
+function removalKey(roomId: string, playerId: string): string {
+  return `${roomId}:${playerId}`;
+}
+
+function cancelRemoval(roomId: string, playerId: string): void {
+  const key = removalKey(roomId, playerId);
+  const timer = pendingRemovals.get(key);
+  if (timer) clearTimeout(timer);
+  pendingRemovals.delete(key);
+}
+
+/** Remove o jogador da sala se nenhum socket dele voltar dentro da tolerância. */
+function scheduleRemoval(roomId: string, playerId: string): void {
+  cancelRemoval(roomId, playerId);
+  const key = removalKey(roomId, playerId);
+  pendingRemovals.set(
+    key,
+    setTimeout(() => {
+      pendingRemovals.delete(key);
+      const room = rooms.get(roomId);
+      if (!room || hasOtherSocket(roomId, playerId, null)) return;
+      room.players.delete(playerId);
+      if (room.players.size === 0) rooms.delete(room.id);
+      else broadcastRoom(room);
+    }, DISCONNECT_GRACE_MS),
+  );
 }
 
 function broadcastRoom(room: OnlineRoom) {
@@ -241,6 +283,7 @@ wss.on("connection", (ws) => {
       }
       meta.playerId = msg.playerId;
       meta.roomId = msg.roomId;
+      cancelRemoval(msg.roomId, msg.playerId);
       if (!room.players.has(msg.playerId)) {
         room.players.set(msg.playerId, {
           id: msg.playerId,
@@ -257,9 +300,7 @@ wss.on("connection", (ws) => {
       const room = rooms.get(msg.roomId ?? meta.roomId ?? "");
       const playerId = msg.playerId ?? meta.playerId;
       if (room && playerId && !hasOtherSocket(room.id, playerId, ws)) {
-        room.players.delete(playerId);
-        if (room.players.size === 0) rooms.delete(room.id);
-        else broadcastRoom(room);
+        scheduleRemoval(room.id, playerId);
       }
       meta.roomId = undefined;
       meta.playerId = undefined;
@@ -399,9 +440,7 @@ wss.on("connection", (ws) => {
     if (meta?.roomId && meta.playerId) {
       const room = rooms.get(meta.roomId);
       if (room && !hasOtherSocket(meta.roomId, meta.playerId, ws)) {
-        room.players.delete(meta.playerId);
-        if (room.players.size === 0) rooms.delete(room.id);
-        else broadcastRoom(room);
+        scheduleRemoval(room.id, meta.playerId);
       }
     }
     socketMeta.delete(ws);

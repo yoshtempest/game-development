@@ -54,7 +54,7 @@ export function GameApp() {
   const { connected, updateState } = online;
   const {
     send: socketSend,
-    lastMessage: socketLast,
+    subscribe: socketSubscribe,
     connected: socketConnected,
   } = useBattleSocket(online.roomId, online.playerId);
   const navigate = useNavigate();
@@ -135,26 +135,32 @@ export function GameApp() {
   ]);
 
   // Seguidor: navega só quando o anúncio veio do parceiro de guilda e é
-  // endereçado a ele. O líder vai no state para a autoridade do co-op.
+  // endereçado a ele. O líder vai no state para a autoridade do co-op. Por
+  // assinatura: com `lastMessage` o `roomState` que chega junto engolia o
+  // `battleStart` e o parceiro ficava na exploração.
+  const pathnameRef = useLatestRef(location.pathname);
   useEffect(() => {
     if (!connected || !online.guildId) return;
-    if (socketLast?.type !== "battleStart") return;
-    const from = socketLast.from as string | undefined;
-    const to = socketLast.to as string | undefined;
-    const route = socketLast.route as string | undefined;
-    if (!route || to !== online.playerId || from !== online.guildId) return;
-    if (route === location.pathname) return;
-    const state =
-      socketLast.state && typeof socketLast.state === "object"
-        ? (socketLast.state as Record<string, unknown>)
-        : {};
-    void navigate(route, { state: { ...state, battleLeaderId: from } });
+    const guildId = online.guildId;
+    const playerId = online.playerId;
+    return socketSubscribe("battleStart", (msg) => {
+      const from = msg.from as string | undefined;
+      const to = msg.to as string | undefined;
+      const route = msg.route as string | undefined;
+      if (!route || to !== playerId || from !== guildId) return;
+      if (route === pathnameRef.current) return;
+      const state =
+        msg.state && typeof msg.state === "object"
+          ? (msg.state as Record<string, unknown>)
+          : {};
+      void navigate(route, { state: { ...state, battleLeaderId: from } });
+    });
   }, [
     connected,
     online.guildId,
     online.playerId,
-    socketLast,
-    location.pathname,
+    socketSubscribe,
+    pathnameRef,
     navigate,
   ]);
 

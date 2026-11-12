@@ -51,6 +51,11 @@ export type NpcHitIntent = {
  * que chegam para ele.
  */
 export type BattleCoop = {
+  /**
+   * Batalha 2v1 de verdade (online, fora do PvP, com parceiro de guilda na
+   * arena). Só com ela ligada a morte vira espectador em vez de derrota.
+   */
+  active: boolean;
   authoritative: boolean;
   localPlayerId: string;
   remoteTarget: NpcTarget | null;

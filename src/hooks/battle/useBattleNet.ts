@@ -5,6 +5,19 @@ import { useInterpolatedRemotePlayer } from "@/hooks/battle/useInterpolatedRemot
 import type { BattleSnapshot } from "@/hooks/battle/useBattleSnapshot";
 import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
 
+/**
+ * Sem pacote do parceiro há mais que isto, ele conta como fora da luta. O
+ * jogador manda estado a 10 Hz e o líder snapshot a 20 Hz, então 4 s é queda,
+ * não jitter.
+ */
+const REMOTE_STALE_MS = 4_000;
+
+/**
+ * Tempo para o parceiro chegar na arena (navegar + carregar o chunk da
+ * batalha) antes do primeiro pacote. Até lá ele conta como vivo.
+ */
+const REMOTE_JOIN_GRACE_MS = 8_000;
+
 export type BattleRemotePlayer = {
   id: string;
   x: number;
@@ -32,8 +45,10 @@ export function useBattleNet({
   isPvp: boolean;
 }) {
   const online = useOnline();
-  const { connected, reconnecting, send, subscribe, lastMessage } =
-    useBattleSocket(online.roomId, online.playerId);
+  const { connected, reconnecting, send, subscribe } = useBattleSocket(
+    online.roomId,
+    online.playerId,
+  );
 
   // PvP usa o host da sala; co-op usa quem iniciou a batalha.
   const isHost = isPvp
@@ -63,11 +78,22 @@ export function useBattleNet({
     null,
   );
 
+  const [mountedAt] = useState(() => Date.now());
+  const [remoteSeenAt, setRemoteSeenAt] = useState<number | null>(null);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (!online.connected) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [online.connected]);
+
   useEffect(() => {
     if (!isHost) return;
     return subscribe("battlePlayerState", (msg) => {
       const from = msg.from as string | undefined;
       if (remoteId && from && from !== remoteId) return;
+      setRemoteSeenAt(Date.now());
       setRemotePlayer({
         id: from ?? remoteId ?? "",
         x: Number(msg.x ?? 0),
@@ -83,6 +109,7 @@ export function useBattleNet({
   useEffect(() => {
     if (!isGuest) return;
     return subscribe("battleSnapshot", (msg) => {
+      setRemoteSeenAt(Date.now());
       setRemoteSnapshot(msg as unknown as BattleSnapshot);
     });
   }, [isGuest, subscribe]);
@@ -101,13 +128,16 @@ export function useBattleNet({
     };
   }, [isHost, isPvp, remoteId, remotePlayer]);
 
-  // Sem dado do parceiro ainda, assume vivo: um falso "morto" faria o jogador
-  // virar espectador (ou perder) antes do primeiro pacote chegar.
-  const remoteAlive = remoteTarget
-    ? remoteTarget.alive
-    : remoteSnapshot?.player
-      ? remoteSnapshot.player.hp > 0
-      : true;
+  // Parceiro "vivo" = pacote recente e HP > 0. Sem pacote ainda, vale a
+  // tolerância de chegada: um falso "morto" faria o jogador perder antes do
+  // primeiro pacote, e um falso "vivo" eterno deixava o líder caído como
+  // espectador para sempre quando o parceiro nunca chegava ou caía da rede.
+  const remoteFresh =
+    remoteSeenAt != null
+      ? now - remoteSeenAt < REMOTE_STALE_MS
+      : now - mountedAt < REMOTE_JOIN_GRACE_MS;
+  const remoteHp = isHost ? remotePlayer?.hp : remoteSnapshot?.player?.hp;
+  const remoteAlive = remoteFresh && (remoteHp == null || remoteHp > 0);
 
   return {
     connected: online.connected,
@@ -120,7 +150,6 @@ export function useBattleNet({
     remoteId: remoteId ?? null,
     send,
     subscribe,
-    lastMessage,
     remotePlayer,
     interpRemotePlayer,
     remoteSnapshot,

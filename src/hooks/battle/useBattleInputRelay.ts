@@ -4,12 +4,15 @@ import type { BattleSocketMessage } from "@/hooks/useBattleSocket";
 export function useBattleInputRelay({
   isHost,
   send,
-  lastMessage,
+  subscribe,
   enabled = true,
 }: {
   isHost: boolean;
   send: (msg: BattleSocketMessage) => void;
-  lastMessage: BattleSocketMessage | null;
+  subscribe: (
+    type: string,
+    listener: (msg: BattleSocketMessage) => void,
+  ) => () => void;
   /** Só o PvP compartilha um avatar; no co-op cada jogador move o seu. */
   enabled?: boolean;
 }) {
@@ -35,19 +38,20 @@ export function useBattleInputRelay({
     };
   }, [enabled, isHost, send]);
 
-  // Host: aplica inputs remotos via eventos sintéticos
+  // Host: aplica inputs remotos via eventos sintéticos. Por assinatura: dois
+  // inputs no mesmo frame (keydown + keyup de um toque) sumiam com `lastMessage`.
   useEffect(() => {
     if (!enabled || !isHost) return;
-    if (!lastMessage || lastMessage.type !== "input") return;
-    const code = (lastMessage.code as string) ?? "";
-    const key = (lastMessage.key as string) ?? "";
-    const action = (lastMessage.action as string) ?? "";
-    if (!code) return;
-    const evt = new KeyboardEvent(action === "keyup" ? "keyup" : "keydown", {
-      code,
-      key,
-      bubbles: true,
+    return subscribe("input", (msg) => {
+      const code = (msg.code as string) ?? "";
+      const key = (msg.key as string) ?? "";
+      const action = (msg.action as string) ?? "";
+      if (!code) return;
+      const evt = new KeyboardEvent(
+        action === "keyup" ? "keyup" : "keydown",
+        { code, key, bubbles: true },
+      );
+      window.dispatchEvent(evt);
     });
-    window.dispatchEvent(evt);
-  }, [enabled, isHost, lastMessage]);
+  }, [enabled, isHost, subscribe]);
 }

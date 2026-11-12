@@ -13,6 +13,7 @@ import type { BattleNet } from "@/hooks/battle/useBattleNet";
 import type { NpcHitIntent } from "@/hooks/battle/coop/types";
 import type { useNpcAI } from "@/hooks/battle/npc/ai/useAi";
 import type { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
+import type { BattleSnapshot } from "@/hooks/battle/useBattleSnapshot";
 
 type Props = {
   player: Player;
@@ -27,6 +28,10 @@ type Props = {
   lastRewards: unknown;
   battleLeaderId?: string;
   isPvp?: boolean;
+  /** Batalha 2v1 (ver `BattleCoop.active`). */
+  coopActive?: boolean;
+  /** Derrota local do guest quando o líder anuncia a derrota da dupla. */
+  runCoopDefeat?: () => void;
 };
 
 export function useOnlineBattle({
@@ -40,6 +45,8 @@ export function useOnlineBattle({
   showDefeatBase,
   xpReward,
   lastRewards,
+  coopActive = false,
+  runCoopDefeat,
 }: Props) {
   const navigate = useNavigate();
   const online = useOnline();
@@ -48,7 +55,6 @@ export function useOnlineBattle({
     connected: battleSocketConnected,
     reconnecting: battleSocketReconnecting,
     send: battleSocketSend,
-    lastMessage: battleSocketLast,
     subscribe: battleSocketSubscribe,
     isHost: isBattleHost,
     isGuest: isBattleGuest,
@@ -64,30 +70,33 @@ export function useOnlineBattle({
   // ── Snapshot do líder ────────────────────────────────────────────────────
   // O envio vive aqui porque o estado autoritativo (player/NPC/HPs) só existe
   // depois da cena; a recepção fica no `useBattleNet` (montado antes dela).
+  const buildSnapshot = (): BattleSnapshot => ({
+    t: Date.now(),
+    player: {
+      x: player.x,
+      y: player.y,
+      hp: battle.playerHP,
+      state: player.state,
+      direction: player.battleDirection,
+      character: player.character,
+    },
+    npc: {
+      x: npc.x,
+      y: npc.y,
+      hp: battle.npcHP,
+      state: npc.state,
+      direction: npc.direction,
+      hidden: npc.hidden,
+      phase: battle.npcPhase ?? 1,
+      projectiles: npc.projectiles,
+    },
+  });
+  const buildSnapshotRef = useLatestRef(buildSnapshot);
+
   useBattleSnapshot({
     isHost: isBattleHost,
     send: battleSocketSend,
-    getState: () => ({
-      t: Date.now(),
-      player: {
-        x: player.x,
-        y: player.y,
-        hp: battle.playerHP,
-        state: player.state,
-        direction: player.battleDirection,
-        character: player.character,
-      },
-      npc: {
-        x: npc.x,
-        y: npc.y,
-        hp: battle.npcHP,
-        state: npc.state,
-        direction: npc.direction,
-        hidden: npc.hidden,
-        phase: battle.npcPhase ?? 1,
-        projectiles: npc.projectiles,
-      },
-    }),
+    getState: buildSnapshot,
   });
 
   const interpolatedRemoteSnapshot = useInterpolatedSnapshot(
@@ -451,21 +460,12 @@ export function useOnlineBattle({
   // Guest: recebe dano do host (só PvP)
   useEffect(() => {
     if (!isPvp || isBattleHost) return;
-    if (battleSocketLast?.type !== "opponentDamage") return;
-    const amount = Number(battleSocketLast.amount ?? 0);
-    setOpponentHP((hp) => Math.max(0, hp - amount));
-  }, [isPvp, isBattleHost, battleSocketLast]);
-
-  // Guest: acompanha retry/leave do host
-  useEffect(() => {
-    if (isBattleHost) return;
-    if (battleSocketLast?.type === "battleRetry") {
-      window.location.reload();
-    }
-    if (battleSocketLast?.type === "battleLeave") {
-      void navigate(-1);
-    }
-  }, [isBattleHost, battleSocketLast, navigate]);
+    return battleSocketSubscribe("opponentDamage", (message) => {
+      const amount = Number(message.amount ?? 0);
+      if (!Number.isFinite(amount) || amount <= 0) return;
+      setOpponentHP((hp) => Math.max(0, hp - amount));
+    });
+  }, [isPvp, isBattleHost, battleSocketSubscribe]);
 
   // Guest: solicita re-sync ao conectar
   useEffect(() => {
@@ -474,51 +474,18 @@ export function useOnlineBattle({
     battleSocketSend({ type: "requestSync" });
   }, [isBattleHost, battleSocketConnected, battleSocketSend]);
 
-  // Host: responde a requestSync com snapshot completo
+  // Host: responde a requestSync com snapshot completo. Antes o effect
+  // dependia de `lastMessage` + todo o estado da cena e reenviava o snapshot a
+  // cada frame enquanto `requestSync` fosse a última mensagem.
   useEffect(() => {
     if (!isBattleHost) return;
-    if (battleSocketLast?.type !== "requestSync") return;
-    battleSocketSend({
-      type: "battleSnapshot",
-      t: Date.now(),
-      player: {
-        x: player.x,
-        y: player.y,
-        hp: battle.playerHP,
-        state: player.state,
-        direction: player.battleDirection,
-        character: player.character,
-      },
-      npc: {
-        x: npc.x,
-        y: npc.y,
-        hp: battle.npcHP,
-        state: npc.state,
-        direction: npc.direction,
-        hidden: npc.hidden,
-        phase: battle.npcPhase ?? 1,
-        projectiles: npc.projectiles,
-      },
+    return battleSocketSubscribe("requestSync", () => {
+      battleSocketSend({
+        type: "battleSnapshot",
+        ...buildSnapshotRef.current(),
+      });
     });
-  }, [
-    isBattleHost,
-    battleSocketLast,
-    battleSocketSend,
-    player.x,
-    player.y,
-    player.state,
-    player.battleDirection,
-    player.character,
-    battle.playerHP,
-    npc.x,
-    npc.y,
-    npc.state,
-    npc.direction,
-    npc.hidden,
-    npc.projectiles,
-    battle.npcHP,
-    battle.npcPhase,
-  ]);
+  }, [isBattleHost, battleSocketSubscribe, battleSocketSend, buildSnapshotRef]);
 
   useEffect(() => {
     if (isBattleHost) return;
@@ -532,15 +499,53 @@ export function useOnlineBattle({
   useBattleInputRelay({
     isHost: isBattleHost,
     send: battleSocketSend,
-    lastMessage: battleSocketLast,
+    subscribe: battleSocketSubscribe,
     enabled: isPvp,
   });
 
-  const { remoteResult, remoteRewards, notifyResult } = useBattleLifecycle({
-    isHost: isBattleHost,
-    send: battleSocketSend,
-    lastMessage: battleSocketLast,
-  });
+  const { remoteResult, remoteRewards, notifyResult, clearRemoteResult } =
+    useBattleLifecycle({
+      isHost: isBattleHost,
+      send: battleSocketSend,
+      subscribe: battleSocketSubscribe,
+    });
+
+  // Guest: acompanha retry/leave do host. O retry reinicia a luta local em vez
+  // de `location.reload()` — o reload apagava sala e guilda da memória e o
+  // guest caía da partida online.
+  const handleRetryRef = useLatestRef(handleRetry);
+  const coopDefeatRanRef = useRef(false);
+  useEffect(() => {
+    if (isBattleHost) return;
+    const offRetry = battleSocketSubscribe("battleRetry", () => {
+      coopDefeatRanRef.current = false;
+      clearRemoteResult();
+      handleRetryRef.current();
+    });
+    const offLeave = battleSocketSubscribe("battleLeave", () => {
+      void navigate(-1);
+    });
+    return () => {
+      offRetry();
+      offLeave();
+    };
+  }, [
+    isBattleHost,
+    battleSocketSubscribe,
+    clearRemoteResult,
+    handleRetryRef,
+    navigate,
+  ]);
+
+  // Guest no co-op: a derrota da dupla chega pelo líder. O guest roda a própria
+  // derrota uma vez (morte/tempo do personagem dele), já que ao cair só virou
+  // espectador.
+  useEffect(() => {
+    if (!isBattleGuest || !coopActive || remoteResult !== "defeat") return;
+    if (coopDefeatRanRef.current) return;
+    coopDefeatRanRef.current = true;
+    runCoopDefeat?.();
+  }, [isBattleGuest, coopActive, remoteResult, runCoopDefeat]);
 
   const handleRetrySync = () => {
     handleRetry();
@@ -596,7 +601,6 @@ export function useOnlineBattle({
     battleSocketConnected,
     battleSocketReconnecting,
     battleSocketSend,
-    battleSocketLast,
     remotePlayerState,
     interpRemotePlayer,
     guestHasSnapshot,

@@ -52,6 +52,7 @@ import { BabidiMachineGama } from "@/components/Game/Battle/Entities/Babidi/Mach
 import { RemoteResultOverlay } from "@/components/Game/Battle/Overlay/RemoteResult";
 import { ConnectionOverlay } from "@/components/Game/Battle/Overlay/Connection";
 import { OnlineBattleOverlay } from "@/components/Game/Battle/Overlay/OnlineBattle";
+import { CoopSpectatorOverlay } from "@/components/Game/Battle/Overlay/CoopSpectator";
 import { DrikaSigiloOverlay } from "@/components/Game/Battle/Overlay/DrikaSigilo";
 import { getBossSizeMultiplier } from "@/utils/npc/getSpritePath";
 import { playerAbilityPath } from "@/utils/paths";
@@ -109,8 +110,11 @@ export function BattleScene(props: Props) {
 
   // Contrato da cena com a IA: só o líder simula; o guest espelha o NPC e
   // resolve localmente os golpes endereçados a ele.
+  const coopActive =
+    online.connected && !isPvp && (props.playerCount ?? 1) > 1;
   const coop = useMemo<BattleCoop>(
     () => ({
+      active: coopActive,
       authoritative: !battleNet.isGuest,
       localPlayerId: online.playerId,
       remoteTarget: battleNet.remoteTarget,
@@ -118,6 +122,7 @@ export function BattleScene(props: Props) {
       sendNpcHit,
     }),
     [
+      coopActive,
       battleNet.isGuest,
       battleNet.remoteTarget,
       battleNet.remoteAlive,
@@ -149,6 +154,8 @@ export function BattleScene(props: Props) {
     handleCloseOutro,
     handleRetry,
     handleContinue,
+    coopSpectator,
+    runCoopDefeat,
     navigate,
     showIntro,
     skipIntro,
@@ -307,6 +314,8 @@ export function BattleScene(props: Props) {
     battleLeaderId,
     isPvp,
     net: battleNet,
+    coopActive,
+    runCoopDefeat,
   });
 
   const {
@@ -332,6 +341,10 @@ export function BattleScene(props: Props) {
   // No PvP os dois controlam a mesma luta (o guest espelha o host). No co-op o
   // guest tem avatar próprio e precisa de controle para andar/atacar.
   if (netIsGuest && isPvp) {
+    controlsDisabled = true;
+  }
+  // Espectador do co-op: caído, sem agir até a dupla vencer ou cair.
+  if (coopSpectator) {
     controlsDisabled = true;
   }
 
@@ -944,6 +957,10 @@ export function BattleScene(props: Props) {
       <RemoteResultOverlay
         visible={!isBattleHost && !!remoteResult}
         result={remoteResult}
+      />
+
+      <CoopSpectatorOverlay
+        visible={coopSpectator && !showVictory && !showDefeat}
       />
 
       <ConnectionOverlay

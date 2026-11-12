@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useNavigate, useLocation } from "react-router";
 import { useBattleMana } from "@/contexts/BattleManaContext";
@@ -39,6 +39,7 @@ import { loadBestTime, saveBestTime } from "@/utils/bestTime";
 import { recordWin } from "@/utils/rewards";
 import { computeElapsedBattleTime } from "@/hooks/battle/time/computeElapsedBattleTime";
 import { INVOCATION_MS } from "@/services/npc/attacks/hungryKing/state";
+import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import type { LootBagContents } from "@/utils/types/battle/loot";
 import type { BattleSceneProps } from "./types";
 
@@ -378,6 +379,9 @@ export function useBattleScene({
 
   const battleLootContentsRef = useRef<LootBagContents[]>([]);
 
+  // Jogador local caído no co-op, aguardando o parceiro vencer ou cair.
+  const [coopSpectator, setCoopSpectator] = useState(false);
+
   const onPlayerDeathRef = useLatestRef(() => {
     if (rewindFrames != null) {
       battle.isEnding.current = true;
@@ -396,6 +400,15 @@ export function useBattleScene({
     }
 
     if (tryVastolordRevivalRef.current()) {
+      return;
+    }
+
+    // Co-op (regra B do #538): quem cai vira espectador enquanto o parceiro
+    // estiver de pé. O guest nunca decide a derrota sozinho — espera o
+    // `battleEnd` do líder, que é quem enxerga os dois HPs.
+    if (coop?.active && (!coop.authoritative || coop.remoteAlive)) {
+      setCoopSpectator(true);
+      setPlayer((p) => ({ ...p, state: "fallen" }));
       return;
     }
 
@@ -426,7 +439,9 @@ export function useBattleScene({
       battle.setNpcHP(battle.npcMaxHp);
       return;
     }
-    setBattleHP(player.character, battle.playerHP);
+    // Espectador do co-op vence com HP 0; salvar 0 marcaria o personagem como
+    // derrotado (modo difícil) mesmo com a vitória da dupla.
+    setBattleHP(player.character, Math.max(1, battle.playerHP));
     const mana = battleManaRef.current;
     if (mana) {
       setBattleMana(
@@ -792,7 +807,7 @@ export function useBattleScene({
     npcData.class,
   ]);
 
-  const { handleRetry, defeatElapsed } = useDefeatFlow({
+  const { handleRetry: handleRetryBase, defeatElapsed } = useDefeatFlow({
     player,
     setBattleHP,
     setBattleMana,
@@ -838,6 +853,50 @@ export function useBattleScene({
     resetPortals: babidiResetPortals,
   });
 
+  const coopActive = coop?.active ?? false;
+  const coopAuthoritative = coop?.authoritative ?? true;
+  const coopRemoteAlive = coop?.remoteAlive ?? true;
+  const isCoopGuest = coopActive && !coopAuthoritative;
+
+  // O guest nasce no spawn do parceiro: `BATTLE_DEFAULT_STATE` (aplicado pelo
+  // `setMode("battle")` no mount e pelo `resetBattleState` do retry) põe todo
+  // mundo em `BATTLE_SPAWN.player`, e os dois avatares ficavam sobrepostos.
+  const coopSpawnedRef = useRef(false);
+  useEffect(() => {
+    if (!isCoopGuest || player.mode !== "battle") return;
+    if (coopSpawnedRef.current) return;
+    coopSpawnedRef.current = true;
+    setPlayer((p) => ({ ...p, x: BATTLE_SPAWN.coopPlayer.x }));
+  }, [isCoopGuest, player.mode, setPlayer]);
+
+  // Líder caído + parceiro caído = derrota da dupla. O `runDefeat` liga o
+  // `showDefeat`, que o `useOnlineBattle` transforma no `battleEnd` do guest.
+  const coopDefeatRanRef = useRef(false);
+  useEffect(() => {
+    if (!coopSpectator || !coopActive || !coopAuthoritative) return;
+    if (coopRemoteAlive || coopDefeatRanRef.current) return;
+    coopDefeatRanRef.current = true;
+    runDefeatRef.current();
+  }, [coopSpectator, coopActive, coopAuthoritative, coopRemoteAlive]);
+
+  const handleRetry = useCallback(() => {
+    setCoopSpectator(false);
+    coopDefeatRanRef.current = false;
+    handleRetryBase();
+    if (isCoopGuest) {
+      setPlayer((p) => ({ ...p, x: BATTLE_SPAWN.coopPlayer.x }));
+    }
+  }, [handleRetryBase, isCoopGuest, setPlayer]);
+
+  /**
+   * Derrota local disparada de fora (guest recebendo o `battleEnd` do líder):
+   * registra morte/tempo do próprio personagem, que o guest não fez ao cair
+   * porque virou espectador.
+   */
+  const runCoopDefeat = useCallback(() => {
+    runDefeatRef.current();
+  }, []);
+
   // Intro do alfa hungryDog: câmera foca no alfa enquanto ele invoca (2s),
   // sem congelar a batalha (a animação é dirigida pela IA do NPC).
   const alfaIntroFocus: CameraFocus | null =
@@ -871,6 +930,8 @@ export function useBattleScene({
     handleCloseOutro,
     handleRetry,
     handleContinue,
+    coopSpectator,
+    runCoopDefeat,
     navigate,
     showIntro,
     skipIntro,

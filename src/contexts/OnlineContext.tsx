@@ -9,6 +9,11 @@ import {
   type ReactNode,
 } from "react";
 
+import {
+  ONLINE_GUILD_SESSION_KEY,
+  ONLINE_ROOM_SESSION_KEY,
+} from "@/data/storageKeys";
+
 export type OnlinePlayer = {
   id: string;
   name: string;
@@ -60,6 +65,29 @@ const OnlineContext = createContext<OnlineContextValue | null>(null);
 
 const PLAYER_ID_KEY = "jomasio_online_player_id";
 
+/**
+ * sessionStorage (e não localStorage): sala e guilda são da aba. Duas abas no
+ * mesmo navegador — o jeito comum de testar host/guest — não podem herdar a
+ * sala uma da outra. O acesso pode lançar (modo privado/bloqueado), e online é
+ * opcional, então a falha vira "sem sessão".
+ */
+function readSession(key: string): string | null {
+  try {
+    return sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writeSession(key: string, value: string | null): void {
+  try {
+    if (value) sessionStorage.setItem(key, value);
+    else sessionStorage.removeItem(key);
+  } catch {
+    return;
+  }
+}
+
 function getPlayerId(): string {
   let id = localStorage.getItem(PLAYER_ID_KEY);
   if (!id) {
@@ -77,7 +105,9 @@ export function OnlineProvider({ children }: { children: ReactNode }) {
   const [roomId, setRoomId] = useState<string | null>(null);
   const [room, setRoom] = useState<OnlineRoom | null>(null);
   const [rooms, setRooms] = useState<OnlineRoom[]>([]);
-  const [guildId, setGuildId] = useState<string | null>(null);
+  const [guildId, setGuildId] = useState<string | null>(() =>
+    readSession(ONLINE_GUILD_SESSION_KEY),
+  );
   const stateRef = useRef<{
     scene?: string;
     x?: number;
@@ -151,9 +181,36 @@ export function OnlineProvider({ children }: { children: ReactNode }) {
     } catch {
       // ignore
     }
+    writeSession(ONLINE_ROOM_SESSION_KEY, null);
     setRoomId(null);
     setRoom(null);
+    setGuildId(null);
   }, [roomId, playerId]);
+
+  // Reload (retry, troca de slot, F5) apagava sala e guilda da memória e o
+  // jogador saía da partida sem perceber. O socket fechado já o tirou da sala
+  // no servidor, então a volta é um `join` de novo; sala que sumiu limpa tudo.
+  const restoredRef = useRef(false);
+  useEffect(() => {
+    if (restoredRef.current) return;
+    restoredRef.current = true;
+    const storedRoom = readSession(ONLINE_ROOM_SESSION_KEY);
+    if (!storedRoom) return;
+    void joinRoom(storedRoom).then((joined) => {
+      if (joined) return;
+      writeSession(ONLINE_ROOM_SESSION_KEY, null);
+      writeSession(ONLINE_GUILD_SESSION_KEY, null);
+      setGuildId(null);
+    });
+  }, [joinRoom]);
+
+  useEffect(() => {
+    if (roomId) writeSession(ONLINE_ROOM_SESSION_KEY, roomId);
+  }, [roomId]);
+
+  useEffect(() => {
+    writeSession(ONLINE_GUILD_SESSION_KEY, guildId);
+  }, [guildId]);
 
   useEffect(() => {
     stateRef.current = { ...stateRef.current, guildId };
