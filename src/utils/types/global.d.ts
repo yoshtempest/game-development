@@ -749,6 +749,12 @@ declare global {
      * não reduzir, e os golpes de área que varrem summons.
      */
     armor: DamageArmor;
+    /**
+     * Dano por tick do sangramento ativo neste summon. Fica no próprio summon
+     * porque quem aplica (pet hungryDeath) escala o valor com as estrelas;
+     * ausente = sangramento padrão.
+     */
+    bleedTickDamage?: number;
   };
 
   export type SoundId =
