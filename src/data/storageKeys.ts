@@ -38,6 +38,8 @@ export const SHOW_COMBO_ACTION_KEY = "showComboAction";
 export const SHOW_HIGHLIGHT_KEY = "showHighlight";
 export const SHOW_ABILITY_INTRO_KEY = "showAbilityIntro";
 export const SHARED_XP_KEY = "sharedXp";
+/** Idioma escolhido no menu de config. Global ao aparelho, não por slot. */
+export const LANGUAGE_KEY = "game_language";
 export const REDEEMED_CARDS_KEY = "redeemed_cards";
 export const GROUND_ITEMS_KEY = "ground_items";
 export const FOOTBALLCOURT_DOGS_KEY = "footballcourt_dog_spots";
