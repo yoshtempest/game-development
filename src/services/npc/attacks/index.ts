@@ -25,6 +25,7 @@ import { JhowsimarAttack } from "./jhowsimar";
 import { LeviathanAttack } from "./leviathan";
 import { LupitaAttack } from "./lupita";
 import { MadameAttack } from "./madame";
+import { MahoragaAttack } from "./mahoraga";
 import { ManimAttack } from "./manim";
 import { MaugreloAttack } from "./maugrelo";
 import { MauraoAttack } from "./maurao";
@@ -119,6 +120,9 @@ export const npcAttacks = {
   /* Lagoa do Canto */
   hungryPig: new HungryPigAttack("hungryPig"),
   technoblade: new TechnobladeAttack("technoblade"),
+
+  /* Shibuya (evento diário) */
+  mahoraga: new MahoragaAttack("mahoraga"),
 
   /* Training */
   dummy: new DummyAttack(),

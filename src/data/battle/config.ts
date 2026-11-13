@@ -246,6 +246,16 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     background: sceneBackgrounds.CombatTutorial,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
   },
+  mahoraga: {
+    npcType: "mahoraga",
+    onVictory: ({ navigate }) => {
+      void navigate(-1);
+    },
+    victoryDescription:
+      "Você exorcizou o Mahoraga antes que a roda girasse de novo",
+    background: sceneBackgrounds.CafeteriaBattle,
+    audioSrc: backgroundAudioPath("/battle/DarkSouls.m4a"),
+  },
   trueVandinha: {
     npcType: "trueVandinha",
     onVictory: ({ navigate }) => {
@@ -278,6 +288,7 @@ export const ROUTE_TO_BATTLE_KEY: Record<string, string> = {
   "/battle/technoblade": "technoblade",
   "/battle/vandinhafragment": "vandinha",
   "/battle/truevandinha": "trueVandinha",
+  "/battle/mahoraga": "mahoraga",
   "/training": "training",
   "/battle/pvp": "pvp",
 };
