@@ -548,6 +548,14 @@ declare global {
     | "withStaff"
     | "withPocketKnife";
 
+  /**
+   * Animação de exploração escolhida no menu "Animações". É estado de pose,
+   * não `PlayerState`: o `PlayerState` é da batalha e tem `animationFlow`
+   * exaustivo, enquanto a animação de exploração só troca o sprite parado e
+   * some no primeiro passo.
+   */
+  type ExploreEmote = "sitting";
+
   type Player = {
     gridX: number;
     gridY: number;
@@ -564,6 +572,8 @@ declare global {
     movementSpeed: number;
     hasPeru?: boolean;
     moving?: boolean;
+    /** Ausente = em pé. Qualquer tentativa de andar ou entrar em batalha limpa. */
+    emote?: ExploreEmote;
     machineGamaControl?: boolean;
     grabbedUntil?: number;
     bleedUntil: number;

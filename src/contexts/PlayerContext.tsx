@@ -87,6 +87,8 @@ type PlayerActionsContextType = {
   setMap: (map: number[][]) => void;
   setHeightMap: (heightMap: number[][]) => void;
   setMode: (mode: PlayerMode) => void;
+  /** `null` levanta o jogador. Só vale na exploração — em batalha é ignorado. */
+  setEmote: (emote: ExploreEmote | null) => void;
   restoreMode: () => void;
   resetBattleState: () => void;
   setBattleCollision: (params: CollisionParams) => void;
@@ -386,12 +388,21 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         ...p,
         mode,
         ...(mode === "battle" && p.mode !== "battle"
-          ? BATTLE_DEFAULT_STATE
+          ? { ...BATTLE_DEFAULT_STATE, emote: undefined }
           : {}),
       }));
       if (mode === "menu" && playerModeRef.current !== "menu") {
         previousModeRef.current = playerModeRef.current;
       }
+    },
+    [setPlayer],
+  );
+
+  const setEmote = useCallback(
+    (emote: ExploreEmote | null) => {
+      setPlayer((p) =>
+        p.mode === "battle" ? p : { ...p, emote: emote ?? undefined },
+      );
     },
     [setPlayer],
   );
@@ -494,6 +505,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       setMap,
       setHeightMap,
       setMode,
+      setEmote,
       restoreMode,
       resetBattleState,
       setBattleCollision,
@@ -557,6 +569,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       setMap,
       setHeightMap,
       setMode,
+      setEmote,
       restoreMode,
       resetBattleState,
       setBattleCollision,
