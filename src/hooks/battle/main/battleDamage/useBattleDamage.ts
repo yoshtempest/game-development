@@ -235,52 +235,62 @@ export function useBattleDamage({
     ],
   );
 
-  // Expansão de Domínio (burst): dano especial em TODOS os inimigos da arena.
-  const handleDomainBurst = useCallback(() => {
-    if (battle.isEnding.current) return;
+  /**
+   * Expansão de Domínio (burst): dano especial em TODOS os inimigos da arena.
+   * Os fatores vêm do `DomainExpansionDefinition` resolvido — variante de forma
+   * (ex.: Vastolord) bate mais forte pelo mesmo funil.
+   */
+  const handleDomainBurst = useCallback(
+    (
+      mainMultiplier: number = DOMAIN_BURST_MAIN_MULTIPLIER,
+      summonMultiplier: number = DOMAIN_BURST_SUMMON_MULTIPLIER,
+    ) => {
+      if (battle.isEnding.current) return;
 
-    const burstKind = getAbilityDamageType("domainBurst");
+      const burstKind = getAbilityDamageType("domainBurst");
 
-    battle.playerHit(
-      DOMAIN_BURST_MAIN_MULTIPLIER * specialDamageRatio,
-      true,
-      true,
-      burstKind,
-    );
+      battle.playerHit(
+        mainMultiplier * specialDamageRatio,
+        true,
+        true,
+        burstKind,
+      );
 
-    for (const summon of summons) {
-      damageSummon({
-        target: { id: summon.id, x: summon.x, y: summon.y },
-        multiplier: DOMAIN_BURST_SUMMON_MULTIPLIER * specialDamageRatio,
-        source: "other",
-        damageKind: burstKind,
-        player,
-        playerClass,
-        progress,
-        playerHP: battle.playerHP,
-        playerMaxHp: battle.playerMaxHp,
-        vampirism: battle.vampirism,
-        summons,
-        setSummons,
-        giveSummonRewards,
-        spawnDamageRef: refs.spawnDamageRef,
-        registerHitRef: refs.registerHitRef,
-        setPlayerHP: battle.setPlayerHP,
-        deliciaSetter: battle.setDelicia,
-        hitsToSpecial: battle.hitsToSpecial,
-      });
-    }
-  }, [
-    battle,
-    giveSummonRewards,
-    player,
-    playerClass,
-    progress,
-    refs,
-    setSummons,
-    summons,
-    specialDamageRatio,
-  ]);
+      for (const summon of summons) {
+        damageSummon({
+          target: { id: summon.id, x: summon.x, y: summon.y },
+          multiplier: summonMultiplier * specialDamageRatio,
+          source: "other",
+          damageKind: burstKind,
+          player,
+          playerClass,
+          progress,
+          playerHP: battle.playerHP,
+          playerMaxHp: battle.playerMaxHp,
+          vampirism: battle.vampirism,
+          summons,
+          setSummons,
+          giveSummonRewards,
+          spawnDamageRef: refs.spawnDamageRef,
+          registerHitRef: refs.registerHitRef,
+          setPlayerHP: battle.setPlayerHP,
+          deliciaSetter: battle.setDelicia,
+          hitsToSpecial: battle.hitsToSpecial,
+        });
+      }
+    },
+    [
+      battle,
+      giveSummonRewards,
+      player,
+      playerClass,
+      progress,
+      refs,
+      setSummons,
+      summons,
+      specialDamageRatio,
+    ],
+  );
 
   return {
     registerHitRef,
