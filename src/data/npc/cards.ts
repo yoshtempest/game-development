@@ -478,3 +478,20 @@ export function rollCardDrop(npcType: string): NpcCard | null {
   if (Math.random() >= CARD_CHANCE) return null;
   return card;
 }
+
+/** Prefixo que `makeCard` usa para transformar `npcType` em id de item. */
+const CARD_ITEM_PREFIX = "card_";
+
+/**
+ * Resolve o NPC dono de uma carta a partir do id do item.
+ *
+ * A UI genérica de inventário/drops só conhece o `ItemId`; é por aqui que ela
+ * descobre que o item é uma carta e precisa da arte animada do NPC. Volta
+ * `null` para qualquer item que não seja carta registrada — inclusive id de
+ * save antigo cujo NPC saiu de `NPC_CARDS`.
+ */
+export function getCardNpcType(itemId: string): string | null {
+  if (!itemId.startsWith(CARD_ITEM_PREFIX)) return null;
+  const card = NPC_CARDS[itemId.slice(CARD_ITEM_PREFIX.length)];
+  return card ? card.npcType : null;
+}
