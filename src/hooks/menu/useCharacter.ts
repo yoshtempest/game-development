@@ -12,6 +12,7 @@ import { getSelectableCharacters } from "@/gameRules/menu/selectableCharacters";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useStableCallback } from "@/hooks/useStableCallback";
 import { useMenuSFX } from "@/hooks/menu/useMenuSFX";
+import { useCharacterVoice } from "@/hooks/audio/useCharacterVoice";
 import { useFlags } from "@/contexts/FlagContext";
 
 export function useCharacterMenu(
@@ -57,7 +58,11 @@ export function useCharacterMenu(
   }, [selectedIndex]);
 
   const handleChooseCharacterRef = useRef<(id: CharacterId) => void>(() => {});
-  handleChooseCharacterRef.current = (id: CharacterId) => setCharacter(id);
+  const playVoice = useCharacterVoice();
+  handleChooseCharacterRef.current = (id: CharacterId) => {
+    setCharacter(id);
+    playVoice(id);
+  };
   const playMoveRef = useLatestRef(playMove);
   const playSelectRef = useLatestRef(playSelect);
   const pushControlsRef = useLatestRef(pushControls);
