@@ -2,7 +2,22 @@ import { createCards } from "@/utils/items/createItem";
 import { NPC_CARDS, CLASS_DATA } from "@/data/npc";
 import { npcPath } from "@/utils/paths";
 
-function cardImage(npcType: string): string {
+/**
+ * Arte da carta: o rosto do NPC (issue #497).
+ *
+ * Nem todo NPC tem `face.svg`; quem renderiza a carta deve cair em
+ * `cardFallbackImage` quando o rosto não carregar.
+ */
+export function cardImage(npcType: string): string {
+  return npcPath(`/${npcType}/face.svg`);
+}
+
+/**
+ * Arte antiga da carta (sprite de lado), usada quando o NPC ainda não tem
+ * `face.svg` — todo NPC lutável tem `right.svg`, então a carta nunca fica
+ * sem imagem.
+ */
+export function cardFallbackImage(npcType: string): string {
   return npcPath(`/${npcType}/right.svg`);
 }
 

@@ -1,12 +1,15 @@
 import type { PlayerSnap, NpcSnap, BattleSnap } from "@/utils/types/replay";
 import type { NPCBattleState } from "@/utils/types/npc/npc";
 import type { RefObject } from "react";
-import type { ReplayFrame } from "@/utils/types/replay";
+import type { RewindResurrection } from "@/utils/types/battle/rewind";
 
 export type Props = {
   character: CharacterId;
-  rewindFrames: ReplayFrame[] | null;
-  setRewindFrames: React.Dispatch<React.SetStateAction<ReplayFrame[] | null>>;
+  /** Cinemática do "Retrocesso Temporal" em curso (pausa a batalha). */
+  rewindResurrection: RewindResurrection | null;
+  setRewindResurrection: React.Dispatch<
+    React.SetStateAction<RewindResurrection | null>
+  >;
   performRewindRef: RefObject<() => boolean>;
   setPlayer: React.Dispatch<React.SetStateAction<Player>>;
   setNpcPhase: React.Dispatch<React.SetStateAction<number>>;
@@ -28,5 +31,4 @@ export type Props = {
     setProjectiles: React.Dispatch<React.SetStateAction<Projectile[]>>;
   };
   resetCombo: () => void;
-  getReplayWindow: (windowMs: number) => { frames: ReplayFrame[] } | null;
 };

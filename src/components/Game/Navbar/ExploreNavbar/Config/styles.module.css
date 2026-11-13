@@ -141,3 +141,11 @@
   text-align: center;
   border: var(--size-2) solid var(--primary-color);
 }
+
+.languageHint {
+  max-width: 100%;
+  text-wrap: wrap;
+  text-align: center;
+  color: var(--text-hint);
+  font-size: var(--fs-14);
+}

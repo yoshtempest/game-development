@@ -48,6 +48,8 @@ export const MARSHADOW_VASTOLORD_SPRITES: Partial<Record<PlayerState, string>> =
     airGrab: "attacks/attack",
     airKick: "attacks/attack",
     fallingAttack: "attacks/fallingAttack",
+    /** Habilidade Laser da Forma Vastolord: pose de carga durante o intro. */
+    preLaser: "attacks/preLaser",
     /** Habilidade Laser da Forma Vastolord: segura o sprite de disparo por 3s. */
     laser: "attacks/laser",
   };

@@ -28,7 +28,9 @@ export type BattleCombatActionsProps = {
   weapon: YvelWeapon | undefined;
   summons: ReturnType<typeof useBattleStageSetup>["summons"];
   setSummons: ReturnType<typeof useBattleStageSetup>["setSummons"];
-  giveSummonRewards: ReturnType<typeof useBattleStageSetup>["giveSummonRewards"];
+  giveSummonRewards: ReturnType<
+    typeof useBattleStageSetup
+  >["giveSummonRewards"];
   setPlayerState: ReturnType<typeof useBattleStageSetup>["setPlayerState"];
   ematronComboMultiplierRef: ReturnType<
     typeof useBattleStageSetup

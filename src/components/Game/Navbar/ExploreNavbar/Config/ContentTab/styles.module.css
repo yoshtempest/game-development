@@ -1,0 +1,94 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--fs-8);
+  width: 90%;
+  margin: var(--fs-8) auto;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr;
+  align-items: center;
+  gap: var(--fs-8);
+  padding: var(--size-4) var(--smaller);
+  border: var(--size-2) solid var(--primary-color);
+  border-radius: var(--size-4);
+}
+
+.selected {
+  outline: var(--size-2) solid var(--text-color);
+  background-color: var(--primary-color);
+}
+
+.name {
+  font-weight: bold;
+}
+
+.size {
+  color: var(--text-hint);
+  font-size: var(--fs-13);
+}
+
+.status {
+  text-align: center;
+  font-size: var(--fs-13);
+}
+
+.installed {
+  color: var(--accent-color);
+}
+
+.partial {
+  color: var(--text-color);
+}
+
+.pending {
+  color: var(--text-hint);
+}
+
+.action,
+.allButton {
+  padding: var(--size-4) var(--fs-8);
+  background: transparent;
+  color: var(--text-color);
+  border: var(--size-2) solid var(--accent-color);
+  border-radius: var(--size-4);
+  font-size: var(--fs-13);
+  cursor: pointer;
+}
+
+.action:disabled,
+.allButton:disabled {
+  border-color: var(--primary-color);
+  color: var(--text-hint);
+  cursor: default;
+}
+
+.allButton {
+  padding: var(--fs-8) var(--medium);
+  font-weight: bold;
+}
+
+.hint {
+  margin: 0;
+  color: var(--text-hint);
+  font-size: var(--fs-13);
+}
+
+.error {
+  margin: 0;
+  color: var(--secondary-color);
+  font-size: var(--fs-13);
+}

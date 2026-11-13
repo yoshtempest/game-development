@@ -64,8 +64,7 @@ export function PvpMatchOverlay({ match, opponentName }: Props) {
           Você {wins.me} × {wins.opponent} {opponentName}
         </span>
         <span className={styles.detail}>
-          {bestOf === 1 ? "Duelo único" : `Melhor de ${bestOf}`} · Round{" "}
-          {round}
+          {bestOf === 1 ? "Duelo único" : `Melhor de ${bestOf}`} · Round {round}
         </span>
       </div>
 
