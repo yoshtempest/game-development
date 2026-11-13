@@ -14,6 +14,7 @@ import {
   BLOOD_ICON_SRC,
 } from "@/data/characters/marshadow/marshadowCutIn";
 import type { CutInEnemieOverlay } from "@/utils/types/battle/cutInEnemie";
+import type { BattleOutroResult } from "@/utils/types/battle/outro";
 import { useHitFlash } from "@/hooks/battle/visuals/useHitFlash";
 import styles from "./styles.module.css";
 
@@ -95,6 +96,13 @@ type Props = {
    * Ausente = sem piscada (pet, aliado e visual remoto não passam HP).
    */
   hp?: number;
+  /**
+   * Resultado da batalha do ponto de vista **deste NPC**. Com valor, o sprite
+   * troca para `victory.svg`/`defeat.svg` e fica assim até sair da batalha,
+   * como o retrato do player faz com `outroExpression`. Sem o arquivo, a
+   * cadeia de fallback do `onError` cai no `default.svg`.
+   */
+  outroResult?: BattleOutroResult | null;
 };
 
 const HIT_FLASH_CLASS = ["", styles.hitFlashA, styles.hitFlashB] as const;
@@ -117,6 +125,7 @@ export function NPCBattle({
   npcBleeding = false,
   purpleHole = false,
   hp,
+  outroResult = null,
 }: Props) {
   const { playSound } = useSoundEffects();
   const hitFlash = useHitFlash(hp);
@@ -163,7 +172,9 @@ export function NPCBattle({
     ? npcPathProjectile("/explosion.svg")
     : isHungryDeathRunning
       ? npcPath(`/hungryDeath/run${runFrame + 1}.svg`)
-      : `${basePath}`;
+      : outroResult
+        ? npcPath(`/${npcType}/${outroResult}.svg`)
+        : `${basePath}`;
 
   // Alguns bosses não possuem o sprite resolvido (ex.: idle.svg na 2ª fase).
   // Fazemos fallback em runtime: idle.svg → default.svg → walk.svg.
@@ -243,7 +254,12 @@ export function NPCBattle({
             decoding="async"
             src={resolvedSrc}
             onError={handleSpriteError}
-            className={HIT_FLASH_CLASS[hitFlash.phase]}
+            className={[
+              HIT_FLASH_CLASS[hitFlash.phase],
+              outroResult === "victory" && !isDying ? styles.outroVictory : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
             onAnimationEnd={hitFlash.endFlash}
             style={{
               width: "100%",

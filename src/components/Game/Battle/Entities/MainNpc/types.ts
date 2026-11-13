@@ -1,6 +1,7 @@
 import type { BattleEntitiesBattle } from "@/components/Game/Battle/Entities/types";
 import type { CutInEnemieOverlay } from "@/hooks/battle/player/characters/marshadow/useMarshadowCutInEnemie";
 import { NPCBattle } from "@/components/Game/Entities/Npc/Battle";
+import type { BattleOutroResult } from "@/utils/types/battle/outro";
 
 export type MainNpcProps = {
   x: number;
@@ -16,4 +17,5 @@ export type MainNpcProps = {
   cutInEnemie?: CutInEnemieOverlay | null;
   npcBleeding?: boolean;
   purpleHole?: boolean;
+  outroResult?: BattleOutroResult | null;
 };

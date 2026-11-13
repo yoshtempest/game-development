@@ -32,6 +32,7 @@ import { DomainExpansionEffects } from "@/components/Game/Battle/Effects/Domain/
 import { MugetsuDisintegration } from "@/components/Game/Battle/Effects/Marshadow/MugetsuDisintegration";
 import { NatsukiSphere } from "@/components/Game/Battle/Entities/Projectiles/NatsukiSphere";
 import { BabidiBombDrop } from "./Projectiles/BabidiBombDrop";
+import { getOpponentOutroResult } from "@/gameRules/battle/outro";
 import type { Props } from "./types";
 
 export function BattleEntities({
@@ -127,6 +128,9 @@ export function BattleEntities({
             cutInEnemie={cutInEnemie}
             npcBleeding={npcBleeding}
             purpleHole={purpleHole}
+            outroResult={
+              outroExpression ? getOpponentOutroResult(outroExpression) : null
+            }
           />
 
           <NpcProjectile
