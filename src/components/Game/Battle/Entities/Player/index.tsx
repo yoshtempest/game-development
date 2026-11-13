@@ -31,6 +31,8 @@ type Props = {
   babidiAttackVariant?: BabidiAttackVariant;
   /** Controle do Machine Gama pelo jogador após a expansão de domínio. */
   babidiMachineGamaControl?: boolean;
+  /** Modo Tóxico do babidi em curso. */
+  babidiToxicForm?: boolean;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
   babidiShieldSides?: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
@@ -58,6 +60,7 @@ export function Player({
   mugetsuBlink = null,
   babidiAttackVariant,
   babidiMachineGamaControl = false,
+  babidiToxicForm = false,
   babidiShieldSides,
   onBabidiShieldEnd,
   hakai = false,
@@ -94,6 +97,7 @@ export function Player({
       mugetsuBlink={mugetsuBlink}
       babidiAttackVariant={babidiAttackVariant}
       babidiMachineGamaControl={babidiMachineGamaControl}
+      babidiToxicForm={babidiToxicForm}
       babidiShieldSides={babidiShieldSides}
       onBabidiShieldEnd={onBabidiShieldEnd}
       levelUpParticles={levelUpParticles}

@@ -11,6 +11,28 @@ import { getIdleFrames, IDLE_FRAME_MS } from "@/data/sprites/idleFrames";
 import { resolvePlayerSprite } from "@/components/Game/Entities/Player/Battle/utils/resolvePlayerSprite";
 import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
 
+/**
+ * Sprites do Modo Tóxico que já falharam ao carregar nesta sessão.
+ *
+ * A arte de `babidi/inFight/toxicForm/` ainda não existe para todo estado:
+ * lembrar a falha evita um 404 (e um frame de imagem quebrada) a cada troca
+ * de estado — depois da primeira falha o estado vai direto para o sprite
+ * normal com o tint verde de placeholder. É por sessão de propósito: a arte
+ * adicionada depois aparece no próximo reload, sem precisar de flag.
+ */
+const MISSING_TOXIC_SPRITES = new Set<string>();
+
+/**
+ * Caminho esperado do sprite do Modo Tóxico: a mesma árvore de `inFight/`
+ * (`withGun/`, `withMissile/`, `landing.svg`…) espelhada sob
+ * `inFight/toxicForm/`, para a arte nova entrar sem mudar código.
+ */
+function toBabidiToxicSprite(src: string): string | null {
+  const marker = "/babidi/inFight/";
+  if (!src.includes(marker)) return null;
+  return src.replace(marker, `${marker}toxicForm/`);
+}
+
 interface UseBattleSpriteParams {
   character: CharacterId;
   state: PlayerState;
@@ -22,6 +44,7 @@ interface UseBattleSpriteParams {
   outroExpression?: "victory" | "defeat" | null;
   babidiAttackVariant?: BabidiAttackVariant;
   babidiMachineGamaControl?: boolean;
+  babidiToxicForm?: boolean;
   hakai?: boolean;
   sigiloPhase?: string;
 }
@@ -37,6 +60,7 @@ export function useBattleSprite({
   outroExpression = null,
   babidiAttackVariant,
   babidiMachineGamaControl = false,
+  babidiToxicForm = false,
   hakai = false,
   sigiloPhase,
 }: UseBattleSpriteParams) {
@@ -87,6 +111,16 @@ export function useBattleSprite({
     );
   }
 
+  const toxicRequested =
+    character === "babidi" && babidiToxicForm && !babidiMachineGamaControl;
+  const toxicCandidate = toxicRequested ? toBabidiToxicSprite(baseSrc) : null;
+  const toxicPlaceholder =
+    toxicRequested &&
+    (toxicCandidate === null || MISSING_TOXIC_SPRITES.has(toxicCandidate));
+  if (toxicCandidate !== null && !toxicPlaceholder) {
+    baseSrc = toxicCandidate;
+  }
+
   // Sequência idle do personagem (e forma):1 frame = parado, >1 = animado.
   const idleFrames = getIdleFrames(character, form);
 
@@ -120,6 +154,26 @@ export function useBattleSprite({
   const src = errorSrc ?? idleFrameSprite(baseSrc, idleFrames, idleFrame);
 
   const handleSpriteError = () => {
+    if (toxicCandidate !== null && !toxicPlaceholder) {
+      MISSING_TOXIC_SPRITES.add(toxicCandidate);
+      setErrorSrc(
+        resolvePlayerSprite({
+          character,
+          state,
+          weapon,
+          form,
+          transformationFrame,
+          teleportSprite,
+          preAtomic,
+          outroExpression,
+          babidiAttackVariant,
+          hakai,
+          sigiloPhase,
+        }),
+      );
+      return;
+    }
+
     // Personagens sem `expressions/victory|defeat.svg` quebrariam a imagem na
     // arena; nesse caso volta para o sprite normal da batalha (o BattleOutro
     // segue inalterado, com o mesmo retrato que falhar nele).
@@ -168,5 +222,6 @@ export function useBattleSprite({
     src,
     handleSpriteError,
     resolvedState,
+    toxicPlaceholder,
   };
 }

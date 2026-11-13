@@ -96,3 +96,12 @@
     opacity: 1;
   }
 }
+
+/*
+ * Modo Tóxico do babidi sem os sprites de inFight/toxicForm/: puxa o sprite
+ * normal para o verde "derretido" até a arte própria existir.
+ */
+.babidiToxicPlaceholder {
+  filter: sepia(1) saturate(6) hue-rotate(55deg) brightness(0.9)
+    drop-shadow(0 0 6px #6cff3a);
+}

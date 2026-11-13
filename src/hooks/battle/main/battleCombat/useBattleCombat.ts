@@ -27,6 +27,8 @@ import { useMuryokushoExpansion } from "@/hooks/battle/player/characters/natsuki
 import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/hakaiExpansion/useHakaiExpansion";
 import { useBabidiDomainExpansion } from "@/hooks/battle/player/characters/babidi/domainExpansion/useBabidiDomainExpansion";
 import { useBabidiBombDrop } from "@/hooks/battle/player/characters/babidi/bombDrop/useBombDrop";
+import { useBabidiToxicForm } from "@/hooks/battle/player/characters/babidi/toxicForm/useToxicForm";
+import { BabidiToxicFormConstants } from "@/data/characters/babidi";
 import { useAtomic } from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
 import { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/mugetsuExpansion/useMugetsuExpansion";
 import { useDomainExpansionBurst } from "@/hooks/battle/utilities/domainExpansionBurst/useDomainExpansionBurst";
@@ -472,13 +474,23 @@ export function useBattleCombat({
 
   dragBattleRef.current = battle;
 
+  /**
+   * Roll de veneno do Modo Tóxico, preenchido depois que o hook da forma é
+   * criado (ele precisa do `onAbilityUsed`, declarado mais abaixo). Os
+   * projéteis do básico chamam pelo ref para não depender da ordem dos hooks.
+   */
+  const babidiToxicHitRef = useRef<() => void>(() => {});
+
   const babidiEnergy = useBabidiEnergyAttack({
     PLAYER_SIZE,
     timeRef: refs.timeRef,
     npc: { x: npc.x, y: npc.y },
     npcClass: npcData.class,
     summons,
-    onProjectileHit: (target) => babidiOnHitRef.current?.(target),
+    onProjectileHit: (target) => {
+      babidiOnHitRef.current?.(target);
+      if (target.id === "main") babidiToxicHitRef.current();
+    },
   });
   babidiFireRef.current = babidiEnergy.fire;
 
@@ -490,7 +502,10 @@ export function useBattleCombat({
     timeRef: refs.timeRef,
     npc: { x: npc.x, y: npc.y },
     summons,
-    onProjectileHit: (target) => babidiMissileOnHitRef.current?.(target),
+    onProjectileHit: (target) => {
+      babidiMissileOnHitRef.current?.(target);
+      if (target.id === "main") babidiToxicHitRef.current();
+    },
   });
   babidiMissileFireRef.current = (player) => babidiMissile.fire(player);
   babidiMissileFireBurstRef.current = (player) =>
@@ -1283,6 +1298,27 @@ export function useBattleCombat({
     cooldownReduction: battle.char.stats.cooldownReduction,
   });
 
+  // Modo Tóxico do babidi (#438) --------------------------------------------
+  const toxicForm = useBabidiToxicForm({
+    player,
+    battleManaRef,
+    freezeActionsUntilRef,
+    isPausedRef,
+    disabledRef: cloneDisabledRef,
+    battleEndedRef: battle.isEnding,
+    blocked: babidiMachineGamaControl,
+    onUsed: onAbilityUsed,
+    onPoison: () => {
+      npcEnchantUntilRef.current.poison = Math.max(
+        npcEnchantUntilRef.current.poison,
+        Date.now() + BabidiToxicFormConstants.POISON_DURATION_MS,
+      );
+      refs.spawnDamageRef.current?.(0, npc.x, npc.y, "poison");
+    },
+    cooldownReduction: battle.char.stats.cooldownReduction,
+  });
+  babidiToxicHitRef.current = toxicForm.onMainBasicHit;
+
   const domainExpansionAbilities = {
     mugetsu: {
       press: mugetsuPress,
@@ -1313,6 +1349,10 @@ export function useBattleCombat({
     babidiBombDropPress: bombDrop.press,
     babidiBombDropUsable: bombDrop.usable,
     babidiBombDropRemaining: bombDrop.remaining,
+    babidiToxicFormActive: toxicForm.active,
+    babidiToxicFormPress: toxicForm.press,
+    babidiToxicFormUsable: toxicForm.usable,
+    babidiToxicFormRemaining: toxicForm.remaining,
     babidiResetPortals: () => {},
     battle,
     npc,

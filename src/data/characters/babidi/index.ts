@@ -3,6 +3,8 @@ import {
   ONE_HUNDRED_TWENTY_MS,
   ONE_HUNDRED_MS,
   TEN_THOUSAND_MS,
+  TWENTY_THOUSAND_MS,
+  FIVE_THOUSAND_MS,
   THREE_HUNDRED_MS,
   THREE_THOUSAND_MS,
   TWO_HUNDRED_MS,
@@ -91,4 +93,30 @@ export const BabidiBombDropConstants = {
   PORTAL_SIZE: 90,
   /** Largura renderizada da explosão. */
   EXPLOSION_SIZE: 64,
+} as const;
+
+/**
+ * Modo Tóxico do babidi (issue #438): transformação temporária inspirada no
+ * "Rick tóxico" (#457/#458) — babidi verde, derretido e raivoso.
+ *
+ * Enquanto ativa, cada projétil do ataque básico (energia ou míssil) que acerta
+ * o inimigo principal tem `POISON_CHANCE` de envenená-lo. O veneno reusa o
+ * mesmo status de NPC do encantamento de arma (`npcEnchantUntilRef.poison`),
+ * então o tick de dano e o número flutuante vêm do `useStatusDots` — não existe
+ * um segundo caminho de DoT no NPC.
+ *
+ * Valores são default de balanceamento ainda não validado pelo autor
+ * (decisão para revisar no PR).
+ */
+export const BabidiToxicFormConstants = {
+  /** Fração da energia MÁXIMA consumida ao ativar (20%). */
+  COST_RATIO: 0.2,
+  /** Duração da transformação. */
+  DURATION_MS: TEN_THOUSAND_MS,
+  /** Recarga base contada a partir da ativação (20s, antes do CDR). */
+  COOLDOWN_MS: TWENTY_THOUSAND_MS,
+  /** Chance (0–1) de envenenar o inimigo principal a cada acerto do básico. */
+  POISON_CHANCE: 0.3,
+  /** Duração do veneno aplicado no NPC (renovada, não acumulada). */
+  POISON_DURATION_MS: FIVE_THOUSAND_MS,
 } as const;
