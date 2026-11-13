@@ -86,6 +86,7 @@ export const SPEAKERS = {
   },
   juanDerson: { name: "Juan Derson", base: "/janderson", pose: "right" },
   rapariga: { name: "Rapariga", base: "/rapariga", pose: "default" },
+  gatoFalante: { name: "Gato Falante" },
   rickPrime: { name: "Rick prime", base: "/rickPrime", pose: "right" },
 
   surica: { name: "Surica", base: "/surica", pose: "default" },
