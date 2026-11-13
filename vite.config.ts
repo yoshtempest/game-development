@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { tempestPwaDevSw, tempestPwaManifest } from "tempest-react-sdk/vite";
+import { contentManifest } from "./vite/contentManifest";
 
 /**
  * Vite configuration.
@@ -14,6 +15,9 @@ import { tempestPwaDevSw, tempestPwaManifest } from "tempest-react-sdk/vite";
  * - `tempestPwaDevSw` compiles and serves the worker under `npm run dev`,
  *   replacing `VitePWA`'s `devOptions.enabled`. It shells out to `esbuild`,
  *   which rolldown-vite does not ship — hence the explicit devDependency.
+ * - `contentManifest` emits `dist/content-manifest.json`, the list of every
+ *   file under `public/assets` that the "Conteúdo" settings tab downloads
+ *   pack by pack for offline play.
  *
  * Every PWA URL is spelled out with the `BASE` prefix because the app is
  * deployed to a GitHub Pages subpath. `tempestPwaManifest` only base-joins the
@@ -27,6 +31,8 @@ export default defineConfig({
   base: BASE,
   plugins: [
     react(),
+
+    contentManifest(),
 
     tempestPwaManifest({
       appShell: `${BASE}index.html`,
@@ -116,5 +122,6 @@ export default defineConfig({
         secure: false,
       },
     },
+    allowedHosts: ["commonsensical-zayden-superimprobably.ngrok-free.dev"],
   },
 });

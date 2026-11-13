@@ -9,7 +9,10 @@ import {
   SHOW_ABILITY_INTRO_KEY,
   SHARED_XP_KEY,
   DIFFICULTY_KEY,
+  LANGUAGE_KEY,
 } from "@/data/storageKeys";
+import type { GameLanguage } from "@/data/settings/language";
+import { applyDocumentLanguage } from "@/utils/documentLanguage";
 import { slotKey } from "@/services/save/slotManager";
 import { type SettingsReturn, settingsStore } from "./constants";
 
@@ -51,6 +54,12 @@ export function useSettings(): SettingsReturn {
     settingsStore.emitChange();
   }, []);
 
+  const setLanguage = useCallback((language: GameLanguage) => {
+    localStorage.setItem(LANGUAGE_KEY, language);
+    applyDocumentLanguage(language);
+    settingsStore.emitChange();
+  }, []);
+
   return useMemo(
     () => ({
       ...s,
@@ -62,6 +71,7 @@ export function useSettings(): SettingsReturn {
       setShowAbilityIntro,
       setSharedXp,
       setDifficulty,
+      setLanguage,
     }),
     [
       s,
@@ -72,6 +82,7 @@ export function useSettings(): SettingsReturn {
       setShowAbilityIntro,
       setSharedXp,
       setDifficulty,
+      setLanguage,
     ],
   );
 }

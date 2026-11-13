@@ -18,6 +18,7 @@ import type {
 import type { Condition } from "@/utils/types/maps/conditions";
 import type { Character as CharacterDef } from "@/utils/types/player/player";
 import type { DamageKind as DamageKindDef } from "@/utils/types/battle/damageKind";
+import type { NewPlayerStatus as NewPlayerStatusDef } from "@/utils/types/battle/status";
 
 export {};
 
@@ -302,6 +303,18 @@ declare global {
     damageType?: DamageKindDef;
   };
 
+  /**
+   * Status que o projétil pode aplicar no player ao acertar. Mora no dado do
+   * projétil (e não no NPC) porque o acerto é resolvido longe da IA, no loop
+   * de projéteis — só o projétil sabe que acertou. A rolagem da chance é feita
+   * uma vez por acerto, e a aplicação passa por `applyPlayerStatus`.
+   */
+  type ProjectileOnHitStatus = {
+    status: NewPlayerStatusDef;
+    /** Probabilidade (0–1) de aplicar o status a cada acerto. */
+    chance: number;
+  };
+
   type ProjectileCommon = ProjectileHp & {
     variant: "common";
     x: number;
@@ -315,6 +328,7 @@ declare global {
     state: "walk" | "idle";
     canCrouchDodge?: boolean;
     landsOnGround?: boolean;
+    onHitStatus?: ProjectileOnHitStatus;
   };
 
   type ProjectilePull = ProjectileHp & {
@@ -448,8 +462,12 @@ declare global {
    * vida máxima dos inimigos a cada 50ms.
    */
   type PlayerNatsukiDomainState = "rioiki";
-  /** Laser da Forma Vastolord do marshadow. */
-  type PlayerLaserState = "laser";
+  /**
+   * Laser da Forma Vastolord do marshadow em duas poses: `preLaser` (sprite
+   * `preLaser.svg`) segura o personagem durante o intro/carga, e `laser`
+   * (sprite `laser.svg`) é a pose do disparo enquanto o feixe está ativo.
+   */
+  type PlayerLaserState = "preLaser" | "laser";
   /** "Gran Rey Cero" do marshadow. */
   type PlayerGranReyCeroState = "granReyCero";
   /**
@@ -534,6 +552,14 @@ declare global {
     | "withStaff"
     | "withPocketKnife";
 
+  /**
+   * Animação de exploração escolhida no menu "Animações". É estado de pose,
+   * não `PlayerState`: o `PlayerState` é da batalha e tem `animationFlow`
+   * exaustivo, enquanto a animação de exploração só troca o sprite parado e
+   * some no primeiro passo.
+   */
+  type ExploreEmote = "sitting";
+
   type Player = {
     gridX: number;
     gridY: number;
@@ -556,6 +582,8 @@ declare global {
      */
     petDismounted?: boolean;
     moving?: boolean;
+    /** Ausente = em pé. Qualquer tentativa de andar ou entrar em batalha limpa. */
+    emote?: ExploreEmote;
     machineGamaControl?: boolean;
     grabbedUntil?: number;
     bleedUntil: number;
@@ -755,6 +783,12 @@ declare global {
      * não reduzir, e os golpes de área que varrem summons.
      */
     armor: DamageArmor;
+    /**
+     * Dano por tick do sangramento ativo neste summon. Fica no próprio summon
+     * porque quem aplica (pet hungryDeath) escala o valor com as estrelas;
+     * ausente = sangramento padrão.
+     */
+    bleedTickDamage?: number;
   };
 
   export type SoundId =

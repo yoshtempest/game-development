@@ -26,11 +26,12 @@ import {
   GRAN_REY_CERO_LOCK_WINDOW_MS,
   GRAN_REY_CERO_MAX_TICKS,
   GRAN_REY_CERO_PUSH_PX,
+  GRAN_REY_CERO_REIRYOKU_COST,
   GRAN_REY_CERO_TICK_MS,
   GRAN_REY_CERO_TRAVEL_MS,
 } from "@/data/characters/marshadow/granReyCero";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
-import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
+import { accumulateVampirism } from "@/gameRules/battle/vampirism/accumulateVampirism";
 import {
   granReyCeroDistance,
   granReyCeroHits,
@@ -86,6 +87,8 @@ export function useGranReyCero({
   playSound,
   onUsed,
   cooldownReduction,
+  energy,
+  spendEnergy,
 }: Props): GranReyCeroApi {
   const { stopSound } = useSoundEffects();
   const { isMenuOpen } = useMenuPause();
@@ -98,6 +101,7 @@ export function useGranReyCero({
   const readyAtRef = useRef(0);
   const cooldownReductionRef = useLatestRef(cooldownReduction);
   const onUsedRef = useLatestRef(onUsed);
+  const spendEnergyRef = useLatestRef(spendEnergy);
   const rafRef = useRef<number | null>(null);
   const lastFrameRef = useRef(0);
   const fadingRef = useRef(false);
@@ -109,6 +113,13 @@ export function useGranReyCero({
   const ticksRef = useRef(0);
   /** Dano fracionário que ainda não virou inteiro. */
   const accRef = useRef(0);
+  /**
+   * Dano mitigado ainda não convertido em cura. Com dano base
+   * baixo ou vampirismo pequeno, a cura de um tick fica abaixo de 0.5 e o
+   * arredondamento por tick a zerava. Ver
+   * `accumulateVampirism` (issue #398).
+   */
+  const vampDamageAccRef = useRef(0);
   /** Origem/direção do corte, fixadas no disparo. */
   const originXRef = useRef(0);
   const tipYRef = useRef(0);
@@ -133,7 +144,10 @@ export function useGranReyCero({
     disabledRef,
     isPausedRef,
     battleEndedRef,
-    extraCanUse: () => readyAtRef.current <= Date.now() && !activeRef.current,
+    extraCanUse: () =>
+      readyAtRef.current <= Date.now() &&
+      !activeRef.current &&
+      (energy ?? GRAN_REY_CERO_REIRYOKU_COST) >= GRAN_REY_CERO_REIRYOKU_COST,
   });
 
   const clearTimers = useCallback(() => {
@@ -155,6 +169,7 @@ export function useGranReyCero({
     tickAccRef.current = 0;
     ticksRef.current = 0;
     accRef.current = 0;
+    vampDamageAccRef.current = 0;
     setEffect(null);
     setPlayer((p) =>
       p.mode !== "battle" || !ALL_PREDICATES.isGranReyCero(p.state)
@@ -198,6 +213,18 @@ export function useGranReyCero({
 
     const push = blade.dirX * GRAN_REY_CERO_PUSH_PX;
 
+    /** Cura em lote pelo funil único: ver `vampDamageAccRef`. */
+    const healFromHit = (dealt: number) => {
+      vampDamageAccRef.current = accumulateVampirism({
+        pending: vampDamageAccRef.current,
+        damage: dealt,
+        source: "other",
+        vampirism,
+        playerMaxHp,
+        setPlayerHP,
+      });
+    };
+
     // NPC principal.
     const mainNpc = npcRef.current;
     if (granReyCeroHits(blade.tipX, blade.tipY, mainNpc.x, mainNpc.y)) {
@@ -211,13 +238,7 @@ export function useGranReyCero({
       setNpcHP((hp) => Math.max(0, hp - dmg));
       spawnDamageNumber(dmg, mainNpc.x, mainNpc.y, "npc");
       registerHitRef.current?.(dmg);
-      applyVampirism({
-        damage: dmg,
-        source: "other",
-        vampirism,
-        playerMaxHp,
-        setPlayerHP,
-      });
+      healFromHit(dmg);
       mainNpc.updateNpc({ x: clampX(mainNpc.x + push) });
     }
 
@@ -237,13 +258,7 @@ export function useGranReyCero({
       const newHp = Math.max(0, s.hp - dmg);
       spawnDamageNumber(dmg, s.x, s.y, "summon");
       registerHitRef.current?.(dmg);
-      applyVampirism({
-        damage: dmg,
-        source: "other",
-        vampirism,
-        playerMaxHp,
-        setPlayerHP,
-      });
+      healFromHit(dmg);
       if (newHp <= 0) {
         killed = true;
         return null;
@@ -392,6 +407,7 @@ export function useGranReyCero({
     tickAccRef.current = 0;
     ticksRef.current = 0;
     accRef.current = 0;
+    vampDamageAccRef.current = 0;
     lastFrameRef.current = Date.now();
 
     setEffect({ tipX: p.x, tipY: p.y, dirX, fading: false });
@@ -420,6 +436,7 @@ export function useGranReyCero({
   const press = useCallback(() => {
     if (activeRef.current) return;
     if (!usableRef.current) return;
+    if (!spendEnergyRef.current(GRAN_REY_CERO_REIRYOKU_COST)) return;
 
     onUsedRef.current?.();
     activeRef.current = true;
@@ -462,6 +479,7 @@ export function useGranReyCero({
     onUsedRef,
     playSound,
     showAbilityIntro,
+    spendEnergyRef,
     startSpecialIntro,
     usableRef,
   ]);

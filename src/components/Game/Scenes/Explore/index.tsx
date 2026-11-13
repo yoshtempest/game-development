@@ -641,6 +641,7 @@ export function ExploreScene({
           PLAYER_SIZE={PLAYER_SIZE}
           hasPeru={player.hasPeru}
           moving={player.moving}
+          emote={player.emote}
         />
 
         {questDirection && (

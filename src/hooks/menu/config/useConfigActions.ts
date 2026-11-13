@@ -1,5 +1,6 @@
 import { useCallback, type RefObject } from "react";
 import type { ConfigTab } from "@/data/config/tabs";
+import type { GameLanguage } from "@/data/settings/language";
 
 interface UseConfigActionsParams {
   showQuestIndicator: boolean;
@@ -7,6 +8,7 @@ interface UseConfigActionsParams {
   showComboAction: boolean;
   showHighlight: boolean;
   showAbilityIntro: boolean;
+  language: GameLanguage;
 
   screenRef: RefObject<"menu" | "tutorial">;
   isOnTabRef: RefObject<boolean>;
@@ -19,6 +21,7 @@ interface UseConfigActionsParams {
   setShowQuestIndicatorRef: RefObject<(v: boolean) => void>;
   setSharedXpRef: RefObject<(v: boolean) => void>;
   checkForUpdateRef: RefObject<() => void>;
+  toggleNotificationsRef: RefObject<() => void>;
   isInstalledRef: RefObject<boolean>;
   methodRef: RefObject<string>;
   installRef: RefObject<() => Promise<boolean>>;
@@ -27,8 +30,10 @@ interface UseConfigActionsParams {
   setShowComboActionRef: RefObject<(v: boolean) => void>;
   setShowHighlightRef: RefObject<(v: boolean) => void>;
   setShowAbilityIntroRef: RefObject<(v: boolean) => void>;
+  setLanguageRef: RefObject<(v: GameLanguage) => void>;
   navigateRef: RefObject<(path: string) => void>;
   onConfirmRef: RefObject<(() => void) | undefined>;
+  onContentConfirmRef: RefObject<((index: number) => void) | undefined>;
   setScreen: (s: "menu" | "tutorial") => void;
 }
 
@@ -38,6 +43,7 @@ export function useConfigActions({
   showComboAction,
   showHighlight,
   showAbilityIntro,
+  language,
   screenRef,
   isOnTabRef,
   activeTabRef,
@@ -49,6 +55,7 @@ export function useConfigActions({
   setShowQuestIndicatorRef,
   setSharedXpRef,
   checkForUpdateRef,
+  toggleNotificationsRef,
   isInstalledRef,
   methodRef,
   installRef,
@@ -57,8 +64,10 @@ export function useConfigActions({
   setShowComboActionRef,
   setShowHighlightRef,
   setShowAbilityIntroRef,
+  setLanguageRef,
   navigateRef,
   onConfirmRef,
+  onContentConfirmRef,
   setScreen,
 }: UseConfigActionsParams) {
   const handleConfirm = useCallback((): boolean => {
@@ -97,6 +106,10 @@ export function useConfigActions({
             setShowInstructionsRef.current(true);
           }
         }
+
+        if (idx === 5) {
+          setLanguageRef.current(language === "pt" ? "en" : "pt");
+        }
       }
     }
 
@@ -118,6 +131,10 @@ export function useConfigActions({
       }
     }
 
+    if (activeTabRef.current === "conteudo") {
+      onContentConfirmRef.current?.(idx);
+    }
+
     onConfirmRef.current?.();
 
     return true;
@@ -127,6 +144,7 @@ export function useConfigActions({
     showComboAction,
     showHighlight,
     showAbilityIntro,
+    language,
     screenRef,
     isOnTabRef,
     activeTabRef,
@@ -137,6 +155,7 @@ export function useConfigActions({
     setSharedXpRef,
     setScreen,
     checkForUpdateRef,
+    toggleNotificationsRef,
     isInstalledRef,
     methodRef,
     installRef,
@@ -145,8 +164,10 @@ export function useConfigActions({
     setShowComboActionRef,
     setShowHighlightRef,
     setShowAbilityIntroRef,
+    setLanguageRef,
     navigateRef,
     onConfirmRef,
+    onContentConfirmRef,
   ]);
 
   const handleCancel = useCallback((): boolean => {

@@ -1,35 +1,64 @@
 import type { Props } from "./types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import { useSoundEffects } from "@/contexts/SoundEffectsContext";
+
+import { useLatestRef } from "@/hooks/useLatestRef";
+
+import { getProjectileCenter } from "@/gameRules/npc/projectile/projectileDamage";
+import { isProjectileId } from "@/gameRules/npc/projectile/projectileId";
+import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
+
+import {
+  DEFAULT_OVERLAY,
+  BEHIND_X_OFFSET,
+  SPAWN_X_OFFSET,
+  KILLER_QUEEN_SPRITE_FILE,
+} from "@/data/characters/srGuaxinim/srGuaxinim";
 
 import {
   playerPathSrGuaxinimHabilities,
   npcPathProjectile,
 } from "@/utils/paths";
-import { useSoundEffects } from "@/contexts/SoundEffectsContext";
-import { getProjectileCenter } from "@/gameRules/npc/projectile/projectileDamage";
-import { isProjectileId } from "@/gameRules/npc/projectile/projectileId";
-import { applyTime, clearTime, freezeWorldSpec } from "@/gameRules/battle/time";
-import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 import type {
   KillerQueenOverlay,
   EnemyTarget,
 } from "@/utils/types/character/srGuaxinim";
-import {
-  DEFAULT_OVERLAY,
-  BEHIND_X_OFFSET,
-  SPAWN_X_OFFSET,
-  TOTAL_FREEZE_MS,
-  KILLER_QUEEN_TIME_ID,
-  KILLER_QUEEN_SPRITE_FILE,
-} from "@/data/characters/srGuaxinim/srGuaxinim";
 
+/**
+ * Resolve a posição atual de um alvo marcado. Desde a #521 a Killer Queen não
+ * congela mais o tempo, então inimigos e projéteis continuam andando durante a
+ * coreografia: a bomba acompanha o alvo vivo e só cai no último ponto
+ * conhecido quando ele já saiu de cena (projétil que acertou, summon morto).
+ */
+function resolveLivePosition(
+  target: EnemyTarget,
+  enemies: EnemyTarget[],
+  projectiles: Projectile[],
+): EnemyTarget {
+  if (isProjectileId(target.id)) {
+    const live = projectiles.find((p) => p.id === target.id);
+    return live ? { id: target.id, ...getProjectileCenter(live) } : target;
+  }
+  return enemies.find((e) => e.id === target.id) ?? target;
+}
+
+/**
+ * Killer Queen do SrGuaxinim: o stand aparece atrás de cada inimigo e projétil
+ * destrutível, marca com uma bomba e detona tudo no final.
+ *
+ * Desde a #521 o tempo **não** para: o mundo continua agindo e o jogador pode
+ * se mover (e correr) enquanto o stand trabalha. Por isso nada aqui escreve em
+ * `timeRef` nem no `freezeActionsUntilRef`, e as posições (alvo, bomba e o
+ * próprio player no retorno do stand) são lidas ao vivo por ref em cada passo,
+ * não de um snapshot do início. No fim o `idle` só é forçado se o player ainda
+ * estiver na pose da habilidade — quem saiu andando não é puxado de volta.
+ */
 export function useSrGuaxinimKillerQueen({
   player,
   setPlayer,
   enemies,
   projectiles,
-  timeRef,
-  freezePlayerUntilRef,
   onBombProjectiles,
   onAreaDamage,
 }: Props) {
@@ -41,14 +70,11 @@ export function useSrGuaxinimKillerQueen({
 
   const runningRef = useRef(false);
   const timersRef = useRef<number[]>([]);
-  const onAreaDamageRef = useRef(onAreaDamage);
-  onAreaDamageRef.current = onAreaDamage;
-  const onBombProjectilesRef = useRef(onBombProjectiles);
-  onBombProjectilesRef.current = onBombProjectiles;
-  const timeRefRef = useRef(timeRef);
-  timeRefRef.current = timeRef;
-  const freezePlayerUntilRefRef = useRef(freezePlayerUntilRef);
-  freezePlayerUntilRefRef.current = freezePlayerUntilRef;
+  const onAreaDamageRef = useLatestRef(onAreaDamage);
+  const onBombProjectilesRef = useLatestRef(onBombProjectiles);
+  const enemiesRef = useLatestRef(enemies);
+  const projectilesRef = useLatestRef(projectiles);
+  const playerRef = useLatestRef(player);
 
   useEffect(() => {
     const isSrGuaxinim = player.character === "srGuaxinim";
@@ -64,43 +90,42 @@ export function useSrGuaxinimKillerQueen({
         timers.push(window.setTimeout(resolve, ms));
       });
 
-    const isRight = player.battleDirection === "right";
-    const playerSideX = player.x + (isRight ? SPAWN_X_OFFSET : -SPAWN_X_OFFSET);
-    const playerSideFlip = !isRight;
-    const behindX = (e: EnemyTarget) =>
-      e.x >= player.x ? e.x + BEHIND_X_OFFSET : e.x - BEHIND_X_OFFSET;
-    const behindFlip = (e: EnemyTarget) => e.x >= player.x;
+    const playerSide = () => {
+      const p = playerRef.current;
+      const isRight = p.battleDirection === "right";
+      return {
+        x: p.x + (isRight ? SPAWN_X_OFFSET : -SPAWN_X_OFFSET),
+        y: p.y,
+        flip: !isRight,
+      };
+    };
+    const live = (t: EnemyTarget) =>
+      resolveLivePosition(t, enemiesRef.current, projectilesRef.current);
+    const behind = (e: EnemyTarget) => {
+      const px = playerRef.current.x;
+      return {
+        x: e.x >= px ? e.x + BEHIND_X_OFFSET : e.x - BEHIND_X_OFFSET,
+        flip: e.x >= px,
+      };
+    };
 
-    const done = Date.now() + TOTAL_FREEZE_MS;
-    // Regra de time: um único efeito congela o mundo inteiro (npc, summons,
-    // allies, pet e projéteis). O player fica de fora do `TimeKind` — o lock
-    // de ação dele é o `freezeActionsUntilRef`, compartilhado por outras
-    // habilidades.
-    timeRefRef.current.current = applyTime(
-      timeRefRef.current.current,
-      freezeWorldSpec(KILLER_QUEEN_TIME_ID, TOTAL_FREEZE_MS),
-    );
-    freezePlayerUntilRefRef.current.current = done;
-
-    // Snapshot dos alvos no instante em que a habilidade começa: inimigos +
-    // projéteis destrutíveis. A partir daqui os projéteis ficam congelados, então
-    // as posições não mudam mais durante a sequência.
     const targets: EnemyTarget[] = [
-      ...enemies,
-      ...projectiles
+      ...enemiesRef.current,
+      ...projectilesRef.current
         .filter((p) => !p.indestructible)
         .map((p) => ({ id: p.id, ...getProjectileCenter(p) })),
     ];
 
     void (async () => {
       try {
+        const start = playerSide();
         setKillerQueen({
           active: true,
-          x: playerSideX,
-          y: player.y,
+          x: start.x,
+          y: start.y,
           sprite: "idle",
           opacity: 0,
-          flip: playerSideFlip,
+          flip: start.flip,
         });
         await delay(30);
         setKillerQueen((q) => ({ ...q, opacity: 1 }));
@@ -109,46 +134,44 @@ export function useSrGuaxinimKillerQueen({
 
         const bombed: BombTarget[] = [];
         const bombedProjectileIds: string[] = [];
-        for (const enemy of targets) {
-          const recall = window.setTimeout(() => {
-            setKillerQueen({
-              active: true,
-              x: behindX(enemy),
-              y: enemy.y,
-              sprite: "idle",
-              opacity: 0,
-              flip: behindFlip(enemy),
-            });
-            // Apareceu atrás de um alvo (teleporte) -> blink.mp3
-            playSound("blink");
-          }, 260);
-          timers.push(recall);
+        for (const target of targets) {
           await delay(260);
-
-          setKillerQueen((q) => ({ ...q, opacity: 1 }));
+          const enemy = live(target);
+          const spot = behind(enemy);
+          setKillerQueen({
+            active: true,
+            x: spot.x,
+            y: enemy.y,
+            sprite: "idle",
+            opacity: 1,
+            flip: spot.flip,
+          });
+          playSound("blink");
           await delay(280);
           setKillerQueen((q) => ({ ...q, sprite: "touch" }));
           await delay(200);
 
+          const touched = live(target);
           bombed.push({
-            id: enemy.id,
-            x: enemy.x,
-            y: enemy.y,
+            id: target.id,
+            x: touched.x,
+            y: touched.y,
             phase: "bomb",
           });
-          if (isProjectileId(enemy.id)) bombedProjectileIds.push(enemy.id);
+          if (isProjectileId(target.id)) bombedProjectileIds.push(target.id);
           setBombTargets([...bombed]);
           setKillerQueen((q) => ({ ...q, opacity: 0 }));
           await delay(250);
         }
 
+        const end = playerSide();
         setKillerQueen({
           active: true,
-          x: playerSideX,
-          y: player.y,
+          x: end.x,
+          y: end.y,
           sprite: "prePalm",
           opacity: 0,
-          flip: playerSideFlip,
+          flip: end.flip,
         });
         await delay(30);
         setKillerQueen((q) => ({ ...q, opacity: 1 }));
@@ -156,18 +179,18 @@ export function useSrGuaxinimKillerQueen({
         setKillerQueen((q) => ({ ...q, sprite: "palm" }));
         await delay(150);
 
-        setBombTargets((prev) =>
-          prev.map((b) => ({ ...b, phase: "explosion" })),
-        );
-        // Dano de área da explosão: os projéteis bomba levam o dano real do
-        // special (mesmo pipeline dos inimigos) e só somem se o dano zerar o
-        // HP — quem explode é a própria bomba que nasceu no projétil.
+        const detonated: BombTarget[] = bombed.map((b) => ({
+          ...b,
+          ...live(b),
+          phase: "explosion",
+        }));
+        setBombTargets(detonated);
         onBombProjectilesRef.current(
           bombedProjectileIds.map((id) => {
-            const target = targets.find((t) => t.id === id);
+            const target = detonated.find((t) => t.id === id);
             const count = Math.max(
               1,
-              bombed.filter(
+              detonated.filter(
                 (b) =>
                   target != null &&
                   Math.hypot(target.x - b.x, target.y - b.y) <= 200,
@@ -177,61 +200,62 @@ export function useSrGuaxinimKillerQueen({
           }),
         );
         onAreaDamageRef.current(
-          bombed
+          detonated
             .filter((b) => !isProjectileId(b.id))
             .map((b) => ({ x: b.x, y: b.y })),
-          enemies,
+          enemiesRef.current,
         );
 
         await delay(450);
-
-        const unfreeze = Date.now();
-        timeRefRef.current.current = clearTime(
-          timeRefRef.current.current,
-          KILLER_QUEEN_TIME_ID,
-        );
-        freezePlayerUntilRefRef.current.current = unfreeze;
 
         setKillerQueen((q) => ({ ...q, opacity: 0 }));
         await delay(250);
         setBombTargets([]);
         setKillerQueen(DEFAULT_OVERLAY);
-        setPlayer((p) => ({ ...p, state: "idle" }));
-      } finally {
-        freezePlayerUntilRefRef.current.current = Date.now();
-        timeRefRef.current.current = clearTime(
-          timeRefRef.current.current,
-          KILLER_QUEEN_TIME_ID,
+        setPlayer((p) =>
+          ALL_PREDICATES.isAbilityTrigger(p.state)
+            ? { ...p, state: "idle" }
+            : p,
         );
+      } finally {
         runningRef.current = false;
         timersRef.current = [];
       }
     })();
   }, [
     player.character,
-    player.battleDirection,
-    player.x,
-    player.y,
     player.state,
     setPlayer,
-    enemies,
-    projectiles,
     playSound,
+    enemiesRef,
+    projectilesRef,
+    playerRef,
+    onAreaDamageRef,
+    onBombProjectilesRef,
   ]);
 
   useEffect(() => {
+    const timers = timersRef;
     return () => {
-      freezePlayerUntilRefRef.current.current = Date.now();
-      timeRefRef.current.current = clearTime(
-        timeRefRef.current.current,
-        KILLER_QUEEN_TIME_ID,
-      );
+      for (const t of timers.current) window.clearTimeout(t);
     };
   }, []);
 
+  const liveBombTargets = useMemo<BombTarget[]>(
+    () =>
+      bombTargets.length === 0
+        ? bombTargets
+        : bombTargets.map((b) =>
+            b.phase === "bomb"
+              ? { ...b, ...resolveLivePosition(b, enemies, projectiles) }
+              : b,
+          ),
+    [bombTargets, enemies, projectiles],
+  );
+
   return {
     killerQueen,
-    bombTargets,
+    bombTargets: liveBombTargets,
     killerQueenSprite: (sprite: KillerQueenOverlay["sprite"]) =>
       playerPathSrGuaxinimHabilities(
         `/bitesTheDust/${KILLER_QUEEN_SPRITE_FILE[sprite]}.svg`,

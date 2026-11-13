@@ -8,6 +8,7 @@ import { getEquipmentStatsBonus } from "@/gameRules/battle/equipment";
 import { getMaxMana } from "@/gameRules/battle/mana";
 import { getRankMultiplier } from "@/gameRules/rank";
 import { ONE_THOUSAND_MS } from "@/data/ms";
+import { SITTING_HEAL_PER_SECOND } from "@/data/player/emotes";
 
 const REGEN_TICK_MS = ONE_THOUSAND_MS;
 
@@ -41,6 +42,11 @@ function computeMaxHp(
  * atual, fome e teto de vida são relidos por ref dentro do tick, então o
  * cálculo continua acompanhando mudança de equipamento, título e fome
  * sem precisar reinstalar nada.
+ *
+ * Sentado (`player.emote === "sitting"`) soma `SITTING_HEAL_PER_SECOND` ao
+ * tick e cura mesmo com fome zerada — descansar é justamente a saída de quem
+ * está sem comida. A pose é lida por ref pelo mesmo motivo do `progress`:
+ * sentar/levantar não pode reiniciar o intervalo.
  */
 export function useRegenTimer() {
   const { player } = usePlayer();
@@ -49,6 +55,7 @@ export function useRegenTimer() {
 
   const progressRef = useLatestRef(progress);
   const characterRef = useLatestRef(player.character);
+  const emoteRef = useLatestRef(player.emote);
   const setBattleHPRef = useLatestRef(setBattleHP);
   const setBattleManaRef = useLatestRef(setBattleMana);
   const getBonusRef = useLatestRef(getBonus);
@@ -76,7 +83,9 @@ export function useRegenTimer() {
 
       const hp = charProgress.battleHP;
       if (hp == null) return;
-      if (charProgress.hunger <= 0) return;
+      const sittingHeal =
+        emoteRef.current === "sitting" ? SITTING_HEAL_PER_SECOND : 0;
+      if (charProgress.hunger <= 0 && sittingHeal === 0) return;
 
       const titleBonus = getBonusRef.current();
       const maxHp = computeMaxHp(
@@ -90,7 +99,9 @@ export function useRegenTimer() {
 
       if (hp >= maxHp) return;
 
-      const healPerTick = (maxHp / 60) * (charProgress.hunger / MAX_HUNGER);
+      const healPerTick =
+        (maxHp / 60) * (Math.max(0, charProgress.hunger) / MAX_HUNGER) +
+        sittingHeal;
       const next = Math.min(maxHp, hp + healPerTick);
 
       setBattleHPRef.current(
@@ -103,6 +114,7 @@ export function useRegenTimer() {
   }, [
     player.mode,
     characterRef,
+    emoteRef,
     progressRef,
     setBattleHPRef,
     setBattleManaRef,

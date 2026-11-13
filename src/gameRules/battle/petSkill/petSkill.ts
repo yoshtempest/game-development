@@ -127,17 +127,30 @@ export function runPetSkill(
         targetNpcType: target.npcType,
       });
 
+      const bleedTick = Math.max(
+        1,
+        Math.round(
+          effect.bleedTickDamage * PET_STAR_MULTIPLIER ** (petStars - 1),
+        ),
+      );
+
       triggerTeleportBite(target.x, target.y, () => {
         if (target.id === "main") {
           battle.setNpcHP((hp) => Math.max(0, hp - dmg));
-          applyNpcBleed(effect.bleedMs);
+          applyNpcBleed(effect.bleedMs, bleedTick);
           npcRootedUntilRef.current = Date.now() + rootDurationMs;
           spawnDamageRef.current?.(dmg, target.x, target.y, "pet");
           return;
         }
         setSummons((prev) =>
           prev.map((s) =>
-            s.id === target.id ? { ...s, hp: Math.max(0, s.hp - dmg) } : s,
+            s.id === target.id
+              ? {
+                  ...s,
+                  hp: Math.max(0, s.hp - dmg),
+                  bleedTickDamage: Math.max(s.bleedTickDamage ?? 0, bleedTick),
+                }
+              : s,
           ),
         );
         summonsBleedUntilRef.current = {
@@ -194,5 +207,5 @@ export function runPetSkill(
       break;
     }
   }
-  playSound("summon");
+  playSound(effect.kind === "teleportBite" ? "hungryDeath" : "summon");
 }

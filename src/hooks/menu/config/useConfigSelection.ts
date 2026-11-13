@@ -8,6 +8,7 @@ import { useMenuSFX } from "@/hooks/menu/useMenuSFX";
 import { useSettings } from "@/hooks/settings/useSetting";
 import { useUpdate } from "@/contexts/UpdateContext";
 import { usePWA } from "@/contexts/PWAContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 import type { ConfigTab } from "@/data/config/tabs";
 import { CONFIG_TABS, CONFIG_TAB_COUNT } from "@/data/config/tabs";
 import { useLatestRef } from "@/hooks/useLatestRef";
@@ -15,12 +16,28 @@ import {
   DIFFICULTY,
   COLUMN_COUNT,
   BATTLE_COUNT,
+  CONTENT_COUNT,
   getColumnMaxIndex,
 } from "./configConstants";
 import { useConfigActions } from "./useConfigActions";
 import { DIALOGUE_SPEED_LIST, type DialogueSpeed } from "@/utils/settings";
 
-export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
+/**
+ * Linhas da aba em lista (batalha/conteúdo), ou `null` na aba "geral", que é
+ * uma grade de colunas. As duas abas em lista compartilham a mesma navegação:
+ * ↑/↓ percorrem as linhas, ← volta para as abas.
+ */
+function getListRowCount(tab: ConfigTab): number | null {
+  if (tab === "batalha") return BATTLE_COUNT;
+  if (tab === "conteudo") return CONTENT_COUNT;
+  return null;
+}
+
+export function useConfigSelection(
+  isActive: boolean,
+  onConfirm?: () => void,
+  onContentConfirm?: (index: number) => void,
+) {
   const navigate = useNavigate();
   const { pushControls } = useGameControls();
 
@@ -39,8 +56,11 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
     setShowAbilityIntro,
     sharedXp,
     setSharedXp,
+    language,
+    setLanguage,
   } = useSettings();
   const { checkForUpdate } = useUpdate();
+  const { toggleNotifications } = useNotifications();
   const {
     install,
     isInstalled,
@@ -97,13 +117,16 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
   const setShowHighlightRef = useLatestRef(setShowHighlight);
   const setShowAbilityIntroRef = useLatestRef(setShowAbilityIntro);
   const setSharedXpRef = useLatestRef(setSharedXp);
+  const setLanguageRef = useLatestRef(setLanguage);
   const checkForUpdateRef = useLatestRef(checkForUpdate);
+  const toggleNotificationsRef = useLatestRef(toggleNotifications);
   const installRef = useLatestRef(install);
   const isInstalledRef = useLatestRef(isInstalled);
   const methodRef = useLatestRef(method);
   const setShowInstalledMessageRef = useLatestRef(setShowInstalledMessage);
   const setShowInstructionsRef = useLatestRef(setShowInstructions);
   const onConfirmRef = useLatestRef(onConfirm);
+  const onContentConfirmRef = useLatestRef(onContentConfirm);
   const navigateRef = useLatestRef(navigate);
 
   const modeRef = useLatestRef(player.mode);
@@ -143,6 +166,7 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
     showComboAction,
     showHighlight,
     showAbilityIntro,
+    language,
     screenRef,
     isOnTabRef,
     activeTabRef,
@@ -154,6 +178,7 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
     setShowQuestIndicatorRef,
     setSharedXpRef,
     checkForUpdateRef,
+    toggleNotificationsRef,
     isInstalledRef,
     methodRef,
     installRef,
@@ -162,8 +187,10 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
     setShowComboActionRef,
     setShowHighlightRef,
     setShowAbilityIntroRef,
+    setLanguageRef,
     navigateRef,
     onConfirmRef,
+    onContentConfirmRef,
     setScreen,
   });
 
@@ -183,7 +210,7 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
           return;
         }
 
-        if (activeTabRef.current === "batalha") return;
+        if (getListRowCount(activeTabRef.current) !== null) return;
 
         setSelectedColumn((prev) => (prev + 1) % COLUMN_COUNT);
         setSelectedIndex(0);
@@ -203,7 +230,7 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
           return;
         }
 
-        if (activeTabRef.current === "batalha") {
+        if (getListRowCount(activeTabRef.current) !== null) {
           setIsOnTab(true);
           return;
         }
@@ -230,9 +257,9 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
 
         const col = selectedColumnRef.current;
 
-        if (activeTabRef.current === "batalha") {
-          const maxIndex = BATTLE_COUNT;
-          setSelectedIndex((prev) => (prev + 1) % maxIndex);
+        const listRows = getListRowCount(activeTabRef.current);
+        if (listRows !== null) {
+          setSelectedIndex((prev) => (prev + 1) % listRows);
           return;
         }
 
@@ -268,7 +295,7 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
 
         if (isOnTabRef.current) return;
 
-        if (activeTabRef.current === "batalha") {
+        if (getListRowCount(activeTabRef.current) !== null) {
           if (selectedIndexRef.current === 0) {
             setIsOnTab(true);
             return;
@@ -367,6 +394,7 @@ export function useConfigSelection(isActive: boolean, onConfirm?: () => void) {
     showHighlight,
     showAbilityIntro,
     sharedXp,
+    language,
     activeTab,
     isOnTab,
     cycleDifficulty,
