@@ -2,6 +2,8 @@ import { isOf } from "./isOf";
 import { ALL_STATES } from "./constants";
 
 // ── Predicados ────────────────────────────────────────────
+export const isEmote = isOf(ALL_STATES.EMOTE_STATES);
+export const isReady = isOf(ALL_STATES.READY_STATES);
 export const isMoveState = isOf(ALL_STATES.MOVE_STATES);
 export const isRunState = isOf(ALL_STATES.RUN_STATES);
 export const isCrouched = isOf(ALL_STATES.CROUCHED_STATES);
@@ -42,6 +44,10 @@ export const isGroundCombo = isOf(ALL_STATES.GROUND_COMBO_STATES);
 export const isCombo = isOf(ALL_STATES.COMBO_STATES);
 
 export const ALL_PREDICATES = {
+  // Espera
+  isEmote,
+  isReady,
+
   // Locomoção
   isMoveState,
   isRunState,

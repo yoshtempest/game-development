@@ -7,6 +7,7 @@ import {
   THREE_HUNDRED_MS,
   FOUR_HUNDRED_MS,
   FIVE_HUNDRED_MS,
+  SIX_HUNDRED_MS,
   EIGHT_HUNDRED_MS,
 } from "@/data/ms";
 
@@ -77,6 +78,10 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
   // Conversão de energia amaldiçoada em cura do natsuki: troca para o sprite
   // heal.svg por 300ms e volta para idle.
   heal: { next: "idle", duration: THREE_HUNDRED_MS },
+
+  // Emote/taunt (sem dano): idle2 → idle3 → idle. Qualquer ação sobrescreve.
+  idle2: { next: "idle3", duration: SIX_HUNDRED_MS },
+  idle3: { next: "idle", duration: SIX_HUNDRED_MS },
 
   // Genki Dama do ematron: estados controlados pelo hold (useEmatronGenkiDama),
   // não avançam sozinhos — o hook troca os sprites conforme a fase.

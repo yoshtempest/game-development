@@ -14,6 +14,19 @@ export const CROUCHED_STATES = stateSet<PlayerCrouchState>(
   "walkCrounched",
 );
 
+// ── Espera ────────────────────────────────────────────────
+/** Emote/taunt: pose sem dano que qualquer outra ação interrompe. */
+export const EMOTE_STATES = stateSet<PlayerEmoteState>("idle2", "idle3");
+/**
+ * Parado e pronto para agir: o `idle` e o emote. As entradas que exigem o
+ * personagem parado (ataque básico, habilidades) aceitam o emote para que ele
+ * seja cancelado pela ação, em vez de engolir o input.
+ */
+export const READY_STATES = unionOf(
+  stateSet<PlayerIdleState>("idle"),
+  EMOTE_STATES,
+);
+
 // ── Ar ────────────────────────────────────────────────────
 /** No ar — a gravidade está no comando. */
 export const AIRBORNE_STATES = stateSet<PlayerAirState>(
@@ -217,6 +230,10 @@ export const GROUND_COMBO_STATES = stateSet<PlayerComboState>(
 export const COMBO_STATES = unionOf(GROUND_COMBO_STATES, AIR_MELEE_STATES);
 
 export const ALL_STATES = {
+  // Espera
+  EMOTE_STATES,
+  READY_STATES,
+
   // Locomoção
   MOVE_STATES,
   RUN_STATES,
