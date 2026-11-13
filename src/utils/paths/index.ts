@@ -42,6 +42,7 @@ export { npcPathEnemie } from "./npc/npcPathEnemie";
 export { npcPathProjectile } from "./npc/npcPathProjectile";
 export { playerProjectilePath } from "./player/playerProjectilePath";
 export { effectsPath } from "./effectsPath";
+export { statusOverlayPath } from "./statusOverlayPath";
 export { soundEffectPath } from "./song/soundEffectPath";
 export { backgroundAudioPath } from "./song/backgroundAudioPath";
 export { sfx } from "./song/sfx";
