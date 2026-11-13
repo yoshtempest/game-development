@@ -1,7 +1,4 @@
-import type {
-  DamageArmor,
-  DamageKind,
-} from "@/utils/types/battle/damageKind";
+import type { DamageArmor, DamageKind } from "@/utils/types/battle/damageKind";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
 import type { ElementType } from "@/utils/types/battle/element";

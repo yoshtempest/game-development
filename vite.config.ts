@@ -122,8 +122,6 @@ export default defineConfig({
         secure: false,
       },
     },
-    allowedHosts: [
-      "commonsensical-zayden-superimprobably.ngrok-free.dev",
-    ],
+    allowedHosts: ["commonsensical-zayden-superimprobably.ngrok-free.dev"],
   },
 });

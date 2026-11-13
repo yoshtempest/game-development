@@ -7,7 +7,10 @@ type Props = {
  * Cortina do guest do co-op até o primeiro snapshot do líder. O placar e o HP
  * do oponente do PvP moram no `PvpMatchOverlay` e no painel do HUD.
  */
-export function OnlineBattleOverlay({ isBattleGuest, guestHasSnapshot }: Props) {
+export function OnlineBattleOverlay({
+  isBattleGuest,
+  guestHasSnapshot,
+}: Props) {
   if (!isBattleGuest || guestHasSnapshot) return null;
   return (
     <div

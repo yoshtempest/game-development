@@ -90,7 +90,7 @@ export function HelpSection({
       </div>
       <p className={styles.languageHint}>
         {language === "en"
-          ? "Use \"Traduzir esta página\" (Translate this page) no menu do navegador."
+          ? 'Use "Traduzir esta página" (Translate this page) no menu do navegador.'
           : "Em English, a tradução é feita pelo próprio navegador."}
       </p>
     </div>
