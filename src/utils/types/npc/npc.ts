@@ -150,6 +150,7 @@ export type NPCBattleState = {
       spinHitCount: number;
     };
     maugrelo?: import("@/services/npc/attacks/maugrelo/state").MaugreloAI;
+    evilMorty?: import("@/services/npc/attacks/evilMorty/state").EvilMortyAI;
     hungryDog?: import("@/services/npc/attacks/hungryDog/state").HungryDogAI;
     /**
      * Cooldown do cuspe ácido do hungryDog comum. Separado do `lastAttackRef`

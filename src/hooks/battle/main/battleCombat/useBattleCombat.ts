@@ -10,6 +10,7 @@ import { useBattleDamage } from "@/hooks/battle/main/battleDamage/useBattleDamag
 import { useBattleEntities } from "@/hooks/battle/main/battleEntities/useBattleEntities";
 import { useBattleCombatActions } from "@/hooks/battle/main/battleCombatActions/useBattleCombatActions";
 import { usePhaseTransition } from "@/hooks/battle/death/phaseTransition/usePhaseTransition";
+import { getNpcPhaseCount } from "@/data/npc";
 import { useSigilo } from "@/hooks/battle/player/characters/drika/useSigilo";
 import { useBattleSync } from "@/hooks/battle/sync/useSync";
 import { useStatusDots } from "@/hooks/battle/effects/statusDots/useStatusDots";
@@ -958,7 +959,7 @@ export function useBattleCombat({
       addVastolordLaserChargeRef.current();
     }
 
-    if (npcData.class === "boss" && battle.npcPhase === 1) {
+    if (battle.npcPhase < getNpcPhaseCount(npcType, npcData.class)) {
       // Destrava o lifecycle (o hook setou o isEnding no início da varredura) e
       // avança para a fase 2, reposicionando os personagens no `usePhaseTransition`.
       // Atualiza TAMBÉM o npcPhase do sistema de batalha (fonte de verdade da
@@ -966,8 +967,9 @@ export function useBattleCombat({
       // e a próxima varredura (fase 2) é tratada como fase 1, resetando o boss
       // com vida cheia em vez de encerrar a batalha.
       battle.isEnding.current = false;
-      battle.setNpcPhase(2);
-      npcPhaseRef.current = 2;
+      const nextPhase = battle.npcPhase + 1;
+      battle.setNpcPhase(nextPhase);
+      npcPhaseRef.current = nextPhase;
       battle.setNpcHP(battle.npcMaxHp);
       npc.updateNpc({ hidden: false });
       return;
@@ -981,6 +983,7 @@ export function useBattleCombat({
     npc,
     npcData.class,
     npcPhaseRef,
+    npcType,
     onNpcDeathRef,
     vastolordActive,
   ]);

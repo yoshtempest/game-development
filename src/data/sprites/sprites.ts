@@ -67,6 +67,7 @@ export const NPC_CATEGORY: Record<string, NpcCategory> = {
   theMasterPiece: "enemies",
   theChaosCreator: "enemies",
   theFirstNightmare: "enemies",
+  evilMorty: "enemies",
   theDevourerOfWorlds: "enemies",
   piupiu: "pets",
   madame: "pets",

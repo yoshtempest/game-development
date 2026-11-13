@@ -67,6 +67,7 @@ export const NPC_CLASSES = {
   theMasterPiece: "legendary",
   theChaosCreator: "legendary",
   theFirstNightmare: "legendary",
+  evilMorty: "supreme" /* 3 fases: entediado, sério, irritado */,
 } as const satisfies Record<string, NPCClass>;
 
 export type NpcType = keyof typeof NPC_CLASSES;

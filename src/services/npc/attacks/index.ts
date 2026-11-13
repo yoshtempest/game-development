@@ -51,6 +51,7 @@ import { UntrackedMonsterAttack } from "./untrackedMonster";
 import { VandinhaFragmentAttack } from "./vandinhaFragment";
 import { YangKaiAttack } from "./yangKai";
 import { OuroborosAttack } from "./ouroboros";
+import { EvilMortyAttack } from "./evilMorty";
 
 /**
  * Registry de ataques por NPC. `satisfies Record<NpcType, NpcAttack>` faz
@@ -134,6 +135,7 @@ export const npcAttacks = {
   theChaosCreator: new TheChaosCreatorAttack("theChaosCreator"),
   theFirstNightmare: new TheFirstNightmareAttack("theFirstNightmare"),
   ouroboros: new OuroborosAttack("ouroboros"),
+  evilMorty: new EvilMortyAttack(),
 } satisfies Record<NpcType, NpcAttack>;
 
 /**
