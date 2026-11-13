@@ -11,6 +11,7 @@ import { useBattleEntities } from "@/hooks/battle/main/battleEntities/useBattleE
 import { useBattleCombatActions } from "@/hooks/battle/main/battleCombatActions/useBattleCombatActions";
 import { usePhaseTransition } from "@/hooks/battle/death/phaseTransition/usePhaseTransition";
 import { useSigilo } from "@/hooks/battle/player/characters/drika/useSigilo";
+import { useLaricellAbilities } from "@/hooks/battle/player/characters/laricell/useLaricellAbilities";
 import { useBattleSync } from "@/hooks/battle/sync/useSync";
 import { useStatusDots } from "@/hooks/battle/effects/statusDots/useStatusDots";
 import { useTrainingEffects } from "@/hooks/battle/effects/useTrainingEffects";
@@ -102,6 +103,10 @@ export function useBattleCombat({
     saveDataRef,
     npcRootedUntilRef,
     rootedSummonsUntilRef,
+    barrierRef,
+    npcBlindRef,
+    laricellVampireActive,
+    setLaricellVampireActive,
     setModeRef,
     closeInventoryRef,
     closeNavbarRef,
@@ -447,6 +452,7 @@ export function useBattleCombat({
   });
 
   const {
+    handleAbilityAreaHit,
     handleGenkiDamaExplode,
     handleAtomicBoom,
     handleDomainBurst,
@@ -767,6 +773,23 @@ export function useBattleCombat({
   }, [battle.tenacityReduction, battleTenacityRef]);
 
   const cloneDisabledRef = useLatestRef(controlsDisabled);
+
+  const laricell = useLaricellAbilities({
+    player,
+    npc,
+    isPausedRef,
+    cooldownReduction: battle.char.stats.cooldownReduction,
+    playSound,
+    onUsed: onAbilityUsed,
+    freezeActionsUntilRef,
+    disabledRef: cloneDisabledRef,
+    battleEndedRef: battle.isEnding,
+    barrierRef,
+    npcBlindRef,
+    vampireActive: laricellVampireActive,
+    setVampireActive: setLaricellVampireActive,
+    areaHit: handleAbilityAreaHit,
+  });
 
   const {
     cloneVisual: ematronClone,
@@ -1385,6 +1408,7 @@ export function useBattleCombat({
     atomicUsable,
     atomicRemaining,
     activeAbilityPress: openActiveAbility,
+    laricell,
     activeAbilityUsable: activeAbilityRemaining <= 0,
     activeAbilityRemaining,
     specialIntroAbility,

@@ -30,6 +30,12 @@ import {
 import type { NpcHitIntent } from "@/hooks/battle/coop/types";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
+import {
+  clampToBarrier,
+  isBarrierActive,
+  isInsideBarrier,
+  rollBlindMiss,
+} from "@/gameRules/battle/laricell/npcControl";
 
 /**
  * Mesmo alvo = mesmo id e mesmas propriedades visíveis. Usado para não
@@ -73,6 +79,8 @@ export function useNpcAI({
   rootedUntilRef,
   fishingNetRef,
   honoredFleeRef,
+  barrierRef,
+  npcBlindRef,
   npcHpRef,
   npcMaxHpRef,
   npcBlockedRef,
@@ -136,6 +144,7 @@ export function useNpcAI({
     );
   }, [localAliveRef, targetsRef]);
 
+  const projectilesRef = useLatestRef(projectiles);
   const activeProjectile = projectiles[0] ?? null;
   const projectileRef = useLatestRef(activeProjectile);
   const setProjectile = useCallback(
@@ -231,20 +240,41 @@ export function useNpcAI({
     [getEffectiveTargets, onRemoteHitRef],
   );
 
+  /**
+   * NPC cego (Bomba de Fumaça) erra o golpe: o "miss" sai sobre o alvo e o
+   * golpe não é roteado nem aplicado. Só cobre os golpes de alvo único
+   * (melee e projétil) — área não depende de mira.
+   */
+  const blindMiss = useCallback((): boolean => {
+    if (!rollBlindMiss(npcBlindRef?.current ?? null, Date.now(), Math.random)) {
+      return false;
+    }
+    const target = currentTargetRef.current;
+    spawnDamageRef?.current?.(
+      0,
+      target?.x ?? playerXRef.current,
+      target?.y ?? playerYRef.current,
+      "miss",
+    );
+    return true;
+  }, [npcBlindRef, spawnDamageRef, playerXRef, playerYRef]);
+
   const handleMeleeHit = useCallback(
     (multiplier?: number, damageKind?: DamageKind) => {
+      if (blindMiss()) return;
       if (routeSingle({ source: "melee", multiplier, damageKind })) return;
       onMeleeHitRef.current?.(multiplier, damageKind);
     },
-    [routeSingle, onMeleeHitRef],
+    [blindMiss, routeSingle, onMeleeHitRef],
   );
 
   const handleProjectileHit = useCallback(
     (damageKind?: DamageKind) => {
+      if (blindMiss()) return;
       if (routeSingle({ source: "ranged", damageKind })) return;
       onProjectileHitRef.current?.(damageKind);
     },
-    [routeSingle, onProjectileHitRef],
+    [blindMiss, routeSingle, onProjectileHitRef],
   );
 
   const handlePullPlayer = useCallback(
@@ -586,7 +616,19 @@ export function useNpcAI({
       // faz o slow-movement valer para todo comportamento — perseguir,
       // dash, investida — sem que cada um precise saber da regra.
       const scaledX = n.x + (result.x - n.x) * npcTime.speed;
-      const nextX = rooted ? n.x : scaledX;
+      const now = Date.now();
+      const barrier = barrierRef?.current ?? null;
+      const nextX = rooted ? n.x : clampToBarrier(n.x, scaledX, barrier, now);
+
+      if (
+        isBarrierActive(barrier, now) &&
+        projectilesRef.current.some((p) => isInsideBarrier(p.x, barrier, now))
+      ) {
+        setProjectiles((prev) =>
+          prev.filter((p) => !isInsideBarrier(p.x, barrier, now)),
+        );
+        onProjectileDestroyed();
+      }
       const nextY = result.y ?? n.y;
       const direction = result.direction ?? getNpcDirection(nextX, targetX);
       const distanceX = Math.abs(n.x - targetX);
@@ -628,6 +670,9 @@ export function useNpcAI({
     rootedUntilRef,
     fishingNetRef,
     honoredFleeRef,
+    barrierRef,
+    projectilesRef,
+    onProjectileDestroyed,
     npcPhaseRef,
     npcBlockedRef,
     npcHpRef,

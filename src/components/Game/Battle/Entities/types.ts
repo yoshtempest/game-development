@@ -33,6 +33,7 @@ import type {
   BabidiShieldSides,
 } from "@/utils/types/character/babidi";
 import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
+import type { LaricellVisual } from "@/hooks/battle/player/characters/laricell/types";
 
 export type BattleEntitiesBattle = {
   piercings: { id: number; x: number; y: number }[];
@@ -126,6 +127,8 @@ export type Props = {
   babidiEnergyProjectiles?: BabidiEnergyProjectile[];
   babidiMissileProjectiles?: BabidiMissileProjectile[];
   fishingNet?: { x: number; y: number } | null;
+  /** Efeitos das habilidades da Laricell (parede, brincos, fumaça, forma). */
+  laricellVisual?: LaricellVisual | null;
   babidiClones?: BabidiCloneVisual[];
   /** Portal/bomba/explosão da Energia Dimensional do babidi. */
   babidiBombDrop?: BabidiBombDropVisual | null;

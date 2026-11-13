@@ -90,6 +90,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     srGuaxinimOraMultiplierRef,
     vastolordMultiplierRef,
     vastolordActive = false,
+    bonusUniversalVampirism = 0,
     petId = null,
     divergentFistRef,
     onDivergentFistConsumedRef,
@@ -150,23 +151,23 @@ export function useBattleSystem(props: BattleSystemProps) {
 
   /**
    * Vampirismo efetivo da batalha = equipamento + o universal da Forma
-   * Vastolord (10%) enquanto ela está ativa. A injeção fica aqui, num único
-   * ponto, porque TODO caminho de dano do jogador (básico/special via
+   * Vastolord (10%) e o da Forma Vampira da Laricell enquanto estão ativas. A
+   * injeção fica aqui, num único ponto, porque TODO caminho de dano do jogador (básico/special via
    * `usePlayerBattle`, habilidades via `battle.vampirism` no `useBattleCombat`,
    * dreno do Domínio, summons) lê este mesmo objeto — não há um segundo funil
    * de cura para manter em sincronia.
    */
-  const vampirism = useMemo(
-    () =>
-      vastolordActive
-        ? {
-            ...baseVampirism,
-            universalVampirism:
-              baseVampirism.universalVampirism + VASTOLORD_UNIVERSAL_VAMPIRISM,
-          }
-        : baseVampirism,
-    [baseVampirism, vastolordActive],
-  );
+  const vampirism = useMemo(() => {
+    const formBonus =
+      (vastolordActive ? VASTOLORD_UNIVERSAL_VAMPIRISM : 0) +
+      bonusUniversalVampirism;
+    return formBonus > 0
+      ? {
+          ...baseVampirism,
+          universalVampirism: baseVampirism.universalVampirism + formBonus,
+        }
+      : baseVampirism;
+  }, [baseVampirism, vastolordActive, bonusUniversalVampirism]);
 
   const { blockGauge, setBlockGauge, blockLimit, resetBlockGauge } =
     useBlockGauge(char.level, getBlockArmor(totalArmor));
