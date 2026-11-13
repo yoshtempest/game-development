@@ -1,5 +1,7 @@
 import { useCallback, useRef } from "react";
 
+import { nextComboStepIndex } from "@/gameRules/battle/basicCombo";
+
 import {
   EMATRON_COMBO_STEPS,
   EMATRON_COMBO_WINDOW_MS,
@@ -22,11 +24,13 @@ export function useEmatronCombo() {
   const lastSpriteKeyRef = useRef<string | null>(null);
 
   const advance = useCallback((now: number): EmatronComboStep => {
-    const withinWindow =
-      now - lastPressAtRef.current <= EMATRON_COMBO_WINDOW_MS;
-    const nextIndex = withinWindow
-      ? (stepIndexRef.current + 1) % EMATRON_COMBO_STEPS.length
-      : 0;
+    const nextIndex = nextComboStepIndex({
+      previousIndex: stepIndexRef.current,
+      lastPressAt: lastPressAtRef.current,
+      now,
+      windowMs: EMATRON_COMBO_WINDOW_MS,
+      length: EMATRON_COMBO_STEPS.length,
+    });
     const step = EMATRON_COMBO_STEPS[nextIndex] ?? EMATRON_COMBO_STEPS[0];
     stepIndexRef.current = nextIndex;
     multiplierRef.current = step.multiplier;

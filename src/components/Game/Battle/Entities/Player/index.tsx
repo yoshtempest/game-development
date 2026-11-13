@@ -100,6 +100,7 @@ export function Player({
       nameTag={nameTag}
       hakai={hakai}
       sigiloPhase={sigiloPhase}
+      basicComboStep={player.basicComboStep}
     />
   );
 }

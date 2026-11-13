@@ -1,15 +1,29 @@
 import { useEffect, useState } from "react";
 
 import {
+  basicComboSpritePath,
   idleFrameSprite,
   playerAbilityPath,
   resolveBattleSprite,
 } from "@/utils/paths";
 import { resolveSpriteState } from "@/gameRules/battle/playerStates";
+import {
+  getBasicComboStep,
+  usesBasicCombo,
+} from "@/gameRules/battle/basicCombo";
 import { getIdleFrames, IDLE_FRAME_MS } from "@/data/sprites/idleFrames";
 
 import { resolvePlayerSprite } from "@/components/Game/Entities/Player/Battle/utils/resolvePlayerSprite";
 import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
+
+/**
+ * Sprites de postura do combo básico que já deram 404. Os assets `attackN.svg`
+ * ainda não existem para a maioria dos personagens (issue #380); sem este
+ * cache cada golpe tentaria o arquivo de novo e piscaria a imagem quebrada
+ * antes do fallback. É global ao módulo porque a ausência do arquivo não muda
+ * durante a sessão.
+ */
+const missingComboSprites = new Set<string>();
 
 interface UseBattleSpriteParams {
   character: CharacterId;
@@ -24,6 +38,7 @@ interface UseBattleSpriteParams {
   babidiMachineGamaControl?: boolean;
   hakai?: boolean;
   sigiloPhase?: string;
+  basicComboStep?: number;
 }
 
 export function useBattleSprite({
@@ -39,10 +54,11 @@ export function useBattleSprite({
   babidiMachineGamaControl = false,
   hakai = false,
   sigiloPhase,
+  basicComboStep,
 }: UseBattleSpriteParams) {
   const resolvedState = resolveSpriteState(state);
 
-  let baseSrc = resolvePlayerSprite({
+  const plainSrc = resolvePlayerSprite({
     character,
     state,
     weapon,
@@ -55,6 +71,21 @@ export function useBattleSprite({
     hakai,
     sigiloPhase,
   });
+
+  const comboSrc =
+    state === "attack" &&
+    basicComboStep != null &&
+    !outroExpression &&
+    usesBasicCombo(character)
+      ? basicComboSpritePath(
+          plainSrc,
+          getBasicComboStep(basicComboStep).sprite,
+        )
+      : null;
+  const usableComboSrc =
+    comboSrc && !missingComboSprites.has(comboSrc) ? comboSrc : null;
+
+  let baseSrc = usableComboSrc ?? plainSrc;
 
   if (character === "babidi" && babidiMachineGamaControl) {
     const mgState = resolvedState;
@@ -138,6 +169,12 @@ export function useBattleSprite({
           sigiloPhase,
         }),
       );
+      return;
+    }
+
+    if (usableComboSrc && baseSrc === usableComboSrc) {
+      missingComboSprites.add(usableComboSrc);
+      setErrorSrc(plainSrc);
       return;
     }
 

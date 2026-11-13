@@ -28,6 +28,8 @@ import {
   isPlayerParalyzed,
 } from "@/gameRules/battle/status/statusEffects";
 import type { EmatronComboApi } from "@/hooks/battle/player/characters/ematron/useCombo";
+import type { BasicComboApi } from "@/hooks/battle/player/basicCombo/useBasicCombo";
+import { usesBasicCombo } from "@/gameRules/battle/basicCombo";
 import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 
 const PLAYER_COLLISION_W = 30;
@@ -66,6 +68,7 @@ export function useBattleMovement(
   genkiDamaRiseStartYRef?: RefObject<number>,
   natsukiPunchRef?: RefObject<boolean>,
   specialIntroLockRef?: RefObject<boolean>,
+  basicCombo?: BasicComboApi,
 ) {
   const leftIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const rightIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -276,6 +279,14 @@ export function useBattleMovement(
     });
   }
 
+  /**
+   * Press do básico. O passo do combo básico genérico (#376) é decidido aqui,
+   * fora do updater, a partir do snapshot `playerRef`: o `advance` mexe em
+   * refs e lê o relógio, o que não pode acontecer dentro do `setPlayer`. Só o
+   * press que sai do `idle` inicia um golpe do combo — mash durante a animação
+   * não avança a postura —, e o updater só grava o índice no player para o
+   * sprite da postura.
+   */
   function attack() {
     if (isActionFrozen()) return;
     if (lastAttackPressRef) lastAttackPressRef.current = Date.now();
@@ -328,6 +339,21 @@ export function useBattleMovement(
     // `preAttack` — o `usePlayerAnimation` resolve o `next` para `punch`
     // quando `natsukiPunchRef` está marcado. O Punho Divergente
     // (`forcePunchRef`) continua forçando o soco (`preAttack` → attack).
+    let basicComboStep: number | null = null;
+    if (basicCombo) {
+      basicCombo.activeRef.current = false;
+      const startsBasic =
+        current?.mode === "battle" &&
+        current.state === "idle" &&
+        usesBasicCombo(current.character) &&
+        !isPlayerFrozen(current) &&
+        !isPlayerParalyzed(current);
+      if (startsBasic) {
+        basicComboStep = basicCombo.advance(Date.now());
+        basicCombo.activeRef.current = true;
+      }
+    }
+
     const isNatsukiAttack = current?.character === "natsuki";
     const natsukiRolls = isNatsukiAttack && !forcePunchRef?.current;
     const natsukiRoll = natsukiRolls ? Math.random() : 1;
@@ -393,6 +419,9 @@ export function useBattleMovement(
           ...p,
           state: natsukiKick ? "preKick" : "preAttack",
         };
+      }
+      if (basicComboStep != null) {
+        return { ...p, state: "preAttack", basicComboStep };
       }
       return { ...p, state: "preAttack" };
     });
