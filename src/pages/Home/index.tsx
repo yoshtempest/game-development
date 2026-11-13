@@ -7,13 +7,18 @@ import { useBackgroundAudio } from "@/hooks/audio/useBackgroundAudio";
 import { rootAssetPath } from "@/utils/paths";
 import { loadGame } from "@/services/save/saveService";
 import { hasAnySave } from "@/services/save/slotManager";
-import { sceneBackgrounds } from "@/data/scene/background";
 import { useFlags } from "@/contexts/FlagContext";
 import {
   CANTINA_ROUTES,
   JOMASIO_ENTRANCE_ROUTES,
 } from "@/scenes/shared/routes";
 import { ParticlesBackground } from "@/components/ParticlesBackground";
+import { useImageWithFallback } from "@/hooks/scene/useImageWithFallback";
+import {
+  DEFAULT_HOME_BACKGROUND,
+  getCurrentChapter,
+  getHomeBackgroundForChapter,
+} from "@/gameRules/home/background";
 
 function isJomasioEntranceRoute(route: string): boolean {
   return route.toLowerCase().startsWith("/jomasioentrance");
@@ -25,6 +30,11 @@ export default function Home() {
   const { hasFlag } = useFlags();
 
   useBackgroundAudio(undertale);
+
+  const background = useImageWithFallback(
+    getHomeBackgroundForChapter(getCurrentChapter(hasFlag)),
+    DEFAULT_HOME_BACKGROUND,
+  );
 
   useEffect(() => {
     if (!hasAnySave()) {
@@ -65,7 +75,7 @@ export default function Home() {
   return (
     <div
       className="Master"
-      style={{ backgroundImage: `url(${sceneBackgrounds.Home})` }}
+      style={{ backgroundImage: `url(${background})` }}
     >
       <img
         loading="lazy"
