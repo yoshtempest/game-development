@@ -792,7 +792,7 @@ export function useBattleScene({
     }
   }, [showVictory, showDefeat, isRecording, stopRecording]);
 
-  const { reset: resetRewind } = useRewind({
+  const { reset: resetRewind, timePoliceVisible } = useRewind({
     character: player.character,
     rewindFrames,
     setRewindFrames,
@@ -1122,5 +1122,7 @@ export function useBattleScene({
     redUsable,
     purplePress,
     purpleUsable,
+    rewinding: rewindFrames != null,
+    timePoliceVisible,
   });
 }

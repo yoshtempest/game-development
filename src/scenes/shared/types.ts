@@ -248,4 +248,8 @@ export type BattleSceneApi = {
   babidiShieldSides: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onBabidiShieldEnd: (side: BabidiShieldSide, nonce: number) => void;
+  /** Retrocesso Temporal do srGuaxinim em reprodução (fundo galáctico). */
+  rewinding: boolean;
+  /** Easter egg de 1%: a Polícia do Tempo observa este retrocesso. */
+  timePoliceVisible: boolean;
 };
