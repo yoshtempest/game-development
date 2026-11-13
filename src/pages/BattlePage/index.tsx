@@ -97,6 +97,7 @@ export default function BattlePage() {
         background={background}
         audioSrc={config.audioSrc}
         introAudioSrc={config.introAudioSrc}
+        map={config.map}
         training={training}
         isAlfa={isAlfa}
       />

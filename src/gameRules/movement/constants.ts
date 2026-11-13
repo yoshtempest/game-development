@@ -27,3 +27,13 @@ export const JUMP_DURATION = FOUR_HUNDRED_FIFTY_MS;
 
 export const ATTACK_DURATION = TWO_HUNDRED_FIFTY_MS;
 export const SPECIAL_DURATION = EIGHT_HUNDRED_MS;
+
+/**
+ * Física vertical do NPC em mapa de batalha com obstáculos. Mesmo impulso e
+ * mesma gravidade do player (`PLAYER_JUMP_FORCE` / `gravity` do `useGravity`)
+ * de propósito: o NPC alcança exatamente as plataformas que o player alcança,
+ * então nenhum mapa vira esconderijo inalcançável nem o NPC sobe onde o
+ * player não consegue.
+ */
+export const NPC_JUMP_FORCE = PLAYER_JUMP_FORCE;
+export const NPC_GRAVITY = 1;
