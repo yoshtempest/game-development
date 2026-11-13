@@ -86,6 +86,19 @@ export const SPEAKERS = {
   },
   juanDerson: { name: "Juan Derson", base: "/janderson", pose: "right" },
   rapariga: { name: "Rapariga", base: "/rapariga", pose: "default" },
+  gatoSchrodinger: {
+    name: "Gato de Schrödinger",
+    base: "/cats/schrodinger",
+    pose: "default",
+  },
+  gatoDeBotas: {
+    name: "Gato de Botas",
+    base: "/cats/pussInBoots",
+    pose: "default",
+  },
+  garfield: { name: "Garfield", base: "/cats/garfield", pose: "default" },
+  tom: { name: "Tom", base: "/cats/tom", pose: "default" },
+  meowth: { name: "Meowth", base: "/cats/meowth", pose: "default" },
   rickPrime: { name: "Rick prime", base: "/rickPrime", pose: "right" },
 
   surica: { name: "Surica", base: "/surica", pose: "default" },
