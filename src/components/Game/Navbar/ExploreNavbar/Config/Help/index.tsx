@@ -1,3 +1,5 @@
+import { useNotifications } from "@/contexts/NotificationContext";
+
 import styles from "@/components/Game/Navbar/ExploreNavbar/Config/styles.module.css";
 import InstallButton from "@/components/PWA";
 import { UpdateButton } from "@/components/Game/Navbar/ExploreNavbar/Config/UpdateButton";
@@ -19,6 +21,17 @@ export function HelpSection({
   sharedXp,
   language,
 }: Props) {
+  const { enabled, permission, toggleNotifications } = useNotifications();
+
+  const notificationLabel =
+    permission === "unsupported"
+      ? "Indisponível"
+      : permission === "denied"
+        ? "Bloqueado"
+        : enabled
+          ? "ON"
+          : "OFF";
+
   return (
     <div className={styles.flexColumn}>
       <h2 className={styles.marginTop}>Ajuda:</h2>

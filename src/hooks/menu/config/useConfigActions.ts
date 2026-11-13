@@ -21,6 +21,7 @@ interface UseConfigActionsParams {
   setShowQuestIndicatorRef: RefObject<(v: boolean) => void>;
   setSharedXpRef: RefObject<(v: boolean) => void>;
   checkForUpdateRef: RefObject<() => void>;
+  toggleNotificationsRef: RefObject<() => void>;
   isInstalledRef: RefObject<boolean>;
   methodRef: RefObject<string>;
   installRef: RefObject<() => Promise<boolean>>;
@@ -54,6 +55,7 @@ export function useConfigActions({
   setShowQuestIndicatorRef,
   setSharedXpRef,
   checkForUpdateRef,
+  toggleNotificationsRef,
   isInstalledRef,
   methodRef,
   installRef,
@@ -153,6 +155,7 @@ export function useConfigActions({
     setSharedXpRef,
     setScreen,
     checkForUpdateRef,
+    toggleNotificationsRef,
     isInstalledRef,
     methodRef,
     installRef,
