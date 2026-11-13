@@ -4,6 +4,11 @@ import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { createActiveAbility } from "@/data/characters/abilityFactories";
 import { ATOMIC_COOLDOWN_MS, ATOMIC_REIRYOKU_COST } from "./marshadow";
 import {
+  BANKAI_COOLDOWN_MS,
+  BANKAI_DAMAGE_MULTIPLIER,
+  BANKAI_DURATION_MS,
+} from "./bankai";
+import {
   GRAN_REY_CERO_AOE_RADIUS,
   GRAN_REY_CERO_COOLDOWN_MS,
   GRAN_REY_CERO_REIRYOKU_COST,
@@ -38,6 +43,12 @@ export const MARSHADOW_ACTIVE_ABILITIES: ActiveAbility[] = [
     // que nada aqui deve ser lido como "o Domínio passa pelo funil".
     // Nenhum golpe do jogo usa `"true"` ainda; a mecânica está pronta.
     damageType: "true",
+  }),
+  createActiveAbility({
+    id: "bankai",
+    name: "Bankai",
+    description: `Libera a Bankai por ${BANKAI_DURATION_MS / 1000}s: todo dano causado é multiplicado por ${BANKAI_DAMAGE_MULTIPLIER}x. Não acumula com a Forma Vastolord.`,
+    cooldownMs: BANKAI_COOLDOWN_MS,
   }),
   createActiveAbility({
     id: "granReyCero",
