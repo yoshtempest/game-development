@@ -39,15 +39,21 @@ import {
   applyPlayerStatus,
   clearPlayerStatuses,
   STATUS_DURATIONS_MS,
-  BURN_TICK_DAMAGE,
+  BLEED_TICK_DAMAGE_RATIO,
+  BURN_TICK_DAMAGE_RATIO,
+  POISON_TICK_DAMAGE_RATIO,
   type NewPlayerStatus,
 } from "@/gameRules/battle/status/statusEffects";
+import { getNpcPercentDamage } from "@/gameRules/npc/npcPercentDamage";
 import { useStatusDotTicks } from "@/hooks/battle/time/ticks/useStatusDotsTicks";
 import { useNpcBleedTicks } from "@/hooks/battle/time/ticks/useNpcBleedTicks";
 import { useManaRegenTick } from "@/hooks/battle/time/ticks/useManaRegenTick";
 import { usePlayerPullAnimation } from "@/hooks/battle/player/usePlayerPullAnimation";
 import { useMarshadowCutInEnemie } from "@/hooks/battle/player/characters/marshadow/useMarshadowCutInEnemie";
 import type { BattleSystemProps } from "./types";
+
+/** Dano por tick do sangramento no NPC quando quem aplicou não define outro. */
+const NPC_BLEED_BASE_TICK = 2;
 
 export function useBattleSystem(props: BattleSystemProps) {
   const {
@@ -125,6 +131,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     getElementDamageBonus,
     playerMaxHp,
     npcMaxHp: tableNpcMaxHp,
+    npcDamage,
     npcArmor: tableNpcArmor,
     critRate,
     HITS_TO_SPECIAL,
@@ -185,9 +192,17 @@ export function useBattleSystem(props: BattleSystemProps) {
 
   const halfHealReduction = getHalfHealReduction(player.character);
   const equippedResistances = getEquippedResistances(player.character);
+  const bleedTickDamage = getNpcPercentDamage(
+    npcDamage,
+    BLEED_TICK_DAMAGE_RATIO,
+  );
   const burnTickDamage = reduceTickDamage(
-    BURN_TICK_DAMAGE,
+    getNpcPercentDamage(npcDamage, BURN_TICK_DAMAGE_RATIO),
     equippedResistances.heat,
+  );
+  const poisonTickDamage = getNpcPercentDamage(
+    npcDamage,
+    POISON_TICK_DAMAGE_RATIO,
   );
   const onHalfHeal =
     halfHealReduction > 0
@@ -214,6 +229,7 @@ export function useBattleSystem(props: BattleSystemProps) {
   const poisonUntilRef = useLatestRef(player.poisonUntil);
 
   const npcBleedUntilRef = useRef(0);
+  const npcBleedTickDamageRef = useRef(NPC_BLEED_BASE_TICK);
   const npcBleedXRef = useLatestRef(npcX);
   const npcBleedYRef = useLatestRef(npcY);
 
@@ -444,7 +460,9 @@ export function useBattleSystem(props: BattleSystemProps) {
     isPausedRef,
     setPlayerHP,
     spawnDamageRef,
+    bleedTickDamage,
     burnTickDamage,
+    poisonTickDamage,
     bleedXRef,
     bleedYRef,
     bleedUntilRef,
@@ -461,6 +479,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     npcBleedXRef,
     npcBleedYRef,
     npcBleedUntilRef,
+    npcBleedTickDamageRef,
   });
 
   usePlayerPullAnimation(setPlayer, isMenuRef);
@@ -473,12 +492,25 @@ export function useBattleSystem(props: BattleSystemProps) {
     isPausedRef,
   );
 
-  const applyNpcBleed = useCallback((durationMs: number) => {
-    npcBleedUntilRef.current = Math.max(
-      npcBleedUntilRef.current,
-      Date.now() + durationMs,
-    );
-  }, []);
+  /**
+   * Aplica sangramento no NPC principal. Com um sangramento ainda ativo, o
+   * tick mais forte prevalece: reaplicar um sangramento fraco (marshadow) não
+   * pode apagar o bônus de estrelas do hungryDeath no meio do efeito.
+   */
+  const applyNpcBleed = useCallback(
+    (durationMs: number, tickDamage: number = NPC_BLEED_BASE_TICK) => {
+      const now = Date.now();
+      const stillBleeding = npcBleedUntilRef.current > now;
+      npcBleedTickDamageRef.current = stillBleeding
+        ? Math.max(npcBleedTickDamageRef.current, tickDamage)
+        : tickDamage;
+      npcBleedUntilRef.current = Math.max(
+        npcBleedUntilRef.current,
+        now + durationMs,
+      );
+    },
+    [],
+  );
 
   // CutInEnemie do marshadow (forma padrão): sprite sobre o NPC atingido + chance
   // acumulativa de sangramento. Estado renderizado via `battle.cutInEnemie` e
@@ -508,6 +540,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     resetPetSkill();
     resetPetPassive();
     npcBleedUntilRef.current = 0;
+    npcBleedTickDamageRef.current = NPC_BLEED_BASE_TICK;
     marshadowCutIn.reset();
     energy.resetEnergy();
     battleMana?.resetMana();
@@ -554,6 +587,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     playerShield,
     setPlayerShield,
     energy: energy.enabled ? energy.energy : undefined,
+    spendEnergy: energy.spendEnergy,
     mana: battleMana?.playerMana,
     manaMax: battleMana?.playerMaxMana,
     npcHP,

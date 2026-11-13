@@ -23,6 +23,7 @@ import type {
 import { getTime } from "@/gameRules/battle/time";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
+import type { NewPlayerStatus } from "@/utils/types/battle/status";
 
 export function useProjectile(
   projectiles: Projectile[],
@@ -33,7 +34,7 @@ export function useProjectile(
   _playerDirection: Direction,
   _npcX: number,
   _npcY: number,
-  onHit: (damageKind?: DamageKind) => void,
+  onHit: (damageKind?: DamageKind, status?: NewPlayerStatus) => void,
   timeRef: React.RefObject<TimeEffect[]>,
   onPullPlayer?: (x: number) => void,
   onMiss?: (x: number) => void,

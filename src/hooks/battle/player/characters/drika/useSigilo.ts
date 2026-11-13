@@ -5,6 +5,7 @@ import {
   type DrikaArm,
   isDrikaArm,
   DRIKA_ARM_ICONS,
+  getSigiloHpCost,
 } from "@/data/characters/drika/drikaArms";
 
 export type SigiloPhase = "idle" | "biting" | "risking" | "getting";
@@ -73,7 +74,7 @@ export function useSigilo({ character, playerHP, setPlayerHP }: Props) {
         setSelectedArmIcon(null);
         return false;
       }
-      const cost = Math.max(1, Math.floor(playerHP * 0.05));
+      const cost = getSigiloHpCost(playerHP);
       if (playerHP <= cost) return false;
       setSelectedArmIcon(DRIKA_ARM_ICONS[next]);
       setPhase("getting");

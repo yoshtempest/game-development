@@ -6,6 +6,7 @@ import {
 
 export const spriteMap: Record<string, string> = {
   dish: npcPathProjectile("/dish.svg"),
+  acid: npcPathProjectile("/acid.svg"),
   "goat-idle": npcPathPets("/goat/default.svg"),
   "goat-walk": npcPathPets("/goat/walk.svg"),
   staff: npcPathProjectile("/staff.svg"),

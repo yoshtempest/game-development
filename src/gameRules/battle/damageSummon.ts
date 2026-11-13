@@ -11,6 +11,7 @@ import { getCharacterElementTypes } from "@/data/types/characterElementTypes";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
 import { combatService } from "@/services/combat";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
+import { getPlayerBerserkMultiplier } from "@/gameRules/battle/damage/berserk";
 import { NO_ARMOR } from "@/gameRules/battle/damage/armor";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
@@ -92,9 +93,13 @@ export function damageSummon({
   // invocar viraria a forma mais barata de ignorar a build de armadura do chefe.
   // Mesma ordem do funil principal: fúria → armadura → multiplicadores.
   const berserkRaw =
-    player.character === "samurion" && char.level >= 20
-      ? raw * combatService.getBerserkMultiplier(playerHP, playerMaxHp)
-      : raw;
+    raw *
+    getPlayerBerserkMultiplier(
+      player.character,
+      char.level,
+      playerHP,
+      playerMaxHp,
+    );
   const armorReduced = combatService.applyArmor(
     berserkRaw,
     damageKind,

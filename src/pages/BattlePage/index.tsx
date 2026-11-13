@@ -75,7 +75,9 @@ export default function BattlePage() {
   // O duelo só existe a partir de um x1 aceito: sem oponente (URL digitada,
   // reload sem state) não há contra quem lutar.
   if (isPvp && (!online.connected || !pvpOpponentId)) {
-    return <div>Duelo não encontrado — chame alguém pro x1 no modo online.</div>;
+    return (
+      <div>Duelo não encontrado — chame alguém pro x1 no modo online.</div>
+    );
   }
 
   return (

@@ -1,5 +1,6 @@
 import { createExternalStore } from "@/utils/createExternalStore";
 import type { DialogueSpeed } from "@/utils/settings";
+import type { GameLanguage } from "@/data/settings/language";
 import { readSettings } from "./readSettings";
 
 export type Settings = {
@@ -11,6 +12,8 @@ export type Settings = {
   showAbilityIntro: boolean;
   sharedXp: boolean;
   difficulty: NpcDifficulty;
+  /** Idioma do menu de config; só controla a oferta de tradução do navegador. */
+  language: GameLanguage;
 };
 
 export const settingsStore = createExternalStore(readSettings);
@@ -24,4 +27,5 @@ export type SettingsReturn = Settings & {
   setShowAbilityIntro: (show: boolean) => void;
   setSharedXp: (shared: boolean) => void;
   setDifficulty: (difficulty: NpcDifficulty) => void;
+  setLanguage: (language: GameLanguage) => void;
 };

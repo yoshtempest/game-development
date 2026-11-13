@@ -1,7 +1,10 @@
 import type { Props, AtomicApi } from "./types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
-import { ATOMIC_COOLDOWN_MS } from "@/data/characters/marshadow/marshadow";
+import {
+  ATOMIC_COOLDOWN_MS,
+  ATOMIC_REIRYOKU_COST,
+} from "@/data/characters/marshadow/marshadow";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
 import {
   ONE_HUNDRED_MS,
@@ -69,6 +72,8 @@ export function useAtomic({
   playSound,
   onUsed,
   cooldownReduction,
+  energy,
+  spendEnergy,
 }: Props): AtomicApi {
   const [halo, setHalo] = useState(false);
   const [explosion, setExplosion] = useState<AtomicExplosion | null>(null);
@@ -97,6 +102,7 @@ export function useAtomic({
   const projectilesRef = useLatestRef(projectiles);
   const onBoomRef = useLatestRef(onBoom);
   const onUsedRef = useLatestRef(onUsed);
+  const spendEnergyRef = useLatestRef(spendEnergy);
 
   const { usable, usableRef, shouldCancelRef } = useSkillGuard({
     player,
@@ -105,7 +111,10 @@ export function useAtomic({
     disabledRef,
     isPausedRef,
     battleEndedRef,
-    extraCanUse: () => readyAtRef.current <= Date.now() && !activeRef.current,
+    extraCanUse: () =>
+      readyAtRef.current <= Date.now() &&
+      !activeRef.current &&
+      (energy ?? ATOMIC_REIRYOKU_COST) >= ATOMIC_REIRYOKU_COST,
     extraCancel: () => !activeRef.current,
   });
 
@@ -170,6 +179,7 @@ export function useAtomic({
   const press = useCallback(() => {
     if (!usableRef.current) return;
     if (activeRef.current) return;
+    if (!spendEnergyRef.current(ATOMIC_REIRYOKU_COST)) return;
 
     onUsedRef.current?.();
     activeRef.current = true;
@@ -321,6 +331,7 @@ export function useAtomic({
     summonsRef,
     timers,
     usableRef,
+    spendEnergyRef,
   ]);
 
   // Tick do cooldown restante do botão (20s). Com o menu de batalha aberto o
