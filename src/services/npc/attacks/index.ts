@@ -22,6 +22,9 @@ import { HungryFishAttack } from "./hungryFish";
 import { HungryKingAttack } from "./hungryKing";
 import { HungryPigAttack } from "./hungryPig";
 import { JhowsimarAttack } from "./jhowsimar";
+import { VigiaJoaoAttack } from "./vigiaJoao";
+import { VigiaJoaquimAttack } from "./vigiaJoaquim";
+import { VigiaLandoAttack } from "./vigiaLando";
 import { LeviathanAttack } from "./leviathan";
 import { LupitaAttack } from "./lupita";
 import { MadameAttack } from "./madame";
@@ -65,6 +68,9 @@ export const npcAttacks = {
   piupiu: new PiupiuAttack(),
   rice: new RiceAttack("rice"),
   jhowsimar: new JhowsimarAttack(),
+  vigiaJoao: new VigiaJoaoAttack(),
+  vigiaJoaquim: new VigiaJoaquimAttack(),
+  vigiaLando: new VigiaLandoAttack(),
   goat: new GoatAttack(),
   vandinhaFragment: new VandinhaFragmentAttack(),
   trueVandinha: new TrueVandinhaAttack(),

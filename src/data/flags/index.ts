@@ -1,5 +1,8 @@
 export const FLAGS = {
   jhowsimar: { id: "jhowsimar" },
+  vigiaJoao: { id: "vigiaJoao" },
+  vigiaJoaquim: { id: "vigiaJoaquim" },
+  vigiaLando: { id: "vigiaLando" },
   hungryDeath: { id: "hungryDeath" },
   vandinhaFragment: { id: "vandinhaFragment" },
   deise: { id: "deise" },

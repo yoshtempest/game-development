@@ -34,6 +34,17 @@ export const CANTINA_ROUTES = {
   TWO: "/cantina/two",
 };
 
+/**
+ * Batalhas dos vigias que guardam portas. O tile da porta devolve uma destas
+ * rotas enquanto o vigia não foi derrotado; a vitória seta a flag do vigia e
+ * volta (`navigate(-1)`) para a cena, que a partir daí libera a passagem.
+ */
+export const GUARD_BATTLE_ROUTES = {
+  JOAO: "/battle/vigiaJoao",
+  JOAQUIM: "/battle/vigiaJoaquim",
+  LANDO: "/battle/vigiaLando",
+};
+
 export const PROFESSOR_ROOM_ROUTES = {
   ONE: "/professorRoom/one",
   TWO: "/professorRoom/two",

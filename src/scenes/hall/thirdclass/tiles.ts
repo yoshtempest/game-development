@@ -6,8 +6,19 @@ import {
   HALL_ROUTES,
   LIBRARY_ROUTES,
   BRODICLASS_ROUTES,
+  GUARD_BATTLE_ROUTES,
 } from "@/scenes/shared/routes";
-import { hasQuest } from "@/scenes/shared/helpers";
+import { hasFlag, hasQuest } from "@/scenes/shared/helpers";
+import type { TileRouteFunction } from "@/scenes/shared/types";
+
+/**
+ * Porta da biblioteca guardada pelo Vigia Joaquim: enquanto ele não foi
+ * derrotado, entrar na porta abre a batalha em vez de levar à biblioteca.
+ */
+const getLibraryRoute: TileRouteFunction = (_player, _quests, flags) =>
+  hasFlag(flags, "vigiaJoaquim")
+    ? LIBRARY_ROUTES.ONE
+    : GUARD_BATTLE_ROUTES.JOAQUIM;
 
 export const hallThirdClassTiles = [
   createConditionalTile(
@@ -24,8 +35,8 @@ export const hallThirdClassTiles = [
         "Uma reunião do conselho está acontecendo no momento, volte mais tarde",
     },
   ),
-  createDoorTile(9, 2, LIBRARY_ROUTES.ONE),
-  createDoorTile(10, 2, LIBRARY_ROUTES.ONE),
+  createConditionalTile(9, 2, getLibraryRoute),
+  createConditionalTile(10, 2, getLibraryRoute),
   createDoorTile(8, 12, HALL_ROUTES.CENTER_FRONT),
   createDoorTile(9, 12, HALL_ROUTES.CENTER_FRONT),
   createDoorTile(10, 12, HALL_ROUTES.CENTER_FRONT),

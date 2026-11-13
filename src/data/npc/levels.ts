@@ -2,6 +2,9 @@ import type { NpcType } from "@/data/npc/npc";
 
 export const NPC_LEVELS: Partial<Record<NpcType, number>> = {
   jhowsimar: 1,
+  vigiaJoaquim: 3,
+  vigiaJoao: 6,
+  vigiaLando: 8,
   vandinhaFragment: 3,
   deise: 7,
   maugrelo: 9,
