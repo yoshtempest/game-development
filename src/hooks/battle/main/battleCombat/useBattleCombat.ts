@@ -530,8 +530,6 @@ export function useBattleCombat({
       }
     },
     srGuaxinimOraMultiplierRef,
-    refs,
-    freezeActionsUntilRef,
     onBombProjectiles: (strikes) => {
       npc.strikeProjectiles(strikes);
     },
