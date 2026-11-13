@@ -255,6 +255,15 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     background: sceneBackgrounds.PcRoomBattle,
     audioSrc: backgroundAudioPath("/battle/Jojo.m4a"),
   },
+  rickPrime: {
+    npcType: "rickPrime",
+    onVictory: ({ navigate }) => {
+      void navigate(-1);
+    },
+    victoryDescription: "Rick Prime perdeu a paciência... e a luta.",
+    background: sceneBackgrounds.CombatTutorial,
+    audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+  },
 };
 
 export const ROUTE_TO_BATTLE_KEY: Record<string, string> = {
@@ -280,4 +289,5 @@ export const ROUTE_TO_BATTLE_KEY: Record<string, string> = {
   "/battle/truevandinha": "trueVandinha",
   "/training": "training",
   "/battle/pvp": "pvp",
+  "/battle/rickprime": "rickPrime",
 };

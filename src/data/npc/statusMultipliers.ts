@@ -51,6 +51,7 @@ export const NPC_STATUS_MULTIPLIERS: Partial<
   vandinhaFragment: { damage: 1.3, physicalArmor: 1, magicalArmor: 1, hp: 1.3 },
   trueVandinha: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 1 },
   deise: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 0.8 },
+  rickPrime: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 1 },
 };
 
 export function getNpcStatusMultipliers(npcType: string): NpcStatusMultipliers {
