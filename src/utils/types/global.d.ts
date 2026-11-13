@@ -462,8 +462,12 @@ declare global {
    * vida máxima dos inimigos a cada 50ms.
    */
   type PlayerNatsukiDomainState = "rioiki";
-  /** Laser da Forma Vastolord do marshadow. */
-  type PlayerLaserState = "laser";
+  /**
+   * Laser da Forma Vastolord do marshadow em duas poses: `preLaser` (sprite
+   * `preLaser.svg`) segura o personagem durante o intro/carga, e `laser`
+   * (sprite `laser.svg`) é a pose do disparo enquanto o feixe está ativo.
+   */
+  type PlayerLaserState = "preLaser" | "laser";
   /** "Gran Rey Cero" do marshadow. */
   type PlayerGranReyCeroState = "granReyCero";
   /**

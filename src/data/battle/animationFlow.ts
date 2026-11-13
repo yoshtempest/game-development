@@ -84,8 +84,10 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
   preparingGenkiDama: null,
   throwGenkiDama: null,
 
-  // Laser da Forma Vastolord do marshadow: estado mantido pelo hook por 3s
-  // (useVastolordLaser), que restaura o idle quando o feixe termina.
+  // Laser da Forma Vastolord do marshadow: `preLaser` segura a pose de carga
+  // durante o intro e `laser` a do disparo por 3s; os dois são trocados pelo
+  // hook (useVastolordLaser), que restaura o idle quando o feixe termina.
+  preLaser: null,
   laser: null,
 
   // Kamehameha do ematron: fase de disparo (efeito) mantida pelo hook
