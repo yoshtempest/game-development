@@ -22,6 +22,7 @@ export function runPetSkill(
   const {
     petLevel,
     petStars,
+    affinityMultiplier,
     playerLevel,
     groundY,
     beginCoffinSequence,
@@ -47,7 +48,8 @@ export function runPetSkill(
   const effect = def.skillEffect;
   switch (effect.kind) {
     case "damage": {
-      const baseDamage = getPetBaseDamage(petLevel, petStars);
+      const baseDamage =
+        getPetBaseDamage(petLevel, petStars) * affinityMultiplier;
       const dmg = calcPetDamage({
         baseDamage,
         multiplier: effect.multiplier,
@@ -61,7 +63,8 @@ export function runPetSkill(
       break;
     }
     case "jumpAttack": {
-      const baseDamage = getPetBaseDamage(petLevel, petStars);
+      const baseDamage =
+        getPetBaseDamage(petLevel, petStars) * affinityMultiplier;
       const dmg = calcPetDamage({
         baseDamage,
         multiplier: effect.multiplier,
@@ -77,7 +80,8 @@ export function runPetSkill(
       break;
     }
     case "teleportBite": {
-      const baseDamage = getPetBaseDamage(petLevel, petStars);
+      const baseDamage =
+        getPetBaseDamage(petLevel, petStars) * affinityMultiplier;
       const enemies: {
         id: string;
         npcType: string;
@@ -173,7 +177,8 @@ export function runPetSkill(
     }
     case "summon": {
       if (def.petId === "pet_hungryKing") {
-        const starMultiplier = PET_STAR_MULTIPLIER ** (petStars - 1);
+        const starMultiplier =
+          PET_STAR_MULTIPLIER ** (petStars - 1) * affinityMultiplier;
         triggerPetInvoke(HUNGRY_KING_INVOKE_MS);
         beginCoffinSequence(
           [playerX + 200],
@@ -186,22 +191,28 @@ export function runPetSkill(
             }),
         );
       } else {
-        summonAlly(effect.npcType);
+        summonAlly(effect.npcType, undefined, {
+          statMultiplier: affinityMultiplier,
+        });
       }
       break;
     }
-    case "shield":
-      battle.setPlayerShield((shield) => shield + effect.amount);
+    case "shield": {
+      const shieldAmount = Math.round(effect.amount * affinityMultiplier);
+      battle.setPlayerShield((shield) => shield + shieldAmount);
       break;
-    case "heal":
-      battle.setPlayerHP((hp) =>
-        Math.min(battle.playerMaxHp, hp + effect.amount),
-      );
-      spawnDamageRef.current?.(effect.amount, playerX, playerY - 40, "heal");
+    }
+    case "heal": {
+      const healAmount = Math.round(effect.amount * affinityMultiplier);
+      battle.setPlayerHP((hp) => Math.min(battle.playerMaxHp, hp + healAmount));
+      spawnDamageRef.current?.(healAmount, playerX, playerY - 40, "heal");
       break;
+    }
     case "healPercent": {
       const pct = effect.perStar[petStars - 1] ?? effect.perStar[0] ?? 0;
-      const heal = Math.round((battle.playerMaxHp * pct) / 100);
+      const heal = Math.round(
+        ((battle.playerMaxHp * pct) / 100) * affinityMultiplier,
+      );
       battle.setPlayerHP((hp) => Math.min(battle.playerMaxHp, hp + heal));
       spawnDamageRef.current?.(heal, playerX, playerY - 40, "heal");
       break;

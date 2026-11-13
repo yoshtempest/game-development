@@ -27,6 +27,7 @@ export const BATTLE_STATS_KEY = "battle_stats";
 export const DAILY_REWARD_KEY = "daily_reward_last_claim";
 export const MONTHLY_PASS_KEY = "monthly_pass";
 export const PET_PROGRESS_KEY = "pet_progress";
+export const PET_AFFINITY_KEY = "pet_affinity";
 export const PROFESSION_PROGRESS_KEY = "profession_progress";
 export const TOMBSTONES_KEY = "tombstones";
 export const JESO_FOOD_KEY = "jeso_food_last_delivery";

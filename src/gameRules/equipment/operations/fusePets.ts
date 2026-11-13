@@ -4,6 +4,7 @@ import {
   PET_STAR_MAX,
   enhanceFromPetStars,
 } from "@/data/characters/pets/petProgress";
+import { canPetEvolve } from "@/gameRules/pets/evolution";
 import { addToCollection } from "./addToCollection";
 import { getMutableState } from "./getMutableState";
 
@@ -15,6 +16,7 @@ export function fusePets(
 ): Record<string, CharacterEquipmentData> | null {
   const item = getEquipmentById(petId);
   if (!item || item.slot !== "pet") return null;
+  if (!canPetEvolve(item.rank)) return null;
   if (stars < 1 || stars >= PET_STAR_MAX) return null;
 
   const sourceEnhance = enhanceFromPetStars(stars);

@@ -6,6 +6,11 @@ import type { DamageArmor } from "@/utils/types/battle/damageKind";
 export type PetSkillRunDeps = {
   petLevel: number;
   petStars: number;
+  /**
+   * Multiplicador da afinidade pet ↔ jogador (`getPetAffinityMultiplier`),
+   * aplicado a dano, cura, escudo e força de invocação do pet.
+   */
+  affinityMultiplier: number;
   playerLevel: number;
   groundY: number;
   beginCoffinSequence: (

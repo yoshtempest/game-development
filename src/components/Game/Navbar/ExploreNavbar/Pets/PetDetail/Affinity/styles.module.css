@@ -1,0 +1,70 @@
+.affinityPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  padding: var(--size-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--size-3);
+  background: var(--surface-card);
+}
+
+.headerRow,
+.footerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--size-2);
+}
+
+.loveLabel,
+.hateLabel {
+  font-size: var(--fs-10);
+  font-weight: bold;
+}
+
+.loveLabel {
+  color: var(--secondary-color);
+}
+
+.hateLabel {
+  color: var(--danger);
+}
+
+.hearts {
+  display: flex;
+  gap: var(--size-2);
+}
+
+.heartLove {
+  color: var(--secondary-color);
+}
+
+.heartHate {
+  color: var(--danger);
+}
+
+.heartEmpty {
+  color: var(--text-secondary);
+  opacity: 0.35;
+}
+
+.hint {
+  font-size: var(--fs-10);
+  color: var(--text-secondary);
+}
+
+.petButton {
+  padding: var(--size-2) var(--size-3);
+  border: 1px solid var(--secondary-color);
+  border-radius: var(--size-2);
+  background: var(--secondary-color);
+  color: var(--black);
+  font-size: var(--fs-10);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.petButton:active {
+  transform: scale(0.97);
+}
