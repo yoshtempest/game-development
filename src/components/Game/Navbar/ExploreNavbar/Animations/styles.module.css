@@ -1,0 +1,45 @@
+.list {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--small);
+  padding: var(--fs-8);
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: var(--fs-8);
+  padding: var(--fs-8);
+  border-radius: var(--size-4);
+  border: var(--size-1) solid var(--border-strong);
+  background: var(--surface-primary);
+  cursor: pointer;
+}
+
+.selected {
+  outline: var(--size-2) solid var(--text-color);
+  outline-offset: var(--size-2);
+}
+
+.icon {
+  width: var(--fs-36);
+  height: var(--fs-36);
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+
+.label {
+  font-weight: bold;
+}
+
+.description {
+  opacity: 0.8;
+}

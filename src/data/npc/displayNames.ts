@@ -52,6 +52,7 @@ const NPC_DISPLAY_NAMES: Record<NpcType, string> = {
   theDevourerOfWorlds: "O devorador de mundos",
   ouroboros: "Ouroboros",
   rickPrime: "Rick Prime",
+  mahoraga: "Mahoraga, o General Divino",
 };
 
 /**

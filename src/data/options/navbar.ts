@@ -36,6 +36,11 @@ export const NAVBAR_OPTIONS = [
     label: "Pets",
     screen: "pets",
   },
+  {
+    icon: navbarIconPath("animations.svg"),
+    label: "Animações",
+    screen: "animations",
+  },
   { icon: navbarIconPath("saves.svg"), label: "Saves", screen: "saves" },
   {
     icon: navbarIconPath("configs.svg"),

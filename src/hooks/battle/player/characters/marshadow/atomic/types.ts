@@ -42,6 +42,14 @@ export type Props = {
    * nenhum destes hooks.
    */
   cooldownReduction: number;
+  /**
+   * Reiryoku atual do Marshadow (`undefined` para quem não tem a barra). A
+   * habilidade só fica utilizável com saldo para o custo, e o botão reflete
+   * isso pelo mesmo `usable`.
+   */
+  energy: number | undefined;
+  /** Debita o custo em reiryoku; `false` quando não há saldo. */
+  spendEnergy: (cost: number) => boolean;
 };
 
 export type AtomicApi = {
