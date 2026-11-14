@@ -56,3 +56,5 @@ export const NOTIFICATIONS_ENABLED_KEY = "jomasio_notifications_enabled";
 export const LAST_PLAYED_KEY = "jomasio_last_played_at";
 /** Último lembrete disparado (epoch ms), para não repetir a cada checagem. */
 export const LAST_REMINDER_KEY = "jomasio_last_reminder_at";
+export const MAHORAGA_EVENT_KEY = "mahoraga_event_last_fought_day";
+export const MAHORAGA_NOTIFIED_KEY = "mahoraga_event_notified_today";
