@@ -1,4 +1,7 @@
+import { NpcCardImage } from "@/components/Game/NpcCard";
+
 import { ITEMS } from "@/data/items";
+import { getCardNpcType } from "@/data/npc";
 import { itemPath } from "@/utils/paths";
 import type { InventoryItem } from "@/utils/types/player/inventory";
 import styles from "./styles.module.css";
@@ -11,6 +14,7 @@ type Props = {
 
 export function ListItem({ item, isSelected, rejected }: Props) {
   const itemData = ITEMS[item.id];
+  const cardNpcType = getCardNpcType(item.id);
 
   return (
     <li
@@ -18,13 +22,21 @@ export function ListItem({ item, isSelected, rejected }: Props) {
     >
       {itemData && (
         <div className={styles.itemRow}>
-          <img
-            loading="lazy"
-            decoding="async"
-            className={styles.icon}
-            src={itemData.image ?? itemPath(`${item.id}.svg`)}
-            alt={itemData.name}
-          />
+          {cardNpcType ? (
+            <NpcCardImage
+              npcType={cardNpcType}
+              alt={itemData.name}
+              className={styles.icon}
+            />
+          ) : (
+            <img
+              loading="lazy"
+              decoding="async"
+              className={styles.icon}
+              src={itemData.image ?? itemPath(`${item.id}.svg`)}
+              alt={itemData.name}
+            />
+          )}
 
           <div className={styles.info}>
             <span className={styles.name}>

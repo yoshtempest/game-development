@@ -4,6 +4,7 @@ import type { AnimationEvent, ComponentType, LazyExoticComponent } from "react";
 import styles from "./styles.module.css";
 import { useNavbarMenu } from "@/hooks/menu/useNavbar";
 import { useNavbar } from "@/contexts/NavbarContext";
+import { hideBrokenImage } from "@/utils/hideBrokenImage";
 import type { MenuScreen } from "@/utils/types/player/navbar";
 
 function lazyNamed<K extends string>(
@@ -24,6 +25,7 @@ const SCREENS: Record<MenuScreen, LazyExoticComponent<ComponentType>> = {
   professions: lazyNamed(() => import("./Professions"), "Professions"),
   titles: lazyNamed(() => import("./Titles"), "TitlesScreen"),
   pets: lazyNamed(() => import("./Pets"), "Pets"),
+  animations: lazyNamed(() => import("./Animations"), "Animations"),
   saves: lazyNamed(() => import("./Saves"), "Saves"),
   config: lazyNamed(() => import("./Config"), "Config"),
 };
@@ -57,6 +59,7 @@ export function Navbar() {
                 className={styles.icon}
                 src={item.icon}
                 alt=""
+                onError={hideBrokenImage}
               />
               {item.label}
             </li>

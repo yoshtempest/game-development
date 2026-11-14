@@ -1,6 +1,12 @@
 import type { NavigateFunction } from "react-router";
 import { sceneBackgrounds } from "@/data/scene/background";
 import { backgroundAudioPath } from "@/utils/paths";
+import type { BattleMapConfig } from "@/utils/types/maps/battle";
+import {
+  CENTER_ROCK_MAP,
+  ROCKY_FIELD_MAP,
+  TWIN_PLATFORMS_MAP,
+} from "@/data/battle/maps";
 
 export type BattleCtx = {
   setFlag: (flag: FlagId) => void;
@@ -15,6 +21,12 @@ export type BattleConfig = {
   background: string;
   audioSrc: string;
   introAudioSrc?: string;
+  /**
+   * Pedras/plataformas da arena (`data/battle/maps.ts`). Ausente = arena
+   * plana de sempre. Só entra em battle de NPC terrestre: boss que voa,
+   * cava ou teleporta controla o próprio `y` e ignoraria o terreno.
+   */
+  map?: BattleMapConfig;
 };
 
 export function getBattleBackgroundFromRoute(route: string): string {
@@ -58,6 +70,7 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou 'Jhow Simar, o Vigia'",
     background: sceneBackgrounds.CantinaBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+    map: ROCKY_FIELD_MAP,
   },
   hellroom: {
     npcType: "maugrelo",
@@ -93,6 +106,7 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou 'Neimito, o mestre do calor'",
     background: sceneBackgrounds.FootballCourtBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+    map: CENTER_ROCK_MAP,
   },
   hallJailson: {
     npcType: "slimita",
@@ -184,6 +198,7 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou 'Jhow Simar, o Vigia'",
     background: sceneBackgrounds.CantinaBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+    map: ROCKY_FIELD_MAP,
   },
   hungryDog: {
     npcType: "hungryDog",
@@ -211,6 +226,7 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou um Bolinho de arroz!",
     background: sceneBackgrounds.CafeteriaBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+    map: TWIN_PLATFORMS_MAP,
   },
   technoblade: {
     npcType: "technoblade",
@@ -220,6 +236,7 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou o rei",
     background: sceneBackgrounds.CantinaBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+    map: TWIN_PLATFORMS_MAP,
   },
   vandinha: {
     npcType: "vandinhaFragment",
