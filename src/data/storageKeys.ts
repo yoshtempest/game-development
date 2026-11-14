@@ -47,6 +47,8 @@ export const FOOTBALLCOURT_DOGS_KEY = "footballcourt_dog_spots";
 export const ONLINE_ROOM_SESSION_KEY = "jomasio_online_room_id";
 /** Parceiro de guilda da aba (sessionStorage), par do `ONLINE_ROOM_SESSION_KEY`. */
 export const ONLINE_GUILD_SESSION_KEY = "jomasio_online_guild_id";
+/** Encontros e episódios já ouvidos do Rick Prime (issue #442). */
+export const RICK_PRIME_PODCAST_KEY = "rick_prime_podcast";
 /**
  * Opt-in de notificações locais do PWA. Global (fora do slot): é preferência do
  * aparelho, não do save — a permissão do navegador também é por origem.

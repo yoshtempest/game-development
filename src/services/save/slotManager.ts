@@ -158,6 +158,7 @@ export const GAME_STATE_KEYS = [
   "ground_items",
   "footballcourt_dog_spots",
   "babidi_attack_mode",
+  "rick_prime_podcast",
   "mahoraga_event_last_day",
   "mahoraga_event_last_fought_day",
   "mahoraga_event_notified_today"
