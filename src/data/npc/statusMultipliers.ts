@@ -51,6 +51,13 @@ export const NPC_STATUS_MULTIPLIERS: Partial<
   vandinhaFragment: { damage: 1.3, physicalArmor: 1, magicalArmor: 1, hp: 1.3 },
   trueVandinha: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 1 },
   deise: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 0.8 },
+  /**
+   * Super tanque: a issue #444 pede um boss de evento que aguente a janela
+   * inteira. Vida e armadura altas compensam o dano baixo; a adaptação
+   * (`gameRules/battle/mahoragaAdaptation.ts`) soma armadura por cima disto.
+   * Decisão para revisar: valores iniciais sem playtest.
+   */
+  mahoraga: { damage: 0.8, physicalArmor: 1.8, magicalArmor: 1.8, hp: 3 },
 };
 
 export function getNpcStatusMultipliers(npcType: string): NpcStatusMultipliers {
