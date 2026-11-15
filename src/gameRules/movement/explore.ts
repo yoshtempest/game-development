@@ -73,6 +73,7 @@ export function moveExplore(
   blockedTiles?: BlockedTile[],
 ): ExploreMoveResult {
   if (player.mode !== "explore") return { player, blocked: false };
+  if (player.emote) player = { ...player, emote: undefined };
 
   if (player.hasPeru) {
     const double = tryMove(player, map, heightMap, direction, 2, blockedTiles);
