@@ -84,6 +84,7 @@ export function useBattleEntities({
     freezeUntilRef: freezeSummonsUntilRef,
     rootedSummonsUntilRef,
     honoredFleeRef,
+    petBlindRef: battle.summonsPetBlindRef,
     onSummonKilled: () => {
       if (vastolordActive) {
         extendVastolordRef.current(VASTOLORD_KILL_EXTEND_MS);

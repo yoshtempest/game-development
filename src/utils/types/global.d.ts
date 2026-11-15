@@ -693,6 +693,7 @@ declare global {
     | "charge"
     | "reflect"
     | "miss"
+    | "blind"
     | "bleed"
     | "burn"
     | "poison"

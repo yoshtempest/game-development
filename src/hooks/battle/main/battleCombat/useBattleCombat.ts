@@ -429,6 +429,10 @@ export function useBattleCombat({
       rootedSummonsUntilRef,
       rootDurationMs,
       playSound,
+      npcEnchantUntilRef,
+      npcStaggerRef: refs.npcStaggerRef,
+      npcPetBlindRef: battle.npcPetBlindRef,
+      summonsPetBlindRef: battle.summonsPetBlindRef,
     });
   };
 

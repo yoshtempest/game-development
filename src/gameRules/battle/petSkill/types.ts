@@ -2,6 +2,8 @@ import type { RefObject } from "react";
 
 import type { SpawnDamageFn } from "@/utils/types/battle/spawnDamageFn";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
+import type { Enchantment } from "@/data/equipment/enchantments";
+import type { PetBlind } from "@/gameRules/battle/petSkill/blind";
 
 export type PetSkillRunDeps = {
   petLevel: number;
@@ -27,7 +29,12 @@ export type PetSkillRunDeps = {
     setPlayerShield: React.Dispatch<React.SetStateAction<number>>;
   };
   spawnDamageRef: RefObject<SpawnDamageFn>;
-  npc: { x: number; y: number };
+  /** `updateNpc` aplica o clamp da arena no `x` (empurrão do Tsunami). */
+  npc: {
+    x: number;
+    y: number;
+    updateNpc: (partial: { x?: number }) => void;
+  };
   summonAlly: (
     npcType: string,
     overrideX?: number,
@@ -48,5 +55,16 @@ export type PetSkillRunDeps = {
   npcRootedUntilRef: RefObject<number>;
   rootedSummonsUntilRef: RefObject<Record<string, number>>;
   rootDurationMs: number;
+  /**
+   * Fim de cada status de encantamento no NPC principal. O congelamento do
+   * Tsunami reusa o `freeze` daqui (com `npcStaggerRef` segurando o NPC) para
+   * o indicador de status e o reset da derrota valerem sem caminho paralelo.
+   */
+  npcEnchantUntilRef: RefObject<Record<Enchantment, number>>;
+  npcStaggerRef: RefObject<number>;
+  /** Cegueira do Tornado de Terra (Peru) no NPC principal. */
+  npcPetBlindRef: RefObject<PetBlind>;
+  /** Cegueira do Tornado de Terra (Peru) por summon inimigo (id → cegueira). */
+  summonsPetBlindRef: RefObject<Record<string, PetBlind>>;
   playSound: (sound: SoundId, loop?: boolean, volumeOverride?: number) => void;
 };
