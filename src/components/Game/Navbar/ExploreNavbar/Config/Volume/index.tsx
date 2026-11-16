@@ -1,4 +1,4 @@
-import { Minus, Plus, Volume2 } from "lucide-react";
+import { Minus, Plus, Volume2, SixteenthNotes } from "lucide-react";
 
 import { BGM_COLUMN, SFX_COLUMN } from "@/hooks/menu/config/configConstants";
 
@@ -35,6 +35,7 @@ export function VolumeSection({
         )}
 
       <div className="navbarContainerRow">
+        <SixteenthNotes />
         <h2>Efeitos Sonoros: {sfxVolume}</h2>
       </div>
 
@@ -66,7 +67,10 @@ export function VolumeSection({
           <span className={styles.cursor}>▼</span>
         )}
 
-        <h2 className={styles.marginTop}>Música de Fundo: {bgmVolume}</h2>
+        <div className="navbarContainerRow">
+          <SixteenthNotes />
+          <h2>Música de Fundo: {bgmVolume}</h2>
+        </div>
         <div className={styles.flexRow}>
           <button
             type="button"
