@@ -7,7 +7,7 @@ import {
   DIVERGENT_FIST_COST,
 } from "@/gameRules/battle/cursedEnergy";
 import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
-import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
+import { getDomainExpansion } from "@/data/characters/domainExpansions";
 import { npcPath, playerAbilityBackgroundPath } from "@/utils/paths";
 import { PetSkillButton } from "@/components/Game/Battle/Buttons/PetSkill";
 import { WeaponSwitchButton } from "@/components/Game/Battle/Buttons/WeaponSwitch";
@@ -96,7 +96,10 @@ export function BattleAbilities({
 
   const battleMana = useBattleMana();
 
-  const domainConfig = DOMAIN_EXPANSIONS[player.character];
+  const domainConfig = getDomainExpansion(
+    player.character,
+    vastolordActive ? "vastolord" : null,
+  );
   const domainBackground = domainConfig.hasBackgroundArt
     ? playerAbilityBackgroundPath(player.character, "domainExpansion")
     : undefined;
@@ -482,29 +485,26 @@ export function BattleAbilities({
           );
         })()}
 
-      {!vastolordActive &&
-        (() => {
-          abilitySlotsRef.current.push({
-            click: domainExpansionPress,
-            disabled: controlsDisabled,
-            hold: false,
-            abilityId:
-              player.character === "marshadow"
-                ? "domainExpansion"
-                : "domainBurst",
-          });
-          return (
-            <DomainExpansionButton
-              name={domainConfig.name}
-              description={domainConfig.description}
-              accent={domainConfig.accent}
-              background={domainBackground}
-              ready={domainExpansionUsable}
-              disabled={controlsDisabled}
-              onClick={domainExpansionPress}
-            />
-          );
-        })()}
+      {(() => {
+        abilitySlotsRef.current.push({
+          click: domainExpansionPress,
+          disabled: controlsDisabled,
+          hold: false,
+          abilityId:
+            domainConfig.kind === "mugetsu" ? "domainExpansion" : "domainBurst",
+        });
+        return (
+          <DomainExpansionButton
+            name={domainConfig.name}
+            description={domainConfig.description}
+            accent={domainConfig.accent}
+            background={domainBackground}
+            ready={domainExpansionUsable}
+            disabled={controlsDisabled}
+            onClick={domainExpansionPress}
+          />
+        );
+      })()}
     </div>
   );
 }
