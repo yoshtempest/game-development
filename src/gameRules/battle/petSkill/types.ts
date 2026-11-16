@@ -8,6 +8,11 @@ import type { PetBlind } from "@/gameRules/battle/petSkill/blind";
 export type PetSkillRunDeps = {
   petLevel: number;
   petStars: number;
+  /**
+   * Multiplicador da afinidade pet ↔ jogador (`getPetAffinityMultiplier`),
+   * aplicado a dano, cura, escudo e força de invocação do pet.
+   */
+  affinityMultiplier: number;
   playerLevel: number;
   groundY: number;
   beginCoffinSequence: (
