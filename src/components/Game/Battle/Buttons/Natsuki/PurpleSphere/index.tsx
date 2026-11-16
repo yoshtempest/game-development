@@ -28,7 +28,7 @@ export function PurpleSphereButton({
     <AbilityButton
       type="custom"
       customClasses={purpleSphereClasses}
-      label="Roxa"
+      // label="Roxa"
       disabled={disabled}
       onClick={onClick}
       extraProps={{ active }}
