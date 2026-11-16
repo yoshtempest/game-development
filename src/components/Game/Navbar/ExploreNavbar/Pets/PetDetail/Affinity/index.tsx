@@ -1,4 +1,4 @@
-import { Heart, HeartCrack } from "lucide-react";
+import { Crown, Skull } from "lucide-react";
 
 import { getPetAffinityMultiplier } from "@/gameRules/pets/affinity";
 import {
@@ -27,7 +27,7 @@ export function PetAffinity({ affinity, owned, onPet }: Props) {
   const hate = value < 0;
   const filled = Math.abs(value);
   const bonusPercent = Math.round((getPetAffinityMultiplier(value) - 1) * 100);
-  const Icon = hate ? HeartCrack : Heart;
+  const Icon = hate ? Skull : Crown;
   const label = hate ? "Ódio" : value > 0 ? "Afeição" : "Neutro";
 
   return (

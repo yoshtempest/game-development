@@ -68,7 +68,6 @@ export function PetDetail({ entry, onClose }: Props) {
               isEquipped={isEquipped}
               fusing={!!fusing}
               canFuse={canFuse}
-              evolutionLocked={evolutionLocked}
               startFuse={startFuse}
               executeFuse={executeFuse}
               equipPet={equipPet}
@@ -90,11 +89,14 @@ export function PetDetail({ entry, onClose }: Props) {
 
           <PetAbilities entry={entry} />
 
-          <PetStarSelector
-            selectedStar={selectedStar}
-            setSelectedStar={setSelectedStar}
-            ownedQtyByStar={ownedQtyByStar}
-          />
+          {!evolutionLocked && (
+            <PetStarSelector
+              selectedStar={selectedStar}
+              setSelectedStar={setSelectedStar}
+              ownedQtyByStar={ownedQtyByStar}
+            />
+          )}
+
         </main>
       </div>
 

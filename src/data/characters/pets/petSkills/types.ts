@@ -21,21 +21,21 @@ type PetSkillDamage = {
 export type PetSkillEffect =
   | ({ kind: "damage" } & PetSkillDamage)
   | ({ kind: "jumpAttack" } & PetSkillDamage)
-  | ({ kind: "teleportBite" } & PetSkillDamage & { bleedMs: number })
-  | ({ kind: "tsunami" } & PetSkillDamage & {
-        pushDistance: number;
-        freezeChance: number;
-      })
-  | { kind: "blindTornado"; missChance: number; durationMs: number }
   | ({ kind: "teleportBite" } & PetSkillDamage & {
         bleedMs: number;
         /**
          * Dano por tick do sangramento com o pet em 1 estrela. Cada estrela a
          * mais multiplica por `PET_STAR_MULTIPLIER`, a mesma curva do dano base,
          * para o sangramento acompanhar a progressão do pet (issue #178).
+         * Ausente usa o dano base de sangramento (`BASE_BLEED_TICK_DAMAGE`).
          */
-        bleedTickDamage: number;
+        bleedTickDamage?: number;
       })
+  | ({ kind: "tsunami" } & PetSkillDamage & {
+        pushDistance: number;
+        freezeChance: number;
+      })
+  | { kind: "blindTornado"; missChance: number; durationMs: number }
   | { kind: "summon"; npcType: string }
   /** Rapariga: sorteia um gato de `RAPARIGA_CATS` e aplica o efeito dele. */
   | { kind: "summonCat" }

@@ -21,6 +21,9 @@ import {
  */
 const HUNGRY_KING_INVOKE_MS = ONE_THOUSAND_MS;
 
+/** Dano por tick quando o efeito de sangramento não declara um valor próprio. */
+const BASE_BLEED_TICK_DAMAGE = 2;
+
 export function runPetSkill(
   def: PetSkillDefinition,
   deps: PetSkillRunDeps,
@@ -137,11 +140,12 @@ export function runPetSkill(
         targetNpcType: target.npcType,
       });
 
+      // Fallback para efeitos sem tick próprio: mantém o dano base de
+      // sangramento (o mesmo usado por `applyNpcBleed` e `useStatusDots`).
+      const bleedTickDamage = effect.bleedTickDamage ?? BASE_BLEED_TICK_DAMAGE;
       const bleedTick = Math.max(
         1,
-        Math.round(
-          effect.bleedTickDamage * PET_STAR_MULTIPLIER ** (petStars - 1),
-        ),
+        Math.round(bleedTickDamage * PET_STAR_MULTIPLIER ** (petStars - 1)),
       );
 
       triggerTeleportBite(target.x, target.y, () => {
@@ -231,7 +235,6 @@ export function runPetSkill(
     case "shield":
       battle.setPlayerShield((shield) => shield + effect.amount);
       break;
-    }
     case "heal": {
       const healAmount = Math.round(effect.amount * affinityMultiplier);
       battle.setPlayerHP((hp) => Math.min(battle.playerMaxHp, hp + healAmount));
