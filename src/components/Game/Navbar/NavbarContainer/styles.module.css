@@ -1,0 +1,73 @@
+/**
+ * Area ocupada pelo menu: o card cresce para preencher o espaço e o botão
+ * Voltar fica logo abaixo dele, alinhado à borda esquerda (como no mockup).
+ */
+.wrapper {
+  display: flex;
+  position: absolute;
+  top: 5%;
+  right: 0;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: calc(var(--game-viewport-width) - var(--size-6));
+  height: 90dvh;
+  padding: var(--size-16) var(--size-16) 0;
+  z-index: 999;
+}
+
+/** Moldura externa tênue, recuada do card (sem esferas, só a linha tech). */
+.wrapper::before {
+  content: "";
+  position: absolute;
+  inset: var(--size-8);
+  z-index: -1;
+  pointer-events: none;
+  border: var(--size-1) solid rgba(34, 211, 238, 0.18);
+  clip-path: polygon(
+    var(--size-30) 0,
+    calc(100% - var(--size-30)) 0,
+    100% var(--size-30),
+    100% calc(100% - var(--size-30)),
+    calc(100% - var(--size-30)) 100%,
+    var(--size-30) 100%,
+    0 calc(100% - var(--size-30)),
+    0 var(--size-30)
+  );
+}
+
+@keyframes showBackbutton {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.backButton {
+  align-self: flex-start;
+  margin: calc(-1 * var(--size-8)) 0 0 var(--size-20);
+
+  display: flex;
+  align-items: center;
+  gap: var(--fs-8);
+  padding: var(--fs-8) var(--small);
+  background: linear-gradient(180deg, #0d2b55, #06142e);
+  color: var(--text-color);
+  border: var(--size-1) solid var(--nav-panel-line);
+  border-radius: var(--size-4);
+  font-size: var(--fs-14);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 var(--size-10) rgba(34, 211, 238, 0.25);
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
+  z-index: 9999999999999999;
+  animation: showBackbutton 1.2s;
+}
+
+.backButton:hover {
+  background: linear-gradient(180deg, #124a8f, #0a2a63);
+  box-shadow: 0 0 var(--size-16) rgba(34, 211, 238, 0.45);
+}

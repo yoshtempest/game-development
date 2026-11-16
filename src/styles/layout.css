@@ -47,15 +47,19 @@
   isolation: isolate;
 }
 
+/**
+ * Card das telas do navbar. Posição e altura ficam no `.navbarContainerWrapper`,
+ * que também desenha o botão Voltar abaixo; aqui só o visual do painel.
+ */
 .containerOfNavbar {
   display: flex;
-  position: absolute;
-
+  position: relative;
+  flex: 1;
   flex-direction: column;
-  width: calc(var(--game-viewport-width) - var(--size-6));
-  height: 100dvh;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0;
   align-items: center;
-  z-index: 999;
 
   /**
    * Painel tech: a borda transparente recebe o gradiente ciano na border-box

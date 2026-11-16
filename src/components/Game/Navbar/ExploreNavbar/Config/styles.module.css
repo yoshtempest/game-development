@@ -251,29 +251,3 @@
   color: var(--text-muted);
   font-size: var(--fs-14);
 }
-
-/** Botão "Voltar" ancorado no canto inferior esquerdo do painel. */
-.backButton {
-  position: absolute;
-  bottom: var(--size-20);
-  left: var(--size-30);
-  z-index: 5;
-
-  display: flex;
-  align-items: center;
-  gap: var(--fs-8);
-  padding: var(--fs-8) var(--small);
-  background: linear-gradient(180deg, #0d2b55, #06142e);
-  color: var(--text-color);
-  border: var(--size-1) solid var(--nav-panel-line);
-  border-radius: var(--size-4);
-  font-size: var(--fs-14);
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 0 var(--size-10) rgba(34, 211, 238, 0.25);
-}
-
-.backButton:hover {
-  background: linear-gradient(180deg, #124a8f, #0a2a63);
-  box-shadow: 0 0 var(--size-16) rgba(34, 211, 238, 0.45);
-}

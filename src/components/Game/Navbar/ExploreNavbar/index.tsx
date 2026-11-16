@@ -4,6 +4,7 @@ import type { AnimationEvent, ComponentType, LazyExoticComponent } from "react";
 import styles from "./styles.module.css";
 import { useNavbarMenu } from "@/hooks/menu/useNavbar";
 import { useNavbar } from "@/contexts/NavbarContext";
+import { NavbarContainer } from "@/components/Game/Navbar/NavbarContainer";
 import { hideBrokenImage } from "@/utils/hideBrokenImage";
 import type { MenuScreen } from "@/utils/types/player/navbar";
 
@@ -73,7 +74,9 @@ export function Navbar() {
 
   return (
     <Suspense fallback={null}>
-      <Screen />
+      <NavbarContainer>
+        <Screen />
+      </NavbarContainer>
     </Suspense>
   );
 }
