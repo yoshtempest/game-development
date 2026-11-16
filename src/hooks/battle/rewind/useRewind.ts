@@ -3,20 +3,31 @@ import { useEffect, useRef } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { getCharacterPassive } from "@/data/characters/passives";
 import {
+  REWIND_RESURRECTION_PHASES,
+  REWIND_RESURRECTION_PHASE_MS,
+} from "@/data/characters/srGuaxinim/resurrection";
+import {
   findRewindTarget,
   pruneRewindSnapshots,
   REWIND_BUFFER_MS,
   REWIND_INTERVAL_MS,
-  REWIND_PLAYBACK_MS,
   type RewindSnap,
 } from "@/gameRules/battle/rewind";
 import type { RewindSnapshot } from "@/utils/types/battle/rewind";
-import type { ReplayFrame } from "@/utils/types/replay";
 
+/**
+ * Passiva "Retrocesso Temporal": guarda snapshots da batalha e, na morte, volta
+ * o estado inteiro para ~10s antes, uma vez por batalha.
+ *
+ * Desde a #284 a volta não é mais um replay frame a frame: a morte dispara a
+ * cinemática `launch → portal → void → flash` (`rewindResurrection`), durante a
+ * qual a batalha fica pausada pelo `isPaused` do `useScene` (ninguém age), e o
+ * snapshot alvo é aplicado de uma vez quando o `flash` termina.
+ */
 export function useRewind({
   character,
-  rewindFrames,
-  setRewindFrames,
+  rewindResurrection,
+  setRewindResurrection,
   performRewindRef,
   setPlayer,
   setNpcPhase,
@@ -29,12 +40,10 @@ export function useRewind({
   battle,
   npc,
   resetCombo,
-  getReplayWindow,
 }: Props) {
   const rewindSnapshotsRef = useRef<RewindSnap[]>([]);
   const rewindUsedRef = useRef(false);
   const rewindTargetRef = useRef<RewindSnapshot | null>(null);
-  const rewindIndexRef = useRef(0);
 
   const applyRewind = (target: RewindSnapshot) => {
     battle.setPlayerHP(target.playerHP);
@@ -67,73 +76,29 @@ export function useRewind({
     resetCombo();
   };
 
-  const applyFrameToLive = (frame: ReplayFrame) => {
-    setPlayer((p) => ({
-      ...p,
-      x: frame.px,
-      y: frame.py,
-      state: frame.ps,
-      battleDirection: frame.pd,
-    }));
-    npc.setNpc((n) => ({
-      ...n,
-      x: frame.nx,
-      y: frame.ny,
-      state: frame.ns,
-      direction: frame.ndir,
-    }));
-    battle.setPlayerHP(frame.php);
-    battle.setPlayerShield(frame.pshield);
-    battle.setNpcHP(frame.nhp);
-    battle.setDelicia(frame.del);
-    setSummons(
-      frame.sm.map((s) => ({
-        id: s.id,
-        npcType: s.t,
-        x: s.x,
-        y: s.y,
-        direction: s.dir,
-        state: s.st,
-        hp: s.hp,
-        maxHp: s.hp,
-        // O frame carrega a armadura resolvida no spawn: sem ela a criatura
-        // voltaria do rewind sem defesa nenhuma.
-        armor: s.armor,
-        isDying: false,
-      })),
-    );
-  };
-
   const onRewindCompleteRef = useLatestRef(() => {
     if (rewindTargetRef.current) {
       applyRewind(rewindTargetRef.current);
     }
     rewindTargetRef.current = null;
-    setRewindFrames(null);
+    setRewindResurrection(null);
   });
 
-  const applyFrameToLiveRef = useLatestRef(applyFrameToLive);
+  const phase = rewindResurrection?.phase ?? null;
 
   useEffect(() => {
-    if (!rewindFrames || rewindFrames.length === 0) return;
-    rewindIndexRef.current = rewindFrames.length - 1;
-
-    const interval = setInterval(() => {
-      const idx = rewindIndexRef.current;
-      const frame = rewindFrames[idx];
-      if (frame) {
-        applyFrameToLiveRef.current(frame);
-        rewindIndexRef.current = idx - 1;
-        if (idx <= 0) {
-          clearInterval(interval);
-          onRewindCompleteRef.current();
-          return;
-        }
+    if (phase == null) return;
+    const index = REWIND_RESURRECTION_PHASES.indexOf(phase);
+    const next = REWIND_RESURRECTION_PHASES[index + 1];
+    const timer = window.setTimeout(() => {
+      if (next == null) {
+        onRewindCompleteRef.current();
+        return;
       }
-    }, REWIND_PLAYBACK_MS);
-
-    return () => clearInterval(interval);
-  }, [rewindFrames, applyFrameToLiveRef, onRewindCompleteRef]);
+      setRewindResurrection((r) => (r ? { ...r, phase: next } : r));
+    }, REWIND_RESURRECTION_PHASE_MS[phase]);
+    return () => window.clearTimeout(timer);
+  }, [phase, setRewindResurrection, onRewindCompleteRef]);
 
   performRewindRef.current = () => {
     const passive = getCharacterPassive(character, "rewindTime");
@@ -150,14 +115,20 @@ export function useRewind({
     rewindTargetRef.current = target;
     battle.isEnding.current = true;
 
-    const windowReplay = getReplayWindow(passive.effect.rewindMs);
-    if (!windowReplay || windowReplay.frames.length === 0) {
+    const origin = playerSnapshotRef.current;
+    const firstPhase = REWIND_RESURRECTION_PHASES[0];
+    if (!origin || firstPhase == null) {
       applyRewind(target);
       rewindTargetRef.current = null;
       return true;
     }
 
-    setRewindFrames(windowReplay.frames);
+    setRewindResurrection({
+      phase: firstPhase,
+      originX: origin.x,
+      originY: origin.y,
+      character,
+    });
     return true;
   };
 
@@ -209,7 +180,7 @@ export function useRewind({
     rewindSnapshotsRef.current = [];
     rewindTargetRef.current = null;
     rewindUsedRef.current = false;
-    setRewindFrames(null);
+    setRewindResurrection(null);
   };
 
   return {

@@ -107,6 +107,11 @@ export type Props = {
   preAtomic?: boolean;
   /** Vitória/derrota: jogador troca para expressions/<tipo>.svg (battleOutro). */
   outroExpression?: "victory" | "defeat" | null;
+  /**
+   * Esconde o sprite do player local: a cinemática do "Retrocesso Temporal"
+   * (#284) desenha a própria cópia dele saindo pelo portal.
+   */
+  hidePlayer?: boolean;
   /** Halo.svg acima do jogador durante preparing/finalizating do "I Am Atomic". */
   atomicHalo?: boolean;
   /** Flash no sprite do jogador na explosão do "I Am Atomic". */
