@@ -6,7 +6,7 @@ import { useSettings } from "@/hooks/settings/useSetting";
 import { useCallback, useEffect, useRef } from "react";
 import { useContentPacks } from "@/hooks/menu/config/useContentPacks";
 import { VictorTutorial } from "@/components/Game/Navbar/ExploreNavbar/Config/VictorTutorial";
-import { CONFIG_TABS, CONFIG_TAB_LABELS } from "@/data/config/tabs";
+import { CONFIG_TABS, CONFIG_TAB_LABELS, TAB_ICONS } from "@/data/config/tabs";
 import { BattleTab } from "./BattleTab";
 import { ContentTab } from "./ContentTab";
 import { DifficultySection } from "./Difficulty";
@@ -59,14 +59,21 @@ export function Config() {
   return (
     <div className={`containerOfNavbar ${styles.center}`} ref={configRef}>
       <div className="tabs">
-        {CONFIG_TABS.map((tab) => (
-          <button
-            key={tab}
-            className={`${"tab"} ${activeTab === tab ? "tabActive" : ""} ${isOnTab && activeTab === tab ? "tabSelected" : ""}`}
-          >
-            {CONFIG_TAB_LABELS[tab]}
-          </button>
-        ))}
+        {CONFIG_TABS.map((tab) => {
+          const Icon = TAB_ICONS[tab];
+
+          return (
+            <button
+              key={tab}
+              className={`${"tab"} ${activeTab === tab ? "tabActive" : ""}
+              ${isOnTab && activeTab === tab ? "tabSelected" : ""}`}
+            >
+              <Icon size={19} strokeWidth={2.2} />
+
+              <span>{CONFIG_TAB_LABELS[tab]}</span>
+            </button>
+          );
+        })}
       </div>
 
       {activeTab === "geral" && (

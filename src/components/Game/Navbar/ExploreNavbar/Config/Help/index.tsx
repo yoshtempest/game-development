@@ -3,6 +3,7 @@ import InstallButton from "@/components/PWA";
 import { UpdateButton } from "@/components/Game/Navbar/ExploreNavbar/Config/UpdateButton";
 import type { GameLanguage } from "@/data/settings/language";
 import { LANGUAGE_LABEL } from "@/data/settings/language";
+import { LifeBuoy, Star, Signpost, Play, Languages } from "lucide-react";
 
 type Props = {
   selectedColumn: number;
@@ -21,7 +22,10 @@ export function HelpSection({
 }: Props) {
   return (
     <div className={styles.flexColumn}>
-      <h2 className={styles.marginTop}>Ajuda:</h2>
+      <div className="navbarContainerRow">
+        <LifeBuoy />
+        <h2>Ajuda</h2>
+      </div>
       <div
         className={`${styles.tutorialButton} ${
           selectedColumn === 2 && selectedIndex === 0 ? styles.selected : ""
@@ -30,8 +34,10 @@ export function HelpSection({
         {selectedColumn === 2 && selectedIndex === 0 && (
           <span className={styles.cursor}>▼</span>
         )}
-
-        <h2>Indicador de Missões: {showQuestIndicator ? "ON" : "OFF"}</h2>
+        <div className="navbarContainerRow">
+          <Signpost />
+          <h2>Indicador de Missões: {showQuestIndicator ? "ON" : "OFF"}</h2>
+        </div>
       </div>
       <div
         className={`${styles.tutorialButton} ${
@@ -42,7 +48,10 @@ export function HelpSection({
           <span className={styles.cursor}>▼</span>
         )}
 
-        <h2>Xp Compartilhado: {sharedXp ? "ON" : "OFF"}</h2>
+        <div className="navbarContainerRow">
+          <Star />
+          <h2>Xp Compartilhado: {sharedXp ? "ON" : "OFF"}</h2>
+        </div>
       </div>
       <div
         className={`${styles.tutorialButton} ${
@@ -53,7 +62,10 @@ export function HelpSection({
           <span className={styles.cursor}>▼</span>
         )}
 
-        <h2>Ver Tutorial</h2>
+        <div className="navbarContainerRow">
+          <Play />
+          <h2>Ver Tutorial</h2>
+        </div>
       </div>
       <div
         className={`${styles.tutorialButton} ${
@@ -86,7 +98,10 @@ export function HelpSection({
           <span className={styles.cursor}>▼</span>
         )}
 
-        <h2>Idioma: {LANGUAGE_LABEL[language]}</h2>
+        <div className="navbarContainerRow">
+          <Languages />
+          <h2>Idioma: {LANGUAGE_LABEL[language]}</h2>
+        </div>
       </div>
       <p className={styles.languageHint}>
         {language === "en"

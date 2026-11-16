@@ -81,6 +81,13 @@
   display: none;
 }
 
+.navbarContainerRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--size-4);
+}
+
 .section {
   display: flex;
   flex-direction: column;
