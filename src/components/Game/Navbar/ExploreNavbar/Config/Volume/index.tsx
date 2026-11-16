@@ -25,7 +25,7 @@ export function VolumeSection({
 }: Props) {
   return (
     <div className={styles.flexColumn}>
-      <div className="navbarContainerRow">
+      <div className="navbarContainerRow sectionHeader">
         <Volume2 />
         <h2>Sons</h2>
       </div>

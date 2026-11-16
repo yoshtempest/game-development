@@ -22,7 +22,7 @@ export function HelpSection({
 }: Props) {
   return (
     <div className={styles.flexColumn}>
-      <div className="navbarContainerRow">
+      <div className="navbarContainerRow sectionHeader">
         <LifeBuoy />
         <h2>Ajuda</h2>
       </div>

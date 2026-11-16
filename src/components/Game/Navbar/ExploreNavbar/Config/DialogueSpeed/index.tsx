@@ -22,7 +22,7 @@ export function DialogueSpeedSection({
 
   return (
     <div className={styles.compactContainer}>
-      <div className="navbarContainerRow">
+      <div className="navbarContainerRow sectionHeader">
         <MessageCircleMore />
         <h2>Diálogo</h2>
       </div>

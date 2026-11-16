@@ -1,4 +1,7 @@
+import { ArrowLeft } from "lucide-react";
+
 import styles from "./styles.module.css";
+import { useNavbar } from "@/contexts/NavbarContext";
 import { useConfigSelection } from "@/hooks/menu/config/useConfigSelection";
 import { useAudio } from "@/hooks/audio/useAudio";
 import { usePlayer } from "@/contexts/PlayerContext";
@@ -15,6 +18,7 @@ import { HelpSection } from "./Help";
 import { VolumeSection } from "./Volume";
 
 export function Config() {
+  const { closeNavbar } = useNavbar();
   const { sfxVolume, bgmVolume, setSfxVolume, setBgmVolume } = useAudio();
   const { difficulty } = usePlayer();
   const { dialogueSpeed } = useSettings();
@@ -47,8 +51,11 @@ export function Config() {
 
   useEffect(() => {
     if (!configRef.current) return;
-    const selectedEl = configRef.current.children[selectedColumn] as
-      HTMLElement | undefined;
+    // O botão Voltar também é filho do painel, mas não é uma coluna navegável.
+    const columns = configRef.current.querySelectorAll<HTMLElement>(
+      ":scope > div",
+    );
+    const selectedEl = columns[selectedColumn];
     if (!selectedEl) return;
     configRef.current.scrollTo({
       top: selectedEl.offsetTop - configRef.current.offsetTop,
@@ -57,7 +64,7 @@ export function Config() {
   }, [selectedColumn]);
 
   return (
-    <div className={`containerOfNavbar ${styles.center}`} ref={configRef}>
+    <div className="containerOfNavbar" ref={configRef}>
       <div className="tabs">
         {CONFIG_TABS.map((tab) => {
           const Icon = TAB_ICONS[tab];
@@ -139,6 +146,11 @@ export function Config() {
       )}
 
       {screen === "tutorial" && <VictorTutorial />}
+
+      <button type="button" className={styles.backButton} onClick={closeNavbar}>
+        <ArrowLeft size={19} strokeWidth={2.2} />
+        Voltar
+      </button>
     </div>
   );
 }

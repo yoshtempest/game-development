@@ -22,7 +22,7 @@ export function DifficultySection({
 
   return (
     <div className={styles.compactContainer}>
-      <div className="navbarContainerRow">
+      <div className="navbarContainerRow sectionHeader">
         <Settings />
         <h2>Dificuldade</h2>
       </div>

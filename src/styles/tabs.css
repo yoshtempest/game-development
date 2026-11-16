@@ -1,44 +1,71 @@
+/**
+ * Abas dos menus (Config, Missões, Saves). Seguem o mesmo padrão tech do
+ * `.containerOfNavbar`: fundo escuro, ciano nas bordas e aba ativa acesa.
+ */
 .tabs {
   display: flex;
-  gap: var(--fs-8);
-  margin-top: 3vh;
+  gap: var(--size-2);
+  margin-top: 2.5vh;
+  margin-bottom: var(--size-16);
   justify-content: center;
-  margin-bottom: var(--smaller);
+  padding: var(--size-2);
+  background: rgba(3, 12, 28, 0.7);
+  border: var(--size-1) solid var(--nav-panel-line-soft);
+  border-radius: var(--size-4);
+  box-shadow: inset 0 0 var(--size-16) rgba(0, 140, 255, 0.1);
 }
 
 .tab {
+  --tab-cut: var(--size-8);
+
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background: var(--surface-card);
-  color: var(--text-hint);
-  border: var(--size-1) solid var(--border-default);
+  background: linear-gradient(
+    180deg,
+    rgba(13, 30, 58, 0.85),
+    rgba(6, 17, 36, 0.9)
+  );
+  color: #8fa6c4;
+  border: var(--size-1) solid rgba(34, 211, 238, 0.2);
   padding: var(--fs-8) var(--small);
-  border-radius: var(--size-6);
+  clip-path: polygon(
+    var(--tab-cut) 0,
+    calc(100% - var(--tab-cut)) 0,
+    100% 50%,
+    calc(100% - var(--tab-cut)) 100%,
+    var(--tab-cut) 100%,
+    0 50%
+  );
   cursor: pointer;
-  gap: 0.5vw;
-  width: 8vw;
-  height: 4vw;
+  gap: var(--fs-8);
+  width: 9vw;
+  height: 3.6vw;
   font-size: var(--fs-14);
+  font-weight: 600;
   transition:
     background 0.2s,
-    color 0.2s;
+    color 0.2s,
+    filter 0.2s;
 }
 
 .tab:hover {
-  background: #2a2a2a;
+  background: linear-gradient(
+    180deg,
+    rgba(18, 52, 96, 0.95),
+    rgba(8, 27, 56, 0.95)
+  );
   color: var(--text-color);
 }
 
 .tabActive {
-  background: rgba(0, 0, 0, 0.3);
+  background: linear-gradient(180deg, #0ea5e9, #0648b8);
   color: var(--text-color);
-  border-color: var(--background-color);
-  transform: scale(1.05);
+  border-color: var(--nav-panel-line);
+  filter: drop-shadow(0 0 var(--size-8) rgba(34, 211, 238, 0.75));
 }
 
 .tabSelected {
-  outline: var(--size-1) solid var(--accent-color);
-  outline-offset: var(--size-1);
+  filter: drop-shadow(0 0 var(--size-6) rgba(34, 211, 238, 0.9));
 }
