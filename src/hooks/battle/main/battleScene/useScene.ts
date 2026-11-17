@@ -1121,7 +1121,7 @@ export function useBattleScene({
     redUsable,
     purplePress,
     purpleUsable,
-    rewinding: rewindFrames != null,
+    rewinding: rewindResurrection != null,
     timePoliceVisible,
   });
 }
