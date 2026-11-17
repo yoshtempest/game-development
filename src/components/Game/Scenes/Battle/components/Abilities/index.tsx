@@ -28,6 +28,8 @@ import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAb
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
 import { useRef } from "react";
 import { useAbilityShortcuts } from "@/hooks/battle/useAbilityShortcuts";
+import { BombButton } from "@/components/Game/Battle/Buttons/Babidi/Bomb";
+import { NetButton } from "@/components/Game/Battle/Buttons/Babidi/Net";
 
 export function BattleAbilities({
   scene,
@@ -453,17 +455,13 @@ export function BattleAbilities({
           });
           return (
             <>
-              <GenericAbilityButton
-                characterId="babidi"
-                abilityId="dimensionalPortal"
+              <BombButton
                 ready={babidiBombDropUsable}
                 remaining={babidiBombDropRemaining}
                 disabled={controlsDisabled || !babidiBombDropUsable}
                 onClick={babidiBombDropPress}
               />
-              <GenericAbilityButton
-                characterId="babidi"
-                abilityId="fishingNet"
+              <NetButton
                 ready={fishingNetUsable}
                 remaining={fishingNetRemaining}
                 disabled={controlsDisabled || !fishingNetUsable}
