@@ -1,5 +1,5 @@
 import type { Props } from "./types";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { getCharacterPassive } from "@/data/characters/passives";
 import {
@@ -13,6 +13,7 @@ import {
   REWIND_INTERVAL_MS,
   type RewindSnap,
 } from "@/gameRules/battle/rewind";
+import { rollTimePolice } from "@/gameRules/battle/timePolice";
 import type { RewindSnapshot } from "@/utils/types/battle/rewind";
 
 /**
@@ -44,6 +45,8 @@ export function useRewind({
   const rewindSnapshotsRef = useRef<RewindSnap[]>([]);
   const rewindUsedRef = useRef(false);
   const rewindTargetRef = useRef<RewindSnapshot | null>(null);
+  const rewindIndexRef = useRef(0);
+  const [timePoliceVisible, setTimePoliceVisible] = useState(false);
 
   const applyRewind = (target: RewindSnapshot) => {
     battle.setPlayerHP(target.playerHP);
@@ -81,6 +84,8 @@ export function useRewind({
       applyRewind(rewindTargetRef.current);
     }
     rewindTargetRef.current = null;
+    setRewindFrames(null);
+    setTimePoliceVisible(false);
     setRewindResurrection(null);
   });
 
@@ -123,6 +128,8 @@ export function useRewind({
       return true;
     }
 
+    setTimePoliceVisible(rollTimePolice());
+    setRewindFrames(windowReplay.frames);
     setRewindResurrection({
       phase: firstPhase,
       originX: origin.x,
@@ -180,10 +187,13 @@ export function useRewind({
     rewindSnapshotsRef.current = [];
     rewindTargetRef.current = null;
     rewindUsedRef.current = false;
+    setRewindFrames(null);
+    setTimePoliceVisible(false);
     setRewindResurrection(null);
   };
 
   return {
     reset,
+    timePoliceVisible,
   };
 }
