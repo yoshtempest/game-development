@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import styles from "@/components/Game/Navbar/ExploreNavbar/Config/styles.module.css";
 import { DIFFICULTY_LABEL } from "@/data/npc";
+import { Settings } from "lucide-react";
 
 type Props = {
   selectedIndex: number;
@@ -21,7 +22,11 @@ export function DifficultySection({
 
   return (
     <div className={styles.compactContainer}>
-      <h2 className={styles.marginTop}>Dificuldade:</h2>
+      <div className="navbarContainerRow sectionHeader">
+        <Settings />
+        <h2>Dificuldade</h2>
+      </div>
+
 
       <div className={styles.compactSelector}>
         {isSelected && <span className={styles.cursor}>▼</span>}

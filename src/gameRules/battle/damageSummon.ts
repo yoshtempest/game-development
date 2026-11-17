@@ -12,6 +12,7 @@ import { getNpcElementTypes } from "@/data/types/npcElementTypes";
 import { combatService } from "@/services/combat";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
 import { isSamurionBerserkActive } from "@/gameRules/player/samurionBerserk";
+import { getPlayerBerserkMultiplier } from "@/gameRules/battle/damage/berserk";
 import { NO_ARMOR } from "@/gameRules/battle/damage/armor";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
@@ -96,6 +97,13 @@ export function damageSummon({
     isSamurionBerserkActive(player.character, char.level)
       ? raw * combatService.getBerserkMultiplier(playerHP, playerMaxHp)
       : raw;
+    raw *
+    getPlayerBerserkMultiplier(
+      player.character,
+      char.level,
+      playerHP,
+      playerMaxHp,
+    );
   const armorReduced = combatService.applyArmor(
     berserkRaw,
     damageKind,

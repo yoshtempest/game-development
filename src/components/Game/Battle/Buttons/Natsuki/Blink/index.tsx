@@ -25,7 +25,7 @@ export function BlinkButton({ energy, disabled = false, onClick }: Props) {
     <AbilityButton
       type="hold"
       customClasses={blinkClasses}
-      label="BLINK"
+      // label="BLINK"
       disabled={disabled}
       onPress={onClick}
       onRelease={() => {}}

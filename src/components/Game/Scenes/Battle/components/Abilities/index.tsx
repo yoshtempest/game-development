@@ -33,6 +33,8 @@ import {
   getDomainExpansionAbilityId,
   isAbilityUnlocked,
 } from "@/gameRules/player/abilityUnlock";
+import { BombButton } from "@/components/Game/Battle/Buttons/Babidi/Bomb";
+import { NetButton } from "@/components/Game/Battle/Buttons/Babidi/Net";
 
 export function BattleAbilities({
   scene,
@@ -480,17 +482,13 @@ export function BattleAbilities({
           });
           return (
             <>
-              <GenericAbilityButton
-                characterId="babidi"
-                abilityId="dimensionalPortal"
+              <BombButton
                 ready={babidiBombDropUsable}
                 remaining={babidiBombDropRemaining}
                 disabled={controlsDisabled || !babidiBombDropUsable || isLocked("dimensionalPortal")}
                 onClick={babidiBombDropPress}
               />
-              <GenericAbilityButton
-                characterId="babidi"
-                abilityId="fishingNet"
+              <NetButton
                 ready={fishingNetUsable}
                 remaining={fishingNetRemaining}
                 disabled={controlsDisabled || !fishingNetUsable || isLocked("fishingNet")}

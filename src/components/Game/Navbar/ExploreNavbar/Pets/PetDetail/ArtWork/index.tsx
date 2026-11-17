@@ -17,6 +17,7 @@ interface PetArtworkProps {
   eligible: number;
   isEquipped: boolean;
   canFuse: () => boolean;
+  /** Rank abaixo de Lendário: mostra o aviso no lugar do botão (#503). */
   startFuse: (star: number) => void;
   executeFuse: () => void;
   equipPet: () => void;
@@ -128,7 +129,7 @@ export function PetArtwork({
         <strong>
           {selectedStar} / {PET_STAR_MAX}
         </strong>
-      </div>
+    </div>
     </div>
   );
 }

@@ -25,11 +25,13 @@ import { ChargeParticles } from "@/components/Game/Battle/Effects/ChargeParticle
 import { KokusenAnimation } from "@/components/Game/Battle/Effects/Natsuki/KokusenAnimation";
 import { DivergentFistAnimation } from "@/components/Game/Battle/Effects/Natsuki/DivergentFistAnimation";
 import { BlackFlashAnimation } from "@/components/Game/Battle/Effects/Natsuki/BlackFlashAnimation";
+import { RewindResurrectionAnimation } from "@/components/Game/Battle/Effects/SrGuaxinim/RewindResurrection";
 import { VastolordTimer } from "@/components/Game/Battle/Effects/Marshadow/VastolordTimer";
 import { SkipAnimationButton } from "@/components/Game/Battle/SkipAnimationButton";
 import { SpecialIntro } from "@/components/Game/Battle/Effects/SpecialIntro";
 import { DomainExpansionIntro } from "@/components/Game/Battle/Effects/Domain/DomainExpansionIntro";
 import { DomainExpansionBackground } from "@/components/Game/Battle/Effects/Domain/DomainExpansionBackground";
+import { TimeRewindOverlay } from "@/components/Game/Battle/Effects/SrGuaxinim/TimeRewindOverlay";
 import { DomainBurstOverlay } from "@/components/Game/Battle/Effects/Domain/DomainBurstOverlay";
 import { AlfaAbility } from "@/components/Game/Battle/Effects/Ability/AlfaAbility";
 import { TransformationAura } from "@/components/Game/Battle/Effects/TransformationAura";
@@ -229,6 +231,7 @@ export function BattleScene(props: Props) {
     battlePaused,
     showRetry,
     playerProjectile,
+    rewindResurrection,
     killerQueen,
     bombTargets,
     killerQueenSprite,
@@ -342,6 +345,8 @@ export function BattleScene(props: Props) {
     redUsable,
     purplePress,
     purpleUsable,
+    rewinding,
+    timePoliceVisible,
   } = useBattleScene({
     ...props,
     isAlfa,
@@ -601,6 +606,7 @@ export function BattleScene(props: Props) {
       npcBleeding: battle.npcBleeding,
       preAtomic: specialIntroActive,
       outroExpression,
+      hidePlayer: rewindResurrection != null,
       atomicHalo,
       atomicExplosion,
       atomicCuts,
@@ -658,6 +664,7 @@ export function BattleScene(props: Props) {
       granReyCeroEffect,
       specialIntroActive,
       outroExpression,
+      rewindResurrection,
       atomicHalo,
       atomicExplosion,
       atomicCuts,
@@ -908,6 +915,11 @@ export function BattleScene(props: Props) {
         />
       )}
 
+      <TimeRewindOverlay
+        active={rewinding}
+        timePoliceVisible={timePoliceVisible}
+      />
+
       <DomainBurstOverlay
         active={domainBurstActive}
         name={domainConfig.name}
@@ -1058,6 +1070,11 @@ export function BattleScene(props: Props) {
             variant={blackFlashVariant}
             playerX={player.x}
             playerY={player.y}
+          />
+
+          <RewindResurrectionAnimation
+            resurrection={rewindResurrection}
+            PLAYER_SIZE={PLAYER_SIZE}
           />
 
           {vastolordActive && (

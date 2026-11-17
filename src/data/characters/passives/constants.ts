@@ -56,12 +56,13 @@ export const CHARACTER_PASSIVES: Record<
   samurion: [
     {
       characterId: "samurion",
-      id: "notImplemented",
-      name: "Passiva (a definir)",
-      description: "Passiva do personagem ainda não definida.",
-      unlockedAtLevel: 1,
+      id: "berserk",
+      name: "Berserk",
+      description:
+        "Quanto menor a vida, maior o dano causado — até o dobro com 10% de HP ou menos.",
+      unlockedAtLevel: 20,
       oncePerBattle: false,
-      effect: NOT_IMPLEMENTED,
+      effect: { kind: "berserk" },
     },
   ],
   srGuaxinim: [

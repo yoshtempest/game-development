@@ -7,6 +7,7 @@ import { SleepBarNotification } from "@/components/Game/Notification/SleepBar";
 import { XpProfessionNotification } from "@/components/Game/Notification/XpProfession";
 import { StatusToasts } from "@/components/Game/Notification/StatusToasts";
 import { ToastStack } from "@/components/Game/Notification/ToastStack";
+import { MahoragaEventNotifier } from "@/components/Game/Notification/MahoragaEvent";
 import { CharacterUnlockModal } from "@/components/Game/Unlock/CharacterUnlockModal";
 import { useInventory } from "@/contexts/InventoryContext";
 import { useNavbar } from "@/contexts/NavbarContext";
@@ -267,6 +268,7 @@ export function GameApp() {
       <HungerBarNotification />
       <SleepBarNotification />
       <XpProfessionNotification />
+      <MahoragaEventNotifier />
       <StatusToasts />
       <CharacterUnlockModal />
       <ToastStack />
