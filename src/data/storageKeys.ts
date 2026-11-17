@@ -27,6 +27,7 @@ export const BATTLE_STATS_KEY = "battle_stats";
 export const DAILY_REWARD_KEY = "daily_reward_last_claim";
 export const MONTHLY_PASS_KEY = "monthly_pass";
 export const PET_PROGRESS_KEY = "pet_progress";
+export const PET_AFFINITY_KEY = "pet_affinity";
 export const PROFESSION_PROGRESS_KEY = "profession_progress";
 export const TOMBSTONES_KEY = "tombstones";
 export const JESO_FOOD_KEY = "jeso_food_last_delivery";
@@ -38,6 +39,8 @@ export const SHOW_COMBO_ACTION_KEY = "showComboAction";
 export const SHOW_HIGHLIGHT_KEY = "showHighlight";
 export const SHOW_ABILITY_INTRO_KEY = "showAbilityIntro";
 export const SHARED_XP_KEY = "sharedXp";
+/** Idioma escolhido no menu de config. Global ao aparelho, não por slot. */
+export const LANGUAGE_KEY = "game_language";
 export const REDEEMED_CARDS_KEY = "redeemed_cards";
 export const GROUND_ITEMS_KEY = "ground_items";
 export const FOOTBALLCOURT_DOGS_KEY = "footballcourt_dog_spots";
@@ -45,3 +48,16 @@ export const FOOTBALLCOURT_DOGS_KEY = "footballcourt_dog_spots";
 export const ONLINE_ROOM_SESSION_KEY = "jomasio_online_room_id";
 /** Parceiro de guilda da aba (sessionStorage), par do `ONLINE_ROOM_SESSION_KEY`. */
 export const ONLINE_GUILD_SESSION_KEY = "jomasio_online_guild_id";
+/** Encontros e episódios já ouvidos do Rick Prime (issue #442). */
+export const RICK_PRIME_PODCAST_KEY = "rick_prime_podcast";
+/**
+ * Opt-in de notificações locais do PWA. Global (fora do slot): é preferência do
+ * aparelho, não do save — a permissão do navegador também é por origem.
+ */
+export const NOTIFICATIONS_ENABLED_KEY = "jomasio_notifications_enabled";
+/** Último instante (epoch ms) em que o jogo esteve visível; base do lembrete. */
+export const LAST_PLAYED_KEY = "jomasio_last_played_at";
+/** Último lembrete disparado (epoch ms), para não repetir a cada checagem. */
+export const LAST_REMINDER_KEY = "jomasio_last_reminder_at";
+export const MAHORAGA_EVENT_KEY = "mahoraga_event_last_fought_day";
+export const MAHORAGA_NOTIFIED_KEY = "mahoraga_event_notified_today";

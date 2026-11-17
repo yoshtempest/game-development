@@ -29,6 +29,7 @@ import { CHARACTER_KEY, PLAYER_CLASS_KEY } from "@/data/storageKeys";
 import { slotKey } from "@/services/save/slotManager";
 import { isCharacter } from "@/data/characters/list";
 import { useSettings } from "@/hooks/settings/useSetting";
+import { getPetRole } from "@/data/characters/pets/petSkills";
 
 /**
  * Estado que muda com alta frequência (a cada movimento/ataque do player).
@@ -87,6 +88,8 @@ type PlayerActionsContextType = {
   setMap: (map: number[][]) => void;
   setHeightMap: (heightMap: number[][]) => void;
   setMode: (mode: PlayerMode) => void;
+  /** `null` levanta o jogador. Só vale na exploração — em batalha é ignorado. */
+  setEmote: (emote: ExploreEmote | null) => void;
   restoreMode: () => void;
   resetBattleState: () => void;
   setBattleCollision: (params: CollisionParams) => void;
@@ -386,12 +389,21 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         ...p,
         mode,
         ...(mode === "battle" && p.mode !== "battle"
-          ? BATTLE_DEFAULT_STATE
+          ? { ...BATTLE_DEFAULT_STATE, emote: undefined }
           : {}),
       }));
       if (mode === "menu" && playerModeRef.current !== "menu") {
         previousModeRef.current = playerModeRef.current;
       }
+    },
+    [setPlayer],
+  );
+
+  const setEmote = useCallback(
+    (emote: ExploreEmote | null) => {
+      setPlayer((p) =>
+        p.mode === "battle" ? p : { ...p, emote: emote ?? undefined },
+      );
     },
     [setPlayer],
   );
@@ -442,11 +454,14 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const equippedPet = getEquippedInfo(player.character, "pet");
-    const hasTurkeyPet = equippedPet?.id === "pet_turkey";
+    const isMounted =
+      equippedPet != null &&
+      getPetRole(equippedPet.id) === "montaria" &&
+      !player.petDismounted;
     setPlayer((prev) =>
-      prev.hasPeru === hasTurkeyPet ? prev : { ...prev, hasPeru: hasTurkeyPet },
+      prev.hasPeru === isMounted ? prev : { ...prev, hasPeru: isMounted },
     );
-  }, [getEquippedInfo, player.character, setPlayer]);
+  }, [getEquippedInfo, player.character, player.petDismounted, setPlayer]);
 
   // ── Valores dos contextos ───────────────────────────────────────────
 
@@ -494,6 +509,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       setMap,
       setHeightMap,
       setMode,
+      setEmote,
       restoreMode,
       resetBattleState,
       setBattleCollision,
@@ -557,6 +573,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       setMap,
       setHeightMap,
       setMode,
+      setEmote,
       restoreMode,
       resetBattleState,
       setBattleCollision,

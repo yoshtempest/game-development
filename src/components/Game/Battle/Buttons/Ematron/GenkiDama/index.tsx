@@ -40,13 +40,13 @@ export function EmatronGenkiDamaButton({
     <AbilityButton
       type="hold"
       customClasses={genkiDamaClasses}
-      label="GENKI DAMA"
+      // label="GENKI DAMA"
       disabled={disabled}
       onPress={onPress}
       onRelease={onRelease}
       full={noKi}
-      valueText={Math.round(energy).toString()}
-      costText={`-{GENKI_DAMA_INITIAL_COST} Ki`}
+      // valueText={Math.round(energy).toString()}
+      // costText={`-{GENKI_DAMA_INITIAL_COST} Ki`}
       extraProps={{ depleted: noKi }}
       title={`Genki Dama: segure para flutuar e reunir energia na esfera (cresce a cada segundo; solte para arremessar). Custa ${GENKI_DAMA_INITIAL_COST} de Ki + dreno contínuo enquanto segura. Dano máximo: ${GENKI_DAMA_MAX_DAMAGE_MULTIPLIER}x o ataque básico`}
       style={{

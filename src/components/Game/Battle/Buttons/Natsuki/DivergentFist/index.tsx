@@ -32,7 +32,7 @@ export function DivergentFistButton({
     <AbilityButton
       type="custom"
       customClasses={divergentFistClasses}
-      label="punho divergente"
+      // label="punho divergente"
       disabled={disabled}
       onClick={onClick}
       extraProps={{ active }}

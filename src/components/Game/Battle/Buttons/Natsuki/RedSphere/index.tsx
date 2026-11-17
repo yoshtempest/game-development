@@ -22,7 +22,7 @@ export function RedSphereButton({ disabled = false, onClick }: Props) {
     <AbilityButton
       type="custom"
       customClasses={redSphereClasses}
-      label="Vermelha"
+      // label="Vermelha"
       disabled={disabled}
       onClick={onClick}
       title="Invoca e arremessa a esfera vermelha (dano mágico + empurrão)."

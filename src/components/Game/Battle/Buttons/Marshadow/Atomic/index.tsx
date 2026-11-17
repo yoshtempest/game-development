@@ -1,3 +1,4 @@
+import { playerPathMarshadowHabilities } from "@/utils/paths/characters/marshadow";
 import styles from "./styles.module.css";
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
 
@@ -29,7 +30,7 @@ export function AtomicButton({
     <AbilityButton
       type="standard"
       customClasses={atomicClasses}
-      label="I AM ATOMIC"
+      // label="I AM ATOMIC"
       ready={ready}
       remaining={remaining}
       disabled={disabled}
@@ -37,7 +38,7 @@ export function AtomicButton({
       title="I Am Atomic: explosão centrada no inimigo com maior vida máxima, causando dano especial em todos os inimigos num raio de 300px (2x no alvo). Cooldown de 20s."
       style={{
         backgroundImage:
-          'url("public/assets/player/marshadow/inFight/default/habilities/atomic/background.svg")',
+          `url("${playerPathMarshadowHabilities("atomic/background.svg")}")`,
       }}
     />
   );

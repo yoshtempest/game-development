@@ -126,15 +126,19 @@ export function useBattleStats({
     return 90 + char.stats.hp * 10;
   }, [char.stats.hp]);
 
-  const npcMaxHp = useMemo(() => {
-    return getNpcStats(
-      npcLevel,
-      npcClass,
-      difficulty,
-      npcStatMultiplier,
-      npcType,
-    ).hp;
-  }, [npcLevel, npcClass, difficulty, npcStatMultiplier, npcType]);
+  const npcBaseStats = useMemo(
+    () =>
+      getNpcStats(npcLevel, npcClass, difficulty, npcStatMultiplier, npcType),
+    [npcLevel, npcClass, difficulty, npcStatMultiplier, npcType],
+  );
+
+  const npcMaxHp = npcBaseStats.hp;
+
+  /**
+   * Dano base do NPC da batalha: referência dos efeitos que antes tiravam um
+   * valor fixo (ticks de DoT) e agora são fração dele (`getNpcPercentDamage`).
+   */
+  const npcDamage = npcBaseStats.damage;
 
   const npcArmor = useMemo<DamageArmor>(() => {
     const stats = getNpcStats(
@@ -189,6 +193,7 @@ export function useBattleStats({
     getElementDamageBonus,
     playerMaxHp,
     npcMaxHp,
+    npcDamage,
     npcArmor,
     HITS_TO_SPECIAL,
     hasPet,
