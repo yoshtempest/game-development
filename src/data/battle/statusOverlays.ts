@@ -12,13 +12,13 @@ import type { PlayerStatus } from "@/utils/types/battle/status";
  * tela: o overlay se esconde no erro de carregamento.
  */
 export const STATUS_OVERLAYS = {
-  bleed: ["1.svg", "2.svg"],
-  burn: ["1.svg", "2.svg"],
-  poison: ["1.svg", "2.svg"],
-  paralyze: ["1.svg", "2.svg"],
-  blind: ["1.svg", "2.svg"],
-  confuse: ["1.svg", "2.svg"],
-  freeze: ["1.svg", "2.svg"],
+  bleed: ["1.svg", "2.svg", "3.svg"],
+  burn: ["1.svg", "2.svg", "3.svg"],
+  poison: ["1.svg", "2.svg", "3.svg"],
+  paralyze: ["1.svg", "2.svg", "3.svg"],
+  blind: ["1.svg", "2.svg", "3.svg"],
+  confuse: ["1.svg", "2.svg", "3.svg"],
+  freeze: ["1.svg", "2.svg", "3.svg"],
 } as const satisfies Record<PlayerStatus, readonly string[]>;
 
 /**

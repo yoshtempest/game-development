@@ -301,7 +301,6 @@ export function BattleAbilities({
               />
               {honoredOneActive ? (
                 <BlinkButton
-                  energy={battleMana?.playerMana ?? 0}
                   disabled={
                     controlsDisabled ||
                     ALL_PREDICATES.isNatsukiDomain(player.state) ||
