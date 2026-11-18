@@ -1102,6 +1102,7 @@ export function BattleScene(props: Props) {
         isTraining={isTraining ?? false}
         showOutro={showOutro}
         handleCloseOutro={handleCloseOutro}
+        isPvp={isPvp}
         playerCharacter={player.character}
         showHighlight={showHighlight}
         highlightData={highlightData}
