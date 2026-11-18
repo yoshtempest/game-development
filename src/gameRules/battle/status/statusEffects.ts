@@ -119,6 +119,34 @@ export function getActivePlayerStatuses(player: Player): ActivePlayerStatus[] {
   return active;
 }
 
+/** Uma aplicação de status ativa, identificada pelo instante em que termina. */
+export type PlayerStatusApplication = {
+  status: PlayerStatus;
+  until: number;
+};
+
+/**
+ * Status ativos com o timestamp de fim, em vez do tempo restante.
+ *
+ * O `until` não muda entre frames de uma mesma aplicação, então serve de
+ * identidade estável para efeitos visuais (overlay sorteado por aplicação).
+ */
+export function getActivePlayerStatusApplications(
+  player: Player,
+): PlayerStatusApplication[] {
+  const now = Date.now();
+  const active: PlayerStatusApplication[] = [];
+
+  for (const status of STATUS_LIST) {
+    const until = player[STATUS_UNTIL_FIELD[status]];
+    if (until > now) {
+      active.push({ status, until });
+    }
+  }
+
+  return active;
+}
+
 export function clearPlayerStatuses(player: Player): Player {
   return {
     ...player,
