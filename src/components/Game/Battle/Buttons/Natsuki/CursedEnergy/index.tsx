@@ -3,7 +3,7 @@
 
 import styles from "./styles.module.css";
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
-import { playerPath } from "@/utils/paths";
+import { playerPathNatsukiHabilities } from "@/utils/paths";
 
 type Props = {
   energy: number;
@@ -51,7 +51,7 @@ export function CursedEnergyButton({
       // renderExtra={{ beforeLabel }}
       style={{
         backgroundImage:
-          `url("${playerPath("natsuki/inFight/cursedEnergy.svg")}")`,
+          `url("${playerPathNatsukiHabilities("heal/healEffect.svg")}")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
