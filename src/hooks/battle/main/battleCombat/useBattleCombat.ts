@@ -38,7 +38,7 @@ import { gainAbilityCharge, gainSpecial } from "@/gameRules/battle/special";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
 import { getWeaponEnchantment } from "@/gameRules/battle/equipment";
 import type { Enchantment } from "@/data/equipment/enchantments";
-import { CHARGE_ATTACK_MIN_LEVEL } from "@/data/battle/charge";
+import { CHARGE_ATTACK_MIN_LEVEL } from "@/data/characters/unlockLevels";
 import { KILLER_QUEEN_COOLDOWN_MS } from "@/data/characters/srGuaxinim/srGuaxinim";
 import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/laricell/laricell";
 import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
