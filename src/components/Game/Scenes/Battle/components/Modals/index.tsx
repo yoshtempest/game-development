@@ -26,6 +26,7 @@ export function BattleModals(props: Props) {
     bestTime,
     getReplayData,
     isAlfa,
+    isPvp,
     titleProgressSnapshot,
     showDefeat,
     handleRetry,
@@ -42,6 +43,8 @@ export function BattleModals(props: Props) {
         <BattleOutro
           character={playerCharacter}
           type={showOutro}
+          npcType={isPvp ? undefined : npcType}
+          isAlfa={isAlfa}
           onNext={handleCloseOutro}
         />
       )}

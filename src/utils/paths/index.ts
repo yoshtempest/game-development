@@ -31,6 +31,7 @@ export { playerPathMarshadowHabilities } from "./characters/marshadow";
 export { playerPathSrGuaxinimHabilities } from "./characters/srGuaxinim";
 export { playerPathNatsukiHabilities } from "./characters/natsuki";
 export { playerPathEmatronHabilities } from "./characters/ematron";
+export { playerPathBabidiHabilities } from "./characters/babidi";
 export {
   playerAbilityBackgroundPath,
   playerAbilityPath,
@@ -42,6 +43,7 @@ export { npcPathEnemie } from "./npc/npcPathEnemie";
 export { npcPathProjectile } from "./npc/npcPathProjectile";
 export { playerProjectilePath } from "./player/playerProjectilePath";
 export { effectsPath } from "./effectsPath";
+export { statusOverlayPath } from "./statusOverlayPath";
 export { soundEffectPath } from "./song/soundEffectPath";
 export { backgroundAudioPath } from "./song/backgroundAudioPath";
 export { sfx } from "./song/sfx";

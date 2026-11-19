@@ -8,9 +8,11 @@ import {
   getProjectileHitY,
   type ProjectileHeight,
 } from "@/gameRules/npc/projectile/crouchDodge";
+import { rollProjectileOnHitStatus } from "@/gameRules/npc/projectile/onHitStatus";
 import { tryMeleeIntercept } from "@/hooks/battle/npc/tryMeleeIntercept";
 import type { StrikeOpts } from "@/hooks/battle/npc/apply/applyPlayerStrike";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
+import type { NewPlayerStatus } from "@/utils/types/battle/status";
 
 export type LinearOpts = {
   playerX: number;
@@ -24,7 +26,11 @@ export type LinearOpts = {
   claimToken?: StrikeOpts["claimToken"];
   resolveHit?: StrikeOpts["resolveHit"];
   spawnDamage?: StrikeOpts["spawnDamage"];
-  onHit: (damageKind?: DamageKind) => void;
+  /**
+   * Acerto no player. `status` chega preenchido quando o projétil carrega
+   * `onHitStatus` e a rolagem da chance passou (ex: veneno do cuspe ácido).
+   */
+  onHit: (damageKind?: DamageKind, status?: NewPlayerStatus) => void;
   onPullPlayer?: (x: number) => void;
   onMiss?: (x: number) => void;
   onStick?: () => void;
@@ -119,7 +125,7 @@ export function handleLinearProjectile(
     if (p.variant === "common" && p.landsOnGround) {
       opts.onStick?.();
     } else {
-      opts.onHit(p.damageType);
+      opts.onHit(p.damageType, rollProjectileOnHitStatus(p));
     }
     return null;
   }

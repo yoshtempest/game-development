@@ -7,6 +7,20 @@ import { FISHES } from "./profession/fishes";
 import { WEIGHTS } from "./profession/weights";
 
 export const MATERIALS = createItems({
+  dharma_sphere: {
+    image: itemPath("dharma_sphere.svg"),
+    name: "Esfera do Dharma",
+    description:
+      "Um raio da roda do Mahoraga. Junte as nove para atrair o leme do Dharma.",
+    type: "material",
+  },
+  dharma_wheel: {
+    image: itemPath("dharma_wheel.svg"),
+    name: "Leme do Dharma",
+    description:
+      "O leme que gira a cada adaptação do Mahoraga. Megumi saberia o que fazer com ele.",
+    type: "material",
+  },
   hungry_essence: {
     image: itemPath("hungry_essence.svg"),
     name: "Essência de Morto",

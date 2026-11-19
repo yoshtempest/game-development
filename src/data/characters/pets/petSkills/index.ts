@@ -16,3 +16,14 @@ export type {
   PetSkillDefinition,
   PetSkillEffect,
 } from "./types";
+export {
+  pickRaparigaCat,
+  RAPARIGA_CAT_IDS,
+  RAPARIGA_CATS,
+  raparigaCatSprite,
+} from "./raparigaCats";
+export type {
+  RaparigaCat,
+  RaparigaCatEffect,
+  RaparigaCatId,
+} from "./raparigaCats";

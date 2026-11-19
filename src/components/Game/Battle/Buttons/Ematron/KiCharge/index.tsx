@@ -5,6 +5,7 @@ import {
 
 import styles from "./styles.module.css";
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { playerPathEmatronHabilities } from "@/utils/paths/characters/ematron";
 
 type Props = {
   energy: number;
@@ -41,14 +42,19 @@ export function EmatronKiChargeButton({
     <AbilityButton
       type="hold"
       customClasses={kiChargeClasses}
-      label="CARGA DE KI"
+      // label="CARGA DE KI"
       disabled={disabled}
       onPress={onPress}
       onRelease={onRelease}
       full={full}
-      valueText={Math.round(energy).toString()}
-      costText={`+${EMATRON_KI_CHARGE_PER_TICK}/100ms`}
+      // valueText={Math.round(energy).toString()}
+      // costText={`+${EMATRON_KI_CHARGE_PER_TICK}/100ms`}
       title={`Carga de Ki: segure para recarregar +${EMATRON_KI_CHARGE_PER_TICK} de Ki a cada ${EMATRON_KI_CHARGE_TICK_MS}ms (o personagem fica parado sem poder agir)`}
+      style={{
+        backgroundImage: `url("${playerPathEmatronHabilities("chargingKi/chargingKiEffect.svg")}")`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     />
   );
 }

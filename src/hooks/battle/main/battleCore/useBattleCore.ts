@@ -487,6 +487,7 @@ export function useBattleCore({
 
     npc.updateNpc({
       x: clampX(npc.x + dir * BLOCK_ATTACK_PUSH_DISTANCE),
+      pushCount: (npc.pushCount ?? 0) + 1,
     });
 
     setSummons((prev) =>
@@ -495,6 +496,7 @@ export function useBattleCore({
         .map((s) => ({
           ...s,
           x: clampX(s.x + dir * BLOCK_ATTACK_PUSH_DISTANCE),
+          pushCount: (s.pushCount ?? 0) + 1,
         })),
     );
   });

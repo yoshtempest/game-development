@@ -55,6 +55,9 @@ export const NPC_CLASSES = {
   technoblade: "legendary",
   ouroboros: "supreme",
 
+  /* Shibuya (evento diário) */
+  mahoraga: "boss",
+
   /* Training */
   dummy: "common",
 
@@ -67,6 +70,9 @@ export const NPC_CLASSES = {
   theMasterPiece: "legendary",
   theChaosCreator: "legendary",
   theFirstNightmare: "legendary",
+
+  /* Conselho dos vilões */
+  rickPrime: "boss",
 } as const satisfies Record<string, NPCClass>;
 
 export type NpcType = keyof typeof NPC_CLASSES;

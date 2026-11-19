@@ -57,6 +57,11 @@ export type NPCBattleState = {
   jumpLandingX?: number;
   /** Oculta o NPC (ex: alfa cavando no subsolo). Persiste até ser limpo. */
   hidden?: boolean;
+  /**
+   * Quantos knockbacks o NPC já sofreu. Só cresce; o renderer compara com o
+   * valor anterior para mostrar `pushed.svg` (`usePushedPose`).
+   */
+  pushCount?: number;
 
   ai?: {
     slimita?: {
@@ -151,5 +156,10 @@ export type NPCBattleState = {
     };
     maugrelo?: import("@/services/npc/attacks/maugrelo/state").MaugreloAI;
     hungryDog?: import("@/services/npc/attacks/hungryDog/state").HungryDogAI;
+    /**
+     * Cooldown do cuspe ácido do hungryDog comum. Separado do `lastAttackRef`
+     * para o cuspe não atrasar a mordida quando o jogador se aproxima.
+     */
+    hungryDogSpit?: { current: number };
   };
 };

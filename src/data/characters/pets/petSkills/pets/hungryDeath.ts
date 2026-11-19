@@ -15,12 +15,13 @@ export const pet_hungryDeath: PetSkillDefinition = def(
   {
     name: "Devora Tudo",
     description:
-      "Teleporta na frente do inimigo com maior vida, morde e o faz sangrar por 5s.",
+      "Teleporta na frente do inimigo com maior vida máxima, morde e o faz sangrar por 5s. O sangramento fica mais forte a cada estrela.",
     cooldownMs: PET_SKILL_COOLDOWN_MS,
   },
   {
     kind: "teleportBite",
     multiplier: 3,
     bleedMs: 5000,
+    bleedTickDamage: 2,
   },
 );
