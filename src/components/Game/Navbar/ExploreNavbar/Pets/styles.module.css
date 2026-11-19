@@ -139,7 +139,7 @@
 }
 
 .unlockBadge {
-  align-self: flex-start;
+  align-self: flex-end;
   font-size: var(--fs-10);
   padding: var(--size-1) var(--size-4);
   border-radius: var(--size-3);
@@ -152,6 +152,7 @@
   font-weight: bold;
   box-shadow: 0 0 var(--size-12) var(--accent-70);
   animation: unlockPulse 1.2s ease-in-out infinite;
+  margin-right: 5%;
 }
 
 @keyframes unlockPulse {

@@ -30,7 +30,7 @@ export function GenericAbilityButton({
   characterId,
   abilityId,
   behavior = "standard",
-  label,
+  // label,
   accent,
   background,
   ready = true,
@@ -59,7 +59,7 @@ export function GenericAbilityButton({
       type={behavior}
       customClasses={genericClasses}
       className={className}
-      label={label ?? ability.name}
+      // label={label ?? ability.name}
       // `AbilityButton` só mostra custo em `hold`; nas padrão o custo fica na
       // descrição da tooltip.
       costText={

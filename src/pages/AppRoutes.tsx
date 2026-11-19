@@ -160,10 +160,12 @@ export function AppRoutes() {
             <Route path="battle/hungryDog" element={<BattlePage />} />
             <Route path="battle/vandinhafragment" element={<BattlePage />} />
             <Route path="battle/truevandinha" element={<BattlePage />} />
+            <Route path="battle/mahoraga" element={<BattlePage />} />
             <Route path="battle/jhowsimar" element={<BattlePage />} />
             <Route path="battle/piupiu" element={<BattlePage />} />
             <Route path="battle/rice" element={<BattlePage />} />
             <Route path="battle/goat" element={<BattlePage />} />
+            <Route path="battle/rickprime" element={<BattlePage />} />
 
             <Route
               path="/battle/tester/:npcId"

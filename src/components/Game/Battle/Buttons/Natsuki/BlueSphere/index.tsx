@@ -28,7 +28,7 @@ export function BlueSphereButton({
     <AbilityButton
       type="custom"
       customClasses={blueSphereClasses}
-      label="Azul"
+      // label="Azul"
       disabled={disabled}
       onClick={onClick}
       extraProps={{ active }}

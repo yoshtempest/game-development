@@ -26,7 +26,7 @@
   top: 0;
   right: 0;
   width: var(--size-192);
-  height: var(--vh-93);
+  height: 100%;
   align-items: center;
   justify-content: center;
   background: linear-gradient(

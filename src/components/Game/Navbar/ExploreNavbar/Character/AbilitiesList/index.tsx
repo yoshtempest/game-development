@@ -4,6 +4,7 @@ import { Zap, ShieldCheck } from "lucide-react";
 import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
 
 import { getCharacterAbilities } from "@/data/characters/abilities";
+import { getAbilityUnlockLevel } from "@/gameRules/player/abilityUnlock";
 import { useGameControlsLayer } from "@/hooks/game/useGameControlsLayer";
 import { PassiveSkills } from "@/components/Game/Battle/PassiveSkills";
 import { usePlayer } from "@/contexts/PlayerContext";
@@ -110,7 +111,10 @@ export function AbilitiesList({
 
         {abilities.map((ability, i) => {
           const active = ability.kind === "active";
-          const locked = !active && level < ability.unlockedAtLevel;
+          const unlockLevel = active
+            ? getAbilityUnlockLevel(characterId, ability.id)
+            : ability.unlockedAtLevel;
+          const locked = level < unlockLevel;
           const Icon = active ? Zap : ShieldCheck;
 
           return (
@@ -135,7 +139,12 @@ export function AbilitiesList({
               <p className={styles.description}>{ability.description}</p>
 
               <div className={styles.metaRow}>
-                <AbilityMeta ability={ability} characterId={characterId} />
+                <AbilityMeta
+                  ability={ability}
+                  characterId={characterId}
+                  unlockLevel={unlockLevel}
+                  locked={locked}
+                />
               </div>
             </div>
           );

@@ -32,6 +32,7 @@ import { DomainExpansionEffects } from "@/components/Game/Battle/Effects/Domain/
 import { MugetsuDisintegration } from "@/components/Game/Battle/Effects/Marshadow/MugetsuDisintegration";
 import { NatsukiSphere } from "@/components/Game/Battle/Entities/Projectiles/NatsukiSphere";
 import { BabidiBombDrop } from "./Projectiles/BabidiBombDrop";
+import { getOpponentOutroResult } from "@/gameRules/battle/outro";
 import type { Props } from "./types";
 
 export function BattleEntities({
@@ -70,6 +71,7 @@ export function BattleEntities({
   npcBleeding = false,
   preAtomic = false,
   outroExpression = null,
+  hidePlayer = false,
   atomicHalo = false,
   atomicFlash = false,
   atomicExplosion = null,
@@ -128,6 +130,9 @@ export function BattleEntities({
             npcBleeding={npcBleeding}
             purpleHole={purpleHole}
             pushCount={npc.pushCount}
+            outroResult={
+              outroExpression ? getOpponentOutroResult(outroExpression) : null
+            }
           />
 
           <NpcProjectile
@@ -187,29 +192,31 @@ export function BattleEntities({
 
       <Pet pet={pet} TILE_SIZE={TILE_SIZE} />
 
-      <Player
-        player={player}
-        PLAYER_SIZE={PLAYER_SIZE}
-        weapon={weapon}
-        grabFlipped={grabFlipped}
-        form={playerForm}
-        transformationFrame={transformationFrame}
-        blinkVisual={blinkVisual}
-        teleportSprite={ematronClone != null}
-        preAtomic={preAtomic}
-        outroExpression={outroExpression}
-        atomicHalo={atomicHalo}
-        atomicFlash={atomicFlash}
-        mugetsuBlink={mugetsuBlink}
-        babidiAttackVariant={babidiAttackVariant}
-        babidiMachineGamaControl={babidiMachineGamaControl}
-        babidiShieldSides={babidiShieldSides}
-        onBabidiShieldEnd={onBabidiShieldEnd}
-        hakai={hakai}
-        sigiloPhase={sigiloPhase}
-        levelUpParticles={layer === "full"}
-        nameTag={playerNameTag}
-      />
+      {!hidePlayer && (
+        <Player
+          player={player}
+          PLAYER_SIZE={PLAYER_SIZE}
+          weapon={weapon}
+          grabFlipped={grabFlipped}
+          form={playerForm}
+          transformationFrame={transformationFrame}
+          blinkVisual={blinkVisual}
+          teleportSprite={ematronClone != null}
+          preAtomic={preAtomic}
+          outroExpression={outroExpression}
+          atomicHalo={atomicHalo}
+          atomicFlash={atomicFlash}
+          mugetsuBlink={mugetsuBlink}
+          babidiAttackVariant={babidiAttackVariant}
+          babidiMachineGamaControl={babidiMachineGamaControl}
+          babidiShieldSides={babidiShieldSides}
+          onBabidiShieldEnd={onBabidiShieldEnd}
+          hakai={hakai}
+          sigiloPhase={sigiloPhase}
+          levelUpParticles={layer === "full"}
+          nameTag={playerNameTag}
+        />
+      )}
 
       <EnergyProjectile
         projectiles={babidiEnergyProjectiles}
