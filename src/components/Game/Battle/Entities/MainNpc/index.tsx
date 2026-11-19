@@ -15,6 +15,7 @@ export function MainNpc({
   cutInEnemie = null,
   npcBleeding = false,
   purpleHole = false,
+  pushCount,
   outroResult = null,
 }: MainNpcProps) {
   return (
@@ -36,6 +37,7 @@ export function MainNpc({
       npcBleeding={npcBleeding}
       purpleHole={purpleHole}
       hp={battle.npcHP}
+      pushCount={pushCount}
       outroResult={outroResult}
     />
   );

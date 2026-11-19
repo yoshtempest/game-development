@@ -57,6 +57,11 @@ export type NPCBattleState = {
   jumpLandingX?: number;
   /** Oculta o NPC (ex: alfa cavando no subsolo). Persiste até ser limpo. */
   hidden?: boolean;
+  /**
+   * Quantos knockbacks o NPC já sofreu. Só cresce; o renderer compara com o
+   * valor anterior para mostrar `pushed.svg` (`usePushedPose`).
+   */
+  pushCount?: number;
 
   ai?: {
     slimita?: {

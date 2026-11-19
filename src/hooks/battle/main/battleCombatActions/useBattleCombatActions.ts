@@ -111,6 +111,7 @@ export function useBattleCombatActions({
       onNpcPush: (targetX) =>
         npc.updateNpc({
           x: clampX(targetX),
+          pushCount: (npc.pushCount ?? 0) + 1,
         }),
       onComboAdvance: (forwardDistance, targetX) =>
         setPlayer((p) => {

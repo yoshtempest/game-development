@@ -16,6 +16,8 @@ import {
 import type { CutInEnemieOverlay } from "@/utils/types/battle/cutInEnemie";
 import type { BattleOutroResult } from "@/utils/types/battle/outro";
 import { useHitFlash } from "@/hooks/battle/visuals/useHitFlash";
+import { usePushedPose } from "@/hooks/battle/visuals/usePushedPose";
+import { hasPushedSprite } from "@/data/npc";
 import styles from "./styles.module.css";
 
 type Props = {
@@ -97,6 +99,11 @@ type Props = {
    */
   hp?: number;
   /**
+   * Total de knockbacks sofridos. Quando cresce, o sprite vira `pushed.svg`
+   * por `NPC_PUSHED_SPRITE_MS` — só para NPCs em `NPC_PUSHED_SPRITES`; sem o
+   * arquivo, mantém o sprite do estado atual (nunca imagem quebrada).
+   */
+  pushCount?: number;
    * Resultado da batalha do ponto de vista **deste NPC**. Com valor, o sprite
    * troca para `victory.svg`/`defeat.svg` e fica assim até sair da batalha,
    * como o retrato do player faz com `outroExpression`. Sem o arquivo, a
@@ -125,10 +132,12 @@ export function NPCBattle({
   npcBleeding = false,
   purpleHole = false,
   hp,
+  pushCount,
   outroResult = null,
 }: Props) {
   const { playSound } = useSoundEffects();
   const hitFlash = useHitFlash(hp);
+  const isPushed = usePushedPose(pushCount);
   const prevIsExplodingRef = useRef(isExploding);
 
   const isHungryDeathRunning = npcType === "hungryDeath" && state === "run";
@@ -166,7 +175,14 @@ export function NPCBattle({
   const sizeMultiplier = getBossSizeMultiplier(npcType, npcPhase, isAlfa);
   const yOffset = getNpcSpriteYOffset(npcType);
 
-  const basePath = getSpritePath(npcType, state, npcPhase, isAlfa);
+  const showPushed =
+    isPushed && !isAlfa && !isDying && hasPushedSprite(npcType);
+  const basePath = getSpritePath(
+    npcType,
+    showPushed ? "pushed" : state,
+    npcPhase,
+    isAlfa,
+  );
 
   const src = isExploding
     ? npcPathProjectile("/explosion.svg")
