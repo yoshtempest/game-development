@@ -56,6 +56,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     babidiShieldSides = NO_BABIDI_SHIELD,
     onBabidiShieldEnd,
     hakai = false,
+    basicComboStep,
     activeStatuses = NO_ACTIVE_STATUSES,
   } = props;
 
@@ -86,6 +87,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     babidiMachineGamaControl,
     hakai,
     sigiloPhase,
+    basicComboStep,
   });
 
   const isMostHonored = state === "mostHonored";
