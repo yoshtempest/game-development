@@ -5,6 +5,7 @@ import { WOODS } from "./profession/woods";
 import { ORES } from "./profession/ores";
 import { FISHES } from "./profession/fishes";
 import { WEIGHTS } from "./profession/weights";
+import { BAITS } from "./profession/baits";
 
 export const MATERIALS = createItems({
   dharma_sphere: {
@@ -121,4 +122,5 @@ export const MATERIALS = createItems({
   ...ORES,
   ...FISHES,
   ...WEIGHTS,
+  ...BAITS,
 } as const);
