@@ -16,11 +16,42 @@
 }
 
 /* A aba compartilha o `.containerOfNavbar` com o cabeçalho de abas. */
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fs-8);
+  width: 100%;
+}
+
+/* O wrapper assume o espaço que o conteúdo ocupava direto no container. */
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+/* Esconde só o conteúdo durante o overlay do baú; as layers já são desativadas
+   pelo host, mas o conteúdo não pode disputar espaço com a recompensa. */
+.hiddenContent {
+  display: none;
+}
+
 .tabContent {
   display: flex;
   flex: 1;
   width: 100%;
   min-height: 0;
+}
+
+.slotsLabel {
+  margin: 0 0 var(--size-2);
+  font-size: var(--fs-14);
+  color: var(--gold-light);
+  text-align: center;
 }
 
 .leftPanel {

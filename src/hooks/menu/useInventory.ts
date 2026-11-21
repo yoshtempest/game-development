@@ -18,7 +18,7 @@ export function useInventoryMenu(
   listRef?: React.RefObject<HTMLUListElement | null>,
   filterConfig: FilterConfig | null = null,
   chestReady = false,
-  onOpenChest: () => void = () => {},
+  onFocusChest: () => void = () => {},
   onFocusTabs: () => void = () => {},
 ) {
   const { pushControls } = useGameControls();
@@ -56,9 +56,6 @@ export function useInventoryMenu(
   const [filterFocused, setFilterFocused] = useState(false);
   const filterFocusedRef = useLatestRef(filterFocused);
 
-  const [chestFocused, setChestFocused] = useState(false);
-  const chestFocusedRef = useLatestRef(chestFocused);
-
   useEffect(() => {
     if (!listRef?.current) return;
 
@@ -72,12 +69,6 @@ export function useInventoryMenu(
       block: "nearest",
     });
   }, [selectedIndex, listRef]);
-
-  useEffect(() => {
-    if (!chestReady && chestFocusedRef.current) {
-      setChestFocused(false);
-    }
-  }, [chestReady, chestFocusedRef]);
 
   useEffect(() => {
     setSelectedIndex((prev) =>
@@ -101,7 +92,7 @@ export function useInventoryMenu(
   const pushControlsRef = useLatestRef(pushControls);
   const filterConfigRef = useLatestRef(filterConfig);
   const chestReadyRef = useLatestRef(chestReady);
-  const onOpenChestRef = useLatestRef(onOpenChest);
+  const onFocusChestRef = useLatestRef(onFocusChest);
   const onFocusTabsRef = useLatestRef(onFocusTabs);
 
   useEffect(() => {
@@ -109,8 +100,6 @@ export function useInventoryMenu(
 
     const controls = {
       onUp: () => {
-        if (chestFocusedRef.current) return;
-
         if (filterFocusedRef.current && filterConfigRef.current) {
           playMoveRef.current();
           const cfg = filterConfigRef.current;
@@ -124,7 +113,7 @@ export function useInventoryMenu(
         if ((row === 0 || navLength === 0) && filterConfigRef.current) {
           if (chestReadyRef.current) {
             playMoveRef.current();
-            setChestFocused(true);
+            onFocusChestRef.current();
             return;
           }
           playMoveRef.current();
@@ -138,17 +127,6 @@ export function useInventoryMenu(
       },
 
       onDown: () => {
-        if (chestFocusedRef.current) {
-          playMoveRef.current();
-          setChestFocused(false);
-          if (filterConfigRef.current) {
-            setFilterFocused(true);
-          } else {
-            setSelectedIndex(0);
-          }
-          return;
-        }
-
         if (filterFocusedRef.current && filterConfigRef.current) {
           playMoveRef.current();
           const cfg = filterConfigRef.current;
@@ -164,8 +142,6 @@ export function useInventoryMenu(
       },
 
       onLeft: () => {
-        if (chestFocusedRef.current) return;
-
         if (filterFocusedRef.current) return;
 
         if (navLength === 0) {
@@ -174,7 +150,7 @@ export function useInventoryMenu(
             setFilterFocused(true);
           } else if (chestReadyRef.current) {
             playMoveRef.current();
-            setChestFocused(true);
+            onFocusChestRef.current();
           }
           return;
         }
@@ -191,8 +167,6 @@ export function useInventoryMenu(
       },
 
       onRight: () => {
-        if (chestFocusedRef.current) return;
-
         if (filterFocusedRef.current) {
           playMoveRef.current();
           setFilterFocused(false);
@@ -206,12 +180,6 @@ export function useInventoryMenu(
       },
 
       onConfirm: () => {
-        if (chestFocusedRef.current) {
-          playSelectRef.current();
-          onOpenChestRef.current();
-          return true;
-        }
-
         if (filterFocusedRef.current) {
           playSelectRef.current();
           return true;
@@ -231,12 +199,11 @@ export function useInventoryMenu(
     navLength,
     chestReadyRef,
     filterConfigRef,
-    onOpenChestRef,
+    onFocusChestRef,
     onFocusTabsRef,
     playMoveRef,
     playSelectRef,
     pushControlsRef,
-    chestFocusedRef,
     filterFocusedRef,
     handleUseItemRef,
     selectedIndexRef,
@@ -246,6 +213,5 @@ export function useInventoryMenu(
     selectedIndex,
     filterFocused,
     setFilterFocused,
-    chestFocused,
   };
 }

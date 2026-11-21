@@ -1,5 +1,5 @@
 import { chestPath } from "@/utils/paths";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useInventory } from "@/contexts/InventoryContext";
 import { useInventoryMenu } from "@/hooks/menu/useInventory";
 import type { FilterConfig } from "@/utils/types/inventory/filterConfig";
@@ -7,15 +7,9 @@ import {
   useChestOpening,
   type ChestOpenOutcome,
 } from "@/hooks/chest/useChestOpening";
-import { useDailyChest } from "@/hooks/chest/useDailyChest";
 import styles from "./styles.module.css";
 import { ITEMS } from "@/data/items";
-import {
-  CHEST_OPENED_SPRITES,
-  DAILY_CHEST_CLOSED_SPRITE,
-  DAILY_CHEST_OPENED_SPRITE,
-} from "@/data/items/chests/chestItems";
-import { Chest } from "./Chest";
+import { CHEST_OPENED_SPRITES } from "@/data/items/chests/chestItems";
 import { FilterBar } from "./FilterBar";
 import { ListItem } from "./ListItem";
 import { RewardsView } from "./RewardsView";
@@ -41,10 +35,24 @@ const CURRENCY_IDS = ["kwanzas", "hypercoin"] as const;
 
 type Props = {
   isActive: boolean;
+  chestReady: boolean;
+  onFocusChest: () => void;
   onFocusTabs: () => void;
+  onPopup: (message: string) => void;
 };
 
-export function InventoryTab({ isActive, onFocusTabs }: Props) {
+/**
+ * Conteúdo da aba Inventário. O baú diário vive no cabeçalho do host (ao lado
+ * das abas) para poder ser aberto de qualquer subseção; aqui ficam apenas os
+ * baús de item da mochila.
+ */
+export function InventoryTab({
+  isActive,
+  chestReady,
+  onFocusChest,
+  onFocusTabs,
+  onPopup,
+}: Props) {
   const { items, maxSlots, removeItem } = useInventory();
   const { progress } = useCharacterProgress();
   const { addLoot, currentLocationId } = useGroundItems();
@@ -99,47 +107,12 @@ export function InventoryTab({ isActive, onFocusTabs }: Props) {
     [filterType, filteredItems],
   );
 
-  const dailyChest = useDailyChest();
-
-  const [openingChest, setOpeningChest] = useState<{
-    tier: NPCClass;
-    isDaily: boolean;
-  } | null>(null);
-
-  const [popupMessage, setPopupMessage] = useState<string | null>(null);
-  const popupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
-    };
-  }, []);
-
-  const flashPopup = useCallback((message: string) => {
-    if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
-    setPopupMessage(message);
-    popupTimerRef.current = setTimeout(() => setPopupMessage(null), 2000);
-  }, []);
-
-  const handleOpenDailyChest = () => {
-    const outcome = dailyChest.open();
-    if (outcome.status === "opened") {
-      setOpeningChest({ tier: outcome.result.tier, isDaily: true });
-    } else if (outcome.status === "inventoryFull") {
-      flashPopup("Mochila cheia");
-    }
-  };
-
-  const {
-    selectedIndex,
-    filterFocused,
-    chestFocused,
-  } = useInventoryMenu(
+  const { selectedIndex, filterFocused } = useInventoryMenu(
     isActive,
     listRef,
     filterConfig,
-    dailyChest.isReady,
-    handleOpenDailyChest,
+    chestReady,
+    onFocusChest,
     onFocusTabs,
   );
 
@@ -158,15 +131,18 @@ export function InventoryTab({ isActive, onFocusTabs }: Props) {
   const { getEffect } = useItemEffect({ playSFX });
   const { consumeItemRef } = useConsumeItem();
 
+  const [openingChestTier, setOpeningChestTier] = useState<NPCClass | null>(
+    null,
+  );
   const [rewardOptionIndex, setRewardOptionIndex] = useState(0);
   const [rejectedIndex, setRejectedIndex] = useState<number | null>(null);
   const [dropItem, setDropItem] = useState<InventoryItem | null>(null);
 
   const handleChestOutcome = (outcome: ChestOpenOutcome) => {
     if (outcome.status === "opened") {
-      setOpeningChest({ tier: outcome.result.tier, isDaily: false });
+      setOpeningChestTier(outcome.result.tier);
     } else if (outcome.status === "inventoryFull") {
-      flashPopup("Mochila cheia");
+      onPopup("Mochila cheia");
     }
   };
 
@@ -197,17 +173,10 @@ export function InventoryTab({ isActive, onFocusTabs }: Props) {
   const hasOtherChest = !!(
     chestLastResult && otherChestExists(chestLastResult.tier)
   );
-  const chestRewardsVisible =
-    !!(dailyChest.lastResult || chestLastResult) && !openingChest;
+  const chestRewardsVisible = !!chestLastResult && !openingChestTier;
   const rewardOptionCount = chestRewardsVisible ? (hasOtherChest ? 2 : 1) : 0;
 
-  const closeRewards = useStableCallback(() => {
-    if (dailyChest.lastResult) {
-      dailyChest.setLastResult(null);
-    } else {
-      setLastResult(null);
-    }
-  });
+  const closeRewards = useStableCallback(() => setLastResult(null));
 
   const selectedItem = filteredItems[selectedIndex];
   const selectedItemData = selectedItem ? ITEMS[selectedItem.id] : null;
@@ -249,7 +218,7 @@ export function InventoryTab({ isActive, onFocusTabs }: Props) {
   useItemControls({
     isActive,
     filterFocused,
-    chestFocused,
+    chestFocused: false,
     selectedItem,
     isConsumableSelected,
     isChestSelected,
@@ -265,43 +234,41 @@ export function InventoryTab({ isActive, onFocusTabs }: Props) {
       setRejectedIndex(selectedIndex);
       setTimeout(() => setRejectedIndex(null), 1500);
     },
-    onNoKey: () => flashPopup("Sem chave"),
+    onNoKey: () => onPopup("Sem chave"),
     onDropItem: handleDropItem,
   });
 
-  if (openingChest) {
-    const closedSrc = openingChest.isDaily
-      ? DAILY_CHEST_CLOSED_SPRITE
-      : chestPath(`${openingChest.tier}.svg`);
-    const openedSrc = openingChest.isDaily
-      ? DAILY_CHEST_OPENED_SPRITE
-      : CHEST_OPENED_SPRITES[openingChest.tier];
+  if (openingChestTier) {
     return (
       <ChestOpeningAnimation
-        closedSrc={closedSrc}
-        openedSrc={openedSrc}
-        onComplete={() => setOpeningChest(null)}
+        closedSrc={chestPath(`${openingChestTier}.svg`)}
+        openedSrc={CHEST_OPENED_SPRITES[openingChestTier]}
+        onComplete={() => setOpeningChestTier(null)}
       />
     );
   }
 
-  const rewardsVisible = !!(dailyChest.lastResult || chestLastResult);
-  if (rewardsVisible) {
+  if (chestLastResult) {
     return (
       <RewardsView
-        dailyResult={dailyChest.lastResult}
+        dailyResult={null}
         chestResult={chestLastResult}
         hasOtherChest={hasOtherChest}
         rewardOptionIndex={rewardOptionIndex}
         rewardOptionCount={rewardOptionCount}
         lastOpened={lastOpened}
         onSelect={setRewardOptionIndex}
-        onCloseDaily={() => dailyChest.setLastResult(null)}
+        onCloseDaily={() => undefined}
         onCloseChest={() => setLastResult(null)}
         onOpenNextChest={handleOpenNextChest}
       />
     );
   }
+
+  const currencyCount = (totalCoins > 0 ? 1 : 0) + (totalHyperCoins > 0 ? 1 : 0);
+  const totalUsed = items.length + currencyCount;
+  const slotsLabel =
+    maxSlots === Infinity ? `${totalUsed} / ∞` : `${totalUsed} / ${maxSlots}`;
 
   const listItems =
     filterType === "all"
@@ -314,12 +281,7 @@ export function InventoryTab({ isActive, onFocusTabs }: Props) {
   return (
     <div className={`${styles.tabContent} ${styles.container}`}>
       <div className={styles.leftPanel}>
-        <Chest
-          isFocused={chestFocused}
-          isReady={dailyChest.isReady}
-          timeLeft={dailyChest.timeLeft}
-          onOpen={handleOpenDailyChest}
-        />
+        <h3 className={styles.slotsLabel}>Inventário {slotsLabel}</h3>
 
         <FilterBar
           filterType={filterType}
@@ -342,8 +304,6 @@ export function InventoryTab({ isActive, onFocusTabs }: Props) {
           ),
         )}
       </ul>
-
-      {popupMessage && <div className={styles.noKeyPopup}>{popupMessage}</div>}
 
       {dropItem && (
         <DropItem

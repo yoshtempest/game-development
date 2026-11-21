@@ -8,26 +8,37 @@ import {
   type InventorySection,
 } from "@/data/inventory/tabs";
 
+type InventoryFocus = "tabs" | "chest" | "content";
+
 /**
- * Abas superiores da Mochila. A layer fica abaixo das do conteúdo ativo:
- * quando `isOnTab` é false ela devolve o input para a subseção; quando true,
- * as layers da subseção são desmontadas e esta passa a capturar tudo.
+ * Cabeçalho compartilhado da Mochila: abas + baú diário. O foco é um único
+ * estado porque os três alvos disputam a mesma layer de input — o conteúdo
+ * só recebe comandos quando `focus === "content"`, e o baú continua alcançável
+ * de qualquer aba pela seta direita da última aba.
  */
-export function useInventoryTabs(initialSection: InventorySection) {
+export function useInventoryTabs(
+  initialSection: InventorySection,
+  chestReady: boolean,
+  onOpenChest: () => void,
+) {
   const { pushControls } = useGameControls();
   const { playMove, playSelect } = useMenuSFX();
 
   const [activeSection, setActiveSection] =
     useState<InventorySection>(initialSection);
-  const [isOnTab, setIsOnTab] = useState(true);
+  const [focus, setFocus] = useState<InventoryFocus>("tabs");
 
-  const isOnTabRef = useLatestRef(isOnTab);
+  const activeSectionRef = useLatestRef(activeSection);
+  const focusRef = useLatestRef(focus);
+  const chestReadyRef = useLatestRef(chestReady);
+  const onOpenChestRef = useLatestRef(onOpenChest);
   const playMoveRef = useLatestRef(playMove);
   const playSelectRef = useLatestRef(playSelect);
   const pushControlsRef = useLatestRef(pushControls);
 
-  const focusTab = useCallback(() => setIsOnTab(true), []);
-  const enterContent = useCallback(() => setIsOnTab(false), []);
+  const focusTab = useCallback(() => setFocus("tabs"), []);
+  const enterContent = useCallback(() => setFocus("content"), []);
+  const focusChest = useCallback(() => setFocus("chest"), []);
 
   const cycleSection = useCallback((dir: 1 | -1) => {
     playMoveRef.current();
@@ -42,34 +53,57 @@ export function useInventoryTabs(initialSection: InventorySection) {
   useEffect(() => {
     const controls = {
       onLeft: () => {
-        if (!isOnTabRef.current) return false;
-        cycleSection(-1);
-        return true;
+        if (focusRef.current === "tabs") {
+          cycleSection(-1);
+          return true;
+        }
+        if (focusRef.current === "chest") {
+          playMoveRef.current();
+          focusTab();
+          return true;
+        }
+        return false;
       },
 
       onRight: () => {
-        if (!isOnTabRef.current) return false;
+        if (focusRef.current !== "tabs") return false;
+        const index = INVENTORY_SECTIONS.indexOf(activeSectionRef.current);
+        const isLastTab = index === INVENTORY_SECTIONS.length - 1;
+        if (isLastTab && chestReadyRef.current) {
+          playMoveRef.current();
+          focusChest();
+          return true;
+        }
         cycleSection(1);
         return true;
       },
 
       onDown: () => {
-        if (!isOnTabRef.current) return false;
+        if (focusRef.current === "content") return false;
         playMoveRef.current();
         enterContent();
         return true;
       },
 
       onUp: () => {
-        if (!isOnTabRef.current) return false;
+        if (focusRef.current !== "chest") return false;
+        playMoveRef.current();
+        focusTab();
         return true;
       },
 
       onConfirm: () => {
-        if (!isOnTabRef.current) return false;
-        playSelectRef.current();
-        enterContent();
-        return true;
+        if (focusRef.current === "tabs") {
+          playSelectRef.current();
+          enterContent();
+          return true;
+        }
+        if (focusRef.current === "chest") {
+          playSelectRef.current();
+          if (chestReadyRef.current) onOpenChestRef.current();
+          return true;
+        }
+        return false;
       },
 
       blockGlobalOpen: true,
@@ -78,9 +112,14 @@ export function useInventoryTabs(initialSection: InventorySection) {
     const remove = pushControlsRef.current(controls);
     return () => remove();
   }, [
+    activeSectionRef,
+    chestReadyRef,
     cycleSection,
     enterContent,
-    isOnTabRef,
+    focusChest,
+    focusRef,
+    focusTab,
+    onOpenChestRef,
     playMoveRef,
     playSelectRef,
     pushControlsRef,
@@ -88,9 +127,12 @@ export function useInventoryTabs(initialSection: InventorySection) {
 
   return {
     activeSection,
-    isOnTab,
     setActiveSection,
+    isOnTab: focus === "tabs",
+    isChestFocused: focus === "chest",
+    isContentActive: focus === "content",
     focusTab,
     enterContent,
+    focusChest,
   };
 }
