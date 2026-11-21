@@ -165,12 +165,7 @@ div.wrapper {
   color: var(--text-color);
 }
 
-.elementBadge {
-  width: var(--fs-18);
-  height: var(--fs-18);
-  object-fit: contain;
-  image-rendering: pixelated;
-}
+
 
 .detailScroll {
   flex: 1;

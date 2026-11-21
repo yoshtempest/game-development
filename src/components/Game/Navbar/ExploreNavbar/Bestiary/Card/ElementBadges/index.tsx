@@ -1,6 +1,6 @@
 import { elementBadgePath } from "@/utils/paths";
 import { getNpcElementTypes } from "@/data/types/npcElementTypes";
-import styles from "@/components/Game/Navbar/ExploreNavbar/Bestiary/styles.module.css"
+import styles from "./styles.module.css"
 
 export function ElementBadges({ npcType }: { npcType: string }) {
   return (

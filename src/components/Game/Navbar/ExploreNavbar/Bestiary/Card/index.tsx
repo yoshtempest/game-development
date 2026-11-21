@@ -1,8 +1,8 @@
 import styles from "./styles.module.css";
-import { npcPath } from "@/utils/paths";
 import { CLASS_DATA } from "@/data/npc";
 import type { Props } from "./types";
-import { ElementBadges } from "./elementBadges";
+import { ElementBadges } from "./ElementBadges";
+import { BestiaryArtwork } from "./Artwork";
 
 
 export function BestiaryCard({
@@ -23,40 +23,17 @@ export function BestiaryCard({
   index = 0,
   onSelect,
 }: Props) {
-  const spritePath = isAlfa ? `/${baseNpcType}/alfa` : `/${npcType}`;
-  const spriteSrc = (sprite: string) => npcPath(`${spritePath}/${sprite}.svg`);
 
   const artwork = (
-    <div
-      className={variant === "detail" ? styles.detailArt : styles.spriteBox}
-    >
-      <img
-        loading="lazy"
-        decoding="async"
-        src={spriteSrc("default")}
-        alt={name}
-        className={`${variant === "detail" ? styles.detailSprite : styles.sprite} ${
-          encountered ? "" : styles.silhouette
-        }`}
-        onError={(e) => {
-          const img = e.currentTarget;
-
-          if (img.dataset.fallback === "default") {
-            img.dataset.fallback = "walk";
-            img.src = spriteSrc("walk");
-          } else if (img.dataset.fallback === "walk") {
-            img.dataset.fallback = "right";
-            img.src = spriteSrc("right");
-          }
-        }}
-        data-fallback="default"
-      />
-      {variant === "detail" && (
-        <span className={styles.detailIndex}>
-          #{String(index + 1).padStart(2, "0")}
-        </span>
-      )}
-    </div>
+    <BestiaryArtwork
+      npcType={npcType}
+      baseNpcType={baseNpcType}
+      name={name}
+      encountered={encountered}
+      isAlfa={isAlfa}
+      variant={variant}
+      index={index}
+    />
   );
 
   if (variant === "list") {
