@@ -9,8 +9,6 @@ export const SITTING_HEAL_PER_SECOND = 1;
 
 export type ExploreEmoteOption = {
   id: ExploreEmote;
-  label: string;
-  description: string;
   icon: string;
 };
 
@@ -22,8 +20,6 @@ export type ExploreEmoteOption = {
 export const EXPLORE_EMOTES: readonly ExploreEmoteOption[] = [
   {
     id: "sitting",
-    label: "Sentar",
-    description: `Fica sentado e recupera +${SITTING_HEAL_PER_SECOND} de vida por segundo. Andar levanta.`,
     icon: navbarIconPath("sitting.svg"),
   },
 ];

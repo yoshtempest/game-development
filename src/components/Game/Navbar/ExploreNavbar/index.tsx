@@ -26,7 +26,6 @@ const SCREENS: Record<MenuScreen, LazyExoticComponent<ComponentType>> = {
   professions: lazyNamed(() => import("./Professions"), "Professions"),
   titles: lazyNamed(() => import("./Titles"), "TitlesScreen"),
   pets: lazyNamed(() => import("./Pets"), "Pets"),
-  animations: lazyNamed(() => import("./Animations"), "Animations"),
   saves: lazyNamed(() => import("./Saves"), "Saves"),
   config: lazyNamed(() => import("./Config"), "Config"),
 };

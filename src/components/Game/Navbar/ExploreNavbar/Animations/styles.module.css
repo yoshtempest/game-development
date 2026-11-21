@@ -1,5 +1,30 @@
+.animationButton {
+  position: absolute;
+  right: 2%;
+  top: 4%;
+  height: 4.5vw;
+  width: 4.5vw;
+  border: 1px solid white;
+
+  border-radius: 50%;
+}
+
+.animationButton img {
+  width: 100%;
+  height: 100%;
+}
+
+.animationButtonsContainer {
+  position: fixed;
+  border-radius: 100%;
+  top: 4%;
+  width: 3vw;
+  height: 3vw;
+  right: 8%;
+  
+}
 .list {
-  width: 80%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: var(--small);
@@ -13,7 +38,6 @@
   gap: var(--fs-8);
   padding: var(--fs-8);
   border-radius: var(--size-4);
-  border: var(--size-1) solid var(--border-strong);
   background: var(--surface-primary);
   cursor: pointer;
 }
@@ -24,22 +48,8 @@
 }
 
 .icon {
-  width: var(--fs-36);
-  height: var(--fs-36);
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   flex-shrink: 0;
-}
-
-.info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-2);
-}
-
-.label {
-  font-weight: bold;
-}
-
-.description {
-  opacity: 0.8;
 }
