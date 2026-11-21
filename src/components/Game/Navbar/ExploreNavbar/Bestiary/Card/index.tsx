@@ -1,49 +1,9 @@
-import styles from "@/components/Game/Navbar/ExploreNavbar/Bestiary/styles.module.css";
-import { npcPath, elementBadgePath } from "@/utils/paths";
-import { CLASS_DATA, type NPCClass } from "@/data/npc";
-import { getNpcElementTypes } from "@/data/types/npcElementTypes";
+import styles from "./styles.module.css";
+import { npcPath } from "@/utils/paths";
+import { CLASS_DATA } from "@/data/npc";
+import type { Props } from "./types";
+import { ElementBadges } from "./elementBadges";
 
-type DropItem = {
-  name: string;
-  chance: string;
-};
-
-type Props = {
-  npcType: string;
-  name: string;
-  encountered: boolean;
-  kills: number;
-  npcClass: NPCClass | null;
-  location: string;
-  description: string;
-  attacks: string[];
-  dropItems: DropItem[];
-  linkedTitles: string[];
-  isSelected: boolean;
-  baseNpcType?: string;
-  isAlfa?: boolean;
-  variant?: "list" | "detail";
-  index?: number;
-  onSelect?: () => void;
-};
-
-function ElementBadges({ npcType }: { npcType: string }) {
-  return (
-    <>
-      {getNpcElementTypes(npcType).map((element) => (
-        <img
-          loading="lazy"
-          decoding="async"
-          key={element}
-          src={elementBadgePath(`${element.toLowerCase()}.svg`)}
-          alt={element}
-          title={element}
-          className={styles.elementBadge}
-        />
-      ))}
-    </>
-  );
-}
 
 export function BestiaryCard({
   npcType,
