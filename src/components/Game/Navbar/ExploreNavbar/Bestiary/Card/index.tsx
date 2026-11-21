@@ -22,7 +22,28 @@ type Props = {
   isSelected: boolean;
   baseNpcType?: string;
   isAlfa?: boolean;
+  variant?: "list" | "detail";
+  index?: number;
+  onSelect?: () => void;
 };
+
+function ElementBadges({ npcType }: { npcType: string }) {
+  return (
+    <>
+      {getNpcElementTypes(npcType).map((element) => (
+        <img
+          loading="lazy"
+          decoding="async"
+          key={element}
+          src={elementBadgePath(`${element.toLowerCase()}.svg`)}
+          alt={element}
+          title={element}
+          className={styles.elementBadge}
+        />
+      ))}
+    </>
+  );
+}
 
 export function BestiaryCard({
   npcType,
@@ -38,120 +59,67 @@ export function BestiaryCard({
   isSelected,
   baseNpcType,
   isAlfa = false,
+  variant = "list",
+  index = 0,
+  onSelect,
 }: Props) {
   const spritePath = isAlfa ? `/${baseNpcType}/alfa` : `/${npcType}`;
-
   const spriteSrc = (sprite: string) => npcPath(`${spritePath}/${sprite}.svg`);
 
-  console.log({
-    npcType,
-    isAlfa,
-    baseNpcType,
-    spriteSrc,
-  });
-  return (
+  const artwork = (
     <div
-      className={`${styles.card} ${
-        isSelected ? styles.selected : ""
-      } ${encountered ? styles.cardEncountered : styles.cardUnknown}`}
+      className={variant === "detail" ? styles.detailArt : styles.spriteBox}
     >
-      <div className={styles.spriteBox}>
-        <img
-          loading="lazy"
-          decoding="async"
-          src={spriteSrc("default")}
-          alt={name}
-          className={`${styles.sprite} ${encountered ? "" : styles.silhouette}`}
-          onError={(e) => {
-            const img = e.currentTarget;
+      <img
+        loading="lazy"
+        decoding="async"
+        src={spriteSrc("default")}
+        alt={name}
+        className={`${variant === "detail" ? styles.detailSprite : styles.sprite} ${
+          encountered ? "" : styles.silhouette
+        }`}
+        onError={(e) => {
+          const img = e.currentTarget;
 
-            if (img.dataset.fallback === "default") {
-              img.dataset.fallback = "walk";
-              img.src = spriteSrc("walk");
-            } else if (img.dataset.fallback === "walk") {
-              img.dataset.fallback = "right";
-              img.src = spriteSrc("right");
-            }
-          }}
-          data-fallback="default"
-        />
-      </div>
+          if (img.dataset.fallback === "default") {
+            img.dataset.fallback = "walk";
+            img.src = spriteSrc("walk");
+          } else if (img.dataset.fallback === "walk") {
+            img.dataset.fallback = "right";
+            img.src = spriteSrc("right");
+          }
+        }}
+        data-fallback="default"
+      />
+      {variant === "detail" && (
+        <span className={styles.detailIndex}>
+          #{String(index + 1).padStart(2, "0")}
+        </span>
+      )}
+    </div>
+  );
 
-      <div className={styles.info}>
-        {encountered ? (
-          <>
-            <div className={styles.nameRow}>
-              <div className={styles.name}>{name}</div>
-              {getNpcElementTypes(npcType).map((element) => (
-                <img
-                  loading="lazy"
-                  decoding="async"
-                  key={element}
-                  src={elementBadgePath(`${element.toLowerCase()}.svg`)}
-                  alt={element}
-                  title={element}
-                  className={styles.elementBadge}
-                />
-              ))}
-            </div>
-
-            <div className={styles.metaRow}>
-              {npcClass && (
-                <span
-                  className={styles.classBadge}
-                  style={{ color: CLASS_DATA[npcClass].color }}
-                >
-                  {CLASS_DATA[npcClass].label}
-                </span>
-              )}
-              <span className={styles.killCount}>
-                {kills} {kills === 1 ? "vez" : "vezes"} derrotado
-              </span>
-            </div>
-
-            <div className={styles.location}>{location}</div>
-            <div className={styles.description}>{description}</div>
-
-            <div className={styles.attacks}>
-              {attacks.map((attack) => (
-                <span key={attack} className={styles.attackTag}>
-                  {attack}
-                </span>
-              ))}
-            </div>
-
-            {dropItems.length > 0 && (
-              <div className={styles.section}>
-                <div className={styles.sectionTitle}>Drops</div>
-                <div className={styles.dropGrid}>
-                  {dropItems.map((drop) => (
-                    <span key={drop.name} className={styles.dropTag}>
-                      {drop.name}
-                      <span className={styles.dropChance}>{drop.chance}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {linkedTitles.length > 0 && (
-              <div className={styles.section}>
-                <div className={styles.sectionTitle}>Títulos</div>
-                <div className={styles.titleList}>
-                  {linkedTitles.map((titleName) => {
-                    return (
-                      <span key={titleName} className={styles.titleTag}>
-                        {titleName}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </>
-        ) : (
-          <>
-            <div className={styles.unknownName}>???</div>
+  if (variant === "list") {
+    return (
+      <button
+        type="button"
+        className={`${styles.listItem} ${
+          isSelected ? styles.selected : ""
+        } ${encountered ? styles.cardEncountered : styles.cardUnknown}`}
+        onClick={onSelect}
+      >
+        <span className={styles.listIndex}>
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        {artwork}
+        <span className={styles.listInfo}>
+          <span className={styles.listNameRow}>
+            <span className={encountered ? styles.name : styles.unknownName}>
+              {encountered ? name : "???"}
+            </span>
+            {encountered && <ElementBadges npcType={npcType} />}
+          </span>
+          <span className={styles.listMeta}>
             {npcClass && (
               <span
                 className={styles.classBadge}
@@ -160,12 +128,124 @@ export function BestiaryCard({
                 {CLASS_DATA[npcClass].label}
               </span>
             )}
-            <div className={styles.unknownHint}>
-              Derrote este inimigo para descobrir mais
-            </div>
-          </>
-        )}
+            <span className={styles.killCount}>
+              {kills} {kills === 1 ? "vez" : "vezes"} derrotado
+            </span>
+            {encountered ? (
+              <span className={styles.listLocation}>{location}</span>
+            ) : (
+              <span className={styles.listHint}>
+                Derrote este inimigo para descobrir mais
+              </span>
+            )}
+          </span>
+        </span>
+      </button>
+    );
+  }
+
+  return (
+    <div
+      className={`${styles.detailCard} ${
+        encountered ? styles.cardEncountered : styles.cardUnknown
+      }`}
+    >
+      <div className={styles.detailTop}>
+        {artwork}
+
+        <div className={styles.detailIdentity}>
+          {encountered ? (
+            <>
+              <div className={styles.nameRow}>
+                <h3 className={styles.detailName}>{name}</h3>
+                <ElementBadges npcType={npcType} />
+              </div>
+
+              <div className={styles.metaRow}>
+                {npcClass && (
+                  <span
+                    className={styles.classBadge}
+                    style={{ color: CLASS_DATA[npcClass].color }}
+                  >
+                    {CLASS_DATA[npcClass].label}
+                  </span>
+                )}
+                <span className={styles.killCount}>
+                  {kills} {kills === 1 ? "vez" : "vezes"} derrotado
+                </span>
+              </div>
+
+              <div className={styles.location}>{location}</div>
+              <div className={styles.description}>{description}</div>
+            </>
+          ) : (
+            <>
+              <div className={styles.nameRow}>
+                <h3 className={`${styles.detailName} ${styles.unknownName}`}>
+                  ???
+                </h3>
+              </div>
+              {npcClass && (
+                <div className={styles.metaRow}>
+                  <span
+                    className={styles.classBadge}
+                    style={{ color: CLASS_DATA[npcClass].color }}
+                  >
+                    {CLASS_DATA[npcClass].label}
+                  </span>
+                </div>
+              )}
+              <div className={styles.unknownHint}>
+                Derrote este inimigo para descobrir mais
+              </div>
+            </>
+          )}
+        </div>
       </div>
+
+      {encountered && (
+        <>
+          {attacks.length > 0 && (
+            <div className={styles.sectionPanel}>
+              <div className={styles.sectionTitle}>Ataques</div>
+              <div className={styles.attacks}>
+                {attacks.map((attack) => (
+                  <span key={attack} className={styles.attackTag}>
+                    {attack}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {dropItems.length > 0 && (
+            <div className={styles.sectionPanel}>
+              <div className={styles.sectionTitle}>Drops</div>
+              <div className={styles.dropGrid}>
+                {dropItems.map((drop) => (
+                  <span key={drop.name} className={styles.dropTag}>
+                    {drop.name}
+                    <span className={styles.dropChance}>{drop.chance}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {linkedTitles.length > 0 && (
+            <div className={styles.sectionPanel}>
+              <div className={styles.sectionTitle}>Títulos</div>
+              <div className={styles.titleList}>
+                {linkedTitles.map((titleName) => (
+                  <span key={titleName} className={styles.titleTag}>
+                    {titleName}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

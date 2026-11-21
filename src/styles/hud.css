@@ -1,6 +1,6 @@
 .hudImage {
   background-color: var(--background-color);
-  border: var(--size-1) solid var(--text-color);
+  border: var(--size-2) solid #135693;
   border-radius: var(--size-2);
   width: 12vh;
   height: 12vh;
