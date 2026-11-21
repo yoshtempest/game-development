@@ -3,6 +3,7 @@ import { CLASS_DATA } from "@/data/npc";
 import type { Props } from "./types";
 import { ElementBadges } from "./ElementBadges";
 import { BestiaryArtwork } from "./Artwork";
+import { BestiaryList } from "./List";
 
 
 export function BestiaryCard({
@@ -38,46 +39,18 @@ export function BestiaryCard({
 
   if (variant === "list") {
     return (
-      <button
-        type="button"
-        className={`${styles.listItem} ${
-          isSelected ? styles.selected : ""
-        } ${encountered ? styles.cardEncountered : styles.cardUnknown}`}
-        onClick={onSelect}
-      >
-        <span className={styles.listIndex}>
-          {String(index + 1).padStart(2, "0")}
-        </span>
-        {artwork}
-        <span className={styles.listInfo}>
-          <span className={styles.listNameRow}>
-            <span className={encountered ? styles.name : styles.unknownName}>
-              {encountered ? name : "???"}
-            </span>
-            {encountered && <ElementBadges npcType={npcType} />}
-          </span>
-          <span className={styles.listMeta}>
-            {npcClass && (
-              <span
-                className={styles.classBadge}
-                style={{ color: CLASS_DATA[npcClass].color }}
-              >
-                {CLASS_DATA[npcClass].label}
-              </span>
-            )}
-            <span className={styles.killCount}>
-              {kills} {kills === 1 ? "vez" : "vezes"} derrotado
-            </span>
-            {encountered ? (
-              <span className={styles.listLocation}>{location}</span>
-            ) : (
-              <span className={styles.listHint}>
-                Derrote este inimigo para descobrir mais
-              </span>
-            )}
-          </span>
-        </span>
-      </button>
+      <BestiaryList
+        artwork={artwork}
+        name={name}
+        encountered={encountered}
+        kills={kills}
+        npcClass={npcClass}
+        npcType={npcType}
+        location={location}
+        isSelected={isSelected}
+        index={index}
+        onSelect={onSelect}
+      />
     );
   }
 

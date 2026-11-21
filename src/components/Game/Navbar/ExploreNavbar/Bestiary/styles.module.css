@@ -159,14 +159,6 @@ div.wrapper {
   background: var(--nav-panel-line-soft);
 }
 
-.name {
-  font-weight: bold;
-  font-size: var(--fs-14);
-  color: var(--text-color);
-}
-
-
-
 .detailScroll {
   flex: 1;
   min-height: 0;
