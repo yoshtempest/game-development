@@ -88,15 +88,21 @@ export function useStatusMenu(
     return true;
   });
 
+  // O menu fundido mantém este hook montado também na grade de personagens.
+  // Sem o `null`, a camada ficaria no topo da pilha mesmo fechada e roubaria
+  // up/down/confirm da grade — o cursor de stats é invisível, então parecia
+  // que o personagem não respondia ao input.
   useGameControlsLayer(
-    {
-      onUp,
-      onDown,
-      onConfirm,
-      onCancel: cancel,
-      blockGlobalOpen: true,
-    },
-    [isOpen, cancel],
+    isOpen
+      ? {
+          onUp,
+          onDown,
+          onConfirm,
+          onCancel: cancel,
+          blockGlobalOpen: true,
+        }
+      : null,
+    [isOpen, cancel, onUp, onDown, onConfirm],
   );
 
   return {
