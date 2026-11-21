@@ -11,6 +11,7 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import { useMenuSFX } from "@/hooks/menu/useMenuSFX";
 import { useAudio } from "@/hooks/audio/useAudio";
 import { resolveAsset } from "@/utils/paths";
+import { INVENTORY_GRID_COLUMNS } from "@/data/inventory/tabs";
 import type { FilterConfig } from "@/utils/types/inventory/filterConfig";
 
 export function useInventoryMenu(
@@ -98,18 +99,31 @@ export function useInventoryMenu(
   useEffect(() => {
     if (!isOpen) return;
 
+    // A barra de filtros agora é horizontal: esquerda/direita trocam de filtro
+    // e para baixo devolve o foco ao grid.
+    const cycleFilter = (dir: 1 | -1) => {
+      const cfg = filterConfigRef.current;
+      if (!cfg) return;
+      playMoveRef.current();
+      const idx = cfg.labels.findIndex((label) => label.type === cfg.active);
+      const nextIdx =
+        dir === 1
+          ? circularNext(idx, cfg.labels.length)
+          : circularPrev(idx, cfg.labels.length);
+      cfg.onChange(cfg.labels[nextIdx]!.type);
+    };
+
     const controls = {
       onUp: () => {
-        if (filterFocusedRef.current && filterConfigRef.current) {
+        if (filterFocusedRef.current) {
           playMoveRef.current();
-          const cfg = filterConfigRef.current;
-          const idx = cfg.labels.findIndex((l) => l.type === cfg.active);
-          const prevIdx = circularPrev(idx, cfg.labels.length);
-          cfg.onChange(cfg.labels[prevIdx]!.type);
+          onFocusTabsRef.current();
           return;
         }
 
-        const row = Math.floor(selectedIndexRef.current / 3);
+        const row = Math.floor(
+          selectedIndexRef.current / INVENTORY_GRID_COLUMNS,
+        );
         if ((row === 0 || navLength === 0) && filterConfigRef.current) {
           if (chestReadyRef.current) {
             playMoveRef.current();
@@ -123,26 +137,31 @@ export function useInventoryMenu(
 
         if (navLength === 0) return;
         playMoveRef.current();
-        setSelectedIndex((prev) => gridMove(prev, 3, "up", navLength));
+        setSelectedIndex((prev) =>
+          gridMove(prev, INVENTORY_GRID_COLUMNS, "up", navLength),
+        );
       },
 
       onDown: () => {
-        if (filterFocusedRef.current && filterConfigRef.current) {
+        if (filterFocusedRef.current) {
           playMoveRef.current();
-          const cfg = filterConfigRef.current;
-          const idx = cfg.labels.findIndex((l) => l.type === cfg.active);
-          const nextIdx = circularNext(idx, cfg.labels.length);
-          cfg.onChange(cfg.labels[nextIdx]!.type);
+          setFilterFocused(false);
+          setSelectedIndex(0);
           return;
         }
 
         if (navLength === 0) return;
         playMoveRef.current();
-        setSelectedIndex((prev) => gridMove(prev, 3, "down", navLength));
+        setSelectedIndex((prev) =>
+          gridMove(prev, INVENTORY_GRID_COLUMNS, "down", navLength),
+        );
       },
 
       onLeft: () => {
-        if (filterFocusedRef.current) return;
+        if (filterFocusedRef.current) {
+          cycleFilter(-1);
+          return;
+        }
 
         if (navLength === 0) {
           if (filterConfigRef.current) {
@@ -158,25 +177,27 @@ export function useInventoryMenu(
         playMoveRef.current();
 
         // Coluna esquerda devolve o foco para as abas superiores.
-        if (selectedIndexRef.current % 3 === 0) {
+        if (selectedIndexRef.current % INVENTORY_GRID_COLUMNS === 0) {
           onFocusTabsRef.current();
           return;
         }
 
-        setSelectedIndex((prev) => gridMove(prev, 3, "left", navLength));
+        setSelectedIndex((prev) =>
+          gridMove(prev, INVENTORY_GRID_COLUMNS, "left", navLength),
+        );
       },
 
       onRight: () => {
         if (filterFocusedRef.current) {
-          playMoveRef.current();
-          setFilterFocused(false);
-          setSelectedIndex(0);
+          cycleFilter(1);
           return;
         }
 
         if (navLength === 0) return;
         playMoveRef.current();
-        setSelectedIndex((prev) => gridMove(prev, 3, "right", navLength));
+        setSelectedIndex((prev) =>
+          gridMove(prev, INVENTORY_GRID_COLUMNS, "right", navLength),
+        );
       },
 
       onConfirm: () => {

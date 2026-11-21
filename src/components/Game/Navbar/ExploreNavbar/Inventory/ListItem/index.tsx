@@ -18,38 +18,36 @@ export function ListItem({ item, isSelected, rejected }: Props) {
 
   return (
     <li
-      className={`InventoryItem ${isSelected ? "active" : ""} ${rejected ? styles.rejected : ""}`}
+      className={`InventoryItem ${styles.cell} ${isSelected ? "active" : ""} ${
+        rejected ? styles.rejected : ""
+      }`}
     >
       {itemData && (
-        <div className={styles.itemRow}>
-          {cardNpcType ? (
-            <NpcCardImage
-              npcType={cardNpcType}
-              alt={itemData.name}
-              className={styles.icon}
-            />
-          ) : (
-            <img
-              loading="lazy"
-              decoding="async"
-              className={styles.icon}
-              src={itemData.image ?? itemPath(`${item.id}.svg`)}
-              alt={itemData.name}
-            />
-          )}
-
-          <div className={styles.info}>
-            <span className={styles.name}>
-              {itemData.name}
-              {item.qty && item.qty > 0 && (
-                <span className="InventoryQty"> x{item.qty}</span>
-              )}
-            </span>
-
-            {itemData.description && (
-              <span className={styles.description}>{itemData.description}</span>
+        <div className={styles.itemCell}>
+          {/* A quantidade acompanha o ícone; a descrição fica só no painel do
+              item selecionado, para o grid caber em 5 colunas. */}
+          <span className={styles.iconWrap}>
+            {cardNpcType ? (
+              <NpcCardImage
+                npcType={cardNpcType}
+                alt={itemData.name}
+                className={styles.icon}
+              />
+            ) : (
+              <img
+                loading="lazy"
+                decoding="async"
+                className={styles.icon}
+                src={itemData.image ?? itemPath(`${item.id}.svg`)}
+                alt={itemData.name}
+              />
             )}
-          </div>
+            {!!item.qty && item.qty > 0 && (
+              <span className={styles.qty}>{item.qty}</span>
+            )}
+          </span>
+
+          <span className={styles.name}>{itemData.name}</span>
         </div>
       )}
     </li>

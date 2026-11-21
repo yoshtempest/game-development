@@ -16,7 +16,11 @@ import { RewardsView } from "./RewardsView";
 import { ChestOpeningAnimation } from "./ChestOpeningAnimation";
 import { useItemEffect } from "@/hooks/items/useItemEffect";
 import { FILTER_LABELS } from "@/data/inventory/labels";
-import { PROFESSION_ITEMS } from "@/data/professions/professionItems";
+import {
+  getItemOriginInfo,
+  isProfessionItem,
+} from "@/data/inventory/itemInfo";
+import { INVENTORY_GRID_COLUMNS } from "@/data/inventory/tabs";
 import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
 import { CHARACTERS } from "@/data/characters/list";
 import type { InventoryItem } from "@/utils/types/player/inventory";
@@ -84,12 +88,8 @@ export function InventoryTab({
 
   const filteredItems = useMemo(() => {
     if (filterType === "all") return itemsWithCurrency;
-    if (filterType.startsWith("prof_")) {
-      const professionId = filterType.slice(5);
-      const professionItemIds =
-        PROFESSION_ITEMS[professionId as keyof typeof PROFESSION_ITEMS];
-      if (!professionItemIds) return itemsWithCurrency;
-      return itemsWithCurrency.filter((item) => professionItemIds.has(item.id));
+    if (filterType === "profession") {
+      return itemsWithCurrency.filter((item) => isProfessionItem(item.id));
     }
     return itemsWithCurrency.filter((item) => {
       const itemData = item ? ITEMS[item.id] : null;
@@ -180,6 +180,8 @@ export function InventoryTab({
 
   const selectedItem = filteredItems[selectedIndex];
   const selectedItemData = selectedItem ? ITEMS[selectedItem.id] : null;
+  // Profissão ou classe: a origem do item aparece só no painel do selecionado.
+  const originInfo = selectedItem ? getItemOriginInfo(selectedItem.id) : null;
 
   const handleDropItem = useCallback(() => {
     if (!selectedItem) return;
@@ -280,7 +282,7 @@ export function InventoryTab({
 
   return (
     <div className={`${styles.tabContent} ${styles.container}`}>
-      <div className={styles.leftPanel}>
+      <div className={styles.toolbar}>
         <h3 className={styles.slotsLabel}>Inventário {slotsLabel}</h3>
 
         <FilterBar
@@ -290,7 +292,13 @@ export function InventoryTab({
         />
       </div>
 
-      <ul ref={listRef} className={styles.list}>
+      <ul
+        ref={listRef}
+        className={styles.list}
+        style={{
+          gridTemplateColumns: `repeat(${INVENTORY_GRID_COLUMNS}, minmax(0, 1fr))`,
+        }}
+      >
         {listItems.map((item, index) =>
           item ? (
             <ListItem
@@ -300,10 +308,34 @@ export function InventoryTab({
               rejected={index === rejectedIndex}
             />
           ) : (
-            <li key={index} className="InventoryItem" />
+            <li key={index} className={`InventoryItem ${styles.cell}`} />
           ),
         )}
       </ul>
+
+      {/* Painel do selecionado: descrição e origem (profissão ou classe) ficam
+          aqui para que o grid mostre só ícone e nome. */}
+      <div className={styles.details}>
+        {selectedItem && originInfo && (
+          <>
+            <img
+              loading="lazy"
+              decoding="async"
+              className={styles.detailsIcon}
+              src={originInfo.icon}
+              alt=""
+            />
+            <div className={styles.detailsText}>
+              <span className={styles.detailsLabel}>{originInfo.label}</span>
+              {selectedItemData?.description && (
+                <span className={styles.description}>
+                  {selectedItemData.description}
+                </span>
+              )}
+            </div>
+          </>
+        )}
+      </div>
 
       {dropItem && (
         <DropItem
