@@ -77,3 +77,15 @@
   font-size: var(--fs-14);
   color: var(--text-color);
 }
+
+.selected {
+  border-color: var(--nav-panel-line);
+  background: linear-gradient(
+    90deg,
+    rgba(34, 211, 238, 0.24) 0%,
+    rgba(12, 30, 61, 0.82) 100%
+  );
+  box-shadow:
+    inset var(--size-2) 0 0 var(--nav-panel-line),
+    0 0 var(--size-8) rgba(34, 211, 238, 0.18);
+}

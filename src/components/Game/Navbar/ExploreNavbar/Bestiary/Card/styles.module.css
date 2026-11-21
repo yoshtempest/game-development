@@ -1,35 +1,3 @@
-.detailIdentity {
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-4);
-  min-width: 0;
-}
-
-.detailName {
-  margin: 0;
-  font-size: var(--fs-20);
-  color: var(--white);
-}
-
-.detailCard {
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-8);
-}
-
-.detailTop {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--size-10);
-  align-items: start;
-}
-
-.metaRow {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--fs-8);
-}
 
 .cardEncountered {
   border-left-color: var(--success);
@@ -37,25 +5,6 @@
 
 .cardUnknown {
   opacity: 0.6;
-}
-
-.selected {
-  border-color: var(--nav-panel-line);
-  background: linear-gradient(
-    90deg,
-    rgba(34, 211, 238, 0.24) 0%,
-    rgba(12, 30, 61, 0.82) 100%
-  );
-  box-shadow:
-    inset var(--size-2) 0 0 var(--nav-panel-line),
-    0 0 var(--size-8) rgba(34, 211, 238, 0.18);
-}
-
-.nameRow {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--size-6);
 }
 
 .unknownName {
@@ -72,77 +21,4 @@
 .killCount {
   color: var(--text-muted);
   font-size: var(--fs-11);
-}
-
-.unknownHint {
-  color: var(--text-hint);
-  font-size: var(--fs-11);
-  font-style: italic;
-}
-
-.attacks,
-.dropGrid,
-.titleList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--size-4);
-}
-
-.attackTag,
-.dropTag,
-.titleTag {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--size-4);
-  padding: var(--size-2) var(--size-6);
-  border-radius: var(--size-3);
-  font-size: var(--fs-10);
-}
-
-.attackTag {
-  border: var(--size-1) solid var(--border-default);
-  background: rgba(12, 30, 61, 0.6);
-  color: var(--text-secondary);
-}
-
-.dropTag {
-  border: var(--size-1) solid var(--nav-panel-line-soft);
-  background: rgba(12, 30, 61, 0.75);
-  color: var(--text-color);
-}
-
-.titleTag {
-  border: var(--size-1) solid var(--gold-30);
-  background: var(--gold-06);
-  color: var(--accent-color);
-}
-
-.sectionPanel {
-  padding-top: var(--size-6);
-  border-top: var(--size-1) solid var(--nav-panel-line-soft);
-}
-
-.sectionTitle {
-  color: var(--text-secondary);
-  font-size: var(--fs-10);
-  font-weight: bold;
-  letter-spacing: var(--size-1);
-  text-transform: uppercase;
-  margin-bottom: var(--size-4);
-}
-
-.dropChance {
-  color: var(--text-hint);
-  font-size: var(--fs-9);
-}
-
-.location {
-  color: var(--accent-color);
-  font-size: var(--fs-11);
-}
-
-.description {
-  color: var(--text-secondary);
-  font-size: var(--fs-11);
-  line-height: 1.4;
 }
