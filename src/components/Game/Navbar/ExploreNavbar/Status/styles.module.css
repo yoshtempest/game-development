@@ -12,3 +12,22 @@
   flex-direction: column;
   width: 80%;
 }
+
+/* Coluna direita: pontos, equipamentos e habilidades empilhados. O scroll fica
+   aqui para a lista de habilidades não empurrar o painel esquerdo.
+
+   `justify-content: flex-start` é obrigatório: o `.flexRow` herdado centraliza
+   o conteúdo, e num container com overflow isso joga o topo (pontos e
+   equipamentos) para fora da área rolável. O `gap: 5%` do pai também virava
+   um espaço vertical enorme quando a direção mudava para column. */
+.rightColumn {
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--size-4);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.rightColumn > * {
+  flex-shrink: 0;
+}

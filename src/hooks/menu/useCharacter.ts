@@ -42,8 +42,8 @@ export function useCharacterMenu(
       (c.image === "srGuaxinim" && flags.srGuaxinimUnlocked),
   }));
 
-  // Personagem cujas habilidades estão em tela (null = mostrando os cards).
-  const [abilitiesFor, setAbilitiesFor] = useState<CharacterId | null>(null);
+  // Personagem cujo Status está em tela (null = mostrando os cards).
+  const [statusFor, setStatusFor] = useState<CharacterId | null>(null);
 
   const [selectedIndex, setSelectedIndex] = useState(() =>
     Math.max(
@@ -70,9 +70,11 @@ export function useCharacterMenu(
 
   // 🎮 CONTROLES
   useEffect(() => {
-    // Com a lista de habilidades aberta quem responde por up/down é ela — as
-    // duas camadas ativas juntas fariam o cursor andar em paralelo.
-    if (abilitiesFor) return;
+    // Com o Status aberto quem responde por up/down é a tela de pontos — as
+    // duas camadas ativas juntas fariam o cursor andar em paralelo. `isOpen`
+    // também importa porque o mesmo hook serve às duas entradas do menu
+    // fundido (Personagem e o atalho interno de Status).
+    if (!isOpen || statusFor) return;
 
     const controls = {
       onRight: () => {
@@ -123,26 +125,27 @@ export function useCharacterMenu(
     playSelectRef,
     pushControlsRef,
     selectableCharactersRef,
-    abilitiesFor,
+    statusFor,
+    isOpen,
   ]);
 
   useEffect(() => {
-    if (abilitiesFor) return;
+    if (statusFor) return;
     if (!isOpen || !listRef?.current) return;
     const container = listRef.current;
     const selectedElement = container.children[selectedIndex] as HTMLElement;
     if (!selectedElement) return;
     selectedElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [isOpen, selectedIndex, listRef, abilitiesFor]);
+  }, [isOpen, selectedIndex, listRef, statusFor]);
 
-  const closeAbilities = useStableCallback(() => setAbilitiesFor(null));
+  const closeStatus = useStableCallback(() => setStatusFor(null));
 
   return {
     characters,
     selectableCharacters,
     selectedIndex,
-    abilitiesFor,
-    openAbilities: setAbilitiesFor,
-    closeAbilities,
+    statusFor,
+    openStatus: setStatusFor,
+    closeStatus,
   };
 }

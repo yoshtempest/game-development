@@ -8,7 +8,6 @@ export const NAVBAR_OPTIONS = [
     screen: "character",
     confirmSfx: "chooseYourCharacter",
   },
-  { icon: navbarIconPath("status.svg"), label: "Status", screen: "status" },
   {
     icon: navbarIconPath("backpack.svg"),
     label: "Mochila",

@@ -5,9 +5,7 @@ import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
 
 import { getCharacterAbilities } from "@/data/characters/abilities";
 import { getAbilityUnlockLevel } from "@/gameRules/player/abilityUnlock";
-import { useGameControlsLayer } from "@/hooks/game/useGameControlsLayer";
 import { PassiveSkills } from "@/components/Game/Battle/PassiveSkills";
-import { usePlayer } from "@/contexts/PlayerContext";
 import {
   getBabidiAttackMode,
   setBabidiAttackMode,
@@ -19,16 +17,16 @@ import { BabidiAttackCard, BABIDI_ATTACK_OPTIONS } from "./BabidiAttackCard";
 import { AbilityMeta } from "./AbilitieMeta";
 import { useAutoScrollSelectedItem } from "./useAutoScrollSelectedItem";
 
-export function AbilitiesList({
-  characterId,
-  onClose,
-}: {
-  characterId: CharacterId;
-  onClose: () => void;
-}) {
+/**
+ * Habilidades do personagem em exibição no Status.
+ *
+ * A lista é puramente apresentacional: quem dona a layer de input é o Status
+ * (pontos de stat), então as setas não podem mover dois cursores ao mesmo
+ * tempo. A seleção aqui acontece por clique.
+ */
+export function CharacterAbilities({ characterId }: { characterId: CharacterId }) {
   const { progress } = useCharacterProgress();
   const level = progress[characterId]?.level ?? 1;
-  const { player } = usePlayer();
 
   const isBabidi = characterId === "babidi";
 
@@ -37,7 +35,6 @@ export function AbilitiesList({
   );
 
   const abilities = getCharacterAbilities(characterId);
-  const totalItems = abilities.length;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -47,34 +44,13 @@ export function AbilitiesList({
     selectedIndex,
   });
 
-  useGameControlsLayer(
-    {
-      onUp: () => setSelectedIndex((i) => Math.max(0, i - 1)),
-      onDown: () => setSelectedIndex((i) => Math.min(totalItems - 1, i + 1)),
-      ...(isBabidi
-        ? {
-            onLeft: () =>
-              setBabidiMode((m) =>
-                m === "withGun" ? "withMissile" : "withGun",
-              ),
-            onRight: () =>
-              setBabidiMode((m) =>
-                m === "withGun" ? "withMissile" : "withGun",
-              ),
-            onConfirm: () => setBabidiAttackMode(babidiMode),
-          }
-        : {}),
-    },
-    [totalItems, isBabidi, babidiMode],
-  );
-
   return (
-    <div className="containerOfNavbar" style={{ overflow: "hidden" }}>
-      <div className={styles.viewHeader}>
-        <h2>Habilidades</h2>
-        <button className={styles.backButton} onClick={onClose}>
-          Voltar
-        </button>
+    <div className="StatusColumn">
+      <div className="statusMainContainer">
+        <div className="statusHeader">
+          <Zap size={18} />
+          <h2 className="StatusTitle">Habilidades</h2>
+        </div>
       </div>
       <div ref={containerRef} className={styles.container}>
         {abilities.length === 0 && (
@@ -84,28 +60,19 @@ export function AbilitiesList({
         )}
         {isBabidi && (
           <>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                gap: 8,
-                marginBottom: 8,
-              }}
-            >
+            <div className={styles.modeGrid}>
               {BABIDI_ATTACK_OPTIONS.map((mode) => (
                 <BabidiAttackCard
                   key={mode.id}
                   mode={mode}
                   selected={babidiMode === mode.id}
-                  onSelect={() => setBabidiMode(mode.id)}
+                  onSelect={() => {
+                    setBabidiMode(mode.id);
+                    setBabidiAttackMode(mode.id);
+                  }}
                 />
               ))}
             </div>
-
-            <p className={styles.description}>
-              Use ←/→ para selecionar seu modo de ataque e confirme com a tecla
-              de ação.
-            </p>
           </>
         )}
 
@@ -123,6 +90,7 @@ export function AbilitiesList({
               data-index={i}
               className={`${styles.card} ${i === selectedIndex ? styles.selected : ""}`}
               style={locked ? { opacity: 0.5 } : undefined}
+              onClick={() => setSelectedIndex(i)}
             >
               <div className={styles.header}>
                 <Icon size={16} color={active ? "#fbbf24" : "#4ade80"} />
@@ -149,7 +117,7 @@ export function AbilitiesList({
             </div>
           );
         })}
-        <PassiveSkills characterId={player.character} startIndex={0} />
+        <PassiveSkills characterId={characterId} startIndex={0} />
       </div>
     </div>
   );

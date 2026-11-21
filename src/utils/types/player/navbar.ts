@@ -1,13 +1,16 @@
 import type { NAVBAR_OPTIONS } from "@/data/options/navbar";
 
 /**
- * `equipment` não é mais um item da navbar: é um atalho interno (botão do
- * Status e tecla E) que abre a Mochila já na aba de equipamentos. Continua na
- * union porque o `SCREENS` precisa resolver essa rota.
+ * `equipment` e `status` não são itens da navbar: são atalhos internos.
+ * - `equipment`: botão da Mochila/Status e tecla E;
+ * - `status`: entrada direta nos detalhes do personagem em uso.
+ *
+ * Ambos continuam na union porque o `SCREENS` precisa resolver essas rotas.
  */
 export type MenuScreen =
   | (typeof NAVBAR_OPTIONS)[number]["screen"]
-  | "equipment";
+  | "equipment"
+  | "status";
 
 export type NavScreen = "menu" | MenuScreen;
 

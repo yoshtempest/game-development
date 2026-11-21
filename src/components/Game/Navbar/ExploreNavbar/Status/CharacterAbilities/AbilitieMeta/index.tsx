@@ -1,5 +1,5 @@
 import type { CharacterAbility } from "@/utils/types/player/abilities";
-import styles from "@/components/Game/Navbar/ExploreNavbar/Character/AbilitiesList/styles.module.css";
+import styles from "@/components/Game/Navbar/ExploreNavbar/Status/CharacterAbilities/styles.module.css";
 import { getEnergyName } from "@/gameRules/battle/mana";
 import { Clock, Coins, Lock, Sparkles } from "lucide-react";
 

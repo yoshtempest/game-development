@@ -1,4 +1,4 @@
-import styles from "@/components/Game/Navbar/ExploreNavbar/Character/AbilitiesList/styles.module.css";
+import styles from "@/components/Game/Navbar/ExploreNavbar/Status/CharacterAbilities/styles.module.css";
 import { Zap } from "lucide-react";
 import { playerPath, playerProjectilePath } from "@/utils/paths";
 
