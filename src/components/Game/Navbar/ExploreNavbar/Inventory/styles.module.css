@@ -15,6 +15,14 @@
   flex-direction: row;
 }
 
+/* A aba compartilha o `.containerOfNavbar` com o cabeçalho de abas. */
+.tabContent {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
 .leftPanel {
   display: flex;
   flex-direction: column;

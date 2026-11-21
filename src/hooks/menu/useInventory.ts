@@ -19,6 +19,7 @@ export function useInventoryMenu(
   filterConfig: FilterConfig | null = null,
   chestReady = false,
   onOpenChest: () => void = () => {},
+  onFocusTabs: () => void = () => {},
 ) {
   const { pushControls } = useGameControls();
   const { items: rawItems } = useInventory();
@@ -101,6 +102,7 @@ export function useInventoryMenu(
   const filterConfigRef = useLatestRef(filterConfig);
   const chestReadyRef = useLatestRef(chestReady);
   const onOpenChestRef = useLatestRef(onOpenChest);
+  const onFocusTabsRef = useLatestRef(onFocusTabs);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -178,6 +180,13 @@ export function useInventoryMenu(
         }
 
         playMoveRef.current();
+
+        // Coluna esquerda devolve o foco para as abas superiores.
+        if (selectedIndexRef.current % 3 === 0) {
+          onFocusTabsRef.current();
+          return;
+        }
+
         setSelectedIndex((prev) => gridMove(prev, 3, "left", navLength));
       },
 
@@ -223,6 +232,7 @@ export function useInventoryMenu(
     chestReadyRef,
     filterConfigRef,
     onOpenChestRef,
+    onFocusTabsRef,
     playMoveRef,
     playSelectRef,
     pushControlsRef,

@@ -19,7 +19,8 @@ const SCREENS: Record<MenuScreen, LazyExoticComponent<ComponentType>> = {
   player: lazyNamed(() => import("./Player"), "Player"),
   character: lazyNamed(() => import("./Character"), "Character"),
   status: lazyNamed(() => import("./Status"), "Status"),
-  equipment: lazyNamed(() => import("./Equipment"), "Equipment"),
+  // Atalho interno: mesma Mochila, entrando direto na aba de equipamentos.
+  equipment: lazyNamed(() => import("./Inventory"), "InventoryEquipment"),
   inventory: lazyNamed(() => import("./Inventory"), "Inventory"),
   missions: lazyNamed(() => import("./Missions"), "Mission"),
   bestiary: lazyNamed(() => import("./Bestiary"), "DeliciaDex"),
