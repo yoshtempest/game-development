@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useGameControls } from "@/contexts/GameControlsContext";
 import styles from "./styles.module.css";
@@ -14,6 +14,7 @@ import {
   JOMASIO_ENTRANCE_ROUTES,
 } from "@/scenes/shared/routes";
 import { ParticlesBackground } from "@/components/ParticlesBackground";
+import Online from "./Online";
 
 function isJomasioEntranceRoute(route: string): boolean {
   return route.toLowerCase().startsWith("/jomasioentrance");
@@ -23,6 +24,7 @@ export default function Home() {
   const navigate = useNavigate();
   const { pushControls } = useGameControls();
   const { hasFlag } = useFlags();
+  const [onlineOpen, setOnlineOpen] = useState(false);
 
   useBackgroundAudio(undertale);
 
@@ -77,10 +79,13 @@ export default function Home() {
       <p className={styles.continue}>Faça o L para continuar</p>
       <button
         className={styles.multiplayerButton}
-        onClick={() => navigate("/online")}
+        onClick={() => setOnlineOpen(true)}
       >
         Multiplayer
       </button>
+      {onlineOpen && (
+        <Online onClose={() => setOnlineOpen(false)} />
+      )}
       <ParticlesBackground />
     </div>
   );

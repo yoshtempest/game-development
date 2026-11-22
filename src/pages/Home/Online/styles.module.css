@@ -1,0 +1,22 @@
+.modal {
+  padding: var(--medium) var(--size-32);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  gap: var(--small);
+  width: var(--size-384);
+  height: var(--vh-100);
+  max-height: var(--vh-100);
+  opacity: 0.9;
+  align-items: flex-start;
+  border-left: var(--size-2) solid var(--text-color);
+  border-right: var(--size-2) solid var(--text-color);
+  animation: modalScaleIn 0.5s ease-out;
+}
+
+.flexRow {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 3vw;
+}

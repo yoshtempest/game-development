@@ -38,7 +38,6 @@ const BattleTesterPage = lazyLoad(() => import("@/pages/BattleTester"));
 const ReplayPage = lazyLoad(() => import("@/pages/Replay"));
 
 const Landing = lazyLoad(() => import("@/pages/Landing"));
-const Online = lazyLoad(() => import("@/pages/Online"));
 const Login = lazyLoad(() => import("@/pages/Login"));
 const Register = lazyLoad(() => import("@/pages/Register"));
 
@@ -60,7 +59,6 @@ const nonBattlePages = [
   CafeteriaPage,
   FootballCourtPage,
   BrodiClassPage,
-  Online,
 ];
 
 export function AppRoutes() {
@@ -70,7 +68,6 @@ export function AppRoutes() {
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path="/landing" element={<Landing />} />
-          <Route path="/online" element={<Online />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 

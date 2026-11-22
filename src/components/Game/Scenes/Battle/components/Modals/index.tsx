@@ -38,7 +38,7 @@ export function BattleModals(props: Props) {
 
   return (
     <>
-      {showClear && !isTraining && <BattleClear />}
+      {showClear && !isTraining && <BattleClear character={playerCharacter}/>}
       {showOutro && !isTraining && (
         <BattleOutro
           character={playerCharacter}
