@@ -14,9 +14,29 @@
   animation: modalScaleIn 0.5s ease-out;
 }
 
+.scrollArea {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollArea::-webkit-scrollbar {
+  display: none;
+}
+
+.modal button {
+  height: 3vw;
+  display: flex;
+  align-items: center;
+}
+
 .flexRow {
   display: flex;
   flex-direction: row;
   width: 100%;
+  align-items: center;
   gap: 3vw;
+  border-bottom: var(--size-1) solid rgb(0, 66, 104);
 }

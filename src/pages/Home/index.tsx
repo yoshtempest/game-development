@@ -14,7 +14,8 @@ import {
   JOMASIO_ENTRANCE_ROUTES,
 } from "@/scenes/shared/routes";
 import { ParticlesBackground } from "@/components/ParticlesBackground";
-import Online from "./Online";
+import Online from "@/components/Game/Battle/Overlay/Online";
+import { Users } from "lucide-react";
 
 function isJomasioEntranceRoute(route: string): boolean {
   return route.toLowerCase().startsWith("/jomasioentrance");
@@ -81,7 +82,7 @@ export default function Home() {
         className={styles.multiplayerButton}
         onClick={() => setOnlineOpen(true)}
       >
-        Multiplayer
+        <Users />Multiplayer
       </button>
       {onlineOpen && (
         <Online onClose={() => setOnlineOpen(false)} />
