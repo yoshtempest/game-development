@@ -102,7 +102,6 @@ function InventoryMenu({ initialSection }: Props) {
       <div className={styles.header}>
         <div className="tabs">
           {INVENTORY_SECTIONS.map((section) => {
-            const Icon = INVENTORY_SECTION_ICONS[section];
 
             return (
               <button
@@ -115,7 +114,7 @@ function InventoryMenu({ initialSection }: Props) {
                   enterContent();
                 }}
               >
-                <Icon size={19} strokeWidth={2.2} />
+                <img src={INVENTORY_SECTION_ICONS[section]} className={styles.image}/>
                 <span>{INVENTORY_SECTION_LABELS[section]}</span>
               </button>
             );

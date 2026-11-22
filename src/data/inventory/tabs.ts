@@ -1,4 +1,4 @@
-import { Backpack, Shirt } from "lucide-react";
+import { navbarIconPath } from "@/utils/paths";
 
 export type InventorySection = "inventario" | "equipamentos";
 
@@ -21,6 +21,6 @@ export const INVENTORY_SECTION_LABELS: Record<InventorySection, string> = {
 };
 
 export const INVENTORY_SECTION_ICONS = {
-  inventario: Backpack,
-  equipamentos: Shirt,
+  inventario: navbarIconPath("backpack.svg"),
+  equipamentos: navbarIconPath("equipments.svg"),
 };

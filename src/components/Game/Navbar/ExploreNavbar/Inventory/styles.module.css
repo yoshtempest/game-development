@@ -133,6 +133,12 @@
   animation: fadeInOut 2s ease-in-out;
 }
 
+.image {
+  display: flex;
+  width: 2vw;
+  height: 2vw;
+}
+
 @keyframes fadeInOut {
   0% {
     opacity: 0;
