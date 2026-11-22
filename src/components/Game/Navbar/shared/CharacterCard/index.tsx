@@ -1,6 +1,6 @@
 import styles from "./styles.module.css";
 import { ProgressBar } from "@/components/Game/ProgressBar";
-import { playerPath, elementBadgePath, rankBadgePath } from "@/utils/paths";
+import { playerPath, elementBadgePath, rankBadgePath, navbarIconPath } from "@/utils/paths";
 import { getRank, formatRank, srcRank } from "@/gameRules/rank";
 import { getCharacterElementTypes } from "@/data/types/characterElementTypes";
 import { usePlayer } from "@/contexts/PlayerContext";
@@ -94,7 +94,7 @@ export function CharacterCard({
         </p>
         {isEquipped && <p className={styles.inUse}>Em uso</p>}
         {onShowStatus && character.selectable && (
-          <button onClick={() => onShowStatus(character.image)}>Status</button>
+          <button onClick={() => onShowStatus(character.image)}><img src={navbarIconPath("status.svg")}/>Status</button>
         )}
       </div>
     </div>

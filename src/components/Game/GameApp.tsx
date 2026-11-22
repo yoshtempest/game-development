@@ -43,7 +43,7 @@ import { useRegenTimer } from "@/hooks/player/useRegenTimer";
 import { useExploreLocation } from "@/hooks/scene/useExploreLocation";
 import { CombatTutorialProvider } from "@/contexts/CombatTutorialContext";
 import { SocialOverlay } from "@/components/Game/Social/SocialOverlay";
-import { Animations } from "./Navbar/ExploreNavbar/Animations";
+import { Animations } from "./Controls/Animations";
 
 export function GameApp() {
   const { isOpen } = useInventory();

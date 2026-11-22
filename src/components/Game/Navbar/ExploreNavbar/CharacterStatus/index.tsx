@@ -53,6 +53,16 @@ export function CharacterStatus({ initialView }: Props) {
     useStatusMenu(view === "status", statusCharacterId, backToGrid);
 
   /**
+   * A face escolhida define o personagem inspecionado, não o personagem em uso.
+   * Limpar o stat antes da troca evita que um ponto marcado para A seja gasto
+   * em B se o jogador confirmar logo depois de mudar de face.
+   */
+  const showStatusFor = useStableCallback((id: CharacterId) => {
+    clearStat();
+    openStatus(id);
+  });
+
+  /**
    * Clique fora de um stat ou do Confirmar limpa a escolha, sem gastar ponto.
    * A checagem usa atributos em vez de classes do CSS module (hasheadas).
    */
@@ -104,6 +114,7 @@ export function CharacterStatus({ initialView }: Props) {
             selectedIndex={statIndex}
             onSelectStat={selectStat}
             onConfirmStat={confirmStat}
+            onSelectCharacter={showStatusFor}
           />
           <EquipmentList characterId={statusCharacterId} />
           <CharacterAbilities characterId={statusCharacterId} />

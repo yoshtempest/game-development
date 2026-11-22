@@ -3,6 +3,7 @@ import { useEquipment } from "@/contexts/EquipmentContext";
 import { canSpendPoints } from "@/gameRules/menu/validation";
 import { STATS_MENU_ROWS } from "@/data/player/statEffects";
 import { statusIconPath } from "@/utils/paths";
+import { CharacterFaces } from "@/components/Game/Navbar/ExploreNavbar/Status/CharacterFaces";
 import { SelectedStatEffect } from "./SelectedStatEffect";
 
 import styles from "./styles.module.css";
@@ -13,6 +14,8 @@ type AvailableStatsProps = {
   selectedIndex: number | null;
   onSelectStat: (index: number) => void;
   onConfirmStat: () => void;
+  /** Clique na face troca o personagem inspecionado, sem equipá-lo. */
+  onSelectCharacter: (characterId: CharacterId) => void;
 };
 
 export function AvailableStats({
@@ -20,6 +23,7 @@ export function AvailableStats({
   selectedIndex,
   onSelectStat,
   onConfirmStat,
+  onSelectCharacter,
 }: AvailableStatsProps) {
   const { progress } = useCharacterProgress();
   const { getTotalBonus } = useEquipment();
@@ -39,6 +43,10 @@ export function AvailableStats({
 
   return (
     <div className={`StatusColumn ${styles.container}`}>
+      <CharacterFaces
+        selectedCharacterId={characterId}
+        onSelect={onSelectCharacter}
+      />
       <div className="statusMainContainer">
         <div className="statusHeader">
           <img
