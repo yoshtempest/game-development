@@ -8,7 +8,7 @@ export const BABIDI_ATTACK_OPTIONS = [
     image: "/babidi/inFight/withGun/attacks/leftHandAttack.svg",
     label: "Pistola",
     projectile: "/yellowDog.svg",
-    description: "Dispara ataques de energia contra o inimigo.",
+    description: "Dispara cachorros pescoçudos e coloridos.",
   },
   {
     id: "withMissile",

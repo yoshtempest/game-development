@@ -15,7 +15,7 @@ export const CHARACTER_PASSIVES: Record<
       id: "vastolordForm",
       name: "Forma Vastolord",
       description:
-        "Ao morrer, desperta a Forma Vastolord por 10s, recuperando 100% do HP e multiplicando dano e armadura por 4. O grito da transformação empurra os inimigos próximos (até 200px, quanto mais perto mais longe) e, enquanto a forma dura, 10% de todo o dano causado vira cura. Se o inimigo não for derrotado a tempo, perde a batalha.",
+        "Ao morrer, desperta a Forma Vastolord por 10s, recuperando 100% do HP e multiplicando dano e armadura por 4. O grito da transformação empurra os inimigos próximos e, ganha 10% de vampirismo universal.",
       unlockedAtLevel: 1,
       oncePerBattle: true,
       effect: { kind: "vastolordForm", durationMs: 10_000 },
@@ -150,7 +150,7 @@ export const CHARACTER_PASSIVES: Record<
       id: "combo",
       name: "Combo",
       description:
-        "Ataques básicos consecutivos executam o combo: soco, gancho, chute baixo e finalizador aéreo. A cada golpe o Ematron avança em direção ao inimigo e o empurra para trás. Pressionar atacar de novo dentro de 300ms encadeia o próximo golpe com dano crescente (1x até 1.5x). Parar por mais de 300ms volta ao primeiro golpe.",
+        "Ataques básicos consecutivos executam o combo: soco, gancho, chute baixo e finalizador aéreo. A cada golpe avança em direção ao inimigo e o empurra para trás. Pressionar atacar de novo encadeia o próximo golpe com dano crescente (1x até 1.5x).",
       unlockedAtLevel: 1,
       oncePerBattle: false,
       effect: { kind: "combo", windowMs: EMATRON_COMBO_WINDOW_MS },

@@ -18,7 +18,6 @@ function lazyNamed<K extends string>(
 const SCREENS: Record<MenuScreen, LazyExoticComponent<ComponentType>> = {
   player: lazyNamed(() => import("./Player"), "Player"),
   character: lazyNamed(() => import("./Character"), "Character"),
-  // Atalho interno: abre o menu fundido direto no Status do personagem em uso.
   status: lazyNamed(() => import("./Status"), "Status"),
   // Atalho interno: mesma Mochila, entrando direto na aba de equipamentos.
   equipment: lazyNamed(() => import("./Inventory"), "InventoryEquipment"),

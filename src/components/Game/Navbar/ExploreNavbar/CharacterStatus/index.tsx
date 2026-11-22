@@ -12,7 +12,7 @@ import { AvailableStats } from "@/components/Game/Navbar/ExploreNavbar/Status/Av
 import { EquipmentList } from "@/components/Game/Navbar/ExploreNavbar/Status/EquipmentList";
 import { CharacterAbilities } from "@/components/Game/Navbar/ExploreNavbar/Status/CharacterAbilities";
 
-import characterStyles from "@/components/Game/Navbar/ExploreNavbar/Character/styles.module.css";
+import styles from "./styles.module.css";
 import statusStyles from "@/components/Game/Navbar/ExploreNavbar/Status/styles.module.css";
 
 type Props = {
@@ -66,7 +66,7 @@ export function CharacterStatus({ initialView }: Props) {
     return (
       <div
         ref={listRef}
-        className={`containerOfNavbar ${characterStyles.charactersContainer}`}
+        className={`containerOfNavbar ${styles.charactersContainer}`}
       >
         {characters.map((char) => {
           const selectableIndex = selectableCharacters.findIndex(

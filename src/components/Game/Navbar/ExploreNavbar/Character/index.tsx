@@ -1,1 +1,1 @@
-export { Character } from "@/components/Game/Navbar/ExploreNavbar/CharacterStatus";
+export { Character } from "@/components/Game/Navbar/ExploreNavbar/CharacterStatus"
