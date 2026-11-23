@@ -1,5 +1,4 @@
 import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
-import { usePlayer } from "@/contexts/PlayerContext";
 import { canSpendPoints } from "@/gameRules/menu/validation";
 import { STATS } from "@/data/player/statList";
 import { useCircularSelection } from "@/hooks/menu/useCircularSelection";
@@ -15,9 +14,12 @@ import { useGameControlsLayer } from "@/hooks/game/useGameControlsLayer";
  * duas ações deliberadas: confirmar no teclado/gamepad ou clicar em
  * "Confirmar". Marcar é de graça (`selectStat`).
  */
-export function useStatusMenu(isOpen: boolean) {
+export function useStatusMenu(
+  isOpen: boolean,
+  characterId: CharacterId,
+  onBack?: () => void,
+) {
   const { addStat, progress } = useCharacterProgress();
-  const { player } = usePlayer();
   const { playMove, playSelect } = useMenuSFX();
 
   const {
@@ -39,10 +41,10 @@ export function useStatusMenu(isOpen: boolean) {
   /** Gasta um ponto no stat do índice dado; `null` (nada escolhido) não gasta. */
   const spendStat = useStableCallback((index: number | null) => {
     const stat = index === null ? undefined : STATS[index];
-    const char = progress[player.character];
+    const char = progress[characterId];
     if (!stat || !char || !canSpendPoints(char.stats.points)) return false;
 
-    addStat(player.character, stat);
+    addStat(characterId, stat);
     return true;
   });
 
@@ -79,14 +81,28 @@ export function useStatusMenu(isOpen: boolean) {
     return true;
   });
 
+  // Cancelar volta para a seleção de personagens em vez de fechar a navbar:
+  // o Status é uma sub-tela do menu de Personagem.
+  const cancel = useStableCallback(() => {
+    onBack?.();
+    return true;
+  });
+
+  // O menu fundido mantém este hook montado também na grade de personagens.
+  // Sem o `null`, a camada ficaria no topo da pilha mesmo fechada e roubaria
+  // up/down/confirm da grade — o cursor de stats é invisível, então parecia
+  // que o personagem não respondia ao input.
   useGameControlsLayer(
-    {
-      onUp,
-      onDown,
-      onConfirm,
-      blockGlobalOpen: true,
-    },
-    [isOpen],
+    isOpen
+      ? {
+          onUp,
+          onDown,
+          onConfirm,
+          onCancel: cancel,
+          blockGlobalOpen: true,
+        }
+      : null,
+    [isOpen, cancel, onUp, onDown, onConfirm],
   );
 
   return {

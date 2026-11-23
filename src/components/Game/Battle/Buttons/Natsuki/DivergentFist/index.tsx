@@ -2,6 +2,7 @@ import { DIVERGENT_FIST_COST } from "@/gameRules/battle/cursedEnergy";
 
 import styles from "./styles.module.css";
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { playerPathNatsukiHabilities } from "@/utils/paths/characters/natsuki";
 
 type Props = {
   energy: number;
@@ -32,13 +33,19 @@ export function DivergentFistButton({
     <AbilityButton
       type="custom"
       customClasses={divergentFistClasses}
-      label="punho divergente"
+      // label="punho divergente"
       disabled={disabled}
       onClick={onClick}
       extraProps={{ active }}
       valueText={Math.round(energy).toString()}
       costText={`-{DIVERGENT_FIST_COST}`}
       title={`Punho Divergente: o próximo golpe é um soco com 100% de chance de causar 2 instâncias de dano (custa ${DIVERGENT_FIST_COST} de energia amaldiçoada)`}
+      style={{
+        backgroundImage:
+          `url("${playerPathNatsukiHabilities("divergentFist/idle.svg")}")`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     />
   );
 }

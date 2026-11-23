@@ -36,7 +36,7 @@ export function GranReyCeroButton({
     <AbilityButton
       type="standard"
       customClasses={granReyCeroClasses}
-      label="GRAN REY CERO"
+      // label="GRAN REY CERO"
       ready={ready}
       remaining={remaining}
       disabled={disabled}

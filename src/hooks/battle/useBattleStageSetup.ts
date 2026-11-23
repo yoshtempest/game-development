@@ -27,7 +27,8 @@ import { loadBestTime } from "@/utils/bestTime";
 import { buildSummonWrapper } from "@/gameRules/battle/petSkill/buildSummonWrapper";
 import { useBattleInfo } from "@/contexts/BattleInfoContext";
 import { useBattleIntro } from "@/hooks/battle/modals/useIntro";
-import type { ReplayData, ReplayFrame } from "@/utils/types/replay";
+import type { ReplayData } from "@/utils/types/replay";
+import type { RewindResurrection } from "@/utils/types/battle/rewind";
 
 type Props = {
   npcType: string;
@@ -61,6 +62,8 @@ export function useBattleStageSetup({
     ematronComboActiveRef,
     ematronComboAirActiveRef,
     ematronComboStepIndexRef,
+    basicComboActiveRef,
+    basicComboStepIndexRef,
     setTimeScale,
     resetTimeScale,
     timeScaleRef,
@@ -110,7 +113,8 @@ export function useBattleStageSetup({
 
   const battleStartRef = useRef(Date.now());
   const savedPlayerHPRef = useRef(progress[player.character]?.battleHP ?? null);
-  const [rewindFrames, setRewindFrames] = useState<ReplayFrame[] | null>(null);
+  const [rewindResurrection, setRewindResurrection] =
+    useState<RewindResurrection | null>(null);
   const [victoryElapsed, setVictoryElapsed] = useState(0);
   const [bestTime, setBestTime] = useState(loadBestTime(npcType));
 
@@ -258,6 +262,8 @@ export function useBattleStageSetup({
     ematronComboActiveRef,
     ematronComboAirActiveRef,
     ematronComboStepIndexRef,
+    basicComboActiveRef,
+    basicComboStepIndexRef,
     setTimeScale,
     resetTimeScale,
     timeScaleRef,
@@ -300,8 +306,8 @@ export function useBattleStageSetup({
     setIsPhaseTransitioning,
     battleStartRef,
     savedPlayerHPRef,
-    rewindFrames,
-    setRewindFrames,
+    rewindResurrection,
+    setRewindResurrection,
     victoryElapsed,
     setVictoryElapsed,
     bestTime,

@@ -22,7 +22,18 @@ import { usePetBattle } from "@/hooks/battle/player/pets/pet/usePet";
 import { useDamageNumbers } from "@/hooks/battle/damage/numbers/useNumbers";
 import { useExternalDamage } from "@/hooks/battle/damage/external/useExternal";
 import { useBlockGauge } from "@/hooks/battle/effects/useBlockGauge";
-import { getBlockArmor, scaleArmor } from "@/gameRules/battle/damage/armor";
+import {
+  addArmor,
+  getBlockArmor,
+  scaleArmor,
+} from "@/gameRules/battle/damage/armor";
+import {
+  EMPTY_MAHORAGA_ADAPTATION,
+  getMahoragaAdaptationArmor,
+  registerMahoragaHit,
+} from "@/gameRules/battle/mahoragaAdaptation";
+import type { MahoragaAdaptation } from "@/gameRules/battle/mahoragaAdaptation";
+import type { DamageKind } from "@/utils/types/battle/damageKind";
 import {
   getHalfHealReduction,
   HALFHEAL_DURATION_MS,
@@ -39,15 +50,23 @@ import {
   applyPlayerStatus,
   clearPlayerStatuses,
   STATUS_DURATIONS_MS,
-  BURN_TICK_DAMAGE,
+  BLEED_TICK_DAMAGE_RATIO,
+  BURN_TICK_DAMAGE_RATIO,
+  POISON_TICK_DAMAGE_RATIO,
   type NewPlayerStatus,
 } from "@/gameRules/battle/status/statusEffects";
+import { getNpcPercentDamage } from "@/gameRules/npc/npcPercentDamage";
 import { useStatusDotTicks } from "@/hooks/battle/time/ticks/useStatusDotsTicks";
 import { useNpcBleedTicks } from "@/hooks/battle/time/ticks/useNpcBleedTicks";
 import { useManaRegenTick } from "@/hooks/battle/time/ticks/useManaRegenTick";
 import { usePlayerPullAnimation } from "@/hooks/battle/player/usePlayerPullAnimation";
 import { useMarshadowCutInEnemie } from "@/hooks/battle/player/characters/marshadow/useMarshadowCutInEnemie";
+import { NO_PET_BLIND } from "@/gameRules/battle/petSkill/blind";
+import type { PetBlind } from "@/gameRules/battle/petSkill/blind";
 import type { BattleSystemProps } from "./types";
+
+/** Dano por tick do sangramento no NPC quando quem aplicou não define outro. */
+const NPC_BLEED_BASE_TICK = 2;
 
 export function useBattleSystem(props: BattleSystemProps) {
   const {
@@ -126,6 +145,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     getElementDamageBonus,
     playerMaxHp,
     npcMaxHp: tableNpcMaxHp,
+    npcDamage,
     npcArmor: tableNpcArmor,
     critRate,
     HITS_TO_SPECIAL,
@@ -137,7 +157,32 @@ export function useBattleSystem(props: BattleSystemProps) {
   // bloqueio do NPC) lê estes três valores, então o override num ponto só
   // basta para o golpe respeitar a armadura e a tipagem de quem apanha.
   const npcMaxHp = npcOverride?.maxHp ?? tableNpcMaxHp;
-  const npcArmor = npcOverride?.armor ?? tableNpcArmor;
+
+  /**
+   * Adaptação do Mahoraga (issue #444): golpe repetido da mesma natureza vira
+   * armadura extra naquela coluna. Somar no `npcArmor` aqui é o que faz todo
+   * funil que já lê a armadura do NPC respeitar a adaptação. Não volta no
+   * rewind de propósito — a roda já girou.
+   */
+  const [mahoragaAdaptation, setMahoragaAdaptation] =
+    useState<MahoragaAdaptation>(EMPTY_MAHORAGA_ADAPTATION);
+  const isMahoraga = npcType === "mahoraga" && !npcOverride;
+  const baseNpcArmor = npcOverride?.armor ?? tableNpcArmor;
+  const npcArmor = useMemo(
+    () =>
+      isMahoraga
+        ? addArmor(baseNpcArmor, getMahoragaAdaptationArmor(mahoragaAdaptation))
+        : baseNpcArmor,
+    [isMahoraga, baseNpcArmor, mahoragaAdaptation],
+  );
+  const adaptiveOnDamageDealtRef = useLatestRef(
+    (amount: number, kind?: DamageKind) => {
+      if (isMahoraga && kind) {
+        setMahoragaAdaptation((prev) => registerMahoragaHit(prev, kind));
+      }
+      onDamageDealtRef?.current?.(amount);
+    },
+  );
   const npcElementTypes = npcOverride
     ? npcOverride.elementTypes
     : getNpcElementTypes(npcType);
@@ -186,9 +231,17 @@ export function useBattleSystem(props: BattleSystemProps) {
 
   const halfHealReduction = getHalfHealReduction(player.character);
   const equippedResistances = getEquippedResistances(player.character);
+  const bleedTickDamage = getNpcPercentDamage(
+    npcDamage,
+    BLEED_TICK_DAMAGE_RATIO,
+  );
   const burnTickDamage = reduceTickDamage(
-    BURN_TICK_DAMAGE,
+    getNpcPercentDamage(npcDamage, BURN_TICK_DAMAGE_RATIO),
     equippedResistances.heat,
+  );
+  const poisonTickDamage = getNpcPercentDamage(
+    npcDamage,
+    POISON_TICK_DAMAGE_RATIO,
   );
   const onHalfHeal =
     halfHealReduction > 0
@@ -215,6 +268,7 @@ export function useBattleSystem(props: BattleSystemProps) {
   const poisonUntilRef = useLatestRef(player.poisonUntil);
 
   const npcBleedUntilRef = useRef(0);
+  const npcBleedTickDamageRef = useRef(NPC_BLEED_BASE_TICK);
   const npcBleedXRef = useLatestRef(npcX);
   const npcBleedYRef = useLatestRef(npcY);
 
@@ -303,7 +357,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     registerHitRef,
     setPlayer,
     onBeforeNpcHitRef,
-    onDamageDealtRef,
+    onDamageDealtRef: adaptiveOnDamageDealtRef,
     onAttackRef,
     onSpecialRef,
     onKokusenRef,
@@ -383,6 +437,14 @@ export function useBattleSystem(props: BattleSystemProps) {
     onTrigger: () => onPetSkillRef?.current?.(),
   });
 
+  /**
+   * Cegueira do Tornado de Terra (pet Peru) no NPC principal e em cada summon
+   * inimigo. Nasce aqui porque o funil de golpe do NPC (`useNpcBattle`) é
+   * deste hook; o pet escreve e a IA dos summons lê pelo retorno.
+   */
+  const npcPetBlindRef = useRef<PetBlind>(NO_PET_BLIND);
+  const summonsPetBlindRef = useRef<Record<string, PetBlind>>({});
+
   const npcBattle = useNpcBattle({
     npcLevel,
     npcClass,
@@ -424,6 +486,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     tenacityReduction: stats.tenacityReduction,
     luckBonus: stats.luckBonus,
     statMultiplier: npcStatMultiplier,
+    petBlindRef: npcPetBlindRef,
   });
 
   const { isNpcDying } = useBattleLifecycle({
@@ -445,7 +508,9 @@ export function useBattleSystem(props: BattleSystemProps) {
     isPausedRef,
     setPlayerHP,
     spawnDamageRef,
+    bleedTickDamage,
     burnTickDamage,
+    poisonTickDamage,
     bleedXRef,
     bleedYRef,
     bleedUntilRef,
@@ -462,6 +527,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     npcBleedXRef,
     npcBleedYRef,
     npcBleedUntilRef,
+    npcBleedTickDamageRef,
   });
 
   usePlayerPullAnimation(setPlayer, isMenuRef);
@@ -474,12 +540,25 @@ export function useBattleSystem(props: BattleSystemProps) {
     isPausedRef,
   );
 
-  const applyNpcBleed = useCallback((durationMs: number) => {
-    npcBleedUntilRef.current = Math.max(
-      npcBleedUntilRef.current,
-      Date.now() + durationMs,
-    );
-  }, []);
+  /**
+   * Aplica sangramento no NPC principal. Com um sangramento ainda ativo, o
+   * tick mais forte prevalece: reaplicar um sangramento fraco (marshadow) não
+   * pode apagar o bônus de estrelas do hungryDeath no meio do efeito.
+   */
+  const applyNpcBleed = useCallback(
+    (durationMs: number, tickDamage: number = NPC_BLEED_BASE_TICK) => {
+      const now = Date.now();
+      const stillBleeding = npcBleedUntilRef.current > now;
+      npcBleedTickDamageRef.current = stillBleeding
+        ? Math.max(npcBleedTickDamageRef.current, tickDamage)
+        : tickDamage;
+      npcBleedUntilRef.current = Math.max(
+        npcBleedUntilRef.current,
+        now + durationMs,
+      );
+    },
+    [],
+  );
 
   // CutInEnemie do marshadow (forma padrão): sprite sobre o NPC atingido + chance
   // acumulativa de sangramento. Estado renderizado via `battle.cutInEnemie` e
@@ -509,6 +588,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     resetPetSkill();
     resetPetPassive();
     npcBleedUntilRef.current = 0;
+    npcBleedTickDamageRef.current = NPC_BLEED_BASE_TICK;
     marshadowCutIn.reset();
     energy.resetEnergy();
     battleMana?.resetMana();
@@ -555,6 +635,7 @@ export function useBattleSystem(props: BattleSystemProps) {
     playerShield,
     setPlayerShield,
     energy: energy.enabled ? energy.energy : undefined,
+    spendEnergy: energy.spendEnergy,
     mana: battleMana?.playerMana,
     manaMax: battleMana?.playerMaxMana,
     npcHP,
@@ -591,6 +672,8 @@ export function useBattleSystem(props: BattleSystemProps) {
     triggerTeleportBite,
     triggerPetInvoke,
     applyNpcBleed,
+    npcPetBlindRef,
+    summonsPetBlindRef,
     petSkill: petSkillDef
       ? {
           definition: petSkillDef,

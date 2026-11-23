@@ -33,7 +33,7 @@ export function VastolordLaserButton({
     <AbilityButton
       type="custom"
       customClasses={laserClasses}
-      label="VASTOLORD LASER"
+      // label="VASTOLORD LASER"
       disabled={disabled}
       onClick={onClick}
       extraProps={{ charges }}

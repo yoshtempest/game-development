@@ -1,4 +1,5 @@
-import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
+import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { npcPathProjectile } from "@/utils/paths";
 
 type Props = {
   ready: boolean;
@@ -22,15 +23,17 @@ export function KillerQueenButton({
   onClick,
 }: Props) {
   return (
-    <GenericAbilityButton
-      characterId="srGuaxinim"
-      abilityId="killerQueen"
-      behavior="standard"
+    <AbilityButton
+      type="standard"
       accent={KILLER_QUEEN_ACCENT}
       ready={ready}
       remaining={remaining}
       disabled={disabled}
       onClick={onClick}
+      style={{
+        backgroundImage:
+          `url("${npcPathProjectile("/explosion.svg")}")`,
+      }}
     />
   );
 }

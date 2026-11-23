@@ -7,12 +7,16 @@ import { BESTIARY_NPC_ORDER } from "@/data/bestiary";
 export function useBestiaryMenu(
   isOpen: boolean,
   listRef?: React.RefObject<HTMLDivElement | null>,
+  itemCount = BESTIARY_NPC_ORDER.length,
 ) {
   const { pushControls } = useGameControls();
   const { playMove } = useMenuSFX();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const selectedIndexRef = useRef(selectedIndex);
+  // A navegação precisa enxergar a lista filtrada, mas não deve empilhar a
+  // layer de controle de novo toda vez que um filtro mudar.
+  const itemCountRef = useLatestRef(itemCount);
 
   useEffect(() => {
     selectedIndexRef.current = selectedIndex;
@@ -38,16 +42,14 @@ export function useBestiaryMenu(
     const controls = {
       onUp: () => {
         playMoveRef.current();
-        setSelectedIndex((prev) =>
-          prev > 0 ? prev - 1 : BESTIARY_NPC_ORDER.length - 1,
-        );
+        const last = Math.max(0, itemCountRef.current - 1);
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : last));
       },
 
       onDown: () => {
         playMoveRef.current();
-        setSelectedIndex((prev) =>
-          prev < BESTIARY_NPC_ORDER.length - 1 ? prev + 1 : 0,
-        );
+        const last = Math.max(0, itemCountRef.current - 1);
+        setSelectedIndex((prev) => (prev < last ? prev + 1 : 0));
       },
 
       onConfirm: () => true,
@@ -57,10 +59,11 @@ export function useBestiaryMenu(
 
     const remove = pushControlsRef.current(controls);
     return () => remove();
-  }, [isOpen, playMoveRef, pushControlsRef]);
+  }, [isOpen, itemCountRef, playMoveRef, pushControlsRef]);
 
   return {
     selectedIndex,
+    setSelectedIndex,
     npcIds: BESTIARY_NPC_ORDER,
   };
 }

@@ -9,8 +9,16 @@ import {
   PET_STAR_MAX,
   enhanceFromPetStars,
 } from "@/data/characters/pets/petProgress";
+import { canPetEvolve } from "@/gameRules/pets/evolution";
+import type { PetPettingOutcome } from "@/contexts/PetProgressContext";
 import type { PetEntry } from "@/hooks/menu/pets/menu/types";
 import type { EquippedItemInfo } from "@/utils/types/player/equipment";
+
+const PETTING_MESSAGES: Record<PetPettingOutcome, string> = {
+  affinityUp: "Seu pet gostou do carinho! +1 afinidade",
+  maxAffinity: "Seu pet já te adora ao máximo!",
+  dailyLimit: "Seu pet já recebeu carinho hoje. Volte amanhã!",
+};
 
 type Props = {
   entry: PetEntry;
@@ -21,7 +29,8 @@ export function usePetDetail({ entry, onClose }: Props) {
   const { player } = usePlayer();
   const character = player.character;
   const { equip, unequip, fusePets, getEquippedInfo } = useEquipment();
-  const { getPetProgress, resetPetProgress } = usePetProgress();
+  const { getPetProgress, resetPetProgress, getPetAffinity, petPet } =
+    usePetProgress();
   const { playMove, playSelect, playClose } = useMenuSFX();
   const { pushControls } = useGameControls();
   const pushControlsRef = useLatestRef(pushControls);
@@ -49,6 +58,9 @@ export function usePetDetail({ entry, onClose }: Props) {
   const playSelectRef = useLatestRef(playSelect);
   const playCloseRef = useLatestRef(playClose);
 
+  const evolutionLocked = !canPetEvolve(entry.rank);
+  const affinity = getPetAffinity(entry.id);
+
   function highestEligibleStar(): number {
     for (let s = PET_STAR_MAX - 1; s >= 1; s--) {
       if ((entryRef.current.qtyByStar[s - 1] ?? 0) >= 2) return s;
@@ -65,8 +77,17 @@ export function usePetDetail({ entry, onClose }: Props) {
     };
   }
 
+  /** Pets abaixo de Lendário não evoluem (#503), mesmo com cópias de sobra. */
   function canFuse(): boolean {
-    return highestEligibleStar() > 0;
+    return !evolutionLocked && highestEligibleStar() > 0;
+  }
+
+  function petCurrentPet() {
+    if (!entryRef.current.owned) return;
+    const outcome = petPet(entryRef.current.id);
+    if (outcome === "dailyLimit") playCloseRef.current();
+    else playSelectRef.current();
+    setMessage(PETTING_MESSAGES[outcome]);
   }
 
   function ownedQtyByStar(star: number): number {
@@ -202,6 +223,9 @@ export function usePetDetail({ entry, onClose }: Props) {
     fusing,
     isEquipped,
     canFuse,
+    evolutionLocked,
+    affinity,
+    petCurrentPet,
     highestEligibleStar,
     ownedQtyByStar,
     getPetStats,

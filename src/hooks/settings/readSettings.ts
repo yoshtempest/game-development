@@ -8,7 +8,9 @@ import {
   SHOW_ABILITY_INTRO_KEY,
   SHARED_XP_KEY,
   DIFFICULTY_KEY,
+  LANGUAGE_KEY,
 } from "@/data/storageKeys";
+import { parseGameLanguage } from "@/data/settings/language";
 import { slotKey } from "@/services/save/slotManager";
 
 export function readSettings(): Settings {
@@ -46,5 +48,6 @@ export function readSettings(): Settings {
     showAbilityIntro,
     sharedXp,
     difficulty,
+    language: parseGameLanguage(localStorage.getItem(LANGUAGE_KEY)),
   };
 }

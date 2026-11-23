@@ -125,6 +125,16 @@
   box-sizing: border-box;
 }
 
+.selectButton {
+  align-self: flex-start;
+  margin-bottom: var(--size-8);
+}
+
+.selectButton:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
 .characterTitle {
   display: flex;
   align-items: baseline;
