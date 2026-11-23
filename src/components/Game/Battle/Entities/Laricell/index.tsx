@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { CSSProperties } from "react";
 
-import { playerAbilityPath } from "@/utils/paths";
+import { playerPathLaricellHabilities } from "@/utils/paths";
 import type { LaricellVisual } from "@/hooks/battle/player/characters/laricell/types";
 
 import styles from "./styles.module.css";
@@ -27,6 +27,11 @@ type SpriteProps = {
  * esconde a imagem e o efeito continua visível pela própria forma da `div`
  * (gradiente do módulo CSS). Quando o arquivo chegar no caminho esperado, ele
  * aparece sem mudança de código e o `hasArt` desliga o gradiente de fallback.
+ *
+ * O caminho vem de `playerPathLaricellHabilities` — o mesmo dos botões — para
+ * que efeito e botão de uma habilidade nunca caiam em pastas diferentes
+ * (`inFight/default/habilities` vs. `inFight/vampireForm/habilities`). A Forma
+ * Vampira troca quais habilidades aparecem, não onde as artes ficam.
  */
 function AbilitySprite({ ability, file, className, style }: SpriteProps) {
   const [missing, setMissing] = useState(false);
@@ -42,7 +47,7 @@ function AbilitySprite({ ability, file, className, style }: SpriteProps) {
         <img
           loading="lazy"
           decoding="async"
-          src={playerAbilityPath("laricell", ability, file)}
+          src={playerPathLaricellHabilities(`${ability}/${file}`)}
           alt=""
           onLoad={() => setLoaded(true)}
           onError={() => setMissing(true)}
