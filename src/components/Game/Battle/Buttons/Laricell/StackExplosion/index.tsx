@@ -1,9 +1,11 @@
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { getActiveAbility } from "@/data/characters/abilities";
 import { npcPathProjectile } from "@/utils/paths";
 
 type Props = {
   disabled?: boolean;
-  onClick: () => void;ready: boolean;
+  onClick: () => void;
+  ready: boolean;
   remaining: number;
 };
 
@@ -13,7 +15,7 @@ export function StackExplosionButton({
   disabled = false,
   onClick,
 }: Props) {
-
+  const ability = getActiveAbility("laricell", "stackExplosion");
   return (
     <AbilityButton
       type="standard"
@@ -22,7 +24,7 @@ export function StackExplosionButton({
       remaining={remaining}
       onClick={onClick}
       image={npcPathProjectile("explosion.svg")}
-      title="Explode todos os brincos acumulados no inimigo"
+      title={ability ? `${ability.name}: ${ability.description}` : undefined}
     />
   );
 }

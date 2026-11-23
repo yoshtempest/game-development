@@ -1,4 +1,5 @@
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { getActiveAbility } from "@/data/characters/abilities";
 import { playerPathLaricellHabilities } from "@/utils/paths/index";
 
 type Props = {
@@ -14,6 +15,7 @@ export function SmokeBombButton({
   disabled = false,
   onClick,
 }: Props) {
+  const ability = getActiveAbility("laricell", "smokeBomb");
   return (
     <AbilityButton
       type="standard"
@@ -22,7 +24,7 @@ export function SmokeBombButton({
       disabled={disabled}
       onClick={onClick}
       image={playerPathLaricellHabilities("smokeBomb/smoke.svg")}
-      title="Arremessa uma bomba de fumaça"
+      title={ability ? `${ability.name}: ${ability.description}` : undefined}
     />
   );
 }

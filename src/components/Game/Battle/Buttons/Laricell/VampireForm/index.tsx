@@ -1,4 +1,5 @@
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { getActiveAbility } from "@/data/characters/abilities";
 import { playerPathLaricellHabilities } from "@/utils/paths/index";
 
 type Props = {
@@ -14,6 +15,7 @@ export function VampireFormButton({
   disabled = false,
   onClick,
 }: Props) {
+  const ability = getActiveAbility("laricell", "vampireForm");
   return (
     <AbilityButton
       type="standard"
@@ -22,7 +24,7 @@ export function VampireFormButton({
       remaining={remaining}
       onClick={onClick}
       image={playerPathLaricellHabilities("vampireForm/aura.svg")}
-      title="Entra no modo vampira"
+      title={ability ? `${ability.name}: ${ability.description}` : undefined}
     />
   );
 }

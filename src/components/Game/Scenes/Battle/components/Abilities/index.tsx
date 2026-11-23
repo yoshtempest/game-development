@@ -23,7 +23,6 @@ import { VastolordLaserButton } from "@/components/Game/Battle/Buttons/Marshadow
 import { AtomicButton } from "@/components/Game/Battle/Buttons/Marshadow/Atomic";
 import { KillerQueenButton } from "@/components/Game/Battle/Buttons/SrGuaxinim/KillerQueen";
 import { StackExplosionButton } from "@/components/Game/Battle/Buttons/Laricell/StackExplosion";
-import { getLaricellButtons } from "@/components/Game/Battle/Buttons/Laricell/abilityButtons";
 import { DomainExpansionButton } from "@/components/Game/Battle/Buttons/DomainExpansion";
 import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
@@ -37,8 +36,10 @@ import {
 import { BombButton } from "@/components/Game/Battle/Buttons/Babidi/Bomb";
 import { NetButton } from "@/components/Game/Battle/Buttons/Babidi/Net";
 import { IceWallButton } from "@/components/Game/Battle/Buttons/Laricell/IceWall";
+import { ExplodingEarringsButton } from "@/components/Game/Battle/Buttons/Laricell/ExplodingEarrings";
 import { SmokeBombButton } from "@/components/Game/Battle/Buttons/Laricell/SmokeBomb";
 import { VampireFormButton } from "@/components/Game/Battle/Buttons/Laricell/VampireForm";
+import { VampireBiteButton } from "@/components/Game/Battle/Buttons/Laricell/VampireBite";
 
 export function BattleAbilities({
   scene,
@@ -454,24 +455,46 @@ export function BattleAbilities({
 
       {player.character === "laricell" &&
         (() => {
+          // Cada habilidade tem o próprio relógio em `laricell.*.remaining`; o
+          // de `activeAbility` é só da Explosão de Stacks e usá-lo nos demais
+          // botões faria a Parede herdar o cooldown da explosão (e vice-versa).
+          const vampireActive = laricell.visual.vampireActive;
+          const normalButtons = [
+            { abilityId: "iceWall", state: laricell.iceWall },
+            { abilityId: "explodingEarrings", state: laricell.earrings },
+            { abilityId: "smokeBomb", state: laricell.smokeBomb },
+            { abilityId: "vampireForm", state: laricell.vampireForm },
+          ];
+
           abilitySlotsRef.current.push({
             click: activeAbilityPress,
             disabled: controlsDisabled || activeAbilityLocked,
             hold: false,
             abilityId: "stackExplosion",
           });
-          const laricellButtons = getLaricellButtons(laricell);
-          for (const button of laricellButtons) {
+
+          if (vampireActive) {
+            // A Mordida substitui A1–A3 enquanto a forma dura (issue #517).
             abilitySlotsRef.current.push({
-              click: button.state.press,
-              disabled:
-                controlsDisabled ||
-                isLocked(button.abilityId) ||
-                !button.state.usable,
+              click: laricell.bite.press,
+              disabled: controlsDisabled || !laricell.bite.usable,
               hold: false,
-              abilityId: button.abilityId,
+              abilityId: "vampireBite",
             });
+          } else {
+            for (const button of normalButtons) {
+              abilitySlotsRef.current.push({
+                click: button.state.press,
+                disabled:
+                  controlsDisabled ||
+                  isLocked(button.abilityId) ||
+                  !button.state.usable,
+                hold: false,
+                abilityId: button.abilityId,
+              });
+            }
           }
+
           return (
             <>
               <StackExplosionButton
@@ -480,40 +503,57 @@ export function BattleAbilities({
                 disabled={controlsDisabled || activeAbilityLocked}
                 onClick={activeAbilityPress}
               />
-             <IceWallButton
-                ready={activeAbilityUsable}
-                remaining={activeAbilityRemaining}
-                disabled={controlsDisabled || activeAbilityLocked}
-                onClick={activeAbilityPress}
-              />
-              <SmokeBombButton
-                ready={activeAbilityUsable}
-                remaining={activeAbilityRemaining}
-                disabled={controlsDisabled || activeAbilityLocked}
-                onClick={activeAbilityPress}
-              />
-              <VampireFormButton
-                ready={activeAbilityUsable}
-                remaining={activeAbilityRemaining}
-                disabled={controlsDisabled || activeAbilityLocked}
-                onClick={activeAbilityPress}
-              />
-              {/* {laricellButtons.map((button) => (
-                <GenericAbilityButton
-                  key={button.abilityId}
-                  characterId="laricell"
-                  abilityId={button.abilityId}
-                  label={button.label}
-                  ready={button.state.remaining <= 0}
-                  remaining={button.state.remaining}
-                  disabled={
-                    controlsDisabled ||
-                    isLocked(button.abilityId) ||
-                    !button.state.usable
-                  }
-                  onClick={button.state.press}
+              {vampireActive ? (
+                <VampireBiteButton
+                  ready={laricell.bite.remaining <= 0}
+                  remaining={laricell.bite.remaining}
+                  disabled={controlsDisabled || !laricell.bite.usable}
+                  onClick={laricell.bite.press}
                 />
-              ))} */}
+              ) : (
+                <>
+                  <IceWallButton
+                    ready={laricell.iceWall.remaining <= 0}
+                    remaining={laricell.iceWall.remaining}
+                    disabled={
+                      controlsDisabled ||
+                      isLocked("iceWall") ||
+                      !laricell.iceWall.usable
+                    }
+                    onClick={laricell.iceWall.press}
+                  />
+                  <ExplodingEarringsButton
+                    ready={laricell.earrings.remaining <= 0}
+                    remaining={laricell.earrings.remaining}
+                    disabled={
+                      controlsDisabled ||
+                      isLocked("explodingEarrings") ||
+                      !laricell.earrings.usable
+                    }
+                    onClick={laricell.earrings.press}
+                  />
+                  <SmokeBombButton
+                    ready={laricell.smokeBomb.remaining <= 0}
+                    remaining={laricell.smokeBomb.remaining}
+                    disabled={
+                      controlsDisabled ||
+                      isLocked("smokeBomb") ||
+                      !laricell.smokeBomb.usable
+                    }
+                    onClick={laricell.smokeBomb.press}
+                  />
+                  <VampireFormButton
+                    ready={laricell.vampireForm.remaining <= 0}
+                    remaining={laricell.vampireForm.remaining}
+                    disabled={
+                      controlsDisabled ||
+                      isLocked("vampireForm") ||
+                      !laricell.vampireForm.usable
+                    }
+                    onClick={laricell.vampireForm.press}
+                  />
+                </>
+              )}
             </>
           );
         })()}

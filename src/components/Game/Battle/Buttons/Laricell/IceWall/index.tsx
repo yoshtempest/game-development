@@ -1,4 +1,5 @@
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { getActiveAbility } from "@/data/characters/abilities";
 import { playerPathLaricellHabilities } from "@/utils/paths/index";
 
 type Props = {
@@ -14,6 +15,7 @@ export function IceWallButton({
   disabled = false,
   onClick,
 }: Props) {
+  const ability = getActiveAbility("laricell", "iceWall");
   return (
     <AbilityButton
       type="standard"
@@ -22,7 +24,7 @@ export function IceWallButton({
       remaining={remaining}
       onClick={onClick}
       image={playerPathLaricellHabilities("iceWall/wall.svg")}
-      title="Invoca uma parede que serve como escudo"
+      title={ability ? `${ability.name}: ${ability.description}` : undefined}
     />
   );
 }
