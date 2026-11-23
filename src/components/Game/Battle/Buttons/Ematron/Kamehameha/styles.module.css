@@ -8,10 +8,6 @@
   background: var(--ability-ematron-charge-35);
 }
 
-.label {
-  color: var(--yellow-pale);
-}
-
 @keyframes kamehamehaGlow {
   0%,
   100% {

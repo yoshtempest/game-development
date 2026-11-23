@@ -44,13 +44,8 @@ export function EmatronCloneButton({
       // valueText={Math.round(energy).toString()}
       // costText={`-{EMATRON_CLONE_MAX_COST} Ki`}
       extraProps={{ depleted: noKi }}
+      image={playerPathEmatronHabilities("teleport/teleport.svg")}
       title="Instância: segure para criar a cópia fantasma e mova pela arena; solte para teleportar até ela (custa até 50 de Ki pela distância)"
-      style={{
-        backgroundImage: `url("${playerPathEmatronHabilities("teleport/teleport.svg")}")`,
-        backgroundSize: "contain",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
     />
   );
 }

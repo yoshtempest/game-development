@@ -12,10 +12,6 @@
   border-color: var(--accent-80);
 }
 
-.label {
-  color: var(--ability-aurora);
-}
-
 .cooldown {
   font-size: var(--fs-16);
   font-weight: bold;

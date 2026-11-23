@@ -16,7 +16,6 @@ import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
  */
 const granReyCeroClasses: CustomAbilityClasses = {
   button: styles.button,
-  label: styles.label,
   ready: styles.ready,
   cooldown: styles.cooldown,
 };
@@ -36,15 +35,12 @@ export function GranReyCeroButton({
     <AbilityButton
       type="standard"
       customClasses={granReyCeroClasses}
-      // label="GRAN REY CERO"
       ready={ready}
       remaining={remaining}
       disabled={disabled}
       onClick={onClick}
+      image={playerPathMarshadowHabilities("granReyCero/background.svg")}
       title={`Gran Rey Cero: a lâmina corre 500px na direção de mira, parando para rastejar e cortar todo inimigo num raio de ${GRAN_REY_CERO_AOE_RADIUS}px. Cooldown de 20s.`}
-      style={{
-        backgroundImage: `url("${playerPathMarshadowHabilities("granReyCero/background.svg")}")`,
-      }}
     />
   );
 }

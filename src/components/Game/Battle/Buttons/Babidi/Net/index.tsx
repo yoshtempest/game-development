@@ -39,11 +39,7 @@ export function NetButton({
       disabled={disabled}
       onClick={onClick}
       title={`Rede que captura o inimigo`}
-      style={{
-        backgroundImage: `url(${playerPathBabidiHabilities("fishingNet/net.svg")})`,
-        backgroundSize: "contain",
-        backgroundPosition: "center",
-      }}
+      image={playerPathBabidiHabilities("fishingNet/net.svg")}
     />
   );
 }

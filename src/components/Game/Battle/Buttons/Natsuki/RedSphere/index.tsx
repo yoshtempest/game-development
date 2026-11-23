@@ -14,7 +14,6 @@ type Props = {
  */
 const redSphereClasses: CustomAbilityClasses = {
   button: styles.button,
-  label: styles.label,
 };
 
 export function RedSphereButton({ disabled = false, onClick }: Props) {
@@ -26,11 +25,7 @@ export function RedSphereButton({ disabled = false, onClick }: Props) {
       disabled={disabled}
       onClick={onClick}
       title="Invoca e arremessa a esfera vermelha (dano mágico + empurrão)."
-      style={{
-        backgroundImage: `url("${spriteMap.redSphere}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      image={spriteMap.redSphere}
     />
   );
 }

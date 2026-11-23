@@ -27,11 +27,7 @@ export function EmatronKamehamehaButton({ disabled = false, onClick }: Props) {
       // label="KAMEHAMEHA"
       disabled={disabled}
       onClick={onClick}
-      style={{
-        backgroundImage: `url("${playerPathEmatronHabilities("kamehameha/background.svg")}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      image={playerPathEmatronHabilities("kamehameha/background.svg")}
       title="Kamehameha: carregue por 2.8s no sprite chargingKamehameha e o efeito dispara causando dano contínuo e empurrando o inimigo."
     />
   );

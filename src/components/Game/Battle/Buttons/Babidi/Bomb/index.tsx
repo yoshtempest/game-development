@@ -39,11 +39,7 @@ export function BombButton({
       disabled={disabled}
       onClick={onClick}
       title={`Bomba que recai sobre o inimigo`}
-      style={{
-        backgroundImage: `url(${playerProjectilePath("/babidiBomb.svg")})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      image={playerProjectilePath("/babidiBomb.svg")}
     />
   );
 }

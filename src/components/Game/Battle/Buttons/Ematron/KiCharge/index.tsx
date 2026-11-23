@@ -49,12 +49,8 @@ export function EmatronKiChargeButton({
       full={full}
       // valueText={Math.round(energy).toString()}
       // costText={`+${EMATRON_KI_CHARGE_PER_TICK}/100ms`}
+      image={playerPathEmatronHabilities("chargingKi/chargingKiEffect.svg")}
       title={`Carga de Ki: segure para recarregar +${EMATRON_KI_CHARGE_PER_TICK} de Ki a cada ${EMATRON_KI_CHARGE_TICK_MS}ms (o personagem fica parado sem poder agir)`}
-      style={{
-        backgroundImage: `url("${playerPathEmatronHabilities("chargingKi/chargingKiEffect.svg")}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
     />
   );
 }

@@ -453,7 +453,7 @@ export function BattleAbilities({
         (() => {
           abilitySlotsRef.current.push({
             click: activeAbilityPress,
-            disabled: controlsDisabled || isLocked("stackExplosion"),
+            disabled: controlsDisabled || activeAbilityLocked,
             hold: false,
             abilityId: "stackExplosion",
           });
@@ -461,18 +461,39 @@ export function BattleAbilities({
           for (const button of laricellButtons) {
             abilitySlotsRef.current.push({
               click: button.state.press,
-              disabled: controlsDisabled || !button.state.usable,
+              disabled:
+                controlsDisabled ||
+                isLocked(button.abilityId) ||
+                !button.state.usable,
               hold: false,
               abilityId: button.abilityId,
             });
           }
           return (
-            <StackExplosionButton
-              ready={activeAbilityUsable}
-              remaining={activeAbilityRemaining}
-              disabled={controlsDisabled || activeAbilityLocked}
-              onClick={activeAbilityPress}
-            />
+            <>
+              <StackExplosionButton
+                ready={activeAbilityUsable}
+                remaining={activeAbilityRemaining}
+                disabled={controlsDisabled || activeAbilityLocked}
+                onClick={activeAbilityPress}
+              />
+              {laricellButtons.map((button) => (
+                <GenericAbilityButton
+                  key={button.abilityId}
+                  characterId="laricell"
+                  abilityId={button.abilityId}
+                  label={button.label}
+                  ready={button.state.remaining <= 0}
+                  remaining={button.state.remaining}
+                  disabled={
+                    controlsDisabled ||
+                    isLocked(button.abilityId) ||
+                    !button.state.usable
+                  }
+                  onClick={button.state.press}
+                />
+              ))}
+            </>
           );
         })()}
 

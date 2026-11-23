@@ -17,9 +17,6 @@ type Props = {
  */
 const divergentFistClasses: CustomAbilityClasses = {
   button: styles.button,
-  label: styles.label,
-  value: styles.value,
-  cost: styles.cost,
   active: styles.active,
 };
 
@@ -39,13 +36,8 @@ export function DivergentFistButton({
       extraProps={{ active }}
       valueText={Math.round(energy).toString()}
       costText={`-{DIVERGENT_FIST_COST}`}
+      image={playerPathNatsukiHabilities("divergentFist/idle.svg")}
       title={`Punho Divergente: o próximo golpe é um soco com 100% de chance de causar 2 instâncias de dano (custa ${DIVERGENT_FIST_COST} de energia amaldiçoada)`}
-      style={{
-        backgroundImage:
-          `url("${playerPathNatsukiHabilities("divergentFist/idle.svg")}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
     />
   );
 }

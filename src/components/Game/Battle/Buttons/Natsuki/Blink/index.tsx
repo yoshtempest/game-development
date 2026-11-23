@@ -15,9 +15,6 @@ type Props = {
  */
 const blinkClasses: CustomAbilityClasses = {
   button: styles.button,
-  label: styles.label,
-  value: styles.value,
-  cost: styles.cost,
 };
 
 export function BlinkButton({ disabled = false, onClick }: Props) {
@@ -32,13 +29,8 @@ export function BlinkButton({ disabled = false, onClick }: Props) {
       full={false}
       // valueText={Math.round(energy).toString()}
       // costText={`-{BLINK_ENERGY_COST}`}
+      image={playerPathNatsukiHabilities("blink/blink.svg")}
       title={`Blink: teleporte curto à frente (custa ${BLINK_ENERGY_COST} de energia amaldiçoada)`}
-      style={{
-        backgroundImage:
-          `url("${playerPathNatsukiHabilities("blink/blink.svg")}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
     />
   );
 }

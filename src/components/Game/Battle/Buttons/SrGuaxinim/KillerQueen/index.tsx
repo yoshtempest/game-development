@@ -8,14 +8,6 @@ type Props = {
   onClick: () => void;
 };
 
-/**
- * Botão da Killer Queen (SrGuaxinim), agora delegado ao botão genérico: nome,
- * descrição e cooldown vêm do registro (`killerQueenAbility` em
- * `data/characters/abilityFactories`), só o estado de cooldown fica aqui.
- * A cor é a identidade da habilidade (`--ability-aurora` do SrGuaxinim).
- */
-const KILLER_QUEEN_ACCENT = "#fde68a";
-
 export function KillerQueenButton({
   ready,
   remaining,
@@ -25,15 +17,11 @@ export function KillerQueenButton({
   return (
     <AbilityButton
       type="standard"
-      accent={KILLER_QUEEN_ACCENT}
       ready={ready}
       remaining={remaining}
       disabled={disabled}
       onClick={onClick}
-      style={{
-        backgroundImage:
-          `url("${npcPathProjectile("/explosion.svg")}")`,
-      }}
+      image={npcPathProjectile("/explosion.svg")}
     />
   );
 }
