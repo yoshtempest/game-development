@@ -32,6 +32,7 @@ export { playerPathSrGuaxinimHabilities } from "./characters/srGuaxinim";
 export { playerPathNatsukiHabilities } from "./characters/natsuki";
 export { playerPathEmatronHabilities } from "./characters/ematron";
 export { playerPathBabidiHabilities } from "./characters/babidi";
+export { playerPathLaricellHabilities } from "./characters/laricell";
 export {
   playerAbilityBackgroundPath,
   playerAbilityPath,

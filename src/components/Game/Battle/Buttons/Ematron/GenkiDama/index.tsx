@@ -22,9 +22,6 @@ type Props = {
  */
 const genkiDamaClasses: CustomAbilityClasses = {
   button: styles.button,
-  label: styles.label,
-  value: styles.value,
-  cost: styles.cost,
   depleted: styles.depleted,
 };
 

@@ -1,20 +1,11 @@
-import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
+import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { npcPathProjectile } from "@/utils/paths";
 
 type Props = {
-  ready: boolean;
-  remaining: number;
   disabled?: boolean;
-  onClick: () => void;
+  onClick: () => void;ready: boolean;
+  remaining: number;
 };
-
-/**
- * Botão da Explosão de Stacks (Laricell), agora delegado ao botão genérico: nome,
- * descrição e cooldown vêm do registro (`stackExplosionAbility` em
- * `data/characters/abilityFactories`), só o estado de cooldown fica aqui. O
- * rótulo mantém o curto "EXPLOSÃO" (a descrição completa é a tooltip).
- */
-const STACK_EXPLOSION_ACCENT = "#f87171";
-const STACK_EXPLOSION_LABEL = "EXPLOSÃO";
 
 export function StackExplosionButton({
   ready,
@@ -22,17 +13,17 @@ export function StackExplosionButton({
   disabled = false,
   onClick,
 }: Props) {
+
   return (
-    <GenericAbilityButton
-      characterId="laricell"
-      abilityId="stackExplosion"
-      behavior="standard"
-      label={STACK_EXPLOSION_LABEL}
-      accent={STACK_EXPLOSION_ACCENT}
+    <AbilityButton
+      type="standard"
+      disabled={disabled}
       ready={ready}
       remaining={remaining}
-      disabled={disabled}
       onClick={onClick}
+      image={npcPathProjectile("explosion.svg")}
+      title="Explode todos os brincos acumulados no inimigo"
     />
   );
 }
+

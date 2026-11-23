@@ -18,9 +18,6 @@ const CLONE_MIN_KI = 1;
  */
 const cloneClasses: CustomAbilityClasses = {
   button: styles.button,
-  label: styles.label,
-  value: styles.value,
-  cost: styles.cost,
   depleted: styles.depleted,
 };
 

@@ -36,6 +36,9 @@ import {
 } from "@/gameRules/player/abilityUnlock";
 import { BombButton } from "@/components/Game/Battle/Buttons/Babidi/Bomb";
 import { NetButton } from "@/components/Game/Battle/Buttons/Babidi/Net";
+import { IceWallButton } from "@/components/Game/Battle/Buttons/Laricell/IceWall";
+import { SmokeBombButton } from "@/components/Game/Battle/Buttons/Laricell/SmokeBomb";
+import { VampireFormButton } from "@/components/Game/Battle/Buttons/Laricell/VampireForm";
 
 export function BattleAbilities({
   scene,
@@ -477,7 +480,25 @@ export function BattleAbilities({
                 disabled={controlsDisabled || activeAbilityLocked}
                 onClick={activeAbilityPress}
               />
-              {laricellButtons.map((button) => (
+             <IceWallButton
+                ready={activeAbilityUsable}
+                remaining={activeAbilityRemaining}
+                disabled={controlsDisabled || activeAbilityLocked}
+                onClick={activeAbilityPress}
+              />
+              <SmokeBombButton
+                ready={activeAbilityUsable}
+                remaining={activeAbilityRemaining}
+                disabled={controlsDisabled || activeAbilityLocked}
+                onClick={activeAbilityPress}
+              />
+              <VampireFormButton
+                ready={activeAbilityUsable}
+                remaining={activeAbilityRemaining}
+                disabled={controlsDisabled || activeAbilityLocked}
+                onClick={activeAbilityPress}
+              />
+              {/* {laricellButtons.map((button) => (
                 <GenericAbilityButton
                   key={button.abilityId}
                   characterId="laricell"
@@ -492,7 +513,7 @@ export function BattleAbilities({
                   }
                   onClick={button.state.press}
                 />
-              ))}
+              ))} */}
             </>
           );
         })()}

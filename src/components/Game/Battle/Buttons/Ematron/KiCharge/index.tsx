@@ -23,10 +23,7 @@ type Props = {
  */
 const kiChargeClasses: CustomAbilityClasses = {
   button: styles.button,
-  label: styles.label,
   full: styles.full,
-  value: styles.value,
-  cost: styles.cost,
 };
 
 export function EmatronKiChargeButton({

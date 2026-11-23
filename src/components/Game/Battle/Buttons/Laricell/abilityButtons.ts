@@ -33,19 +33,9 @@ export function getLaricellButtons(
   }
   return [
     {
-      abilityId: "iceWall",
-      label: "GELO",
-      state: laricell.iceWall,
-    },
-    {
       abilityId: "explodingEarrings",
       label: "BRINCOS",
       state: laricell.earrings,
-    },
-    {
-      abilityId: "smokeBomb",
-      label: "FUMAÇA",
-      state: laricell.smokeBomb,
     },
     {
       abilityId: "vampireForm",
