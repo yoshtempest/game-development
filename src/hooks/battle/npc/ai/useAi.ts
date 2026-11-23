@@ -654,7 +654,6 @@ export function useNpcAI({
       // faz o slow-movement valer para todo comportamento — perseguir,
       // dash, investida — sem que cada um precise saber da regra.
       const scaledX = n.x + (result.x - n.x) * npcTime.speed;
-      const now = Date.now();
       const barrier = barrierRef?.current ?? null;
       const nextX = rooted ? n.x : clampToBarrier(n.x, scaledX, barrier, now);
 
