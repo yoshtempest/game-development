@@ -42,6 +42,11 @@ export type BattleSystemProps = {
   vastolordMultiplierRef?: React.RefObject<() => number>;
   /** Forma Vastolord ativa: multiplica a armadura do marshadow por 4. */
   vastolordActive?: boolean;
+  /**
+   * Vampirismo universal extra de uma forma temporária que não é a Vastolord
+   * (a Forma Vampira da Laricell). Entra no mesmo memo de `vampirism`.
+   */
+  bonusUniversalVampirism?: number;
   /** Punho Divergente: true quando ativado, consome no próximo golpe básico. */
   divergentFistRef?: React.RefObject<boolean>;
   onDivergentFistConsumedRef?: React.RefObject<() => void>;

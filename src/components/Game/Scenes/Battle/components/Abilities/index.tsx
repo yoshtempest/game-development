@@ -23,6 +23,7 @@ import { VastolordLaserButton } from "@/components/Game/Battle/Buttons/Marshadow
 import { AtomicButton } from "@/components/Game/Battle/Buttons/Marshadow/Atomic";
 import { KillerQueenButton } from "@/components/Game/Battle/Buttons/SrGuaxinim/KillerQueen";
 import { StackExplosionButton } from "@/components/Game/Battle/Buttons/Laricell/StackExplosion";
+import { getLaricellButtons } from "@/components/Game/Battle/Buttons/Laricell/abilityButtons";
 import { DomainExpansionButton } from "@/components/Game/Battle/Buttons/DomainExpansion";
 import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
@@ -76,6 +77,7 @@ export function BattleAbilities({
     vastolordLaserUsable,
     vastolordLaserStacks,
     activeAbilityPress,
+    laricell,
     activeAbilityUsable,
     activeAbilityRemaining,
     babidiBombDropPress,
@@ -455,6 +457,15 @@ export function BattleAbilities({
             hold: false,
             abilityId: "stackExplosion",
           });
+          const laricellButtons = getLaricellButtons(laricell);
+          for (const button of laricellButtons) {
+            abilitySlotsRef.current.push({
+              click: button.state.press,
+              disabled: controlsDisabled || !button.state.usable,
+              hold: false,
+              abilityId: button.abilityId,
+            });
+          }
           return (
             <StackExplosionButton
               ready={activeAbilityUsable}

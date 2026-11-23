@@ -1,0 +1,125 @@
+.iceWall,
+.earrings,
+.earringsExplosion,
+.smoke,
+.vampireAura,
+.bite {
+  position: absolute;
+  z-index: 16;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+}
+
+.iceWall img,
+.earrings img,
+.earringsExplosion img,
+.smoke img,
+.vampireAura img,
+.bite img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.iceWall {
+  width: 64px;
+  height: 220px;
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    rgb(224 242 254 / 0.85),
+    rgb(56 189 248 / 0.6)
+  );
+  box-shadow: 0 0 18px rgb(125 211 252 / 0.8);
+  animation: iceRise 200ms ease-out both;
+}
+
+.earrings {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fde68a, #ca8a04);
+  box-shadow: 0 0 10px #facc15;
+  animation: earringsPulse 200ms ease-in-out infinite alternate;
+}
+
+.earringsExplosion {
+  width: 340px;
+  height: 340px;
+  transform: translate(-50%, -70%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgb(254 240 138 / 0.95),
+    rgb(249 115 22 / 0.6) 55%,
+    transparent 70%
+  );
+  animation: earringsBoom 400ms ease-out both;
+}
+
+.smoke {
+  width: 260px;
+  height: 260px;
+  transform: translate(-50%, -80%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgb(113 113 122 / 0.85),
+    rgb(63 63 70 / 0.5) 60%,
+    transparent 75%
+  );
+  filter: blur(2px);
+}
+
+.vampireAura {
+  width: 180px;
+  height: 240px;
+  transform: translate(-50%, -90%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgb(185 28 28 / 0.35), transparent 70%);
+  animation: earringsPulse 600ms ease-in-out infinite alternate;
+}
+
+.bite {
+  width: 120px;
+  height: 120px;
+  transform: translate(-50%, -80%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(220 38 38 / 0.8), transparent 70%);
+  animation: earringsBoom 300ms ease-out both;
+}
+
+.hasArt {
+  background: none;
+  box-shadow: none;
+  filter: none;
+}
+
+@keyframes iceRise {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes earringsPulse {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes earringsBoom {
+  from {
+    opacity: 1;
+    scale: 0.4;
+  }
+  to {
+    opacity: 0;
+    scale: 1;
+  }
+}
