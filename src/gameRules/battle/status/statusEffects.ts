@@ -46,8 +46,19 @@ export const STATUS_LIST: PlayerStatus[] = [
   "freeze",
 ];
 
-export const BURN_TICK_DAMAGE = 2;
-export const POISON_TICK_DAMAGE = 2;
+/**
+ * Dano por tick dos DoTs como fração do dano base do NPC da batalha
+ * (`getNpcPercentDamage`), para acompanhar o nível dele em vez de ser fixo.
+ *
+ * As frações foram derivadas do antigo valor fixo (2) no NPC que aplica o
+ * status, em dificuldade média, para não mudar o balanceamento atual:
+ * - sangramento vem do `hungryDeath` (comum, nível 1, dano base 5) → 2/5;
+ * - queimadura/veneno vêm do debuff do `maugrelo` (boss, nível 9, dano
+ *   base 38) → 0.05 × 38 ≈ 2.
+ */
+export const BLEED_TICK_DAMAGE_RATIO = 0.4;
+export const BURN_TICK_DAMAGE_RATIO = 0.05;
+export const POISON_TICK_DAMAGE_RATIO = 0.05;
 export const DOT_TICK_INTERVAL_MS = ONE_THOUSAND_MS;
 
 export function isPlayerFrozen(player: Player): boolean {
@@ -102,6 +113,34 @@ export function getActivePlayerStatuses(player: Player): ActivePlayerStatus[] {
     const until = player[STATUS_UNTIL_FIELD[status]];
     if (until > now) {
       active.push({ status, remaining: until - now });
+    }
+  }
+
+  return active;
+}
+
+/** Uma aplicação de status ativa, identificada pelo instante em que termina. */
+export type PlayerStatusApplication = {
+  status: PlayerStatus;
+  until: number;
+};
+
+/**
+ * Status ativos com o timestamp de fim, em vez do tempo restante.
+ *
+ * O `until` não muda entre frames de uma mesma aplicação, então serve de
+ * identidade estável para efeitos visuais (overlay sorteado por aplicação).
+ */
+export function getActivePlayerStatusApplications(
+  player: Player,
+): PlayerStatusApplication[] {
+  const now = Date.now();
+  const active: PlayerStatusApplication[] = [];
+
+  for (const status of STATUS_LIST) {
+    const until = player[STATUS_UNTIL_FIELD[status]];
+    if (until > now) {
+      active.push({ status, until });
     }
   }
 

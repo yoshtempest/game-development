@@ -100,8 +100,8 @@ export function useBattleScene({
     prevModeRef,
     pauseStartRef,
     pauseDurationRef,
-    rewindFrames,
-    setRewindFrames,
+    rewindResurrection,
+    setRewindResurrection,
     victoryElapsed,
     setVictoryElapsed,
     bestTime,
@@ -312,7 +312,7 @@ export function useBattleScene({
   const cameraFocusHook = useCameraSequence({
     npcPhase,
     vastolordActive,
-    enabled: rewindFrames == null && !showVictory && !showDefeat,
+    enabled: rewindResurrection == null && !showVictory && !showDefeat,
     focusMs: cameraFocusMs,
     battleEnded: showVictory || showDefeat,
     modalShown:
@@ -353,7 +353,7 @@ export function useBattleScene({
     showIntro ||
     showOutro != null ||
     showHighlight ||
-    rewindFrames != null ||
+    rewindResurrection != null ||
     isMenuOpen ||
     cameraFocus.isFrozen ||
     transformationFrame != null ||
@@ -392,7 +392,7 @@ export function useBattleScene({
   const [coopSpectator, setCoopSpectator] = useState(false);
 
   const onPlayerDeathRef = useLatestRef(() => {
-    if (rewindFrames != null) {
+    if (rewindResurrection != null) {
       battle.isEnding.current = true;
       return;
     }
@@ -563,6 +563,7 @@ export function useBattleScene({
     charge,
     yvelWeapon,
     switchWeapon: handleWeaponSwitch,
+    yvelBladeWorks,
     drikaArm,
     sigiloPhase,
     sigiloOpen,
@@ -625,6 +626,7 @@ export function useBattleScene({
     atomicUsable,
     atomicRemaining,
     activeAbilityPress,
+    laricell,
     activeAbilityUsable,
     activeAbilityRemaining,
     specialIntroAbility,
@@ -755,7 +757,6 @@ export function useBattleScene({
     startRecording,
     stopRecording,
     getReplayData,
-    getReplayWindow,
   } = useBattleRecording({
     playerRef: playerSnapshotRef,
     npcRef: npcSnapshotRef,
@@ -793,10 +794,10 @@ export function useBattleScene({
     }
   }, [showVictory, showDefeat, isRecording, stopRecording]);
 
-  const { reset: resetRewind } = useRewind({
+  const { reset: resetRewind, timePoliceVisible } = useRewind({
     character: player.character,
-    rewindFrames,
-    setRewindFrames,
+    rewindResurrection,
+    setRewindResurrection,
     performRewindRef,
     setPlayer,
     setNpcPhase,
@@ -809,7 +810,6 @@ export function useBattleScene({
     battle,
     npc,
     resetCombo,
-    getReplayWindow,
   });
 
   const defeatProgress: number = useMemo(() => {
@@ -1023,6 +1023,7 @@ export function useBattleScene({
     extraPunchSprite,
     yvelWeapon,
     switchWeapon: handleWeaponSwitch,
+    yvelBladeWorks,
     drikaArm,
     sigiloPhase,
     sigiloOpen,
@@ -1050,6 +1051,7 @@ export function useBattleScene({
     vastolordActive,
     vastolordRemainingMs,
     vastolordTransformationFrame: transformationFrame,
+    rewindResurrection,
     specialIntroActive,
     specialIntroCharacter,
     specialIntroForm,
@@ -1086,6 +1088,7 @@ export function useBattleScene({
     atomicUsable,
     atomicRemaining,
     activeAbilityPress,
+    laricell,
     activeAbilityUsable,
     activeAbilityRemaining,
     mugetsuSweep,
@@ -1132,5 +1135,7 @@ export function useBattleScene({
     emoteAvailable,
     emoteUsable,
     emotePress,
+    rewinding: rewindResurrection != null,
+    timePoliceVisible,
   });
 }

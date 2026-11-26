@@ -27,7 +27,7 @@ export function UpdateButton() {
   return (
     <button
       type="button"
-      className={styles.tutorialButton}
+      className="navbarContainerRow"
       onClick={isAvailable ? applyUpdate : checkForUpdate}
       disabled={isChecking}
     >

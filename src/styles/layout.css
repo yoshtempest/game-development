@@ -42,35 +42,65 @@
   justify-content: center;
   width: var(--game-viewport-width);
   height: 100dvh;
+  border-left: 1px solid var(--primary-color);
+  border-right: 1px solid var(--primary-color);
   background-size: cover;
   background-repeat: no-repeat;
   isolation: isolate;
 }
 
+/**
+ * Card das telas do navbar. Posição e altura ficam no `.navbarContainerWrapper`,
+ * que também desenha o botão Voltar abaixo; aqui só o visual do painel.
+ */
 .containerOfNavbar {
   display: flex;
-  position: absolute;
-  top: 5%;
-  right: 0;
+  position: relative;
+  flex: 1;
   flex-direction: column;
-  width: calc(var(--game-viewport-width) - var(--size-6));
-  height: 90dvh;
-  background: linear-gradient(
-    170deg,
-    var(--surface-dark) 0%,
-    #0f0f12 35%,
-    #0c0c0f 65%,
-    var(--background-color) 100%
-  );
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0;
   align-items: center;
-  border: var(--size-3) solid var(--border-medium);
-  border-radius: var(--size-5);
-  z-index: 999;
-  box-shadow:
-    inset 0 var(--size-1) 0 rgba(255, 215, 0, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.4),
-    0 0 0 var(--size-1) #000,
-    0 var(--size-4) var(--low-medium) rgba(0, 0, 0, 0.6);
+
+  /**
+   * Painel tech: a borda transparente recebe o gradiente ciano na border-box
+   * e o painel na padding-box. Assim a moldura acompanha o recorte dos cantos
+   * sem exigir um wrapper em cada uma das telas que usam esta classe.
+   */
+  --panel-cut: var(--size-30);
+  border: var(--size-2) solid transparent;
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(14, 165, 233, 0.18) 0%,
+      transparent 60%
+    ) padding-box,
+    linear-gradient(
+      155deg,
+      var(--nav-panel-top) 0%,
+      #08172f 45%,
+      var(--nav-panel-deep) 100%
+    ) padding-box,
+    linear-gradient(
+      90deg,
+      var(--nav-panel-line) 0%,
+      #0ea5e9 35%,
+      #1e40af 70%,
+      var(--nav-panel-line) 100%
+    ) border-box;
+  clip-path: polygon(
+    var(--panel-cut) 0,
+    calc(100% - var(--panel-cut)) 0,
+    100% var(--panel-cut),
+    100% calc(100% - var(--panel-cut)),
+    calc(100% - var(--panel-cut)) 100%,
+    var(--panel-cut) 100%,
+    0 calc(100% - var(--panel-cut)),
+    0 var(--panel-cut)
+  );
+  /* box-shadow é cortado pelo clip-path; drop-shadow contorna o polígono. */
+  filter: drop-shadow(0 0 var(--size-10) var(--nav-panel-glow));
   animation: modalScaleIn 0.5s ease-out;
   overflow-y: auto;
   scrollbar-width: none;
@@ -79,6 +109,41 @@
 
 .containerOfNavbar::-webkit-scrollbar {
   display: none;
+}
+
+.navbarContainerRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--size-4);
+}
+
+/** Cabeçalho de coluna: ícone ciano, título claro e sublinhado em degradê. */
+.sectionHeader {
+  position: relative;
+  width: 100%;
+  padding-bottom: var(--size-8);
+  margin-bottom: var(--size-4);
+  color: #dbeafe;
+}
+
+.sectionHeader svg {
+  color: var(--nav-panel-line);
+}
+
+.sectionHeader::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: var(--size-2);
+  background: linear-gradient(
+    90deg,
+    var(--nav-panel-line) 0%,
+    var(--nav-panel-line-soft) 65%,
+    transparent 100%
+  );
 }
 
 .section {

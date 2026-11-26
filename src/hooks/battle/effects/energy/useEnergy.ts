@@ -66,5 +66,27 @@ export function useEnergy(
     }
   }, [isMarshadow, energyRef, maxHpRef, setPlayerShieldRef]);
 
-  return { enabled: isMarshadow, energy, resetEnergy, consumeOnDamage };
+  /**
+   * Gasto de reiryoku das habilidades do Marshadow. O saldo é lido do ref e
+   * debitado nele na hora (além do state) para que dois presses no mesmo
+   * frame não paguem com o mesmo saldo antes do re-render.
+   */
+  const spendEnergy = useCallback(
+    (cost: number) => {
+      if (!isMarshadow) return true;
+      if (energyRef.current < cost) return false;
+      energyRef.current -= cost;
+      setEnergy((e) => Math.max(0, e - cost));
+      return true;
+    },
+    [isMarshadow, energyRef],
+  );
+
+  return {
+    enabled: isMarshadow,
+    energy,
+    resetEnergy,
+    consumeOnDamage,
+    spendEnergy,
+  };
 }
