@@ -56,6 +56,8 @@ export const NPC_CLASSES = {
   technoblade: "legendary",
   ouroboros: "supreme",
 
+  /* Mundo tóxico */
+  rickToxico: "legendary",
   /* Shibuya (evento diário) */
   mahoraga: "boss",
 

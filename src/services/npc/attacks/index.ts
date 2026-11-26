@@ -54,6 +54,7 @@ import { UntrackedMonsterAttack } from "./untrackedMonster";
 import { VandinhaFragmentAttack } from "./vandinhaFragment";
 import { YangKaiAttack } from "./yangKai";
 import { OuroborosAttack } from "./ouroboros";
+import { RickToxicoAttack } from "./rickToxico";
 import { EvilMortyAttack } from "./evilMorty";
 
 /**
@@ -145,6 +146,7 @@ export const npcAttacks = {
   theChaosCreator: new TheChaosCreatorAttack("theChaosCreator"),
   theFirstNightmare: new TheFirstNightmareAttack("theFirstNightmare"),
   ouroboros: new OuroborosAttack("ouroboros"),
+  rickToxico: new RickToxicoAttack(),
   evilMorty: new EvilMortyAttack(),
 
   /* Conselho dos vilões */

@@ -25,6 +25,7 @@ import { getBehindPlayerX } from "@/gameRules/npc/movement";
 import { rollEvilMortyEvasion } from "@/gameRules/npc/evilMortyEvasion";
 import { EVIL_MORTY_TELEPORT_OFFSET } from "@/data/npc/evilMorty";
 import { applyPlayerStatus } from "@/gameRules/battle/status/statusEffects";
+import { RICK_PASSIVE_POISON_CHANCE } from "@/data/npc/rickToxico";
 import { ProjectileHpConstants } from "@/data/projectile";
 import { hasCompanionAlive } from "@/data/npc";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
@@ -523,6 +524,14 @@ export function useBattleCore({
     );
   });
 
+  targeting.onBeforeNpcHitRef.current = (getDamage, source) => {
+    if (
+      npcType === "rickToxico" &&
+      source === "basic" &&
+      Math.random() < RICK_PASSIVE_POISON_CHANCE
+    ) {
+      setPlayer((p) => applyPlayerStatus(p, "poison"));
+    }
   /**
    * Defesa do jogador contra cada golpe que passa pelo `runHitPrelude`.
    *
