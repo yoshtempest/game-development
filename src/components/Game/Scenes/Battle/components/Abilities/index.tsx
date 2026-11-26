@@ -26,6 +26,7 @@ import { StackExplosionButton } from "@/components/Game/Battle/Buttons/Laricell/
 import { DomainExpansionButton } from "@/components/Game/Battle/Buttons/DomainExpansion";
 import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
+import { BankaiButton } from "@/components/Game/Battle/Buttons/Marshadow/Bankai";
 import { EmoteButton } from "@/components/Game/Battle/Buttons/Emote";
 import { useRef } from "react";
 import { useAbilityShortcuts } from "@/hooks/battle/useAbilityShortcuts";
@@ -78,6 +79,9 @@ export function BattleAbilities({
     granReyCeroPress,
     granReyCeroUsable,
     granReyCeroRemaining,
+    bankaiPress,
+    bankaiUsable,
+    bankaiRemaining,
     vastolordActive,
     vastolordLaserPress,
     vastolordLaserUsable,
@@ -418,6 +422,12 @@ export function BattleAbilities({
               hold: false,
               abilityId: "granReyCero",
             });
+            abilitySlotsRef.current.push({
+              click: bankaiPress,
+              disabled: controlsDisabled,
+              hold: false,
+              abilityId: "bankai",
+            });
           } else {
             abilitySlotsRef.current.push({
               click: vastolordLaserPress,
@@ -439,6 +449,12 @@ export function BattleAbilities({
                 remaining={granReyCeroRemaining}
                 disabled={controlsDisabled || isLocked("granReyCero")}
                 onClick={granReyCeroPress}
+              />
+              <BankaiButton
+                ready={bankaiUsable}
+                remaining={bankaiRemaining}
+                disabled={controlsDisabled}
+                onClick={bankaiPress}
               />
             </>
           ) : (
