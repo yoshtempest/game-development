@@ -1,0 +1,24 @@
+
+.cardEncountered {
+  border-left-color: var(--success);
+}
+
+.cardUnknown {
+  opacity: 0.6;
+}
+
+.unknownName {
+  color: var(--text-hint);
+  font-style: italic;
+  font-weight: bold;
+}
+
+.classBadge {
+  font-size: var(--fs-11);
+  font-weight: bold;
+}
+
+.killCount {
+  color: var(--text-muted);
+  font-size: var(--fs-11);
+}

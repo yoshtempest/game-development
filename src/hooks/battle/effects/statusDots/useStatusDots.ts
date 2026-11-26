@@ -11,6 +11,9 @@ import {
 import { DOT_TICK_INTERVAL_MS } from "@/gameRules/battle/status/statusEffects";
 import { HONORED_ONE_REGEN_PER_SECOND } from "@/gameRules/battle/cursedEnergy";
 
+/** Dano por tick do sangramento quando quem aplicou não definiu outro valor. */
+const BASE_BLEED_TICK = 2;
+
 export function useStatusDots({
   honoredRegenActive,
   battleManaRef,
@@ -58,12 +61,20 @@ export function useStatusDots({
       setSummons((prev) =>
         prev.map((s) =>
           (bleedMap[s.id] ?? 0) > Date.now()
-            ? { ...s, hp: Math.max(0, s.hp - 2) }
+            ? {
+                ...s,
+                hp: Math.max(0, s.hp - (s.bleedTickDamage ?? BASE_BLEED_TICK)),
+              }
             : s,
         ),
       );
       for (const s of bleeding) {
-        spawnDamageRef.current?.(2, s.x, s.y, "bleed");
+        spawnDamageRef.current?.(
+          s.bleedTickDamage ?? BASE_BLEED_TICK,
+          s.x,
+          s.y,
+          "bleed",
+        );
       }
 
       const now = Date.now();

@@ -6,24 +6,3 @@
 .button:hover:not(:disabled) {
   background: var(--red-deep-60);
 }
-
-.title {
-  position: relative;
-  font-size: var(--fs-13);
-  font-weight: bold;
-  text-shadow: 0 0 var(--size-4) var(--background-color);
-}
-
-.value {
-  position: relative;
-  font-size: var(--fs-18);
-  font-weight: bold;
-  color: var(--red-rose);
-}
-
-.heal {
-  position: relative;
-  font-size: var(--fs-13);
-  font-weight: bold;
-  color: var(--rose-mist);
-}

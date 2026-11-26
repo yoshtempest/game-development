@@ -10,10 +10,7 @@ import { clampX } from "@/gameRules/movement/clampX";
 import { combatService } from "@/services/combat";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
-import {
-  applyVampirism,
-  getVampirismPercent,
-} from "@/gameRules/battle/vampirism/applyVampirism";
+import { accumulateVampirism } from "@/gameRules/battle/vampirism/accumulateVampirism";
 import { getAbilityDamageType } from "@/data/characters/abilities";
 
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
@@ -44,14 +41,20 @@ const MAIN_TARGET_KEY = "main-npc";
 /**
  * Laser da Forma Vastolord do marshadow (uma vez por forma): o `press` consome o
  * stack e abre o `SpecialIntro` (background `vastolordForm/habilities/laser/`
- * por 1s em slow-motion, com o personagem travado); ao fim do intro o
- * personagem troca para o sprite `laser.svg` e um feixe (`vastolordLaser.svg`)
+ * por 1s em slow-motion, com o personagem travado na pose de carga — estado
+ * `preLaser`, sprite `preLaser.svg`); ao fim do intro o personagem troca para
+ * o sprite de disparo (`laser`, `laser.svg`) e um feixe (`vastolordLaser.svg`)
  * sai até a ponta do mapa na direção que ele mira, por 3s, centralizado na
  * imagem do personagem (centro do feixe alinhado ao centro vertical do sprite
  * renderizado). A cada 20ms, todo inimigo dentro da faixa do feixe sofre 1% do
  * dano base do personagem e é empurrado 10px para longe do jogador (parando
  * nas bordas via BATTLE_LIMITS). O jogador fica travado no disparo durante os
  * 3s; a habilidade só pode ser usada UMA vez por forma.
+ *
+ * Animação em duas poses (issue #448): sem o `preLaser` o personagem ficava no
+ * idle durante o intro e o feixe saía "do nada". Com o intro desligado na
+ * config o `fire` roda na mesma passada do `press`, então a pose de carga é
+ * sobrescrita antes de renderizar — o jogador pediu para pular a preparação.
  *
  * Pausa (menu aberto): o tick de dano não roda, entrada e fade-out são timers
  * pausáveis e o início do disparo (`shotStartRef`) recebe de volta o tempo
@@ -102,14 +105,8 @@ export function useVastolordLaser({
    */
   const shownAccRef = useRef(new Map<string, number>());
   /**
-   * Dano mitigado acumulado ainda não convertido em cura.
-   *
-   * Cada tick tira uma fração do dano base (1%), e `applyVampirism` arredonda a
-   * cura: com 10% de vampirismo universal, um tick de 0.5 de dano rendia
-   * `Math.round(0.05) === 0`. Chamado por tick, o feixe inteiro nunca curava
-   * (issue #398). O dano é somado aqui e só vai ao funil quando o lote já rende
-   * pelo menos 1 de cura; a sobra (o que o arredondamento não pagou) continua
-   * no acumulador para o próximo lote.
+   * Dano mitigado ainda não convertido em cura: cada tick tira 1% do dano base,
+   * pouco demais para curar sozinho (issue #398). Ver `accumulateVampirism`.
    */
   const vampDamageAccRef = useRef(0);
   const tickTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -251,28 +248,18 @@ export function useVastolordLaser({
 
       /**
        * Converte o dano do tick em cura pelo funil único (`applyVampirism`,
-       * fonte `other` = só o universal, que a Forma Vastolord injeta), mas em
-       * lote: ver `vampDamageAccRef`.
+       * fonte `other` = só o universal, que a Forma Vastolord injeta), em lote
+       * via `accumulateVampirism`.
        */
       const healFromBeam = (dealt: number) => {
-        const percent = getVampirismPercent("other", vampirism);
-        if (percent <= 0) return;
-        const pending = vampDamageAccRef.current + dealt;
-        if ((pending * percent) / 100 < 1) {
-          vampDamageAccRef.current = pending;
-          return;
-        }
-        const healed = applyVampirism({
-          damage: pending,
+        vampDamageAccRef.current = accumulateVampirism({
+          pending: vampDamageAccRef.current,
+          damage: dealt,
           source: "other",
           vampirism,
           playerMaxHp,
           setPlayerHP,
         });
-        vampDamageAccRef.current = Math.max(
-          0,
-          pending - (healed * 100) / percent,
-        );
       };
 
       // NPC principal: dano + empurrão para longe do jogador (clampado).
@@ -379,6 +366,11 @@ export function useVastolordLaser({
     // stack foi gasto no `press`, mas o feixe não sai.
     if (shouldCancelRef.current()) {
       activeRef.current = false;
+      setPlayer((pp) =>
+        pp.mode !== "battle" || pp.state !== "preLaser"
+          ? pp
+          : { ...pp, state: "idle" },
+      );
       return;
     }
     rawAccRef.current = 0;
@@ -435,6 +427,9 @@ export function useVastolordLaser({
     // A stack é consumida no ato: o intro já conta como o custo, mesmo se o
     // feixe só sair um segundo depois.
     setLaserStacks((s) => Math.max(0, s - 1));
+    setPlayer((pp) =>
+      pp.mode !== "battle" ? pp : { ...pp, state: "preLaser" },
+    );
     // O lock do intro segura o personagem antes do feixe (senão ele andaria/
     // viraria de lado durante o slow-motion e o feixe sairia na direção errada).
     // Com o intro desligado na config não há nada para segurar: o feixe sai
@@ -463,6 +458,7 @@ export function useVastolordLaser({
     freezeActionsUntilRef,
     fireRef,
     onUsedRef,
+    setPlayer,
     showAbilityIntro,
     startSpecialIntro,
     usableRef,

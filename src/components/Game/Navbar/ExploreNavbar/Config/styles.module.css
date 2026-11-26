@@ -3,12 +3,18 @@
   flex-direction: row;
   top: 5%;
   right: 0;
-  gap: var(--size-38);
+  gap: var(--size-20);
   width: calc(var(--game-viewport-width) - var(--size-6));
   height: var(--vh-90);
   align-items: flex-start;
   justify-content: center;
   border-radius: var(--size-5);
+}
+
+/** Separadores verticais entre as três colunas do painel. */
+.container > * + * {
+  padding-left: var(--size-20);
+  border-left: var(--size-1) solid rgba(34, 211, 238, 0.14);
 }
 
 .flexColumn {
@@ -20,6 +26,7 @@
 .flexRow {
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: var(--vw-0-2);
 }
 
@@ -31,8 +38,7 @@
 }
 
 .marginTop {
-  margin-top: 3%;
-  margin-bottom: 2%;
+  margin: 0 0 var(--size-8);
 }
 
 .compactContainer {
@@ -48,7 +54,7 @@
 
   display: flex;
   align-items: center;
-  gap: var(--size-4);
+  gap: var(--size-8);
 }
 
 .triangle {
@@ -60,7 +66,8 @@
   align-items: center;
   justify-content: center;
 
-  color: var(--accent-color);
+  color: var(--nav-panel-line);
+  filter: drop-shadow(0 0 var(--size-4) rgba(34, 211, 238, 0.45));
   cursor: pointer;
 }
 
@@ -79,43 +86,87 @@
   }
 }
 
+/**
+ * Seletor hexagonal: o degradê ciano fica na borda e um ::before recuado
+ * desenha o preenchimento azul, então os dois acompanham o clip-path.
+ */
 .item {
-  display: flex;
-  justify-content: center;
   position: relative;
-  padding: var(--fs-8) var(--smaller);
-  border-radius: var(--size-5);
-  border: var(--size-2) solid var(--primary-color);
+  z-index: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--fs-8) var(--small);
   min-width: var(--size-77);
+  background: linear-gradient(
+    90deg,
+    var(--nav-panel-line),
+    #1e40af 50%,
+    var(--nav-panel-line)
+  );
+  clip-path: polygon(
+    var(--size-16) 0,
+    calc(100% - var(--size-16)) 0,
+    100% 50%,
+    calc(100% - var(--size-16)) 100%,
+    var(--size-16) 100%,
+    0 50%
+  );
+}
+
+.item::before {
+  content: "";
+  position: absolute;
+  inset: var(--size-2);
+  z-index: -1;
+  background: linear-gradient(180deg, #0b2a55, #061630);
+  clip-path: polygon(
+    var(--size-16) 0,
+    calc(100% - var(--size-16)) 0,
+    100% 50%,
+    calc(100% - var(--size-16)) 100%,
+    var(--size-16) 100%,
+    0 50%
+  );
 }
 
 .selected {
-  outline: var(--size-2) solid var(--text-color);
-  background-color: var(--primary-color);
+  filter: drop-shadow(0 0 var(--size-6) rgba(34, 211, 238, 0.75));
+}
+
+.item.selected::before {
+  background: linear-gradient(180deg, #0a5fd0, #063a9e);
 }
 
 .active {
-  border-color: var(--accent-color);
+  color: var(--text-color);
 }
 
 .cursor {
   position: absolute;
-  top: calc(-1 * var(--size-5));
+  top: calc(-1 * var(--size-12));
   left: 50%;
   transform: translateX(-50%);
+  color: var(--nav-panel-line);
+  font-size: var(--fs-14);
 }
 
 .volumeContainer {
   display: flex;
   flex-direction: column;
   position: relative;
+  gap: var(--fs-8);
 }
 
 .volumeBar {
+  position: relative;
   width: var(--size-200);
   height: var(--smaller);
-  border: var(--size-2) solid var(--primary-color);
-  border-radius: var(--size-4);
+  border: var(--size-1) solid var(--nav-panel-line-soft);
+  border-radius: var(--radius-pill);
+  background: rgba(3, 10, 24, 0.8);
+  box-shadow: inset 0 0 var(--size-6) rgba(0, 0, 0, 0.5);
 }
 
 .volumeButton {
@@ -123,21 +174,80 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  color: inherit;
+  color: var(--nav-panel-line);
   display: flex;
   align-items: center;
 }
 
+.volumeButton:hover {
+  color: var(--text-color);
+  filter: drop-shadow(0 0 var(--size-4) rgba(34, 211, 238, 0.8));
+}
+
 .volumeFill {
+  position: relative;
   height: 100%;
-  background: var(--background-color);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, #0ea5e9, var(--nav-panel-line));
+  box-shadow: 0 0 var(--size-8) rgba(34, 211, 238, 0.45);
+}
+
+/** Ponto de ajuste na ponta da barra, como no mockup. */
+.volumeFill::after {
+  content: "";
+  position: absolute;
+  right: calc(-1 * var(--size-6));
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--smaller);
+  height: var(--smaller);
+  border-radius: 50%;
+  background: #e0f7ff;
+  border: var(--size-2) solid var(--nav-panel-line);
+  box-shadow: 0 0 var(--size-8) rgba(34, 211, 238, 0.8);
 }
 
 .tutorialButton {
   position: relative;
   text-wrap: nowrap;
   padding: var(--fs-8) var(--smaller);
-  border-radius: var(--size-4);
+  border-radius: var(--size-5);
   text-align: center;
-  border: var(--size-2) solid var(--primary-color);
+  color: var(--text-color);
+  background: linear-gradient(
+    180deg,
+    rgba(11, 32, 64, 0.75),
+    rgba(5, 16, 36, 0.85)
+  );
+  border: var(--size-1) solid var(--nav-panel-line-soft);
+  box-shadow: inset 0 0 var(--size-12) rgba(0, 140, 255, 0.08);
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+
+.tutorialButton:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(16, 52, 96, 0.9),
+    rgba(7, 24, 52, 0.95)
+  );
+  border-color: var(--nav-panel-line);
+}
+
+.tutorialButton.selected {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 95, 208, 0.55),
+    rgba(6, 40, 110, 0.7)
+  );
+  border-color: var(--nav-panel-line);
+}
+
+.languageHint {
+  max-width: 100%;
+  text-wrap: wrap;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-14);
 }

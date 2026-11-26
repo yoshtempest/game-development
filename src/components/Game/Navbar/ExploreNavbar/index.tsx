@@ -4,6 +4,8 @@ import type { AnimationEvent, ComponentType, LazyExoticComponent } from "react";
 import styles from "./styles.module.css";
 import { useNavbarMenu } from "@/hooks/menu/useNavbar";
 import { useNavbar } from "@/contexts/NavbarContext";
+import { NavbarContainer } from "@/components/Game/Navbar/NavbarContainer";
+import { hideBrokenImage } from "@/utils/hideBrokenImage";
 import type { MenuScreen } from "@/utils/types/player/navbar";
 
 function lazyNamed<K extends string>(
@@ -17,7 +19,8 @@ const SCREENS: Record<MenuScreen, LazyExoticComponent<ComponentType>> = {
   player: lazyNamed(() => import("./Player"), "Player"),
   character: lazyNamed(() => import("./Character"), "Character"),
   status: lazyNamed(() => import("./Status"), "Status"),
-  equipment: lazyNamed(() => import("./Equipment"), "Equipment"),
+  // Atalho interno: mesma Mochila, entrando direto na aba de equipamentos.
+  equipment: lazyNamed(() => import("./Inventory"), "InventoryEquipment"),
   inventory: lazyNamed(() => import("./Inventory"), "Inventory"),
   missions: lazyNamed(() => import("./Missions"), "Mission"),
   bestiary: lazyNamed(() => import("./Bestiary"), "DeliciaDex"),
@@ -57,6 +60,7 @@ export function Navbar() {
                 className={styles.icon}
                 src={item.icon}
                 alt=""
+                onError={hideBrokenImage}
               />
               {item.label}
             </li>
@@ -70,7 +74,9 @@ export function Navbar() {
 
   return (
     <Suspense fallback={null}>
-      <Screen />
+      <NavbarContainer>
+        <Screen />
+      </NavbarContainer>
     </Suspense>
   );
 }

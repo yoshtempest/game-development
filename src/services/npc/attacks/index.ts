@@ -25,6 +25,7 @@ import { JhowsimarAttack } from "./jhowsimar";
 import { LeviathanAttack } from "./leviathan";
 import { LupitaAttack } from "./lupita";
 import { MadameAttack } from "./madame";
+import { MahoragaAttack } from "./mahoraga";
 import { ManimAttack } from "./manim";
 import { MaugreloAttack } from "./maugrelo";
 import { MauraoAttack } from "./maurao";
@@ -33,6 +34,7 @@ import { MuyMachoAttack } from "./muyMacho";
 import { NecromancerAttack } from "./necromancer";
 import { NeimitoAttack } from "./neimito";
 import { PiupiuAttack } from "./piupiu";
+import { NetaliAttack } from "./netali";
 import { PlanetarySistersAttack } from "./planetarySisters";
 import { RiceAttack } from "./rice";
 import { SlimitaAttack } from "./slimita";
@@ -43,6 +45,7 @@ import { TheBlackKnightAttack } from "./theBlackKnight";
 import { TheChaosCreatorAttack } from "./theChaosCreator";
 import { TheDevourerOfWorldsAttack } from "./theDevourerOfWorlds";
 import { TheFirstNightmareAttack } from "./theFirstNightmare";
+import { RickPrimeAttack } from "./rickPrime";
 import { TheMasterPieceAttack } from "./theMasterPiece";
 import { TheStrongestManUnderTheHeavensAttack } from "./theStrongestManUnderTheHeavens";
 import { TimAttack } from "./tim";
@@ -76,7 +79,8 @@ export const npcAttacks = {
   denis: new DenisAttack("denis"),
   srGuaxinim: new SrGuaxinimAttack(),
   neimito: new NeimitoAttack("neimito"),
-  planetarySisters: new PlanetarySistersAttack("planetarySisters"),
+  planetarySisters: new PlanetarySistersAttack(),
+  netali: new NetaliAttack(),
   manim: new ManimAttack("manim"),
   maurao: new MauraoAttack(),
   maugrelo: new MaugreloAttack(),
@@ -121,6 +125,9 @@ export const npcAttacks = {
   hungryPig: new HungryPigAttack("hungryPig"),
   technoblade: new TechnobladeAttack("technoblade"),
 
+  /* Shibuya (evento diário) */
+  mahoraga: new MahoragaAttack("mahoraga"),
+
   /* Training */
   dummy: new DummyAttack(),
 
@@ -136,6 +143,9 @@ export const npcAttacks = {
   theFirstNightmare: new TheFirstNightmareAttack("theFirstNightmare"),
   ouroboros: new OuroborosAttack("ouroboros"),
   evilMorty: new EvilMortyAttack(),
+
+  /* Conselho dos vilões */
+  rickPrime: new RickPrimeAttack("rickPrime"),
 } satisfies Record<NpcType, NpcAttack>;
 
 /**

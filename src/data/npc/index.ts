@@ -1,6 +1,7 @@
 export * from "./bossScales";
 export * from "./cards";
 export * from "./class";
+export * from "./companions";
 export * from "./difficultyLabels";
 export * from "./displayNames";
 export * from "./levels";
@@ -8,3 +9,5 @@ export * from "./mauraCalcles";
 export * from "./npc";
 export * from "./statusMultipliers";
 export * from "./phaseCounts";
+export * from "./summonShouts";
+export * from "./pushedSprites";

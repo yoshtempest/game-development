@@ -3,7 +3,10 @@ import type { CharacterProgress } from "@/data/characters/defaultProgress";
 import type { ElementType } from "@/utils/types/battle/element";
 import type { OnBeforeNpcHit } from "@/hooks/battle/npc/blocking/useBlocking";
 import type { BattleBehavior } from "@/utils/types/player/behavior";
-import type { DamageArmor } from "@/utils/types/battle/damageKind";
+import type {
+  DamageArmor,
+  DamageKind,
+} from "@/utils/types/battle/damageKind";
 
 import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
 
@@ -57,7 +60,7 @@ export type Props = {
   /** Dispara quando o Punho Divergente é consumido pelo golpe. */
   onDivergentFistConsumedRef?: React.RefObject<() => void>;
   onBeforeNpcHitRef?: React.RefObject<OnBeforeNpcHit>;
-  onDamageDealtRef?: React.RefObject<(amount: number) => void>;
+  onDamageDealtRef?: React.RefObject<(amount: number, kind?: DamageKind) => void>;
   onAttackRef?: React.RefObject<() => void>;
   onSpecialRef?: React.RefObject<() => void>;
   onKokusenRef?: React.RefObject<() => void>;

@@ -52,7 +52,7 @@ export function PlayerRewards({
             <div className={styles.questInfo}>
               <span className={styles.questLabel}>{r.label}</span>
               <span className={styles.questProgress}>
-                {r.current}/{r.requirement}
+                {r.current.toFixed(0)}/{r.requirement}
               </span>
             </div>
             <div className={styles.questAction}>
@@ -101,7 +101,7 @@ export function PlayerRewards({
                   <div className={styles.questInfo}>
                     <span className={styles.questLabel}>{r.label}</span>
                     <span className={styles.questProgress}>
-                      {r.current}/{r.requirement}
+                      {r.current.toFixed(0)}/{r.requirement}
                     </span>
                   </div>
                   <div className={styles.questAction}>

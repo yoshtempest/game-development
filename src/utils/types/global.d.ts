@@ -18,6 +18,7 @@ import type {
 import type { Condition } from "@/utils/types/maps/conditions";
 import type { Character as CharacterDef } from "@/utils/types/player/player";
 import type { DamageKind as DamageKindDef } from "@/utils/types/battle/damageKind";
+import type { NewPlayerStatus as NewPlayerStatusDef } from "@/utils/types/battle/status";
 
 export {};
 
@@ -302,6 +303,18 @@ declare global {
     damageType?: DamageKindDef;
   };
 
+  /**
+   * Status que o projétil pode aplicar no player ao acertar. Mora no dado do
+   * projétil (e não no NPC) porque o acerto é resolvido longe da IA, no loop
+   * de projéteis — só o projétil sabe que acertou. A rolagem da chance é feita
+   * uma vez por acerto, e a aplicação passa por `applyPlayerStatus`.
+   */
+  type ProjectileOnHitStatus = {
+    status: NewPlayerStatusDef;
+    /** Probabilidade (0–1) de aplicar o status a cada acerto. */
+    chance: number;
+  };
+
   type ProjectileCommon = ProjectileHp & {
     variant: "common";
     x: number;
@@ -315,6 +328,7 @@ declare global {
     state: "walk" | "idle";
     canCrouchDodge?: boolean;
     landsOnGround?: boolean;
+    onHitStatus?: ProjectileOnHitStatus;
   };
 
   type ProjectilePull = ProjectileHp & {
@@ -448,8 +462,12 @@ declare global {
    * vida máxima dos inimigos a cada 50ms.
    */
   type PlayerNatsukiDomainState = "rioiki";
-  /** Laser da Forma Vastolord do marshadow. */
-  type PlayerLaserState = "laser";
+  /**
+   * Laser da Forma Vastolord do marshadow em duas poses: `preLaser` (sprite
+   * `preLaser.svg`) segura o personagem durante o intro/carga, e `laser`
+   * (sprite `laser.svg`) é a pose do disparo enquanto o feixe está ativo.
+   */
+  type PlayerLaserState = "preLaser" | "laser";
   /** "Gran Rey Cero" do marshadow. */
   type PlayerGranReyCeroState = "granReyCero";
   /**
@@ -534,6 +552,14 @@ declare global {
     | "withStaff"
     | "withPocketKnife";
 
+  /**
+   * Animação de exploração escolhida no menu "Animações". É estado de pose,
+   * não `PlayerState`: o `PlayerState` é da batalha e tem `animationFlow`
+   * exaustivo, enquanto a animação de exploração só troca o sprite parado e
+   * some no primeiro passo.
+   */
+  type ExploreEmote = "sitting";
+
   type Player = {
     gridX: number;
     gridY: number;
@@ -549,9 +575,23 @@ declare global {
     mode: PlayerMode;
     movementSpeed: number;
     hasPeru?: boolean;
+    /**
+     * Escolha do jogador de descer da montaria (#513). Fica separado de
+     * `hasPeru` porque `hasPeru` é derivado (pet de montaria equipado E
+     * montado): trocar de pet não pode apagar a preferência.
+     */
+    petDismounted?: boolean;
     moving?: boolean;
+    /** Ausente = em pé. Qualquer tentativa de andar ou entrar em batalha limpa. */
+    emote?: ExploreEmote;
     machineGamaControl?: boolean;
     grabbedUntil?: number;
+    /**
+     * Postura do combo básico genérico (índice em `BASIC_COMBO_STEPS`) do
+     * último básico iniciado. Só existe para o sprite: o dano lê o ref do
+     * `useBasicCombo`, que é atualizado no mesmo press.
+     */
+    basicComboStep?: number;
     bleedUntil: number;
     burnUntil: number;
     poisonUntil: number;
@@ -659,6 +699,7 @@ declare global {
     | "charge"
     | "reflect"
     | "miss"
+    | "blind"
     | "bleed"
     | "burn"
     | "poison"
@@ -734,7 +775,8 @@ declare global {
     x: number;
     y: number;
     direction: NPCDirection;
-    state: "idle" | "walk" | "run" | "attack";
+    /** `debuff`: pose do grito de summon (`SUMMON_SHOUTS`, ex.: "VERB TO BE" da Netali). */
+    state: "idle" | "walk" | "run" | "attack" | "debuff";
     hp: number;
     maxHp: number;
     isDying: boolean;
@@ -749,6 +791,14 @@ declare global {
      * não reduzir, e os golpes de área que varrem summons.
      */
     armor: DamageArmor;
+    /** Total de knockbacks sofridos; dispara `pushed.svg` (`usePushedPose`). */
+    pushCount?: number;
+    /**
+     * Dano por tick do sangramento ativo neste summon. Fica no próprio summon
+     * porque quem aplica (pet hungryDeath) escala o valor com as estrelas;
+     * ausente = sangramento padrão.
+     */
+    bleedTickDamage?: number;
   };
 
   export type SoundId =

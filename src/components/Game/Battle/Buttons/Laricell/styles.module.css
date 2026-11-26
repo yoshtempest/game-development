@@ -1,0 +1,10 @@
+/* Brincos e Mordida não têm arte de fundo própria (#517): o rótulo curto vai
+   por `renderExtra`, porque o `AbilityButton` só renderiza `label` no tipo hold. */
+.shortLabel {
+  color: var(--white);
+  font-family: "Press Start 2P", monospace;
+  font-size: var(--fs-10);
+  line-height: 1.2;
+  text-align: center;
+  pointer-events: none;
+}

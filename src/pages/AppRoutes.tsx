@@ -38,7 +38,6 @@ const BattleTesterPage = lazyLoad(() => import("@/pages/BattleTester"));
 const ReplayPage = lazyLoad(() => import("@/pages/Replay"));
 
 const Landing = lazyLoad(() => import("@/pages/Landing"));
-const Online = lazyLoad(() => import("@/pages/Online"));
 const Login = lazyLoad(() => import("@/pages/Login"));
 const Register = lazyLoad(() => import("@/pages/Register"));
 
@@ -60,7 +59,6 @@ const nonBattlePages = [
   CafeteriaPage,
   FootballCourtPage,
   BrodiClassPage,
-  Online,
 ];
 
 export function AppRoutes() {
@@ -70,7 +68,6 @@ export function AppRoutes() {
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path="/landing" element={<Landing />} />
-          <Route path="/online" element={<Online />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
@@ -161,10 +158,12 @@ export function AppRoutes() {
             <Route path="battle/vandinhafragment" element={<BattlePage />} />
             <Route path="battle/truevandinha" element={<BattlePage />} />
             <Route path="battle/evilmorty" element={<BattlePage />} />
+            <Route path="battle/mahoraga" element={<BattlePage />} />
             <Route path="battle/jhowsimar" element={<BattlePage />} />
             <Route path="battle/piupiu" element={<BattlePage />} />
             <Route path="battle/rice" element={<BattlePage />} />
             <Route path="battle/goat" element={<BattlePage />} />
+            <Route path="battle/rickprime" element={<BattlePage />} />
 
             <Route
               path="/battle/tester/:npcId"

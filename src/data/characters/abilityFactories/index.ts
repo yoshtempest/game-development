@@ -4,10 +4,20 @@ import type { ActiveAbility } from "@/utils/types/player/abilities";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import {
   KILLER_QUEEN_COOLDOWN_MS,
-  TOTAL_FREEZE_MS,
 } from "@/data/characters/srGuaxinim/srGuaxinim";
-import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/laricell/laricell";
+import {
+  STACK_EXPLOSION_COOLDOWN_MS,
+  LaricellBiteConstants,
+  LaricellEarringsConstants,
+  LaricellIceWallConstants,
+  LaricellSmokeConstants,
+  LaricellVampireConstants,
+} from "@/data/characters/laricell/laricell";
 import { YVEL_WEAPONS } from "@/data/characters/yvel/yvelWeapons";
+import {
+  DRIKA_ARMS,
+  DRIKA_SIGILO_HP_COST_RATIO,
+} from "@/data/characters/drika/drikaArms";
 import { BabidiBombDropConstants } from "@/data/characters/babidi";
 import {
   BLINK_ENERGY_COST,
@@ -34,14 +44,14 @@ export function createActiveAbility(
 
 /**
  * Killer Queen do SrGuaxinim: o special dele virou habilidade própria. A coreografia
- * (time-freeze, bombas e explosão) vive em `useSrGuaxinimKillerQueen`; aqui ficam só
+ * (marcação, bombas e explosão, sem parar o tempo desde a #521) vive em `useSrGuaxinimKillerQueen`; aqui ficam só
  * nome, descrição e cooldown, como em qualquer ativa.
  */
 export function killerQueenAbility(): ActiveAbility {
   return createActiveAbility({
     id: "killerQueen",
     name: "Killer Queen",
-    description: `Congela o tempo por ${TOTAL_FREEZE_MS / 1000}s, marca cada inimigo e projétil destrutível com uma bomba e detona todos em área. Cooldown de ${KILLER_QUEEN_COOLDOWN_MS / 1000}s.`,
+    description: `Invoca a Killer Queen, que marca cada inimigo e projétil destrutível com uma bomba e detona todos em área — o tempo não para e você pode se mover enquanto ela trabalha. Cooldown de ${KILLER_QUEEN_COOLDOWN_MS / 1000}s.`,
     cooldownMs: KILLER_QUEEN_COOLDOWN_MS,
   });
 }
@@ -57,6 +67,62 @@ export function stackExplosionAbility(): ActiveAbility {
     name: "Explosão de Stacks",
     description: `Consome os stacks acumulados pelos ataques básicos numa explosão (5 de dano por stack). Cooldown de ${STACK_EXPLOSION_COOLDOWN_MS / 1000}s.`,
     cooldownMs: STACK_EXPLOSION_COOLDOWN_MS,
+  });
+}
+
+/** Parede de Gelo da Laricell (A1): barreira que bloqueia NPC e projéteis. */
+export function laricellIceWallAbility(): ActiveAbility {
+  return createActiveAbility({
+    id: "iceWall",
+    name: "Parede de Gelo",
+    description: `Ergue uma parede de gelo à frente por ${LaricellIceWallConstants.DURATION_MS / 1000}s: inimigos não atravessam e projéteis inimigos se partem nela. Cooldown de ${LaricellIceWallConstants.COOLDOWN_MS / 1000}s.`,
+    cooldownMs: LaricellIceWallConstants.COOLDOWN_MS,
+    requires: "indisponível na Forma Vampira",
+  });
+}
+
+/** Brincos Explosivos da Laricell (A2): explosão em área com pavio. */
+export function laricellEarringsAbility(): ActiveAbility {
+  return createActiveAbility({
+    id: "explodingEarrings",
+    name: "Brincos Explosivos",
+    description: `Arremessa os brincos no inimigo; ${LaricellEarringsConstants.FUSE_MS / 1000}s depois eles explodem em área (${LaricellEarringsConstants.MULTIPLIER}x de dano mágico). Cooldown de ${LaricellEarringsConstants.COOLDOWN_MS / 1000}s.`,
+    cooldownMs: LaricellEarringsConstants.COOLDOWN_MS,
+    damageType: "magical",
+    requires: "indisponível na Forma Vampira",
+  });
+}
+
+/** Bomba de Fumaça da Laricell (A3): cega os inimigos. */
+export function laricellSmokeBombAbility(): ActiveAbility {
+  return createActiveAbility({
+    id: "smokeBomb",
+    name: "Bomba de Fumaça",
+    description: `Cega os inimigos por ${LaricellSmokeConstants.DURATION_MS / 1000}s: cada golpe deles tem ${LaricellSmokeConstants.MISS_CHANCE * 100}% de chance de errar. Cooldown de ${LaricellSmokeConstants.COOLDOWN_MS / 1000}s.`,
+    cooldownMs: LaricellSmokeConstants.COOLDOWN_MS,
+    requires: "indisponível na Forma Vampira",
+  });
+}
+
+/** Forma Vampira da Laricell (A4): troca A1–A3 pela Mordida e ganha vampirismo. */
+export function laricellVampireFormAbility(): ActiveAbility {
+  return createActiveAbility({
+    id: "vampireForm",
+    name: "Forma Vampira",
+    description: `Desperta a linhagem vampira por ${LaricellVampireConstants.DURATION_MS / 1000}s: +${LaricellVampireConstants.UNIVERSAL_VAMPIRISM}% de vampirismo universal e as habilidades viram a Mordida. Cooldown de ${LaricellVampireConstants.COOLDOWN_MS / 1000}s.`,
+    cooldownMs: LaricellVampireConstants.COOLDOWN_MS,
+  });
+}
+
+/** Mordida da Laricell: só existe enquanto a Forma Vampira dura. */
+export function laricellBiteAbility(): ActiveAbility {
+  return createActiveAbility({
+    id: "vampireBite",
+    name: "Mordida",
+    description: `Morde o inimigo à frente (${LaricellBiteConstants.MULTIPLIER}x de dano mágico); a cura vem do vampirismo da forma. Cooldown de ${LaricellBiteConstants.COOLDOWN_MS / 1000}s.`,
+    cooldownMs: LaricellBiteConstants.COOLDOWN_MS,
+    damageType: "magical",
+    requires: "Forma Vampira ativa",
   });
 }
 
@@ -101,13 +167,12 @@ export function hakaiAbility(characterId: CharacterId): ActiveAbility {
   });
 }
 
-/** Sigilo da Drika: troca o braço em uso, pagando 5% da vida atual. */
+/** Sigilo da Drika: troca o braço em uso, pagando parte da vida atual. */
 export function sigiloAbility(): ActiveAbility {
   return createActiveAbility({
     id: "sigilo",
     name: "Sigilo",
-    description:
-      "Troca o braço em uso, pagando 5% da vida atual. Escolha entre 4 braços.",
+    description: `Morde o dedo e desenha o pentagrama com sangue: troca o braço em uso, pagando ${Math.round(DRIKA_SIGILO_HP_COST_RATIO * 100)}% da vida atual. Escolha entre ${DRIKA_ARMS.length} braços.`,
   });
 }
 

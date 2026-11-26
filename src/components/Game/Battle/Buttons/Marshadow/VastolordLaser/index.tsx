@@ -27,22 +27,17 @@ export function VastolordLaserButton({
   onClick,
   charges = 0,
 }: Props) {
-  const imageUrl = playerProjectilePath("vastolordLaser.svg");
 
   return (
     <AbilityButton
       type="custom"
       customClasses={laserClasses}
-      label="VASTOLORD LASER"
+      // label="VASTOLORD LASER"
       disabled={disabled}
       onClick={onClick}
       extraProps={{ charges }}
+      image={playerProjectilePath("vastolordLaser.svg")}
       title="Laser Vastolord: feixe que cruza o mapa por 3s causando 1% do dano base a cada 20ms de contato e empurrando o inimigo. Cada inimigo derrotado na forma concede +1 stack de laser."
-      style={{
-        backgroundImage: `url("${imageUrl}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
     />
   );
 }

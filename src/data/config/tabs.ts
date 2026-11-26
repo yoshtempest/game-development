@@ -1,9 +1,18 @@
-export type ConfigTab = "geral" | "batalha";
+import { Package, Settings, Swords } from "lucide-react";
 
-export const CONFIG_TABS: ConfigTab[] = ["geral", "batalha"];
+export type ConfigTab = "geral" | "batalha" | "conteudo";
+
+export const CONFIG_TABS: ConfigTab[] = ["geral", "batalha", "conteudo"];
 export const CONFIG_TAB_COUNT = CONFIG_TABS.length;
 
 export const CONFIG_TAB_LABELS: Record<ConfigTab, string> = {
   geral: "Geral",
   batalha: "Batalha",
+  conteudo: "Conteúdo",
+};
+
+export const TAB_ICONS = {
+  geral: Settings,
+  batalha: Swords,
+  conteudo: Package,
 };

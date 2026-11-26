@@ -1,4 +1,3 @@
-import { usePlayer } from "@/contexts/PlayerContext";
 import { useEquipment } from "@/contexts/EquipmentContext";
 import { useNavbar } from "@/contexts/NavbarContext";
 import { EQUIPMENT_SLOTS, RANK_COLORS } from "@/data/equipment/definitions";
@@ -8,9 +7,11 @@ import styles from "./styles.module.css";
 import { equipmentIconPath } from "@/utils/paths";
 import { FILTER_LABELS } from "@/utils/equipment/equipmentMenu";
 
-export function EquipmentList() {
-  const { player } = usePlayer();
-  const character = player.character;
+export function EquipmentList({
+  characterId,
+}: {
+  characterId: CharacterId;
+}) {
   const { getEquippedItem } = useEquipment();
   const { setScreen } = useNavbar();
   const { playSelect } = useMenuSFX();
@@ -48,7 +49,7 @@ export function EquipmentList() {
       </div>
       <div className={styles.equipmentGrid}>
         {EQUIPMENT_SLOTS.map((slot) => {
-          const item = getEquippedItem(character, slot);
+          const item = getEquippedItem(characterId, slot);
           return (
             <p key={slot} className={styles.fontSize}>
               <img
