@@ -435,6 +435,12 @@ declare global {
   type PlayerCrouchState = "idleCrounched" | "walkCrounched";
   /** Espera / recuperação. */
   type PlayerIdleState = "idle" | "heal";
+  /**
+   * Emote/taunt: ação sem dano que reaproveita os sprites `idle2.svg` e
+   * `idle3.svg` da pasta `idle/`. Fica em `PlayerCanActState` porque qualquer
+   * outra ação do jogador precisa interromper a pose na hora.
+   */
+  type PlayerEmoteState = "idle2" | "idle3";
   /** No ar — a gravidade está no comando. */
   type PlayerAirState = "preJump" | "jump" | "falling" | "fallingAttack";
   /** Habilidade ativa usada no ar (o windup `preAbility*` desce/segura no ar). */
@@ -528,6 +534,7 @@ declare global {
 
   type PlayerCanActState =
     | PlayerIdleState
+    | PlayerEmoteState
     | PlayerMoveState
     | PlayerCrouchState
     | PlayerAirState

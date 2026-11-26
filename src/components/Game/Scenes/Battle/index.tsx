@@ -295,6 +295,9 @@ export function BattleScene(props: Props) {
     kamehameha,
     kamehamehaPress,
     kamehamehaUsable,
+    emoteAvailable,
+    emoteUsable,
+    emotePress,
     specialIntroAbility,
     specialIntroForm,
     atomicHalo,
@@ -1199,6 +1202,9 @@ export function BattleScene(props: Props) {
           genkiDamaUsable,
           kamehamehaPress,
           kamehamehaUsable,
+          emoteAvailable,
+          emoteUsable,
+          emotePress,
         }}
         controlsDisabled={controlsDisabled}
         isBattleNavOpen={isBattleNavOpen}

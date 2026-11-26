@@ -67,6 +67,9 @@ type SceneSlice = Pick<
   | "genkiDamaUsable"
   | "kamehamehaPress"
   | "kamehamehaUsable"
+  | "emoteAvailable"
+  | "emoteUsable"
+  | "emotePress"
 >;
 
 export type Props = {
