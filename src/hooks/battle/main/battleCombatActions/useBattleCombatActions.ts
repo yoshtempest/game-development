@@ -29,6 +29,7 @@ export function useBattleCombatActions({
   npcLevel,
   progress,
   weapon,
+  equipYvelWeapon,
   summons,
   setSummons,
   giveSummonRewards,
@@ -37,6 +38,8 @@ export function useBattleCombatActions({
   ematronComboActiveRef,
   ematronComboAirActiveRef,
   ematronComboStepIndexRef,
+  basicComboActiveRef,
+  basicComboStepIndexRef,
   forcePunchRef,
   babidiFireRef,
   babidiOnHitRef,
@@ -111,6 +114,7 @@ export function useBattleCombatActions({
       onNpcPush: (targetX) =>
         npc.updateNpc({
           x: clampX(targetX),
+          pushCount: (npc.pushCount ?? 0) + 1,
         }),
       onComboAdvance: (forwardDistance, targetX) =>
         setPlayer((p) => {
@@ -133,6 +137,8 @@ export function useBattleCombatActions({
       ematronComboActiveRef,
       ematronComboAirActiveRef,
       ematronComboStepIndexRef,
+      basicComboActiveRef,
+      basicComboStepIndexRef,
       babidiFireRef,
       babidiOnHitRef,
       babidiMissileFireRef,
@@ -170,6 +176,7 @@ export function useBattleCombatActions({
     playerMaxHp: battle.playerMaxHp,
     vampirism: battle.vampirism,
     weapon,
+    equipWeapon: equipYvelWeapon,
     vastolordMultiplierRef,
   });
 

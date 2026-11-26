@@ -1,6 +1,12 @@
 import type { NavigateFunction } from "react-router";
 import { sceneBackgrounds } from "@/data/scene/background";
 import { backgroundAudioPath } from "@/utils/paths";
+import type { BattleMapConfig } from "@/utils/types/maps/battle";
+import {
+  CENTER_ROCK_MAP,
+  ROCKY_FIELD_MAP,
+  TWIN_PLATFORMS_MAP,
+} from "@/data/battle/maps";
 
 export type BattleCtx = {
   setFlag: (flag: FlagId) => void;
@@ -15,6 +21,12 @@ export type BattleConfig = {
   background: string;
   audioSrc: string;
   introAudioSrc?: string;
+  /**
+   * Pedras/plataformas da arena (`data/battle/maps.ts`). Ausente = arena
+   * plana de sempre. Só entra em battle de NPC terrestre: boss que voa,
+   * cava ou teleporta controla o próprio `y` e ignoraria o terreno.
+   */
+  map?: BattleMapConfig;
 };
 
 export function getBattleBackgroundFromRoute(route: string): string {
@@ -58,6 +70,7 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou 'Jhow Simar, o Vigia'",
     background: sceneBackgrounds.CantinaBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+    map: ROCKY_FIELD_MAP,
   },
   hellroom: {
     npcType: "maugrelo",
@@ -93,6 +106,7 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou 'Neimito, o mestre do calor'",
     background: sceneBackgrounds.FootballCourtBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+    map: CENTER_ROCK_MAP,
   },
   hallJailson: {
     npcType: "slimita",
@@ -184,6 +198,7 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou 'Jhow Simar, o Vigia'",
     background: sceneBackgrounds.CantinaBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+    map: ROCKY_FIELD_MAP,
   },
   hungryDog: {
     npcType: "hungryDog",
@@ -211,6 +226,17 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou um Bolinho de arroz!",
     background: sceneBackgrounds.CafeteriaBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+    map: TWIN_PLATFORMS_MAP,
+  },
+  manim: {
+    npcType: "manim",
+    onVictory: ({ setFlag, navigate }) => {
+      setFlag("manim");
+      void navigate(-1);
+    },
+    victoryDescription: "Você derrotou Manim, tá bom?",
+    background: sceneBackgrounds.HallCenterBattle,
+    audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
   },
   technoblade: {
     npcType: "technoblade",
@@ -220,6 +246,7 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou o rei",
     background: sceneBackgrounds.CantinaBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+    map: TWIN_PLATFORMS_MAP,
   },
   vandinha: {
     npcType: "vandinhaFragment",
@@ -254,6 +281,15 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou o Rick Tóxico",
     background: sceneBackgrounds.ToxicSwampBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+  mahoraga: {
+    npcType: "mahoraga",
+    onVictory: ({ navigate }) => {
+      void navigate(-1);
+    },
+    victoryDescription:
+      "Você exorcizou o Mahoraga antes que a roda girasse de novo",
+    background: sceneBackgrounds.CafeteriaBattle,
+    audioSrc: backgroundAudioPath("/battle/DarkSouls.m4a"),
   },
   trueVandinha: {
     npcType: "trueVandinha",
@@ -263,6 +299,23 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você encontrou a Verdadeira Vandinha",
     background: sceneBackgrounds.PcRoomBattle,
     audioSrc: backgroundAudioPath("/battle/Jojo.m4a"),
+  },
+  evilMorty: {
+    npcType: "evilMorty",
+    onVictory: ({ navigate }) => {
+      void navigate(-1);
+    },
+    victoryDescription: "Você derrotou o Evil Morty",
+    background: sceneBackgrounds.PcRoomBattle,
+    audioSrc: backgroundAudioPath("/battle/Jojo.m4a"),
+  rickPrime: {
+    npcType: "rickPrime",
+    onVictory: ({ navigate }) => {
+      void navigate(-1);
+    },
+    victoryDescription: "Rick Prime perdeu a paciência... e a luta.",
+    background: sceneBackgrounds.CombatTutorial,
+    audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
   },
 };
 
@@ -283,11 +336,15 @@ export const ROUTE_TO_BATTLE_KEY: Record<string, string> = {
   "/battle/hungryDog": "hungryDog",
   "/battle/jhowsimar": "jhowsimar",
   "/battle/piupiu": "piupiu",
+  "/battle/manim": "manim",
   "/battle/rice": "rice",
   "/battle/technoblade": "technoblade",
   "/battle/vandinhafragment": "vandinha",
   "/battle/truevandinha": "trueVandinha",
   "/battle/ricktoxico": "rickToxico",
+  "/battle/evilmorty": "evilMorty",
+  "/battle/mahoraga": "mahoraga",
   "/training": "training",
   "/battle/pvp": "pvp",
+  "/battle/rickprime": "rickPrime",
 };

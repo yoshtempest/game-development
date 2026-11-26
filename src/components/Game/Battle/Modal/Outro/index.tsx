@@ -6,18 +6,31 @@ import { useTypewriter } from "@/hooks/interaction/useTypewriter";
 import { useSettings } from "@/hooks/settings/useSetting";
 import { useGameControls } from "@/contexts/GameControlsContext";
 import { useBattleOutroSound } from "@/hooks/battle/modals/useOutroSound";
+import { getOpponentOutroResult } from "@/gameRules/battle/outro";
+import { getNpcDisplayName } from "@/data/npc/displayNames";
+import type { BattleOutroResult } from "@/utils/types/battle/outro";
+import { NpcOutroPortrait } from "./NpcPortrait";
 
 type Props = {
   character: string;
-  type: "victory" | "defeat";
+  type: BattleOutroResult;
+  /** NPC enfrentado: ganha retrato e som do lado dele, com o resultado invertido. */
+  npcType?: string;
+  isAlfa?: boolean;
   onNext?: () => void;
 };
 
-export function BattleOutro({ character, type, onNext }: Props) {
+export function BattleOutro({
+  character,
+  type,
+  npcType,
+  isAlfa = false,
+  onNext,
+}: Props) {
   const title = type === "victory" ? "Vitória" : "Derrota";
   const message = getOutroLine(character, type);
 
-  useBattleOutroSound(character, type);
+  useBattleOutroSound(character, type, npcType);
 
   const { dialogueSpeedMs } = useSettings();
   const { displayedText, isComplete, skip } = useTypewriter(
@@ -65,6 +78,14 @@ export function BattleOutro({ character, type, onNext }: Props) {
           src={playerPath(`/${character}/expressions/${type}.svg`)}
           alt={character}
         />
+        {npcType && (
+          <NpcOutroPortrait
+            key={`${npcType}-${type}`}
+            npcType={npcType}
+            result={getOpponentOutroResult(type)}
+            alt={getNpcDisplayName(npcType, isAlfa)}
+          />
+        )}
       </div>
     </div>
   );

@@ -52,6 +52,22 @@ export const NPC_STATUS_MULTIPLIERS: Partial<
   trueVandinha: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 1 },
   deise: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 0.8 },
   rickToxico: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 1 },
+  evilMorty: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 1 },
+  /**
+   * Decisão para revisar: as Irmãs Planetárias lutam juntas, então cada uma
+   * tem 70% da vida de um boss solo — somadas ainda dão mais vida que um
+   * boss, mas a luta não dobra de duração.
+   */
+  planetarySisters: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 0.7 },
+  netali: { damage: 0.9, physicalArmor: 1, magicalArmor: 1, hp: 0.7 },
+  rickPrime: { damage: 1, physicalArmor: 1, magicalArmor: 1, hp: 1 },
+  /**
+   * Super tanque: a issue #444 pede um boss de evento que aguente a janela
+   * inteira. Vida e armadura altas compensam o dano baixo; a adaptação
+   * (`gameRules/battle/mahoragaAdaptation.ts`) soma armadura por cima disto.
+   * Decisão para revisar: valores iniciais sem playtest.
+   */
+  mahoraga: { damage: 0.8, physicalArmor: 1.8, magicalArmor: 1.8, hp: 3 },
 };
 
 export function getNpcStatusMultipliers(npcType: string): NpcStatusMultipliers {

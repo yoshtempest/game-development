@@ -5,6 +5,7 @@ import type { ProjectileHitDamageFn } from "@/utils/types/battle/projectileHit";
 import type { BattleObstacle } from "@/utils/types/maps/battle";
 import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
 import type { NpcHitIntent } from "@/hooks/battle/coop/types";
+import type { BattleBarrier, NpcBlind } from "@/utils/types/battle/npcControl";
 
 export type Props = {
   playerX: number;
@@ -34,6 +35,10 @@ export type Props = {
     y: number;
   } | null>;
   honoredFleeRef?: React.RefObject<boolean>;
+  /** Barreira (Parede de Gelo): o NPC não atravessa e projéteis se partem. */
+  barrierRef?: React.RefObject<BattleBarrier | null>;
+  /** Cegueira (Bomba de Fumaça): chance de cada golpe do NPC errar. */
+  npcBlindRef?: React.RefObject<NpcBlind | null>;
   npcHpRef?: React.RefObject<number>;
   npcMaxHpRef?: React.RefObject<number>;
   npcBlockedRef?: React.RefObject<boolean>;
@@ -51,6 +56,10 @@ export type Props = {
   onProjectileMiss?: (x: number) => void;
   onStuckPaperExplode?: () => void;
   onApplyDebuff?: (status: NewPlayerStatus) => void;
+  /** Dano absoluto pelo funil `npcFixedHit` (ver `BehaviorContext.onFixedHit`). */
+  onFixedHit?: (amount: number) => void;
+  /** Derrota roteirizada: dano igual à vida máxima, sem bloqueio nem parry. */
+  onExecutePlayer?: () => void;
   /** Hit da burst do hungryKing (fase 2): 10% do dano base + push de 50px. */
   onBurstHit?: (pushDir: number) => void;
   /** Esfera do Natsuki no estado atual (para colisão com projéteis inimigos). */

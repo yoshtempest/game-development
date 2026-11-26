@@ -10,7 +10,9 @@ import { useBattleDamage } from "@/hooks/battle/main/battleDamage/useBattleDamag
 import { useBattleEntities } from "@/hooks/battle/main/battleEntities/useBattleEntities";
 import { useBattleCombatActions } from "@/hooks/battle/main/battleCombatActions/useBattleCombatActions";
 import { usePhaseTransition } from "@/hooks/battle/death/phaseTransition/usePhaseTransition";
+import { getNpcPhaseCount } from "@/data/npc";
 import { useSigilo } from "@/hooks/battle/player/characters/drika/useSigilo";
+import { useLaricellAbilities } from "@/hooks/battle/player/characters/laricell/useLaricellAbilities";
 import { useBattleSync } from "@/hooks/battle/sync/useSync";
 import { useStatusDots } from "@/hooks/battle/effects/statusDots/useStatusDots";
 import { useTrainingEffects } from "@/hooks/battle/effects/useTrainingEffects";
@@ -26,19 +28,20 @@ import { useNatsukiSpheres } from "@/hooks/battle/player/characters/natsuki/sphe
 import { useMuryokushoExpansion } from "@/hooks/battle/player/characters/natsuki/muryokushoExpansion/useMuryokushoExpansion";
 import { useHakaiExpansion } from "@/hooks/battle/player/characters/ematron/hakaiExpansion/useHakaiExpansion";
 import { useBabidiDomainExpansion } from "@/hooks/battle/player/characters/babidi/domainExpansion/useBabidiDomainExpansion";
+import { useUnlimitedBladeWorks } from "@/hooks/battle/player/characters/yvel/useUnlimitedBladeWorks";
 import { useBabidiBombDrop } from "@/hooks/battle/player/characters/babidi/bombDrop/useBombDrop";
 import { useAtomic } from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
 import { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/mugetsuExpansion/useMugetsuExpansion";
 import { useDomainExpansionBurst } from "@/hooks/battle/utilities/domainExpansionBurst/useDomainExpansionBurst";
 import { VASTOLORD_KILL_EXTEND_MS } from "@/hooks/battle/player/characters/marshadow/vastolordForm/useVastolordForm";
 import { getAbilityDamageType } from "@/data/characters/abilities";
-import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
+import { getDomainExpansion } from "@/data/characters/domainExpansions";
 import { getProjectileDestructionHpByKind } from "@/gameRules/npc/projectile/projectileHp";
 import { gainAbilityCharge, gainSpecial } from "@/gameRules/battle/special";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
 import { getWeaponEnchantment } from "@/gameRules/battle/equipment";
 import type { Enchantment } from "@/data/equipment/enchantments";
-import { CHARGE_ATTACK_MIN_LEVEL } from "@/data/battle/charge";
+import { CHARGE_ATTACK_MIN_LEVEL } from "@/data/characters/unlockLevels";
 import { KILLER_QUEEN_COOLDOWN_MS } from "@/data/characters/srGuaxinim/srGuaxinim";
 import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/laricell/laricell";
 import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
@@ -47,6 +50,8 @@ import {
   useCooldownPauseTick,
 } from "@/hooks/battle/utilities/useCooldowns";
 import { runPetSkill } from "@/gameRules/battle/petSkill/petSkill";
+import { usePetProgress } from "@/contexts/PetProgressContext";
+import { getPetAffinityMultiplier } from "@/gameRules/pets/affinity";
 import type { BabidiTarget } from "@/utils/types/character/babidi";
 import type { BattleCombatProps } from "@/hooks/battle/main/battleCore/types";
 
@@ -102,6 +107,10 @@ export function useBattleCombat({
     saveDataRef,
     npcRootedUntilRef,
     rootedSummonsUntilRef,
+    barrierRef,
+    npcBlindRef,
+    laricellVampireActive,
+    setLaricellVampireActive,
     setModeRef,
     closeInventoryRef,
     closeNavbarRef,
@@ -171,11 +180,14 @@ export function useBattleCombat({
     ematronComboActiveRef,
     ematronComboAirActiveRef,
     ematronComboStepIndexRef,
+    basicComboActiveRef,
+    basicComboStepIndexRef,
     setTimeScale,
     resetTimeScale,
     timeScaleRef,
     yvelWeapon,
     switchWeapon,
+    equipYvelWeapon,
     babidiShield,
   } = useBattleCore({
     setup,
@@ -260,14 +272,6 @@ export function useBattleCombat({
   const onUtilityAbilityUsed = useCallback(() => {
     battle.setDelicia((d) => gainSpecial(d, battle.hitsToSpecial));
   }, [battle]);
-
-  const handleWeaponSwitch = useCallback(() => {
-    const mana = battleManaRef.current;
-    if (mana && !mana.consumeMana(YVEL_WEAPON_SWITCH_MANA_COST)) return;
-    if (!switchWeapon()) return;
-    // Troca de arma é habilidade do Yvel: concede carga da Expansão.
-    onAbilityUsed();
-  }, [battleManaRef, onAbilityUsed, switchWeapon]);
 
   const handleSigiloSelect = useCallback(
     (arm: string) => {
@@ -371,6 +375,7 @@ export function useBattleCombat({
     npcLevel,
     progress,
     weapon: yvelWeapon,
+    equipYvelWeapon,
     summons,
     setSummons,
     giveSummonRewards,
@@ -379,6 +384,8 @@ export function useBattleCombat({
     ematronComboActiveRef,
     ematronComboAirActiveRef,
     ematronComboStepIndexRef,
+    basicComboActiveRef,
+    basicComboStepIndexRef,
     forcePunchRef,
     babidiFireRef,
     babidiOnHitRef,
@@ -403,11 +410,18 @@ export function useBattleCombat({
   // O projétil especial (esfera do natsuki) dispara o golpe do player ao fundir.
   onFireRef.current = handleSpecialHit;
 
+  const { getPetAffinity } = usePetProgress();
+  const equippedPetInfo = getEquippedInfo(player.character, "pet");
+  const petAffinityMultiplier = getPetAffinityMultiplier(
+    equippedPetInfo ? getPetAffinity(equippedPetInfo.id).value : 0,
+  );
+
   executePetSkillRef.current = () => {
     if (!petSkillDef || battle.isEnding.current) return;
     runPetSkill(petSkillDef, {
       petLevel,
       petStars,
+      affinityMultiplier: petAffinityMultiplier,
       playerLevel,
       groundY: player.groundY,
       beginCoffinSequence,
@@ -429,6 +443,10 @@ export function useBattleCombat({
       rootedSummonsUntilRef,
       rootDurationMs,
       playSound,
+      npcEnchantUntilRef,
+      npcStaggerRef: refs.npcStaggerRef,
+      npcPetBlindRef: battle.npcPetBlindRef,
+      summonsPetBlindRef: battle.summonsPetBlindRef,
     });
   };
 
@@ -447,6 +465,7 @@ export function useBattleCombat({
   });
 
   const {
+    handleAbilityAreaHit,
     handleGenkiDamaExplode,
     handleAtomicBoom,
     handleDomainBurst,
@@ -530,8 +549,6 @@ export function useBattleCombat({
       }
     },
     srGuaxinimOraMultiplierRef,
-    refs,
-    freezeActionsUntilRef,
     onBombProjectiles: (strikes) => {
       npc.strikeProjectiles(strikes);
     },
@@ -768,6 +785,23 @@ export function useBattleCombat({
 
   const cloneDisabledRef = useLatestRef(controlsDisabled);
 
+  const laricell = useLaricellAbilities({
+    player,
+    npc,
+    isPausedRef,
+    cooldownReduction: battle.char.stats.cooldownReduction,
+    playSound,
+    onUsed: onAbilityUsed,
+    freezeActionsUntilRef,
+    disabledRef: cloneDisabledRef,
+    battleEndedRef: battle.isEnding,
+    barrierRef,
+    npcBlindRef,
+    vampireActive: laricellVampireActive,
+    setVampireActive: setLaricellVampireActive,
+    areaHit: handleAbilityAreaHit,
+  });
+
   const {
     cloneVisual: ematronClone,
     press: clonePress,
@@ -942,6 +976,8 @@ export function useBattleCombat({
     playSound,
     onUsed: onAbilityUsed,
     cooldownReduction: battle.char.stats.cooldownReduction,
+    energy: battle.energy,
+    spendEnergy: battle.spendEnergy,
   });
 
   // Expansão de Domínio do marshadow -------------------------------------------
@@ -956,7 +992,7 @@ export function useBattleCombat({
       addVastolordLaserChargeRef.current();
     }
 
-    if (npcData.class === "boss" && battle.npcPhase === 1) {
+    if (battle.npcPhase < getNpcPhaseCount(npcType, npcData.class)) {
       // Destrava o lifecycle (o hook setou o isEnding no início da varredura) e
       // avança para a fase 2, reposicionando os personagens no `usePhaseTransition`.
       // Atualiza TAMBÉM o npcPhase do sistema de batalha (fonte de verdade da
@@ -964,8 +1000,9 @@ export function useBattleCombat({
       // e a próxima varredura (fase 2) é tratada como fase 1, resetando o boss
       // com vida cheia em vez de encerrar a batalha.
       battle.isEnding.current = false;
-      battle.setNpcPhase(2);
-      npcPhaseRef.current = 2;
+      const nextPhase = battle.npcPhase + 1;
+      battle.setNpcPhase(nextPhase);
+      npcPhaseRef.current = nextPhase;
       battle.setNpcHP(battle.npcMaxHp);
       npc.updateNpc({ hidden: false });
       return;
@@ -979,6 +1016,7 @@ export function useBattleCombat({
     npc,
     npcData.class,
     npcPhaseRef,
+    npcType,
     onNpcDeathRef,
     vastolordActive,
   ]);
@@ -1029,7 +1067,12 @@ export function useBattleCombat({
   // O uso consome as 40 cargas e causa dano especial em TODOS os inimigos da
   // arena de uma vez. Sem cutin de intro de propósito: a arte em
   // `habilities/<skill>/background.svg` só existe para o marshadow.
-  const domainConfig = DOMAIN_EXPANSIONS[player.character];
+  // Na Forma Vastolord o marshadow troca o Mugetsu pelo domínio da forma
+  // (#498), que roda pelo burst com fatores próprios.
+  const domainConfig = getDomainExpansion(
+    player.character,
+    vastolordActive ? "vastolord" : null,
+  );
   const {
     active: domainBurstActive,
     press: domainBurstPress,
@@ -1045,9 +1088,42 @@ export function useBattleCombat({
     isMenuOpen,
     battleEndedRef: battle.isEnding,
     disabledRef: cloneDisabledRef,
-    onBurst: handleDomainBurst,
+    onBurst: () =>
+      handleDomainBurst(
+        domainConfig.burstMainMultiplier,
+        domainConfig.burstSummonMultiplier,
+      ),
     playSound,
   });
+
+  // Expansão de Domínio do yvel (Unlimited Blade Works) ----------------------
+  const yvelBladeWorks = useUnlimitedBladeWorks({
+    player,
+    charges: battle.delicia,
+    chargesMax: battle.hitsToSpecial,
+    setDelicia: battle.setDelicia,
+    freezeActionsUntilRef,
+    isPausedRef,
+    isMenuOpen,
+    battleEndedRef: battle.isEnding,
+    disabledRef: cloneDisabledRef,
+    equipWeapon: equipYvelWeapon,
+  });
+
+  /**
+   * Botão de troca do Yvel. Dentro da janela do Unlimited Blade Works ele abre
+   * o arsenal (sem mana e sem carga de Expansão — o domínio já foi pago com a
+   * barra inteira); fora dela, sorteia pagando mana e rende carga como
+   * qualquer habilidade.
+   */
+  const { openSelector: openBladeWorksSelector } = yvelBladeWorks;
+  const handleWeaponSwitch = useCallback(() => {
+    if (openBladeWorksSelector()) return;
+    const mana = battleManaRef.current;
+    if (mana && !mana.consumeMana(YVEL_WEAPON_SWITCH_MANA_COST)) return;
+    if (!switchWeapon()) return;
+    onAbilityUsed();
+  }, [battleManaRef, onAbilityUsed, openBladeWorksSelector, switchWeapon]);
 
   // Expansão de Domínio do natsuki (Muryōkūsho) ------------------------------
   // Domínio próprio: congela o mundo, segura a pose `rioiki.svg` por 5s e
@@ -1228,6 +1304,8 @@ export function useBattleCombat({
     playSound,
     onUsed: onAbilityUsed,
     cooldownReduction: battle.char.stats.cooldownReduction,
+    energy: battle.energy,
+    spendEnergy: battle.spendEnergy,
   });
 
   // Esferas do natsuki (blue/red) ---------------------------------------------
@@ -1295,6 +1373,10 @@ export function useBattleCombat({
     machineGama: {
       press: babidiDomainPress,
       usable: babidiDomainUsable,
+    },
+    unlimitedBladeWorks: {
+      press: yvelBladeWorks.press,
+      usable: yvelBladeWorks.usable,
     },
   } as const;
 
@@ -1381,6 +1463,7 @@ export function useBattleCombat({
     atomicUsable,
     atomicRemaining,
     activeAbilityPress: openActiveAbility,
+    laricell,
     activeAbilityUsable: activeAbilityRemaining <= 0,
     activeAbilityRemaining,
     specialIntroAbility,
@@ -1398,7 +1481,8 @@ export function useBattleCombat({
     domainExpansionPress: domainExpansionAbility?.press ?? domainBurstPress,
 
     domainExpansionUsable: domainExpansionAbility?.usable ?? domainBurstUsable,
-    domainBurstActive,
+    domainBurstActive: domainBurstActive || yvelBladeWorks.introActive,
+    yvelBladeWorks,
     domainBackgroundActive,
     domainShattering,
     granReyCeroEffect,

@@ -21,7 +21,9 @@ export type BattleDamageProps = {
   progress: ReturnType<typeof useBattleStageSetup>["progress"];
   summons: ReturnType<typeof useBattleStageSetup>["summons"];
   setSummons: ReturnType<typeof useBattleStageSetup>["setSummons"];
-  giveSummonRewards: ReturnType<typeof useBattleStageSetup>["giveSummonRewards"];
+  giveSummonRewards: ReturnType<
+    typeof useBattleStageSetup
+  >["giveSummonRewards"];
   battleManaRef: RefObject<BattleManaApi | null>;
   cursedEnergyEnabled: boolean;
   vastolordActive: boolean;

@@ -44,6 +44,7 @@ export const NPC_TYPINGS = {
   srGuaxinim: ["Normalis", "Psychicus"],
   neimito: ["Pyrus", "Psychicus"],
   planetarySisters: ["Normalis"],
+  netali: ["Normalis"],
   manim: ["Psychicus", "Normalis"],
   maurao: ["Pyrus", "Darkus"],
   maugrelo: ["Normalis", "Pyrus"],
@@ -99,6 +100,7 @@ export const NPC_TYPINGS = {
   theChaosCreator: ["Darkus"],
   theFirstNightmare: ["Draco", "Umbra"],
   theDevourerOfWorlds: ["Draco", "Darkus"],
+  evilMorty: ["Psychicus", "Metallum"],
 
   /* Pets (sem NPC de batalha próprio) */
   turkey: ["Normalis", "Subterra"],

@@ -1,6 +1,9 @@
 import { itemPath } from "@/utils/paths";
 
+import { NpcCardImage } from "@/components/Game/NpcCard";
+
 import { ITEMS } from "@/data/items";
+import { getCardNpcType } from "@/data/npc";
 import { useDropControls } from "@/hooks/menu/useDropControls";
 import type { InventoryItem } from "@/utils/types/player/inventory";
 
@@ -15,6 +18,7 @@ type Props = {
 
 export function DropItem({ isOpen, item, onDrop, onClose }: Props) {
   const itemData = ITEMS[item.id];
+  const cardNpcType = getCardNpcType(item.id);
   const maxQty = item.qty ?? 1;
 
   const { qty } = useDropControls({
@@ -32,13 +36,21 @@ export function DropItem({ isOpen, item, onDrop, onClose }: Props) {
         <div className={styles.title}>Largar item</div>
 
         <div className={styles.itemPreview}>
-          <img
-            loading="lazy"
-            decoding="async"
-            className={styles.itemIcon}
-            src={itemData.image ?? itemPath(`${item.id}.svg`)}
-            alt={itemData.name}
-          />
+          {cardNpcType ? (
+            <NpcCardImage
+              npcType={cardNpcType}
+              alt={itemData.name}
+              className={styles.itemIcon}
+            />
+          ) : (
+            <img
+              loading="lazy"
+              decoding="async"
+              className={styles.itemIcon}
+              src={itemData.image ?? itemPath(`${item.id}.svg`)}
+              alt={itemData.name}
+            />
+          )}
           <span className={styles.itemName}>{itemData.name}</span>
         </div>
 

@@ -17,7 +17,8 @@ export const NPC_CLASSES = {
   denis: "boss",
   srGuaxinim: "epic",
   neimito: "boss",
-  planetarySisters: "boss",
+  planetarySisters: "boss" /* Marquesa — a Netali entra como companheira */,
+  netali: "boss" /* Irmã planetária que luta ao lado da Marquesa */,
   manim: "boss",
   maurao: "boss",
   maugrelo: "boss",
@@ -57,6 +58,8 @@ export const NPC_CLASSES = {
 
   /* Mundo tóxico */
   rickToxico: "legendary",
+  /* Shibuya (evento diário) */
+  mahoraga: "boss",
 
   /* Training */
   dummy: "common",
@@ -70,6 +73,10 @@ export const NPC_CLASSES = {
   theMasterPiece: "legendary",
   theChaosCreator: "legendary",
   theFirstNightmare: "legendary",
+  evilMorty: "supreme" /* 3 fases: entediado, sério, irritado */,
+
+  /* Conselho dos vilões */
+  rickPrime: "boss",
 } as const satisfies Record<string, NPCClass>;
 
 export type NpcType = keyof typeof NPC_CLASSES;
