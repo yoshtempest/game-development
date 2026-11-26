@@ -16,6 +16,10 @@ import {
 } from "@/data/characters/ematron";
 import type { GenkiDamaVisual } from "@/utils/types/character/ematron";
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
+import {
+  createGenkiDamaLaunch,
+  stepGenkiDamaFlight,
+} from "@/gameRules/battle/characters/ematron/genkiDamaFlight";
 import type { GenkiDamaProps } from "./types";
 
 /**
@@ -25,8 +29,8 @@ import type { GenkiDamaProps } from "./types";
  * dele, que cresce 1.2x por segundo enquanto o Ki é drenado (1 Ki a cada 200ms,
  * rampeando até 1 Ki a cada 40ms em 5s). Soltar durante a subida derruba o
  * jogador (falling → idleCrounched → idle). Soltar no preparing troca para
- * `throwGenkiDama.svg`, arremessa a Genki Dama ao inimigo principal e aplica
- * dano em área proporcional ao tamanho (máx 7x o dano do ataque básico).
+ * `throwGenkiDama.svg`, arremessa a Genki Dama ao inimigo principal num arco
+ * com gravidade e resistência do ar (`genkiDamaFlight`) e aplica dano em área proporcional ao tamanho (máx 7x o dano do ataque básico).
  */
 export function useEmatronGenkiDama({
   player,
@@ -121,19 +125,20 @@ export function useEmatronGenkiDama({
 
   const startThrow = useCallback(
     (startX: number, startY: number) => {
-      const fromX = startX;
-      const fromY = startY;
-      const targetX = npcRef.current.x;
-      const targetY = npcRef.current.y;
+      const launch = createGenkiDamaLaunch(
+        startX,
+        startY,
+        npcRef.current.x,
+        npcRef.current.y,
+        GENKI_DAMA_THROW_MS,
+      );
       const start = Date.now();
 
       throwIntervalRef.current = setInterval(() => {
-        const t = Math.min(1, (Date.now() - start) / GENKI_DAMA_THROW_MS);
-        const x = fromX + (targetX - fromX) * t;
-        const y = fromY + (targetY - fromY) * t;
+        const { x, y, done } = stepGenkiDamaFlight(launch, Date.now() - start);
         setGenkiDamaVisual((v) => (v ? { ...v, phase: "flying", x, y } : v));
 
-        if (t < 1) return;
+        if (!done) return;
 
         const interval = throwIntervalRef.current;
         throwIntervalRef.current = null;

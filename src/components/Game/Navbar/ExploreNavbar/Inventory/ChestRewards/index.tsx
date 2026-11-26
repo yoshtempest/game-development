@@ -44,7 +44,7 @@ export function ChestRewards({
     itemPath(`${id}.svg`);
 
   return (
-    <div className="containerOfNavbar">
+    <div className={styles.chestRewardsContainer}>
       <h3>{isDaily ? "Baú Diário — Aberto!" : "Baú Aberto!"}</h3>
 
       {result.materials.length > 0 && (

@@ -16,6 +16,7 @@ const NPC_DISPLAY_NAMES: Record<NpcType, string> = {
   srGuaxinim: "Sr. Guaxinim",
   neimito: "Neimito",
   planetarySisters: "Irmãs Planetárias",
+  netali: "Netali",
   manim: "Manim",
   maurao: "Maurão",
   maugrelo: "Maugrelo",
@@ -51,6 +52,9 @@ const NPC_DISPLAY_NAMES: Record<NpcType, string> = {
   theFirstNightmare: "O primeiro pesadelo",
   theDevourerOfWorlds: "O devorador de mundos",
   ouroboros: "Ouroboros",
+  evilMorty: "Evil Morty",
+  rickPrime: "Rick Prime",
+  mahoraga: "Mahoraga, o General Divino",
 };
 
 /**

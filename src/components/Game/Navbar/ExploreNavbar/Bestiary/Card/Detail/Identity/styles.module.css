@@ -1,0 +1,43 @@
+.detailIdentity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+  min-width: 0;
+}
+
+.detailName {
+  margin: 0;
+  font-size: var(--fs-20);
+  color: var(--white);
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--size-6);
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--fs-8);
+}
+
+.location {
+  color: var(--accent-color);
+  font-size: var(--fs-11);
+}
+
+.description {
+  color: var(--text-secondary);
+  font-size: var(--fs-11);
+  line-height: 1.4;
+}
+
+.unknownHint {
+  color: var(--text-hint);
+  font-size: var(--fs-11);
+  font-style: italic;
+}

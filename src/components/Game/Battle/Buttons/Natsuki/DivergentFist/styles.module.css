@@ -11,29 +11,6 @@
   animation: glow 1s ease-in-out infinite;
 }
 
-.value,
-.label,
-.cost {
-  position: relative;
-  z-index: 1;
-}
-
-.value {
-  font-size: var(--fs-18);
-  font-weight: bold;
-  color: var(--ability-natsuki);
-}
-
-.label {
-  color: var(--orange-pale);
-}
-
-.cost {
-  font-size: var(--fs-11);
-  font-weight: bold;
-  color: var(--ability-natsuki);
-}
-
 @keyframes glow {
   0%,
   100% {

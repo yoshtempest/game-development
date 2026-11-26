@@ -6,7 +6,3 @@
 .button:hover:not(:disabled) {
   background: var(--ability-natsuki-35);
 }
-
-.label {
-  color: var(--orange-pale);
-}

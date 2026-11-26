@@ -46,8 +46,19 @@ export const STATUS_LIST: PlayerStatus[] = [
   "freeze",
 ];
 
-export const BURN_TICK_DAMAGE = 2;
-export const POISON_TICK_DAMAGE = 2;
+/**
+ * Dano por tick dos DoTs como fração do dano base do NPC da batalha
+ * (`getNpcPercentDamage`), para acompanhar o nível dele em vez de ser fixo.
+ *
+ * As frações foram derivadas do antigo valor fixo (2) no NPC que aplica o
+ * status, em dificuldade média, para não mudar o balanceamento atual:
+ * - sangramento vem do `hungryDeath` (comum, nível 1, dano base 5) → 2/5;
+ * - queimadura/veneno vêm do debuff do `maugrelo` (boss, nível 9, dano
+ *   base 38) → 0.05 × 38 ≈ 2.
+ */
+export const BLEED_TICK_DAMAGE_RATIO = 0.4;
+export const BURN_TICK_DAMAGE_RATIO = 0.05;
+export const POISON_TICK_DAMAGE_RATIO = 0.05;
 export const DOT_TICK_INTERVAL_MS = ONE_THOUSAND_MS;
 
 export function isPlayerFrozen(player: Player): boolean {
@@ -75,16 +86,50 @@ export function isPlayerPoisoned(player: Player): boolean {
 }
 
 /**
+ * Diz se o player está imune ao status (poção de resistência ativa).
+ *
+ * Lido por `applyPlayerStatus` e pelo sangramento, que é o único status
+ * aplicado fora dele — os dois precisam consultar a mesma fonte.
+ */
+export function isPlayerImmuneTo(player: Player, status: PlayerStatus): boolean {
+  return (player.statusImmuneUntil?.[status] ?? 0) > Date.now();
+}
+
+/**
+ * Aplica uma poção de resistência: cura os status listados que estiverem
+ * ativos e deixa o player imune a eles por `durationMs`.
+ *
+ * Curar junto com a imunidade é o que faz a poção servir de "remédio" no meio
+ * da luta, e não só de prevenção antes dela.
+ */
+export function grantStatusResistance(
+  player: Player,
+  statuses: readonly PlayerStatus[],
+  durationMs: number,
+): Player {
+  const until = Date.now() + durationMs;
+  const immune = { ...player.statusImmuneUntil };
+  const cleared: Partial<Record<StatusUntilKey, number>> = {};
+  for (const status of statuses) {
+    immune[status] = Math.max(immune[status] ?? 0, until);
+    cleared[STATUS_UNTIL_FIELD[status]] = 0;
+  }
+  return { ...player, ...cleared, statusImmuneUntil: immune };
+}
+
+/**
  * Aplica um status no player.
  *
  * Ponto único de entrada: TODA aplicação de status passa por aqui (NPC, cut-in,
- * overlay de treino, armas).
+ * overlay de treino, armas). Por isso a imunidade de poção é checada aqui —
+ * devolve o mesmo objeto quando o player está imune, sem reiniciar o timer.
  */
 export function applyPlayerStatus(
   player: Player,
   status: NewPlayerStatus,
   durationMs?: number,
 ): Player {
+  if (isPlayerImmuneTo(player, status)) return player;
   const until = Date.now() + (durationMs ?? STATUS_DURATIONS_MS[status]);
   return { ...player, [STATUS_UNTIL_FIELD[status]]: until };
 }
@@ -102,6 +147,34 @@ export function getActivePlayerStatuses(player: Player): ActivePlayerStatus[] {
     const until = player[STATUS_UNTIL_FIELD[status]];
     if (until > now) {
       active.push({ status, remaining: until - now });
+    }
+  }
+
+  return active;
+}
+
+/** Uma aplicação de status ativa, identificada pelo instante em que termina. */
+export type PlayerStatusApplication = {
+  status: PlayerStatus;
+  until: number;
+};
+
+/**
+ * Status ativos com o timestamp de fim, em vez do tempo restante.
+ *
+ * O `until` não muda entre frames de uma mesma aplicação, então serve de
+ * identidade estável para efeitos visuais (overlay sorteado por aplicação).
+ */
+export function getActivePlayerStatusApplications(
+  player: Player,
+): PlayerStatusApplication[] {
+  const now = Date.now();
+  const active: PlayerStatusApplication[] = [];
+
+  for (const status of STATUS_LIST) {
+    const until = player[STATUS_UNTIL_FIELD[status]];
+    if (until > now) {
+      active.push({ status, until });
     }
   }
 
