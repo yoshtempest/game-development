@@ -1,4 +1,5 @@
 export type Params = {
+  isActive: boolean;
   chestRewardsVisible: boolean;
   rewardOptionCount: number;
   lastOpened: { chestId: ItemId } | null | undefined;

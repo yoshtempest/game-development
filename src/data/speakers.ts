@@ -99,7 +99,9 @@ export const SPEAKERS = {
   garfield: { name: "Garfield", base: "/cats/garfield", pose: "default" },
   tom: { name: "Tom", base: "/cats/tom", pose: "default" },
   meowth: { name: "Meowth", base: "/cats/meowth", pose: "default" },
+  gatoFalante: { name: "Gato Falante" },
   rickPrime: { name: "Rick prime", base: "/rickPrime", pose: "right" },
+  doofusRick: { name: "Doofus Rick", base: "/doofusRick", pose: "default" },
 
   surica: { name: "Surica", base: "/surica", pose: "default" },
   suricaIncrivel: {

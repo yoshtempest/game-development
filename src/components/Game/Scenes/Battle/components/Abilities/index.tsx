@@ -7,7 +7,10 @@ import {
   DIVERGENT_FIST_COST,
 } from "@/gameRules/battle/cursedEnergy";
 import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
+import { SAMUEL_GRIMOIRE_STAMINA_COST } from "@/data/characters/samurion/stamina";
+import { SAMUEL_WEAPON_LABELS } from "@/data/characters/samurion/grimoire";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
+import { getDomainExpansion } from "@/data/characters/domainExpansions";
 import { npcPath, playerAbilityBackgroundPath } from "@/utils/paths";
 import { PetSkillButton } from "@/components/Game/Battle/Buttons/PetSkill";
 import { WeaponSwitchButton } from "@/components/Game/Battle/Buttons/WeaponSwitch";
@@ -26,8 +29,22 @@ import { StackExplosionButton } from "@/components/Game/Battle/Buttons/Laricell/
 import { DomainExpansionButton } from "@/components/Game/Battle/Buttons/DomainExpansion";
 import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
+import { BankaiButton } from "@/components/Game/Battle/Buttons/Marshadow/Bankai";
+import { EmoteButton } from "@/components/Game/Battle/Buttons/Emote";
 import { useRef } from "react";
 import { useAbilityShortcuts } from "@/hooks/battle/useAbilityShortcuts";
+import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
+import {
+  getDomainExpansionAbilityId,
+  isAbilityUnlocked,
+} from "@/gameRules/player/abilityUnlock";
+import { BombButton } from "@/components/Game/Battle/Buttons/Babidi/Bomb";
+import { NetButton } from "@/components/Game/Battle/Buttons/Babidi/Net";
+import { IceWallButton } from "@/components/Game/Battle/Buttons/Laricell/IceWall";
+import { ExplodingEarringsButton } from "@/components/Game/Battle/Buttons/Laricell/ExplodingEarrings";
+import { SmokeBombButton } from "@/components/Game/Battle/Buttons/Laricell/SmokeBomb";
+import { VampireFormButton } from "@/components/Game/Battle/Buttons/Laricell/VampireForm";
+import { VampireBiteButton } from "@/components/Game/Battle/Buttons/Laricell/VampireBite";
 
 export function BattleAbilities({
   scene,
@@ -45,6 +62,9 @@ export function BattleAbilities({
     pet,
     switchWeapon,
     yvelWeapon,
+    samuelWeapon,
+    grimoirePress,
+    yvelBladeWorks,
     openSigilo,
     sphere,
     bluePress,
@@ -64,16 +84,23 @@ export function BattleAbilities({
     granReyCeroPress,
     granReyCeroUsable,
     granReyCeroRemaining,
+    bankaiPress,
+    bankaiUsable,
+    bankaiRemaining,
     vastolordActive,
     vastolordLaserPress,
     vastolordLaserUsable,
     vastolordLaserStacks,
     activeAbilityPress,
+    laricell,
     activeAbilityUsable,
     activeAbilityRemaining,
     babidiBombDropPress,
     babidiBombDropUsable,
     babidiBombDropRemaining,
+    babidiToxicFormPress,
+    babidiToxicFormUsable,
+    babidiToxicFormRemaining,
     fishingNetPress,
     fishingNetUsable,
     fishingNetRemaining,
@@ -92,11 +119,35 @@ export function BattleAbilities({
     genkiDamaUsable,
     kamehamehaPress,
     kamehamehaUsable,
+    emoteAvailable,
+    emoteUsable,
+    emotePress,
   } = scene;
 
   const battleMana = useBattleMana();
+  const { progress } = useCharacterProgress();
+  const playerLevel = progress[player.character]?.level ?? 1;
 
-  const domainConfig = DOMAIN_EXPANSIONS[player.character];
+  /**
+   * Habilidade bloqueada por nível (issue #485) fica visível e desabilitada em
+   * vez de sumir: o índice de `abilitySlotsRef` precisa casar 1:1 com os
+   * `.abilityButton` renderizados para clique e atalho numérico continuarem
+   * apontando para o botão certo.
+   */
+  function isLocked(abilityId: string): boolean {
+    return !isAbilityUnlocked(player.character, abilityId, playerLevel);
+  }
+  const domainLocked = isLocked(
+    getDomainExpansionAbilityId(player.character) ?? "domainBurst",
+  );
+  const activeAbilityLocked = isLocked(
+    player.character === "laricell" ? "stackExplosion" : "killerQueen",
+  );
+
+  const domainConfig = getDomainExpansion(
+    player.character,
+    vastolordActive ? "vastolord" : null,
+  );
   const domainBackground = domainConfig.hasBackgroundArt
     ? playerAbilityBackgroundPath(player.character, "domainExpansion")
     : undefined;
@@ -161,10 +212,17 @@ export function BattleAbilities({
 
       {player.character === "yvel" &&
         (() => {
+          const weaponSwitchDisabled =
+            controlsDisabled ||
+            (!yvelBladeWorks.active &&
+              battleMana != null &&
+              battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST);
           abilitySlotsRef.current.push({
             click: switchWeapon,
+            disabled: weaponSwitchDisabled,
             disabled:
               controlsDisabled ||
+              isLocked("weaponSwitch") ||
               (battleMana != null &&
                 battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST),
             hold: false,
@@ -173,8 +231,10 @@ export function BattleAbilities({
           return (
             <WeaponSwitchButton
               weapon={yvelWeapon}
+              disabled={weaponSwitchDisabled}
               disabled={
                 controlsDisabled ||
+                isLocked("weaponSwitch") ||
                 (battleMana != null &&
                   battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST)
               }
@@ -183,11 +243,36 @@ export function BattleAbilities({
           );
         })()}
 
+      {player.character === "samurion" &&
+        (() => {
+          const grimoireDisabled =
+            controlsDisabled ||
+            (battleMana != null &&
+              battleMana.playerMana < SAMUEL_GRIMOIRE_STAMINA_COST);
+          abilitySlotsRef.current.push({
+            click: grimoirePress,
+            disabled: grimoireDisabled,
+            hold: false,
+            abilityId: "grimoire",
+          });
+          return (
+            <GenericAbilityButton
+              characterId="samurion"
+              abilityId="grimoire"
+              label={
+                samuelWeapon ? SAMUEL_WEAPON_LABELS[samuelWeapon] : undefined
+              }
+              disabled={grimoireDisabled}
+              onClick={grimoirePress}
+            />
+          );
+        })()}
+
       {player.character === "drika" &&
         (() => {
           abilitySlotsRef.current.push({
             click: () => openSigilo?.(),
-            disabled: controlsDisabled,
+            disabled: controlsDisabled || isLocked("sigilo"),
             hold: false,
             abilityId: "sigilo",
           });
@@ -195,7 +280,7 @@ export function BattleAbilities({
             <button
               type="button"
               className="abilityButton"
-              disabled={controlsDisabled}
+              disabled={controlsDisabled || isLocked("sigilo")}
               onClick={() => openSigilo?.()}
             >
               Sigilo
@@ -208,20 +293,20 @@ export function BattleAbilities({
           if (sphere?.variant === "purple") {
             abilitySlotsRef.current.push({
               click: purplePress,
-              disabled: controlsDisabled || !purpleUsable,
+              disabled: controlsDisabled || !purpleUsable || isLocked("purpleSphere"),
               hold: false,
               abilityId: "purpleSphere",
             });
           } else {
             abilitySlotsRef.current.push({
               click: bluePress,
-              disabled: controlsDisabled || !blueUsable,
+              disabled: controlsDisabled || !blueUsable || isLocked("blueSphere"),
               hold: false,
               abilityId: "blueSphere",
             });
             abilitySlotsRef.current.push({
               click: redPress,
-              disabled: controlsDisabled || !redUsable,
+              disabled: controlsDisabled || !redUsable || isLocked("redSphere"),
               hold: false,
               abilityId: "redSphere",
             });
@@ -230,6 +315,7 @@ export function BattleAbilities({
             click: activateDivergentFist,
             disabled:
               controlsDisabled ||
+              isLocked("divergentFist") ||
               (battleMana?.playerMana ?? 0) < DIVERGENT_FIST_COST,
             hold: false,
             abilityId: "divergentFist",
@@ -253,10 +339,10 @@ export function BattleAbilities({
                 blueActive={
                   sphere?.variant === "blue" && sphere.phase !== "dismissing"
                 }
-                blueDisabled={controlsDisabled || !blueUsable}
-                redDisabled={controlsDisabled || !redUsable}
+                blueDisabled={controlsDisabled || !blueUsable || isLocked("blueSphere")}
+                redDisabled={controlsDisabled || !redUsable || isLocked("redSphere")}
                 purpleActive={sphere?.variant === "purple"}
-                purpleDisabled={controlsDisabled || !purpleUsable}
+                purpleDisabled={controlsDisabled || !purpleUsable || isLocked("purpleSphere")}
                 onBlue={bluePress}
                 onRed={redPress}
                 onPurple={purplePress}
@@ -266,13 +352,13 @@ export function BattleAbilities({
                 active={divergentFistActive}
                 disabled={
                   controlsDisabled ||
+                  isLocked("divergentFist") ||
                   (battleMana?.playerMana ?? 0) < DIVERGENT_FIST_COST
                 }
                 onClick={activateDivergentFist}
               />
               {honoredOneActive ? (
                 <BlinkButton
-                  energy={battleMana?.playerMana ?? 0}
                   disabled={
                     controlsDisabled ||
                     ALL_PREDICATES.isNatsukiDomain(player.state) ||
@@ -301,27 +387,27 @@ export function BattleAbilities({
           abilitySlotsRef.current.push({
             press: clonePress,
             release: cloneRelease,
-            disabled: controlsDisabled || !cloneUsable,
+            disabled: controlsDisabled || !cloneUsable || isLocked("clone"),
             hold: true,
             abilityId: "clone",
           });
           abilitySlotsRef.current.push({
             press: kiChargePress,
             release: kiChargeRelease,
-            disabled: controlsDisabled || !kiChargeUsable,
+            disabled: controlsDisabled || !kiChargeUsable || isLocked("kiCharge"),
             hold: true,
             abilityId: "kiCharge",
           });
           abilitySlotsRef.current.push({
             press: genkiDamaPress,
             release: genkiDamaRelease,
-            disabled: controlsDisabled || !genkiDamaUsable,
+            disabled: controlsDisabled || !genkiDamaUsable || isLocked("genkiDama"),
             hold: true,
             abilityId: "genkiDama",
           });
           abilitySlotsRef.current.push({
             click: kamehamehaPress,
-            disabled: controlsDisabled || !kamehamehaUsable,
+            disabled: controlsDisabled || !kamehamehaUsable || isLocked("kamehameha"),
             hold: false,
             abilityId: "kamehameha",
           });
@@ -329,25 +415,25 @@ export function BattleAbilities({
             <>
               <EmatronCloneButton
                 energy={battleMana?.playerMana ?? 0}
-                disabled={controlsDisabled || !cloneUsable}
+                disabled={controlsDisabled || !cloneUsable || isLocked("clone")}
                 onPress={clonePress}
                 onRelease={cloneRelease}
               />
               <EmatronKiChargeButton
                 energy={battleMana?.playerMana ?? 0}
                 energyMax={battleMana?.playerMaxMana ?? 100}
-                disabled={controlsDisabled || !kiChargeUsable}
+                disabled={controlsDisabled || !kiChargeUsable || isLocked("kiCharge")}
                 onPress={kiChargePress}
                 onRelease={kiChargeRelease}
               />
               <EmatronGenkiDamaButton
                 energy={battleMana?.playerMana ?? 0}
-                disabled={controlsDisabled || !genkiDamaUsable}
+                disabled={controlsDisabled || !genkiDamaUsable || isLocked("genkiDama")}
                 onPress={genkiDamaPress}
                 onRelease={genkiDamaRelease}
               />
               <EmatronKamehamehaButton
-                disabled={controlsDisabled || !kamehamehaUsable}
+                disabled={controlsDisabled || !kamehamehaUsable || isLocked("kamehameha")}
                 onClick={kamehamehaPress}
               />
             </>
@@ -359,15 +445,21 @@ export function BattleAbilities({
           if (!vastolordActive) {
             abilitySlotsRef.current.push({
               click: atomicPress,
-              disabled: controlsDisabled,
+              disabled: controlsDisabled || isLocked("iAmAtomic"),
               hold: false,
               abilityId: "iAmAtomic",
             });
             abilitySlotsRef.current.push({
               click: granReyCeroPress,
-              disabled: controlsDisabled,
+              disabled: controlsDisabled || isLocked("granReyCero"),
               hold: false,
               abilityId: "granReyCero",
+            });
+            abilitySlotsRef.current.push({
+              click: bankaiPress,
+              disabled: controlsDisabled,
+              hold: false,
+              abilityId: "bankai",
             });
           } else {
             abilitySlotsRef.current.push({
@@ -382,14 +474,20 @@ export function BattleAbilities({
               <AtomicButton
                 ready={atomicUsable}
                 remaining={atomicRemaining}
-                disabled={controlsDisabled}
+                disabled={controlsDisabled || isLocked("iAmAtomic")}
                 onClick={atomicPress}
               />
               <GranReyCeroButton
                 ready={granReyCeroUsable}
                 remaining={granReyCeroRemaining}
-                disabled={controlsDisabled}
+                disabled={controlsDisabled || isLocked("granReyCero")}
                 onClick={granReyCeroPress}
+              />
+              <BankaiButton
+                ready={bankaiUsable}
+                remaining={bankaiRemaining}
+                disabled={controlsDisabled}
+                onClick={bankaiPress}
               />
             </>
           ) : (
@@ -405,7 +503,7 @@ export function BattleAbilities({
         (() => {
           abilitySlotsRef.current.push({
             click: activeAbilityPress,
-            disabled: controlsDisabled,
+            disabled: controlsDisabled || isLocked("killerQueen"),
             hold: false,
             abilityId: "killerQueen",
           });
@@ -413,7 +511,7 @@ export function BattleAbilities({
             <KillerQueenButton
               ready={activeAbilityUsable}
               remaining={activeAbilityRemaining}
-              disabled={controlsDisabled}
+              disabled={controlsDisabled || activeAbilityLocked}
               onClick={activeAbilityPress}
             />
           );
@@ -421,19 +519,106 @@ export function BattleAbilities({
 
       {player.character === "laricell" &&
         (() => {
+          // Cada habilidade tem o próprio relógio em `laricell.*.remaining`; o
+          // de `activeAbility` é só da Explosão de Stacks e usá-lo nos demais
+          // botões faria a Parede herdar o cooldown da explosão (e vice-versa).
+          const vampireActive = laricell.visual.vampireActive;
+          const normalButtons = [
+            { abilityId: "iceWall", state: laricell.iceWall },
+            { abilityId: "explodingEarrings", state: laricell.earrings },
+            { abilityId: "smokeBomb", state: laricell.smokeBomb },
+            { abilityId: "vampireForm", state: laricell.vampireForm },
+          ];
+
           abilitySlotsRef.current.push({
             click: activeAbilityPress,
-            disabled: controlsDisabled,
+            disabled: controlsDisabled || activeAbilityLocked,
             hold: false,
             abilityId: "stackExplosion",
           });
+
+          if (vampireActive) {
+            // A Mordida substitui A1–A3 enquanto a forma dura (issue #517).
+            abilitySlotsRef.current.push({
+              click: laricell.bite.press,
+              disabled: controlsDisabled || !laricell.bite.usable,
+              hold: false,
+              abilityId: "vampireBite",
+            });
+          } else {
+            for (const button of normalButtons) {
+              abilitySlotsRef.current.push({
+                click: button.state.press,
+                disabled:
+                  controlsDisabled ||
+                  isLocked(button.abilityId) ||
+                  !button.state.usable,
+                hold: false,
+                abilityId: button.abilityId,
+              });
+            }
+          }
+
           return (
-            <StackExplosionButton
-              ready={activeAbilityUsable}
-              remaining={activeAbilityRemaining}
-              disabled={controlsDisabled}
-              onClick={activeAbilityPress}
-            />
+            <>
+              <StackExplosionButton
+                ready={activeAbilityUsable}
+                remaining={activeAbilityRemaining}
+                disabled={controlsDisabled || activeAbilityLocked}
+                onClick={activeAbilityPress}
+              />
+              {vampireActive ? (
+                <VampireBiteButton
+                  ready={laricell.bite.remaining <= 0}
+                  remaining={laricell.bite.remaining}
+                  disabled={controlsDisabled || !laricell.bite.usable}
+                  onClick={laricell.bite.press}
+                />
+              ) : (
+                <>
+                  <IceWallButton
+                    ready={laricell.iceWall.remaining <= 0}
+                    remaining={laricell.iceWall.remaining}
+                    disabled={
+                      controlsDisabled ||
+                      isLocked("iceWall") ||
+                      !laricell.iceWall.usable
+                    }
+                    onClick={laricell.iceWall.press}
+                  />
+                  <ExplodingEarringsButton
+                    ready={laricell.earrings.remaining <= 0}
+                    remaining={laricell.earrings.remaining}
+                    disabled={
+                      controlsDisabled ||
+                      isLocked("explodingEarrings") ||
+                      !laricell.earrings.usable
+                    }
+                    onClick={laricell.earrings.press}
+                  />
+                  <SmokeBombButton
+                    ready={laricell.smokeBomb.remaining <= 0}
+                    remaining={laricell.smokeBomb.remaining}
+                    disabled={
+                      controlsDisabled ||
+                      isLocked("smokeBomb") ||
+                      !laricell.smokeBomb.usable
+                    }
+                    onClick={laricell.smokeBomb.press}
+                  />
+                  <VampireFormButton
+                    ready={laricell.vampireForm.remaining <= 0}
+                    remaining={laricell.vampireForm.remaining}
+                    disabled={
+                      controlsDisabled ||
+                      isLocked("vampireForm") ||
+                      !laricell.vampireForm.usable
+                    }
+                    onClick={laricell.vampireForm.press}
+                  />
+                </>
+              )}
+            </>
           );
         })()}
 
@@ -441,33 +626,44 @@ export function BattleAbilities({
         (() => {
           abilitySlotsRef.current.push({
             click: babidiBombDropPress,
-            disabled: controlsDisabled || !babidiBombDropUsable,
+            disabled: controlsDisabled || !babidiBombDropUsable || isLocked("dimensionalPortal"),
             hold: false,
             abilityId: "dimensionalPortal",
           });
           abilitySlotsRef.current.push({
             click: fishingNetPress,
-            disabled: controlsDisabled || !fishingNetUsable,
+            disabled: controlsDisabled || !fishingNetUsable || isLocked("fishingNet"),
             hold: false,
             abilityId: "fishingNet",
           });
+          abilitySlotsRef.current.push({
+            click: babidiToxicFormPress,
+            disabled: controlsDisabled || !babidiToxicFormUsable,
+            hold: false,
+            abilityId: "toxicForm",
+          });
           return (
             <>
-              <GenericAbilityButton
-                characterId="babidi"
-                abilityId="dimensionalPortal"
+              <BombButton
                 ready={babidiBombDropUsable}
                 remaining={babidiBombDropRemaining}
-                disabled={controlsDisabled || !babidiBombDropUsable}
+                disabled={controlsDisabled || !babidiBombDropUsable || isLocked("dimensionalPortal")}
                 onClick={babidiBombDropPress}
+              />
+              <NetButton
+                ready={fishingNetUsable}
+                remaining={fishingNetRemaining}
+                disabled={controlsDisabled || !fishingNetUsable || isLocked("fishingNet")}
+                onClick={fishingNetPress}
               />
               <GenericAbilityButton
                 characterId="babidi"
-                abilityId="fishingNet"
-                ready={fishingNetUsable}
-                remaining={fishingNetRemaining}
-                disabled={controlsDisabled || !fishingNetUsable}
-                onClick={fishingNetPress}
+                abilityId="toxicForm"
+                accent="#6cff3a"
+                ready={babidiToxicFormUsable}
+                remaining={babidiToxicFormRemaining}
+                disabled={controlsDisabled || !babidiToxicFormUsable}
+                onClick={babidiToxicFormPress}
               />
               {babidiMachineGamaControl && (
                 <GenericAbilityButton
@@ -482,11 +678,31 @@ export function BattleAbilities({
           );
         })()}
 
+      {(() => {
+        abilitySlotsRef.current.push({
+          click: domainExpansionPress,
+          disabled: controlsDisabled,
+          hold: false,
+          abilityId:
+            domainConfig.kind === "mugetsu" ? "domainExpansion" : "domainBurst",
+        });
+        return (
+          <DomainExpansionButton
+            name={domainConfig.name}
+            description={domainConfig.description}
+            accent={domainConfig.accent}
+            background={domainBackground}
+            ready={domainExpansionUsable}
+            disabled={controlsDisabled}
+            onClick={domainExpansionPress}
+          />
+        );
+      })()}
       {!vastolordActive &&
         (() => {
           abilitySlotsRef.current.push({
             click: domainExpansionPress,
-            disabled: controlsDisabled,
+            disabled: controlsDisabled || domainLocked,
             hold: false,
             abilityId:
               player.character === "marshadow"
@@ -500,8 +716,23 @@ export function BattleAbilities({
               accent={domainConfig.accent}
               background={domainBackground}
               ready={domainExpansionUsable}
-              disabled={controlsDisabled}
+              disabled={controlsDisabled || domainLocked}
               onClick={domainExpansionPress}
+            />
+          );
+        })()}
+
+      {emoteAvailable &&
+        (() => {
+          abilitySlotsRef.current.push({
+            click: emotePress,
+            disabled: controlsDisabled || !emoteUsable,
+            hold: false,
+          });
+          return (
+            <EmoteButton
+              disabled={controlsDisabled || !emoteUsable}
+              onClick={emotePress}
             />
           );
         })()}

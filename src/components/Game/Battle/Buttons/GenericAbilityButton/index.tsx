@@ -59,7 +59,9 @@ export function GenericAbilityButton({
       type={behavior}
       customClasses={genericClasses}
       className={className}
-      label={label ?? ability.name}
+      // Só rótulos curtos explícitos entram no botão: quem usa arte de fundo
+      // não passa `label`, e um nome longo do registro vazaria do círculo.
+      label={label}
       // `AbilityButton` só mostra custo em `hold`; nas padrão o custo fica na
       // descrição da tooltip.
       costText={

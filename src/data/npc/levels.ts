@@ -2,6 +2,9 @@ import type { NpcType } from "@/data/npc/npc";
 
 export const NPC_LEVELS: Partial<Record<NpcType, number>> = {
   jhowsimar: 1,
+  vigiaJoaquim: 3,
+  vigiaJoao: 6,
+  vigiaLando: 8,
   vandinhaFragment: 3,
   deise: 7,
   maugrelo: 9,
@@ -13,6 +16,8 @@ export const NPC_LEVELS: Partial<Record<NpcType, number>> = {
   hungryKing: 11,
   neimito: 13,
   planetarySisters: 14,
+  evilMorty: 60,
+  netali: 14,
 };
 
 export function getNpcLevel(npcType: string): number {

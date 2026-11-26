@@ -4,6 +4,7 @@
   width: 8vw;
   height: 8vw;
   z-index: 9999999999999999;
+  border: 2px solid rgb(126, 126, 126);
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.25);
   display: flex;
@@ -18,7 +19,7 @@
   width: 3vw;
   height: 3vw;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(var(--size-6));
   pointer-events: none;
   transition: transform 0.05s linear;

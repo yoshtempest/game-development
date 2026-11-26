@@ -7,6 +7,7 @@ import { SleepBarNotification } from "@/components/Game/Notification/SleepBar";
 import { XpProfessionNotification } from "@/components/Game/Notification/XpProfession";
 import { StatusToasts } from "@/components/Game/Notification/StatusToasts";
 import { ToastStack } from "@/components/Game/Notification/ToastStack";
+import { MahoragaEventNotifier } from "@/components/Game/Notification/MahoragaEvent";
 import { CharacterUnlockModal } from "@/components/Game/Unlock/CharacterUnlockModal";
 import { PetUnlockModal } from "@/components/Game/Unlock/PetUnlockModal";
 import { useInventory } from "@/contexts/InventoryContext";
@@ -43,6 +44,7 @@ import { useRegenTimer } from "@/hooks/player/useRegenTimer";
 import { useExploreLocation } from "@/hooks/scene/useExploreLocation";
 import { CombatTutorialProvider } from "@/contexts/CombatTutorialContext";
 import { SocialOverlay } from "@/components/Game/Social/SocialOverlay";
+import { Animations } from "./Controls/Animations";
 
 export function GameApp() {
   const { isOpen } = useInventory();
@@ -262,12 +264,14 @@ export function GameApp() {
         <Movement />
         <Outlet />
         <GameButtons />
+        <Animations />
         <SocialOverlay />
       </CombatTutorialProvider>
       <XPBarNotification />
       <HungerBarNotification />
       <SleepBarNotification />
       <XpProfessionNotification />
+      <MahoragaEventNotifier />
       <StatusToasts />
       <CharacterUnlockModal />
       <PetUnlockModal />

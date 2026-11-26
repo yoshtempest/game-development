@@ -8,24 +8,8 @@ import { useMenuSFX } from "@/hooks/menu/useMenuSFX";
 import { formatDuration } from "@/utils/formatDuration";
 import { ActivePotionDisplay } from "@/components/Game/Battle/ActivePotionDisplay";
 import { FleeButton } from "@/components/Game/Battle/Buttons/Run";
+import { type Props, type DefeatMenuSelection, OTHER } from "./types";
 
-type DefeatMenuSelection = "retry" | "flee";
-
-type Props = {
-  isOpen: boolean;
-  title?: string;
-  onContinue: () => void;
-  onBack: () => void;
-  progress: number;
-  elapsed: number;
-  bestTime: number;
-  showRetry?: boolean;
-};
-
-const OTHER: Record<DefeatMenuSelection, DefeatMenuSelection> = {
-  retry: "flee",
-  flee: "retry",
-};
 
 export function DefeatModal({
   isOpen,
