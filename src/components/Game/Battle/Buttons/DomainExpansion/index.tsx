@@ -39,7 +39,7 @@ export function DomainExpansionButton({
     <AbilityButton
       type="domain"
       customClasses={domainClasses}
-      label={name}
+        // label={name}
       name={name}
       accent={accent}
       background={background}

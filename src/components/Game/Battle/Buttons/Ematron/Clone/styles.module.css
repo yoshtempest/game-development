@@ -12,30 +12,6 @@
   opacity: 0.6;
 }
 
-.value,
-.label,
-.cost {
-  position: relative;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.value {
-  font-size: var(--fs-18);
-  font-weight: bold;
-  color: var(--ability-ematron);
-}
-
-.label {
-  color: var(--ability-ematron-pale);
-}
-
-.cost {
-  font-size: var(--fs-11);
-  font-weight: bold;
-  color: var(--ability-freeze);
-}
-
 @keyframes glow {
   0%,
   100% {

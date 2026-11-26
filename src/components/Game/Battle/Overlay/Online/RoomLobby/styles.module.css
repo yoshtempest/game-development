@@ -1,0 +1,160 @@
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.roomHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.subtitle {
+  color: #8794a8;
+  font-size: 12px;
+}
+
+.roomHeader h2 {
+  margin-top: 4px;
+  color: #f9f9f9;
+  font-size: 22px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border-radius: 20px;
+  background: #123328;
+  color: #4ade80;
+  font-size: 12px;
+}
+
+.status span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+}
+
+.playersSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionHeader h3 {
+  color: #f9f9f9;
+  font-size: 16px;
+}
+
+.sectionHeader span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #8794a8;
+  font-size: 13px;
+}
+
+.playerList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.player {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #26364f;
+  border-radius: 10px;
+  background: #121b31;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #1c3450;
+  color: #42b9ff;
+}
+
+.playerInfo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.playerInfo strong {
+  color: #f9f9f9;
+}
+
+.playerInfo span {
+  color: #8794a8;
+  font-size: 12px;
+}
+
+.you {
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: #183d5b;
+  color: #42b9ff;
+  font-size: 11px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 2vw;
+}
+
+.actions button {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.playButton {
+  background: #187fc4;
+  color: #fff;
+}
+
+.playButton:hover {
+  background: #0099ff;
+}
+
+.leaveButton {
+  background: #291c27;
+  color: #f87171;
+}
+
+.leaveButton:hover {
+  background: #42232d;
+}

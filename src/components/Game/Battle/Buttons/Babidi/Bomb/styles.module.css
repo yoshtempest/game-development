@@ -1,0 +1,28 @@
+.button {
+  border: var(--size-2) solid var(--accent-50);
+  animation: granReyCeroGlow 1.5s ease-in-out infinite;
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--accent-90);
+}
+
+.ready {
+  border-color: var(--accent-80);
+}
+
+.cooldown {
+  font-size: var(--fs-16);
+  font-weight: bold;
+  color: var(--ability-aurora);
+}
+
+@keyframes granReyCeroGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 var(--size-4) var(--accent-30);
+  }
+  50% {
+    box-shadow: 0 0 var(--size-18) var(--accent-80);
+  }
+}

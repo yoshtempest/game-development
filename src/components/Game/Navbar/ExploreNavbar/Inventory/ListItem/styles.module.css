@@ -1,39 +1,70 @@
-.itemRow {
+/* Célula compacta: ícone com a quantidade no canto inferior direito e o nome
+   logo abaixo. Sem descrição aqui — ela aparece só no item selecionado. */
+.cell {
   display: flex;
   align-items: center;
-  gap: var(--fs-10);
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 0;
+  padding: var(--size-2);
+}
+
+.cell:global(.active) {
+  border-color: var(--accent-color) !important;
+  background: rgba(14, 165, 233, 0.18) !important;
+}
+
+/* A seta do `.active` global não cabe numa célula de grid. */
+.cell:global(.active)::before {
+  content: none;
+}
+
+.itemCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--size-2);
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+}
+
+.iconWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-32);
+  height: var(--size-32);
 }
 
 .icon {
-  width: var(--size-32);
-  height: var(--size-32);
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  flex-shrink: 0;
 }
 
-.info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-2);
-  min-width: 0;
+.qty {
+  position: absolute;
+  right: calc(-1 * var(--size-2));
+  bottom: calc(-1 * var(--size-2));
+  padding: 0 var(--size-2);
+  border: var(--size-1) solid var(--border-default);
+  border-radius: var(--size-4);
+  background: var(--surface-card);
+  color: var(--gold-light);
+  font-size: var(--fs-11);
+  font-weight: bold;
+  line-height: 1.2;
 }
 
 .name {
-  font-size: var(--fs-14);
-  color: var(--text-color);
-}
-
-.description {
+  width: 100%;
+  overflow: hidden;
   font-size: var(--fs-11);
-  color: var(--grey-mid);
-  font-weight: normal;
-  line-height: 1.3;
-  word-wrap: break-word;
-}
-
-.noKey {
-  color: var(--red-500);
-  font-size: var(--fs-080);
+  color: var(--text-color);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rejected {

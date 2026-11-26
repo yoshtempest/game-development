@@ -83,7 +83,7 @@
 }
 
 .equipmentImage {
-  width: var(--fs-42);
+  width: var(--size-40);
 }
 
 .filterTabActive {

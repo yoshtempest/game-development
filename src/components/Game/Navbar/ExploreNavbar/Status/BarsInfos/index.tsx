@@ -1,4 +1,3 @@
-import { usePlayer } from "@/contexts/PlayerContext";
 import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
 import { MAX_HUNGER, getHungerMultiplier } from "@/data/player/hunger";
 import { MAX_SLEEP } from "@/data/player/sleep";
@@ -12,13 +11,12 @@ import { Drumstick, Heart, Moon, Sparkles } from "lucide-react";
 import { statusIconPath } from "@/utils/paths";
 import { formatCompactNumber } from "@/utils/formatCompactNumber";
 
-export function BarsInfos() {
-  const { player } = usePlayer();
-  const character = player.character;
+export function BarsInfos({ characterId }: { characterId: CharacterId }) {
+  const character = characterId;
   const { progress, getXPToNextLevel } = useCharacterProgress();
   const { getBonus } = useTitles();
 
-  const charProgress = progress[player.character];
+  const charProgress = progress[characterId];
   const xpNeeded = getXPToNextLevel(charProgress.level);
 
   const equipmentBonus = getEquipmentStatsBonus(character);
@@ -61,7 +59,7 @@ export function BarsInfos() {
         <ProgressBar
           value={charProgress.xp}
           max={xpNeeded}
-          animationId={`char-xp-${player.character}`}
+          animationId={`char-xp-${characterId}`}
           level={charProgress.level}
         />
       </div>
@@ -79,7 +77,7 @@ export function BarsInfos() {
         <ProgressBar
           value={currentHP}
           max={playerMaxHp}
-          animationId={`char-hp-${player.character}`}
+          animationId={`char-hp-${characterId}`}
           color={
             currentHP > playerMaxHp * 0.5
               ? "var(--success)"
@@ -104,7 +102,7 @@ export function BarsInfos() {
           <ProgressBar
             value={currentMana}
             max={maxMana}
-            animationId={`char-mana-${player.character}`}
+            animationId={`char-mana-${characterId}`}
             color={character === "natsuki" ? "#e84118" : "#7fc7ff"}
           />
         </div>
@@ -123,7 +121,7 @@ export function BarsInfos() {
         <ProgressBar
           value={charProgress.hunger}
           max={MAX_HUNGER}
-          animationId={`char-hunger-${player.character}`}
+          animationId={`char-hunger-${characterId}`}
           color={
             charProgress.hunger > 50
               ? "var(--success)"
@@ -147,7 +145,7 @@ export function BarsInfos() {
         <ProgressBar
           value={charProgress.sleep}
           max={MAX_SLEEP}
-          animationId={`char-sleep-${player.character}`}
+          animationId={`char-sleep-${characterId}`}
           color={
             charProgress.sleep > 50
               ? "var(--success)"

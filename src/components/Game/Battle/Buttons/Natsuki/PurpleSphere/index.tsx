@@ -15,7 +15,6 @@ type Props = {
  */
 const purpleSphereClasses: CustomAbilityClasses = {
   button: styles.button,
-  label: styles.label,
   active: styles.active,
 };
 
@@ -28,16 +27,12 @@ export function PurpleSphereButton({
     <AbilityButton
       type="custom"
       customClasses={purpleSphereClasses}
-      label="Roxa"
+      // label="Roxa"
       disabled={disabled}
       onClick={onClick}
       extraProps={{ active }}
+      image={spriteMap.purpleSphere}
       title="Esfera Roxa: atravessa todos os inimigos no caminho (2x o dano da vermelha), destrói projéteis e é indestrutível."
-      style={{
-        backgroundImage: `url("${spriteMap.purpleSphere}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
     />
   );
 }

@@ -1,0 +1,11 @@
+.poisonTint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: #8b2be2;
+  opacity: 0.2;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+}

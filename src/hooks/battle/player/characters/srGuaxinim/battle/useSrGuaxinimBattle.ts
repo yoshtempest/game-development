@@ -13,8 +13,6 @@ export function useSrGuaxinimBattle({
   onAreaDamage,
   onBombProjectiles,
   srGuaxinimOraMultiplierRef,
-  refs,
-  freezeActionsUntilRef,
 }: Props) {
   const enemies = useMemo(() => {
     if (player.character !== "srGuaxinim") return [];
@@ -52,8 +50,6 @@ export function useSrGuaxinimBattle({
     setPlayer,
     enemies,
     projectiles: npc.projectiles,
-    timeRef: refs.timeRef,
-    freezePlayerUntilRef: freezeActionsUntilRef,
     onBombProjectiles,
     onAreaDamage,
   });
