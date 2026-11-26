@@ -88,6 +88,7 @@ export function BattleEntities({
   babidiBombDrop = null,
   babidiAttackVariant,
   babidiMachineGamaControl = false,
+  babidiToxicFormActive = false,
   babidiShieldSides,
   onBabidiShieldEnd,
   sphere = null,
@@ -194,6 +195,30 @@ export function BattleEntities({
 
       <Pet pet={pet} TILE_SIZE={TILE_SIZE} />
 
+      <Player
+        player={player}
+        PLAYER_SIZE={PLAYER_SIZE}
+        weapon={weapon}
+        grabFlipped={grabFlipped}
+        form={playerForm}
+        transformationFrame={transformationFrame}
+        blinkVisual={blinkVisual}
+        teleportSprite={ematronClone != null}
+        preAtomic={preAtomic}
+        outroExpression={outroExpression}
+        atomicHalo={atomicHalo}
+        atomicFlash={atomicFlash}
+        mugetsuBlink={mugetsuBlink}
+        babidiAttackVariant={babidiAttackVariant}
+        babidiMachineGamaControl={babidiMachineGamaControl}
+        babidiToxicForm={babidiToxicFormActive}
+        babidiShieldSides={babidiShieldSides}
+        onBabidiShieldEnd={onBabidiShieldEnd}
+        hakai={hakai}
+        sigiloPhase={sigiloPhase}
+        levelUpParticles={layer === "full"}
+        nameTag={playerNameTag}
+      />
       {!hidePlayer && (
         <Player
           player={player}

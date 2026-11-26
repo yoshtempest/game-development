@@ -53,6 +53,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     sigiloPhase,
     nameTag,
     babidiMachineGamaControl = false,
+    babidiToxicForm = false,
     babidiShieldSides = NO_BABIDI_SHIELD,
     onBabidiShieldEnd,
     hakai = false,
@@ -74,7 +75,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
 
   const showFlipped = isGrabbed && grabFlipped;
 
-  const { src, handleSpriteError } = useBattleSprite({
+  const { src, handleSpriteError, toxicPlaceholder } = useBattleSprite({
     character,
     state,
     weapon,
@@ -85,6 +86,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     outroExpression,
     babidiAttackVariant,
     babidiMachineGamaControl,
+    babidiToxicForm,
     hakai,
     sigiloPhase,
     basicComboStep,
@@ -123,6 +125,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     atomicFlash ? styles.atomicFlash : "",
     mugetsuBlink === "out" ? styles.mugetsuBlinkOut : "",
     mugetsuBlink === "in" ? styles.mugetsuBlinkIn : "",
+    toxicPlaceholder ? styles.babidiToxicPlaceholder : "",
   ]
     .filter(Boolean)
     .join(" ");
