@@ -16,6 +16,7 @@ export function createCommonProjectile({
   maxHp = hp,
   indestructible = false,
   damageType,
+  onHitStatus,
 }: CommonParams): ProjectileCommon {
   const dx = targetX - startX;
   const dy = targetY - startY;
@@ -39,5 +40,6 @@ export function createCommonProjectile({
     maxHp,
     indestructible,
     damageType,
+    onHitStatus,
   };
 }

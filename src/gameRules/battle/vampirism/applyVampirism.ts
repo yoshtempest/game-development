@@ -27,7 +27,7 @@ export type VampirismStats = {
   universalVampirism: number;
 };
 
-type Params = {
+export type ApplyVampirismParams = {
   /** Dano efetivamente calculado no golpe (não o HP restante do alvo). */
   damage: number;
   source: VampirismSource;
@@ -60,7 +60,7 @@ export function applyVampirism({
   vampirism,
   playerMaxHp,
   setPlayerHP,
-}: Params): number {
+}: ApplyVampirismParams): number {
   if (damage <= 0) return 0;
   const percent = getVampirismPercent(source, vampirism);
   if (percent <= 0) return 0;

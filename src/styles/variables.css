@@ -226,6 +226,13 @@
   --cyan-bright: #00ffff;
   --cyan-bright-45: rgba(0, 255, 255, 0.45);
   --cyan-bright-80: rgba(0, 255, 255, 0.8);
+
+  /* Painel tech dos menus: fundo azul profundo e moldura ciano. */
+  --nav-panel-line: #22d3ee;
+  --nav-panel-line-soft: rgba(34, 211, 238, 0.35);
+  --nav-panel-glow: rgba(0, 170, 255, 0.35);
+  --nav-panel-deep: #050f22;
+  --nav-panel-top: #0c1e3d;
   --gold-06: rgba(255, 215, 0, 0.06);
   --gold-12: rgba(255, 215, 0, 0.12);
   --gold-15: rgba(255, 215, 0, 0.15);

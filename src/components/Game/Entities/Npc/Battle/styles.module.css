@@ -33,3 +33,24 @@
       drop-shadow(0 0 var(--size-4) var(--danger));
   }
 }
+
+/*
+ * Comemoração do NPC que derrotou o player (issue #450). Anima a propriedade
+ * `translate`, independente do `transform` inline que espelha o sprite pela
+ * direção — animar `transform` desfaria o `scaleX(-1)`. Os pulinhos repetem
+ * enquanto o outro e o modal de derrota estão abertos, como o retrato de
+ * vitória do player.
+ */
+.outroVictory {
+  animation: npcOutroVictoryHop 0.6s ease-in-out infinite;
+}
+
+@keyframes npcOutroVictoryHop {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -12%;
+  }
+}

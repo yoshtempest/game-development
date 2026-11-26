@@ -15,6 +15,7 @@ export function useEquipmentMenu(
   isOpen: boolean,
   character: CharacterId,
   rightItemsRef?: React.RefObject<HTMLDivElement | null>,
+  onFocusTabs: () => void = () => {},
 ) {
   const { pushControls } = useGameControls();
   const { equip, unequip, unequipAccessoryAtIndex } = useEquipment();
@@ -22,6 +23,7 @@ export function useEquipmentMenu(
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const selectedIndexRef = useRef(selectedIndex);
+  const onFocusTabsRef = useLatestRef(onFocusTabs);
   const [filter, setFilter] = useState<EquipmentFilter>("all");
 
   const { equippedItems, allCollected, filteredItems } = useEquipmentItems(
@@ -153,7 +155,11 @@ export function useEquipmentMenu(
       if (direction === "left") {
         const rowStart = Math.floor(prev / cols) * cols;
         let next = prev - 1;
-        if (next < rowStart) return prev;
+        if (next < rowStart) {
+          // Primeira coluna dos slots: volta para as abas da Mochila.
+          onFocusTabsRef.current();
+          return prev;
+        }
         while (next >= rowStart && isLockedIndex(next)) {
           next--;
         }

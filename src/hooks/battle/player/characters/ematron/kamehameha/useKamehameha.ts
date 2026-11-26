@@ -6,7 +6,7 @@ import { clampX } from "@/gameRules/movement/clampX";
 import { combatService } from "@/services/combat";
 import type { DamageArmor } from "@/utils/types/battle/damageKind";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
-import { applyVampirism } from "@/gameRules/battle/vampirism/applyVampirism";
+import { accumulateVampirism } from "@/gameRules/battle/vampirism/accumulateVampirism";
 
 import { useSkillGuard } from "@/hooks/battle/player/characters/skillGuard/useSkillGuard";
 import { useMenuPause } from "@/hooks/battle/utilities/useMenuPause";
@@ -79,6 +79,12 @@ export function useKamehameha({
   const shotStartRef = useRef(0);
   const rawAccRef = useRef(0);
   const shownAccRef = useRef(new Map<string, number>());
+  /**
+   * Dano mitigado ainda não convertido em cura. Cada tick tira 1% do
+   * dano base, pouco demais para curar sozinho com o arredondamento por tick. Ver
+   * `accumulateVampirism` (issue #398).
+   */
+  const vampDamageAccRef = useRef(0);
 
   useMenuPauseShift(isMenuOpen, ({ pausedMs }) => {
     if (shotStartRef.current !== 0) shotStartRef.current += pausedMs;
@@ -124,6 +130,7 @@ export function useKamehameha({
     clearTimers();
     rawAccRef.current = 0;
     shownAccRef.current.clear();
+    vampDamageAccRef.current = 0;
     shotStartRef.current = 0;
 
     // Animação de saída: transiciona para 'ending' e depois limpa.
@@ -187,6 +194,18 @@ export function useKamehameha({
         registerHitRef.current?.(whole);
       };
 
+      /** Cura em lote pelo funil único: ver `vampDamageAccRef`. */
+      const healFromHit = (dealt: number) => {
+        vampDamageAccRef.current = accumulateVampirism({
+          pending: vampDamageAccRef.current,
+          damage: dealt,
+          source: "other",
+          vampirism,
+          playerMaxHp,
+          setPlayerHP,
+        });
+      };
+
       // NPC principal: dano + empurrão para longe do jogador (clampado).
       // O feixe pode ir do personagem até a borda em qualquer direção, então a
       // faixa horizontal é sempre [min(fromX,toX), max(fromX,toX)] — a ordem
@@ -206,13 +225,7 @@ export function useKamehameha({
             ),
           );
           setNpcHP((hp) => Math.max(0, hp - dmg));
-          applyVampirism({
-            damage: dmg,
-            source: "other",
-            vampirism,
-            playerMaxHp,
-            setPlayerHP,
-          });
+          healFromHit(dmg);
           reportTick(MAIN_TARGET_KEY, dmg, mainNpc.x, mainNpc.y, "npc");
           mainNpc.updateNpc({
             x: clampX(mainNpc.x + dir * EMATRON_KAMEHAMEHA_PUSH_PX),
@@ -242,13 +255,7 @@ export function useKamehameha({
           ),
         );
         const newHp = Math.max(0, s.hp - dmg);
-        applyVampirism({
-          damage: dmg,
-          source: "other",
-          vampirism,
-          playerMaxHp,
-          setPlayerHP,
-        });
+        healFromHit(dmg);
         reportTick(s.id, dmg, s.x, s.y, "summon");
         if (newHp <= 0) {
           killed = true;

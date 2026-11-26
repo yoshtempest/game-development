@@ -42,10 +42,10 @@
   align-items: center;
   justify-content: center;
   background: var(--overlay-45);
-  border: none;
   border-radius: var(--vw-1-2);
   padding: 0;
   cursor: pointer;
+  border: 1px solid white;
 }
 
 @media (orientation: portrait) {

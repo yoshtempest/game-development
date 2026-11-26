@@ -5,15 +5,22 @@ import type { MarshadowBattleForm } from "@/utils/paths/characters/marshadow/typ
  * Personagens cujas habilidades vivem **direto** em `inFight/habilities/`
  * (sem a pasta de forma): o srGuaxinim (Killer Queen em `habilities/bitesTheDust/`),
  * o natsuki (esferas em `habilities/blue|red/` e a sequência em
- * `habilities/Setup/`) e o babidi (portais em `habilities/portals/`). O marshadow,
- * por outro lado, aninha tudo sob a forma (`inFight/default/habilities/` e
- * `inFight/vastolordForm/habilities/`).
+ * `habilities/Setup/`), o babidi (portais em `habilities/portals/`) e a
+ * laricell (A1–A4 + Mordida, o mesmo layout dos botões via
+ * `playerPathLaricellHabilities`). O marshadow, por outro lado, aninha tudo sob
+ * a forma (`inFight/default/habilities/` e `inFight/vastolordForm/habilities/`).
+ *
+ * A laricell entra aqui mesmo tendo Forma Vampira: a transformação troca o
+ * conjunto de habilidades em tela, não a pasta das artes — separar em
+ * `vampireForm/habilities/` faria o efeito e o botão apontarem para lugares
+ * diferentes para a mesma habilidade.
  */
 const FLAT_ABILITY_FOLDER = new Set([
   "srGuaxinim",
   "natsuki",
   "babidi",
   "ematron",
+  "laricell",
 ]);
 
 /**
