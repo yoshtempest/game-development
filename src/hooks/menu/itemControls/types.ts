@@ -1,4 +1,5 @@
 export type Params = {
+  isActive: boolean;
   filterFocused: boolean;
   chestFocused: boolean;
   selectedItem: { id: string } | undefined;

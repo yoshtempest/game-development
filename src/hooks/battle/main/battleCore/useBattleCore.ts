@@ -6,6 +6,8 @@ import { useBattleKillCounter } from "@/hooks/battle/death/useKillCounter";
 import { useNpcTargeting } from "@/hooks/battle/npc/useNpcTargeting";
 import { useBattleSystem } from "@/hooks/battle/main/battleSystem/useSystem";
 import { useNpcAI } from "@/hooks/battle/npc/ai/useAi";
+import { LaricellVampireConstants } from "@/data/characters/laricell/laricell";
+import type { BattleBarrier, NpcBlind } from "@/utils/types/battle/npcControl";
 import { useGrabThrow } from "@/hooks/battle/throw/useGrabThrow";
 import { useBabidiShield } from "@/hooks/battle/player/characters/babidi/useShield";
 import { useYvelWeaponSwitch } from "@/hooks/battle/player/characters/yvel/useYvelWeaponSwitch";
@@ -20,8 +22,13 @@ import {
 } from "@/hooks/battle/npc/blocking/useBlocking";
 import { INTRO_MS } from "@/services/npc/attacks/hungryDog/state";
 import { clampX } from "@/gameRules/movement/clampX";
+import { getBehindPlayerX } from "@/gameRules/npc/movement";
+import { rollEvilMortyEvasion } from "@/gameRules/npc/evilMortyEvasion";
+import { EVIL_MORTY_TELEPORT_OFFSET } from "@/data/npc/evilMorty";
 import { applyPlayerStatus } from "@/gameRules/battle/status/statusEffects";
+import { RICK_PASSIVE_POISON_CHANCE } from "@/data/npc/rickToxico";
 import { ProjectileHpConstants } from "@/data/projectile";
+import { hasCompanionAlive } from "@/data/npc";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
@@ -108,6 +115,8 @@ export function useBattleCore({
     ematronComboActiveRef,
     ematronComboAirActiveRef,
     ematronComboStepIndexRef,
+    basicComboActiveRef,
+    basicComboStepIndexRef,
     setTimeScale,
     resetTimeScale,
     timeScaleRef,
@@ -156,6 +165,11 @@ export function useBattleCore({
   const { showToast } = useToast();
 
   const { weapon: yvelWeapon, switchWeapon } = useYvelWeaponSwitch({
+  const {
+    weapon: yvelWeapon,
+    switchWeapon,
+    equipWeapon: equipYvelWeapon,
+  } = useYvelWeaponSwitch({
     character: player.character,
     timeRef: refs.timeRef,
   });
@@ -201,6 +215,14 @@ export function useBattleCore({
   }
 
   const npcRootedUntilRef = useRef(0);
+
+  // ── Controle de NPC da Laricell (issue #517) ─────────────────────────────
+  // Moram no core porque a IA (montada aqui) lê a parede e a cegueira a cada
+  // tick, e o vampirismo da Forma Vampira entra no `useBattleSystem`, também
+  // montado aqui; quem escreve nelas é o `useLaricellAbilities`, no combat.
+  const barrierRef = useRef<BattleBarrier | null>(null);
+  const npcBlindRef = useRef<NpcBlind | null>(null);
+  const [laricellVampireActive, setLaricellVampireActive] = useState(false);
   const rootedSummonsUntilRef = useRef<Record<string, number>>({});
 
   const [fishingNet, setFishingNet] = useState<{
@@ -428,11 +450,15 @@ export function useBattleCore({
     onSystemMessage: (text: string) => {
       showToast({ icon: SYSTEM_TOAST_ICON, text });
     },
+    onFixedHit: (amount: number) => battle.npcFixedHit(amount),
+    onExecutePlayer: () => battle.damagePlayerHp(battle.playerMaxHp),
     obstacles,
     timeRef: refs.timeRef,
     npcStaggerRef: refs.npcStaggerRef,
     rootedUntilRef: npcRootedUntilRef,
     fishingNetRef: fishingNetRef,
+    barrierRef,
+    npcBlindRef,
     honoredFleeRef,
     npcHpRef: targeting.npcAiHpRef,
     npcMaxHpRef: targeting.npcAiMaxHpRef,
@@ -498,6 +524,7 @@ export function useBattleCore({
 
     npc.updateNpc({
       x: clampX(npc.x + dir * BLOCK_ATTACK_PUSH_DISTANCE),
+      pushCount: (npc.pushCount ?? 0) + 1,
     });
 
     setSummons((prev) =>
@@ -506,11 +533,51 @@ export function useBattleCore({
         .map((s) => ({
           ...s,
           x: clampX(s.x + dir * BLOCK_ATTACK_PUSH_DISTANCE),
+          pushCount: (s.pushCount ?? 0) + 1,
         })),
     );
   });
 
+  targeting.onBeforeNpcHitRef.current = (getDamage, source) => {
+    if (
+      npcType === "rickToxico" &&
+      source === "basic" &&
+      Math.random() < RICK_PASSIVE_POISON_CHANCE
+    ) {
+      setPlayer((p) => applyPlayerStatus(p, "poison"));
+    }
+  /**
+   * Defesa do jogador contra cada golpe que passa pelo `runHitPrelude`.
+   *
+   * Evil Morty: rola teleporte (vira "miss" e ele reaparece atrás do jogador)
+   * e, se falhar, o escudo (anula tudo). Os dois resolvem sem dano, então o
+   * resultado é `blocked` com `remainingDamage: 0` — o prelúdio rearma o
+   * cooldown do golpe como em qualquer bloqueio.
+   *
+   * Piupiu: bloqueio por gauge, só de perto.
+   */
   targeting.onBeforeNpcHitRef.current = (getDamage) => {
+    if (npcType === "evilMorty") {
+      const evasion = rollEvilMortyEvasion(npcPhaseRef.current);
+      if (evasion === "teleport") {
+        refs.spawnDamageRef.current?.(0, npc.x, npc.y, "miss");
+        npc.updateNpc({
+          x: getBehindPlayerX(
+            player.x,
+            player.battleDirection,
+            EVIL_MORTY_TELEPORT_OFFSET,
+          ),
+        });
+        return { blocked: true, remainingDamage: 0 };
+      }
+      if (evasion === "shield") {
+        npc.updateNpc({ state: "block" });
+        refs.spawnDamageRef.current?.(0, npc.x, npc.y, "blocked");
+        return { blocked: true, remainingDamage: 0 };
+      }
+      return { blocked: false };
+    }
+
     if (npcType !== "piupiu") return { blocked: false };
     const distanceX = Math.abs(npc.x - player.x);
     const distanceY = Math.abs(npc.y - player.y);
@@ -591,6 +658,7 @@ export function useBattleCore({
       }
       onNpcDeathRef.current();
     },
+    holdNpcDeath: hasCompanionAlive(npcType, summons),
     timeRef: refs.timeRef,
     npcStaggerRef: refs.npcStaggerRef,
     playerCooldown: refs.playerCooldown,
@@ -618,6 +686,9 @@ export function useBattleCore({
     srGuaxinimOraMultiplierRef,
     vastolordMultiplierRef,
     vastolordActive,
+    bonusUniversalVampirism: laricellVampireActive
+      ? LaricellVampireConstants.UNIVERSAL_VAMPIRISM
+      : 0,
     divergentFistRef,
     onDivergentFistConsumedRef,
     petId,
@@ -657,6 +728,10 @@ export function useBattleCore({
     resetBattleNavbarRef,
     saveDataRef,
     npcRootedUntilRef,
+    barrierRef,
+    npcBlindRef,
+    laricellVampireActive,
+    setLaricellVampireActive,
     rootedSummonsUntilRef,
     refs,
     setModeRef,
@@ -723,6 +798,8 @@ export function useBattleCore({
     ematronComboActiveRef,
     ematronComboAirActiveRef,
     ematronComboStepIndexRef,
+    basicComboActiveRef,
+    basicComboStepIndexRef,
     setTimeScale,
     resetTimeScale,
     timeScaleRef,
@@ -753,6 +830,7 @@ export function useBattleCore({
     coop,
     yvelWeapon,
     switchWeapon,
+    equipYvelWeapon,
     babidiShield,
     onBlockRef: refs.onBlockRef,
     onDamageTakenRef: refs.onDamageTakenRef,

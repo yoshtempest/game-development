@@ -13,6 +13,7 @@ import { getSelected } from "@/gameRules/menu/selection";
 import { useGameControlsLayer } from "@/hooks/game/useGameControlsLayer";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useMenuSFX } from "@/hooks/menu/useMenuSFX";
+import { useCharacterVoice } from "@/hooks/audio/useCharacterVoice";
 import { CharacterCard } from "@/components/Game/Navbar/shared/CharacterCard";
 
 export function Characters() {
@@ -44,6 +45,8 @@ export function Characters() {
   const playMoveRef = useLatestRef(playMove);
   const playSelectRef = useLatestRef(playSelect);
   const setCharacterRef = useLatestRef(setCharacter);
+  const playVoice = useCharacterVoice();
+  const playVoiceRef = useLatestRef(playVoice);
 
   useGameControlsLayer(
     {
@@ -78,6 +81,7 @@ export function Characters() {
           selectedIndexRef.current,
         );
         setCharacterRef.current(selected.image);
+        playVoiceRef.current(selected.image);
         return true;
       },
       blockGlobalOpen: true,

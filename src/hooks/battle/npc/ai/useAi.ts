@@ -1,6 +1,8 @@
 import type { Props } from "./types";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { getNpcAttack } from "@/services/npc";
+import { startRickToxicoSmoke } from "@/services/npc/attacks/rickToxico";
+import { RICK_FLASK_POISON_CHANCE } from "@/data/npc/rickToxico";
 import { useProjectile } from "@/hooks/battle/npc/useProjectile";
 import { isParryPress } from "@/hooks/battle/npc/isParryPress";
 import {
@@ -8,6 +10,7 @@ import {
   getNpcState,
   applyObstacleCollision,
 } from "@/gameRules/battle/npc/npcPosition";
+import { stepNpcVertical } from "@/gameRules/battle/npc/npcPlatform";
 import type { NPCBattleState } from "@/utils/types/npc/npc";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
@@ -19,6 +22,10 @@ import {
   HONORED_ONE_FLEE_STEP,
 } from "@/gameRules/battle/cursedEnergy";
 import { ProjectileHpConstants } from "@/data/projectile";
+import {
+  RANGED_ATTACK_CUE_COOLDOWN_MS,
+  RANGED_ATTACK_CUE_SOUND,
+} from "@/data/battle/rangedAttackCue";
 import { useProximityLoopSound } from "@/hooks/battle/npc/useProximityLoopSound";
 import { getTime, NPC_TIME_ID } from "@/gameRules/battle/time";
 
@@ -30,6 +37,12 @@ import {
 import type { NpcHitIntent } from "@/hooks/battle/coop/types";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
+import {
+  clampToBarrier,
+  isBarrierActive,
+  isInsideBarrier,
+  rollBlindMiss,
+} from "@/gameRules/battle/laricell/npcControl";
 
 /**
  * Mesmo alvo = mesmo id e mesmas propriedades visíveis. Usado para não
@@ -73,6 +86,8 @@ export function useNpcAI({
   rootedUntilRef,
   fishingNetRef,
   honoredFleeRef,
+  barrierRef,
+  npcBlindRef,
   npcHpRef,
   npcMaxHpRef,
   npcBlockedRef,
@@ -91,6 +106,8 @@ export function useNpcAI({
   onStuckPaperExplode,
   onApplyDebuff,
   onSystemMessage,
+  onFixedHit,
+  onExecutePlayer,
   onBurstHit,
   playerProjectileRef,
   projectileHpRef,
@@ -137,14 +154,23 @@ export function useNpcAI({
     );
   }, [localAliveRef, targetsRef]);
 
+  const projectilesRef = useLatestRef(projectiles);
   const activeProjectile = projectiles[0] ?? null;
   const projectileRef = useLatestRef(activeProjectile);
+  const projectileSpawnedRef = useRef(false);
+  const attackSoundPlayedRef = useRef(false);
+  const lastRangedCueRef = useRef(0);
+  /**
+   * Adiciona (ou limpa) projéteis do NPC. Marca `projectileSpawnedRef` para o
+   * tick da IA saber que houve disparo e decidir se toca o aviso sonoro.
+   */
   const setProjectile = useCallback(
     (p: Projectile | null) => {
       if (p == null) {
         setProjectiles([]);
         return;
       }
+      projectileSpawnedRef.current = true;
       // A vida sai da natureza do projétil: um disparo mágico não custa o
       // mesmo número de golpes que um físico contra a mesma armadura.
       const hp =
@@ -171,10 +197,22 @@ export function useNpcAI({
   const lastAttackRef = useRef(0);
   const summonTimerRef = useRef(0);
   const obstaclesRef = useLatestRef(obstacles ?? []);
+  /**
+   * Velocidade vertical do NPC em mapa com obstáculos. Fica em ref (e não no
+   * `NPCBattleState`) porque só a física de plataforma do host a usa — o
+   * snapshot do co-op e o rewind já carregam o `y` resultante.
+   */
+  const npcVelYRef = useRef(0);
 
   const { playSound, stopSound } = useSoundEffects();
+  /**
+   * `playSound` gravado no replay. Marca `attackSoundPlayedRef` para que um
+   * NPC que já tem som próprio de disparo (Maugrelo, Hungry King…) não ganhe
+   * o aviso genérico de ataque à distância por cima.
+   */
   const loggedPlaySound = useCallback(
     (sound: Parameters<typeof playSound>[0], loop?: boolean) => {
+      attackSoundPlayedRef.current = true;
       logPlay(sound, loop);
       playSound(sound, loop);
     },
@@ -198,6 +236,8 @@ export function useNpcAI({
   const onStuckPaperExplodeRef = useLatestRef(onStuckPaperExplode);
   const onApplyDebuffRef = useLatestRef(onApplyDebuff);
   const onSystemMessageRef = useLatestRef(onSystemMessage);
+  const onFixedHitRef = useLatestRef(onFixedHit);
+  const onExecutePlayerRef = useLatestRef(onExecutePlayer);
   const onBurstHitRef = useLatestRef(onBurstHit);
 
   // ── Roteamento de golpes (co-op) ─────────────────────────────────────────
@@ -233,20 +273,41 @@ export function useNpcAI({
     [getEffectiveTargets, onRemoteHitRef],
   );
 
+  /**
+   * NPC cego (Bomba de Fumaça) erra o golpe: o "miss" sai sobre o alvo e o
+   * golpe não é roteado nem aplicado. Só cobre os golpes de alvo único
+   * (melee e projétil) — área não depende de mira.
+   */
+  const blindMiss = useCallback((): boolean => {
+    if (!rollBlindMiss(npcBlindRef?.current ?? null, Date.now(), Math.random)) {
+      return false;
+    }
+    const target = currentTargetRef.current;
+    spawnDamageRef?.current?.(
+      0,
+      target?.x ?? playerXRef.current,
+      target?.y ?? playerYRef.current,
+      "miss",
+    );
+    return true;
+  }, [npcBlindRef, spawnDamageRef, playerXRef, playerYRef]);
+
   const handleMeleeHit = useCallback(
     (multiplier?: number, damageKind?: DamageKind) => {
+      if (blindMiss()) return;
       if (routeSingle({ source: "melee", multiplier, damageKind })) return;
       onMeleeHitRef.current?.(multiplier, damageKind);
     },
-    [routeSingle, onMeleeHitRef],
+    [blindMiss, routeSingle, onMeleeHitRef],
   );
 
   const handleProjectileHit = useCallback(
     (damageKind?: DamageKind) => {
+      if (blindMiss()) return;
       if (routeSingle({ source: "ranged", damageKind })) return;
       onProjectileHitRef.current?.(damageKind);
     },
-    [routeSingle, onProjectileHitRef],
+    [blindMiss, routeSingle, onProjectileHitRef],
   );
 
   const handlePullPlayer = useCallback(
@@ -331,6 +392,19 @@ export function useNpcAI({
     [routeArea, onLaserHitRef],
   );
 
+  const handleFixedHit = useCallback(
+    (amount: number) => {
+      if (!routeArea({ source: "fixed", amount })) return;
+      onFixedHitRef.current?.(amount);
+    },
+    [routeArea, onFixedHitRef],
+  );
+
+  const handleExecutePlayer = useCallback(() => {
+    if (!routeArea({ source: "execute" })) return;
+    onExecutePlayerRef.current?.();
+  }, [routeArea, onExecutePlayerRef]);
+
   const handleApplyDebuff = useCallback(
     (status: NewPlayerStatus) => {
       if (routeSingle({ source: "status", status })) return;
@@ -359,7 +433,7 @@ export function useNpcAI({
     projectileTarget?.direction ?? playerDirection,
     npc.x,
     npc.y,
-    (damageKind) => {
+    (damageKind, status) => {
       if (npcTypeRef.current === "vandinhaFragment") {
         playSound("breakDish");
         logPlay("breakDish");
@@ -369,6 +443,16 @@ export function useNpcAI({
         logPlay("knifeCut");
       }
       handleProjectileHit(damageKind);
+      if (npcTypeRef.current === "rickToxico") {
+        startRickToxicoSmoke(
+          npcRef.current,
+          projectileTarget?.x ?? playerXRef.current,
+        );
+        if (Math.random() < RICK_FLASK_POISON_CHANCE) {
+          handleApplyDebuff("poison");
+        }
+      }
+      if (status) handleApplyDebuff(status);
     },
     timeRef,
     handlePullPlayer,
@@ -542,6 +626,9 @@ export function useNpcAI({
       // objeto, então a comparação do commit precisa dos valores originais.
       const animBase: NPCBattleState = { ...n };
 
+      projectileSpawnedRef.current = false;
+      attackSoundPlayedRef.current = false;
+
       const result = attack.execute({
         npc: n,
         playerX: targetX,
@@ -580,7 +667,19 @@ export function useNpcAI({
         onStuckPaperExplode: handleStuckPaperExplode,
         onApplyDebuff: handleApplyDebuff,
         onSystemMessage: (text) => onSystemMessageRef.current?.(text),
+        onFixedHit: handleFixedHit,
+        onExecutePlayer: handleExecutePlayer,
       });
+
+      const now = Date.now();
+      if (
+        projectileSpawnedRef.current &&
+        !attackSoundPlayedRef.current &&
+        now - lastRangedCueRef.current >= RANGED_ATTACK_CUE_COOLDOWN_MS
+      ) {
+        lastRangedCueRef.current = now;
+        loggedPlaySound(RANGED_ATTACK_CUE_SOUND);
+      }
 
       const rooted = (rootedUntilRef?.current ?? 0) > Date.now();
       // Regra de time: o `execute` de cada NPC devolve a posição final do
@@ -588,7 +687,18 @@ export function useNpcAI({
       // faz o slow-movement valer para todo comportamento — perseguir,
       // dash, investida — sem que cada um precise saber da regra.
       const scaledX = n.x + (result.x - n.x) * npcTime.speed;
-      const nextX = rooted ? n.x : scaledX;
+      const barrier = barrierRef?.current ?? null;
+      const nextX = rooted ? n.x : clampToBarrier(n.x, scaledX, barrier, now);
+
+      if (
+        isBarrierActive(barrier, now) &&
+        projectilesRef.current.some((p) => isInsideBarrier(p.x, barrier, now))
+      ) {
+        setProjectiles((prev) =>
+          prev.filter((p) => !isInsideBarrier(p.x, barrier, now)),
+        );
+        onProjectileDestroyed();
+      }
       const nextY = result.y ?? n.y;
       const direction = result.direction ?? getNpcDirection(nextX, targetX);
       const distanceX = Math.abs(n.x - targetX);
@@ -603,10 +713,31 @@ export function useNpcAI({
         obstaclesRef.current,
       );
 
+      // Ataque que devolve outro `y` (salto, subterrâneo, voo) é dono do eixo
+      // vertical neste tick; a física de plataforma só cuida de quem anda.
+      const attackOwnsY = result.y !== undefined && result.y !== n.y;
+      let finalY = collision.y;
+      if (attackOwnsY || obstaclesRef.current.length === 0) {
+        npcVelYRef.current = 0;
+      } else {
+        const vertical = stepNpcVertical({
+          x: collision.x,
+          y: collision.y,
+          velY: npcVelYRef.current,
+          blocked: nextX !== n.x && collision.x === n.x,
+          targetX,
+          targetY,
+          canJump: !rooted,
+          obstacles: obstaclesRef.current,
+        });
+        npcVelYRef.current = vertical.velY;
+        finalY = vertical.y;
+      }
+
       const next: NPCBattleState = {
         ...n,
         x: clampX(collision.x),
-        y: collision.y,
+        y: finalY,
         direction,
         hidden: result.hidden ?? n.hidden,
         state: result.state ?? getNpcState(distanceX, forceIdleRef.current),
@@ -630,6 +761,9 @@ export function useNpcAI({
     rootedUntilRef,
     fishingNetRef,
     honoredFleeRef,
+    barrierRef,
+    projectilesRef,
+    onProjectileDestroyed,
     npcPhaseRef,
     npcBlockedRef,
     npcHpRef,
@@ -674,6 +808,8 @@ export function useNpcAI({
     handleLaserHit,
     handleApplyDebuff,
     onSystemMessageRef,
+    handleFixedHit,
+    handleExecutePlayer,
   ]);
 
   const updateNpc = (partial: Partial<NPCBattleState>) => {

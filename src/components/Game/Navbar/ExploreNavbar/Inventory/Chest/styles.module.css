@@ -1,16 +1,12 @@
-.flexColumn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: var(--vh-2);
-}
-
 .dailyChest {
+  position: fixed;
+  right: 5%;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: var(--fs-10) var(--fs-14);
+  gap: var(--small);
+  padding: var(--fs-8) var(--fs-12);
   background: linear-gradient(
     135deg,
     var(--surface-chest),
@@ -18,26 +14,15 @@
   );
   border: var(--size-1) solid var(--border-legendary);
   border-radius: var(--fs-8);
-  width: 80%;
+}
+
+.dailyChest:hover {
+  filter: brightness(1.2);
 }
 
 .dailyChestFocused {
   border-color: var(--gold);
   box-shadow: 0 0 var(--fs-10) var(--gold-60);
-}
-
-.dailyChestInfo {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: var(--size-2);
-}
-
-.dailyChestTitle {
-  font-size: var(--fs-15);
-  font-weight: bold;
-  color: var(--gold-light);
 }
 
 .dailyChestReady {
@@ -53,6 +38,6 @@
 }
 
 .image {
-  width: 20%;
-  height: 8%;
+  width: var(--fs-36);
+  height: auto;
 }

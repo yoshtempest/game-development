@@ -5,6 +5,7 @@ import { useLatestRef } from "@/hooks/useLatestRef";
 import { circularNext, circularPrev } from "@/gameRules/menu/navigation";
 
 export function useRewardsControls({
+  isActive,
   chestRewardsVisible,
   rewardOptionCount,
   lastOpened,
@@ -24,7 +25,7 @@ export function useRewardsControls({
   const closeRewardsRef = useLatestRef(closeRewards);
 
   useEffect(() => {
-    if (!chestRewardsVisible) return;
+    if (!isActive || !chestRewardsVisible) return;
 
     onRewardOptionChange(0);
     rewardOptionIndexRef.current = 0;
@@ -72,6 +73,7 @@ export function useRewardsControls({
     const remove = pushControls(controls);
     return remove;
   }, [
+    isActive,
     chestRewardsVisible,
     pushControls,
     onRewardOptionChange,

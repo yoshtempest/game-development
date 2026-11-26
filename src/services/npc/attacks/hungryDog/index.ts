@@ -7,6 +7,7 @@ import type {
   BehaviorResult,
 } from "@/utils/types/npc/npcBehavior";
 import { MELEE_RANGE, initHungryDogAi } from "./state";
+import { tryAcidSpit } from "./acidSpit";
 import { handleChase } from "./handles/chase";
 import { handleDig } from "./handles/dig";
 import { handleEmerge } from "./handles/emerge";
@@ -26,6 +27,8 @@ export class HungryDogAttack extends NpcAttack {
 
   private executeNormal(ctx: BehaviorContext): BehaviorResult {
     const { npc, targetX, targetY, lastAttackRef, onMeleeHit } = ctx;
+
+    if (tryAcidSpit(ctx)) return { x: npc.x, y: npc.y };
 
     const { x } = chasePlayer(npc, targetX, targetY, 1, MELEE_RANGE);
 

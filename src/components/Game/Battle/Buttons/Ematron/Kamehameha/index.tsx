@@ -19,20 +19,15 @@ const kamehamehaClasses: CustomAbilityClasses = {
 };
 
 export function EmatronKamehamehaButton({ disabled = false, onClick }: Props) {
-  const imageUrl = playerPathEmatronHabilities("/kamehameha/kamehameha.svg");
 
   return (
     <AbilityButton
       type="custom"
       customClasses={kamehamehaClasses}
-      label="KAMEHAMEHA"
+      // label="KAMEHAMEHA"
       disabled={disabled}
       onClick={onClick}
-      style={{
-        backgroundImage: `url("${imageUrl}")`,
-        backgroundSize: "contain",
-        backgroundPosition: "center",
-      }}
+      image={playerPathEmatronHabilities("kamehameha/background.svg")}
       title="Kamehameha: carregue por 2.8s no sprite chargingKamehameha e o efeito dispara causando dano contínuo e empurrando o inimigo."
     />
   );

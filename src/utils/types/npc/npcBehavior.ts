@@ -52,6 +52,17 @@ export type BehaviorContext = {
    * jogo "interrompe" o NPC — ex.: a expansão de domínio cancelada do Denis.
    */
   onSystemMessage?: (text: string) => void;
+   * Dano de valor absoluto (não escala com os stats do NPC) que passa pelo
+   * mesmo funil do laser (`npcFixedHit`): bloqueio e parry continuam valendo.
+   * Existe para golpes cujo dano a issue fixa em número — os cálculos e o
+   * "tá bom?" do Manim.
+   */
+  onFixedHit?: (amount: number) => void;
+  /**
+   * Mata o jogador na hora (dano = 100% da vida máxima), ignorando bloqueio e
+   * parry. Reservado para golpes de derrota roteirizada (bombas do Manim).
+   */
+  onExecutePlayer?: () => void;
   /** true quando o NPC da batalha é um alfa (sprites de alfa, special etc). */
   isAlfa?: boolean;
   /** Spawna um aliado surgindo da direita, fora da vista (entry correndo). */

@@ -26,13 +26,14 @@
   top: 0;
   right: 0;
   width: var(--size-192);
-  height: var(--vh-93);
+  height: 100%;
   align-items: center;
   justify-content: center;
   background: linear-gradient(
-    170deg,
-    var(--primary-color) 70%,
-    var(--surface-dark) 100%
+    to bottom,
+    #142B49CC 0%,
+    #0D1C32 55%,
+    #080F1DCC 100%
   );
   border: var(--size-1) solid var(--background-color);
   border-right: var(--size-3) solid var(--accent-color);
@@ -57,6 +58,7 @@
   font-size: var(--small);
   color: var(--text-color);
   padding: var(--fs-8);
+  border-bottom: 1px solid #09325133;
   gap: var(--vw-0-8);
   cursor: pointer;
 }
