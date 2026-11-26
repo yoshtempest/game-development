@@ -70,6 +70,7 @@ export function createSounds() {
     equip: new Audio(transitionPath("equip.mp3")),
     unequip: new Audio(transitionPath("unequip.mp3")),
     unlockedTitle: playerSoundPath("unlockedTitle.mp3"),
+    petUnlocked: receiveOrUnlock("petUnlocked.mp3"),
     eating: usedItemPath("eating.mp3"),
     drinkingPotion: usedItemPath("drinkingPotion.mp3"),
     jhowsimarJooj: npcSoundPath("jhowsimar/throw.mp3"),

@@ -1,0 +1,75 @@
+.flash {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  pointer-events: none;
+  opacity: 0;
+  animation: petUnlockFlash 0.7s ease-out;
+}
+
+.modal {
+  width: var(--size-563);
+  padding: var(--medium) var(--size-32);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--low-medium);
+  animation: modalScaleIn 0.4s ease-out;
+}
+
+.title {
+  font-size: var(--small);
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.image {
+  width: var(--fs-500);
+  height: var(--fs-500);
+  object-fit: contain;
+  image-rendering: pixelated;
+  animation: petUnlockGlow 1.2s ease-out;
+}
+
+.name {
+  font-size: var(--small);
+  color: var(--text-color);
+}
+
+.button {
+  align-self: center;
+  padding: var(--fs-10) var(--size-32);
+  font-size: var(--small);
+  font-weight: 700;
+  border: none;
+  border-radius: var(--fs-8);
+  color: var(--text-color);
+  background: var(--background-color);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.button:hover {
+  opacity: 0.85;
+}
+
+@keyframes petUnlockFlash {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes petUnlockGlow {
+  0% {
+    filter: brightness(3) drop-shadow(0 0 1.5vw #fff);
+  }
+  100% {
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+}

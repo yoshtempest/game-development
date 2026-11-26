@@ -9,6 +9,7 @@ import { StatusToasts } from "@/components/Game/Notification/StatusToasts";
 import { ToastStack } from "@/components/Game/Notification/ToastStack";
 import { MahoragaEventNotifier } from "@/components/Game/Notification/MahoragaEvent";
 import { CharacterUnlockModal } from "@/components/Game/Unlock/CharacterUnlockModal";
+import { PetUnlockModal } from "@/components/Game/Unlock/PetUnlockModal";
 import { useInventory } from "@/contexts/InventoryContext";
 import { useNavbar } from "@/contexts/NavbarContext";
 import { Navbar } from "@/components/Game/Navbar/ExploreNavbar";
@@ -273,6 +274,7 @@ export function GameApp() {
       <MahoragaEventNotifier />
       <StatusToasts />
       <CharacterUnlockModal />
+      <PetUnlockModal />
       <ToastStack />
       {isOpen && (
         <Suspense fallback={null}>

@@ -13,6 +13,7 @@ import { npcPath } from "@/utils/paths";
 import { useToast } from "@/contexts/ToastContext";
 import { useGameControls } from "@/contexts/GameControlsContext";
 import { raparigaDialogue } from "@/data/dialogues/cafeteria/rapariga";
+import { raparigaAdoptionCutscene } from "@/data/dialogues/cafeteria/raparigaAdoption";
 import type { DialogueSystem } from "@/utils/types/sceneHooks";
 import { useLocation } from "react-router-dom";
 
@@ -28,7 +29,7 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
   const { hasItem, removeItem } = useInventory();
   // (flags not used)
   const { getLootAt, removeItem: removeGroundItem } = useGroundItems();
-  const { addDrop } = useEquipment();
+  const { addDrop, isOwned, getEquippedInfo } = useEquipment();
   const { showToast } = useToast();
   const { pushControls } = useGameControls();
   const location = useLocation();
@@ -419,6 +420,13 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
 
   // showChoiceBoxUI removido - ChoiceBox aberta via interactRapariga
 
+  /**
+   * Conversa da Rapariga no prato de comida. Quando o jogador dá o segundo
+   * prato e ainda não tem o pet, emenda a cutscene de adoção (#476) antes do
+   * `addDrop`: o drop dispara o modal de unlock do pet, e ele precisa vir
+   * depois da cena, não por cima dela. A posse é lida antes de começar porque
+   * o `addDrop` é o que muda esse estado.
+   */
   const startRaparigaDialogue = useCallback(
     (dialogueSystem: DialogueSystem) => {
       if (stateTimerRef.current) {
@@ -442,16 +450,27 @@ export function useFoodPlateEncounter(): FoodPlateEncounterReturn {
         return line;
       });
 
+      const alreadyOwned =
+        isOwned(player.character, "pet_rapariga") ||
+        getEquippedInfo(player.character, "pet")?.id === "pet_rapariga";
+
       dialogueSystem.start(dialogues, () => {
-        if (shouldUnlockRef.current) {
-          try {
-            addDrop(player.character, "pet_rapariga");
-          } catch {}
+        if (!shouldUnlockRef.current) {
+          leaveRaparigaRef.current();
+          return;
         }
-        leaveRaparigaRef.current();
+        if (alreadyOwned) {
+          addDrop(player.character, "pet_rapariga");
+          leaveRaparigaRef.current();
+          return;
+        }
+        dialogueSystem.start(raparigaAdoptionCutscene, () => {
+          addDrop(player.character, "pet_rapariga");
+          leaveRaparigaRef.current();
+        });
       });
     },
-    [addDrop, player.character],
+    [addDrop, isOwned, getEquippedInfo, player.character],
   );
 
   const handleChoice = useCallback(
