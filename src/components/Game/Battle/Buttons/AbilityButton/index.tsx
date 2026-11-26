@@ -1,74 +1,7 @@
-import { type ReactNode, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 
 import styles from "./styles.module.css";
-
-/** Tipos de comportamento do botão de habilidade. */
-type AbilityButtonType =
-  | "standard" // Habilidade padrão com cooldown (Atomic, GranReyCero, etc.)
-  | "hold" // Habilidade de hold (KiCharge) - onPress/onRelease
-  | "count" // Habilidade com contador (Portals) - count/max
-  | "domain" // Expansão de Domínio - accent/background
-  | "combo" // Ação de combo - sem cooldown, apenas visual
-  | "custom"; // Totalmente customizado (usa classes do próprio botão)
-
-type AbilityButtonProps = {
-  /** Tipo da habilidade - define o comportamento e layout. */
-  type: AbilityButtonType;
-
-  // Props padrão (standard, domain)
-  ready?: boolean;
-  remaining?: number;
-  disabled?: boolean;
-  onClick?: () => void;
-
-  // Props para hold
-  onPress?: () => void;
-  onRelease?: () => void;
-
-  // Props para count
-  count?: number;
-  maxCount?: number;
-  cost?: number;
-
-  // Props para domain
-  name?: string;
-  accent?: string;
-  background?: string;
-
-  // Props comuns
-  /** Ícone (lucide-react component) */
-  icon?: ReactNode;
-  /** Texto do rótulo (ex: "I AM ATOMIC") */
-  label?: string;
-  /** Tooltip descritivo */
-  title?: string;
-  /** Classes CSS adicionais do botão (aplicadas ao botão) */
-  className?: string;
-  /** Estilos inline adicionais */
-  style?: CSSProperties;
-  /** Texto do cooldown customizado (se não usar remaining) */
-  cooldownText?: string;
-  /** Texto do custo customizado */
-  costText?: string;
-  /** Texto do valor (energia, etc.) */
-  valueText?: string;
-  /** Se mostra o badge de cooldown (standard) */
-  showCooldown?: boolean;
-  /** Se o botão está "cheio" (para count/hold) */
-  full?: boolean;
-  /** Texto customizado quando full (ex: "DESFAZER") */
-  fullLabel?: string;
-  /** Classes CSS customizadas do botão específico (sobrescrevem as internas) */
-  customClasses?: CustomAbilityClasses;
-  /** Elementos extras customizados (para casos especiais) */
-  renderExtra?: {
-    beforeLabel?: ReactNode;
-    afterLabel?: ReactNode;
-    afterCooldown?: ReactNode;
-  };
-  /** Props extras para casos especiais (ex: active, depleted, charges) */
-  extraProps?: Record<string, unknown>;
-};
+import type { Props } from "./types"
 
 /**
  * Botão base unificado para todas as habilidades de batalha.
@@ -104,11 +37,13 @@ export function AbilityButton({
   valueText,
   showCooldown = true,
   full = false,
-  fullLabel,
   customClasses,
   renderExtra,
   extraProps,
-}: AbilityButtonProps) {
+  image,
+  imagePosition = "center",
+  imageSize = "cover",
+}: Props) {
   const locked = disabled || (type === "standard" && !ready);
 
   // Helper para pegar classe customizada ou padrão
@@ -146,8 +81,6 @@ export function AbilityButton({
   const charges = extraProps?.charges as number | undefined;
 
   // Dynamic label for count type
-  const displayLabel =
-    type === "count" && full && fullLabel ? fullLabel : label;
 
   const baseClasses = [
     c("button"),
@@ -164,11 +97,20 @@ export function AbilityButton({
 
   const inlineStyle: CSSProperties = {
     ...style,
-    ...(type === "domain" &&
-      ({
-        "--domain-accent": accent,
-        backgroundImage: background ? `url(${background})` : undefined,
-      } as CSSProperties & Record<string, string>)),
+
+    ...(image && {
+      backgroundImage: `url("${image}")`,
+      backgroundSize: imageSize,
+      backgroundPosition: imagePosition,
+      backgroundRepeat: "no-repeat",
+    }),
+
+    ...(type === "domain" && {
+      "--domain-accent": accent,
+      ...(background && {
+        backgroundImage: `url("${background}")`,
+      }),
+    }),
   };
 
   // Hold behavior (pointer capture)
@@ -228,9 +170,6 @@ export function AbilityButton({
         </span>
       )}
       {charges && <span className={c("charges")}>{charges}x</span>}
-      <span className={`${c("label")} ${c("abilityLabel")}`}>
-        {displayLabel?.toUpperCase() ?? fullLabel}
-      </span>
       {renderCooldown()}
       {renderCost()}
       {renderExtra?.afterLabel}

@@ -22,6 +22,7 @@ export const TYPE_CLASS: Record<string, string> = {
   crit: styles.crit!,
   charge: styles.charge!,
   miss: styles.miss!,
+  blind: styles.miss!,
   burn: styles.burn!,
   poison: styles.poison!,
   freeze: styles.freeze!,

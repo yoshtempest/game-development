@@ -4,6 +4,7 @@ import { useGameControls } from "@/contexts/GameControlsContext";
 import { useLatestRef } from "@/hooks/useLatestRef";
 
 export function useItemControls({
+  isActive,
   filterFocused,
   chestFocused,
   selectedItem,
@@ -42,6 +43,8 @@ export function useItemControls({
   const onDropItemRef = useLatestRef(onDropItem);
 
   useEffect(() => {
+    if (!isActive) return;
+
     const controls = {
       onConfirm: () => {
         const {
@@ -97,6 +100,7 @@ export function useItemControls({
     const remove = pushControls(controls);
     return remove;
   }, [
+    isActive,
     pushControls,
     consumeItemRef,
     getEffectRef,

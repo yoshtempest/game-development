@@ -1,3 +1,4 @@
+import { playerPathEmatronHabilities } from "@/utils/paths/characters/ematron";
 import styles from "./styles.module.css";
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
 
@@ -17,9 +18,6 @@ const CLONE_MIN_KI = 1;
  */
 const cloneClasses: CustomAbilityClasses = {
   button: styles.button,
-  label: styles.label,
-  value: styles.value,
-  cost: styles.cost,
   depleted: styles.depleted,
 };
 
@@ -35,14 +33,15 @@ export function EmatronCloneButton({
     <AbilityButton
       type="hold"
       customClasses={cloneClasses}
-      label="INSTÂNCIA"
+      // label="INSTÂNCIA"
       disabled={disabled}
       onPress={onPress}
       onRelease={onRelease}
       full={noKi}
-      valueText={Math.round(energy).toString()}
-      costText={`-{EMATRON_CLONE_MAX_COST} Ki`}
+      // valueText={Math.round(energy).toString()}
+      // costText={`-{EMATRON_CLONE_MAX_COST} Ki`}
       extraProps={{ depleted: noKi }}
+      image={playerPathEmatronHabilities("teleport/teleport.svg")}
       title="Instância: segure para criar a cópia fantasma e mova pela arena; solte para teleportar até ela (custa até 50 de Ki pela distância)"
     />
   );

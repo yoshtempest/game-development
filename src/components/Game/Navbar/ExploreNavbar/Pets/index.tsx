@@ -120,11 +120,8 @@ export function Pets() {
       setOpenPet(null);
       return null;
     }
-    return (
-      <div className="containerOfNavbar">
-        <PetDetail entry={entry} onClose={() => setOpenPet(null)} />
-      </div>
-    );
+    // O PetDetail já monta o card; o wrapper do navbar também faria isso.
+    return <PetDetail entry={entry} onClose={() => setOpenPet(null)} />;
   }
 
   return (

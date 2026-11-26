@@ -6,6 +6,7 @@ import {
   isPlayerFrozen,
   isPlayerParalyzed,
 } from "@/gameRules/battle/status/statusEffects";
+import { ALL_PREDICATES } from "@/gameRules/battle/playerStates";
 
 /**
  * Guarda de uso compartilhada pelas habilidades de personagem.
@@ -39,7 +40,7 @@ export function useSkillGuard({
   const canUse =
     player.character === character &&
     player.mode === "battle" &&
-    player.state === "idle" &&
+    ALL_PREDICATES.isReady(player.state) &&
     Math.abs(player.y - player.groundY) < 1 &&
     !isPlayerFrozen(player) &&
     !isPlayerParalyzed(player) &&

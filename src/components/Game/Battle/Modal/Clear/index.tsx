@@ -7,10 +7,21 @@ import styles from "./styles.module.css";
  * - Duração total: ~1.5s
  * - O estado é controlado pelo hook useBattleOutro (timeout de 1.5s)
  */
-export function BattleClear() {
+
+type Props = {
+  character: string;
+};
+
+export function BattleClear({
+  character,
+}: Props) {
+  const text =
+    character === "laricell"
+      ? "Booyah"
+      : "Clear"
   return (
     <div className={styles.overlay}>
-      <div className={styles.clearText}>Clear</div>
+      <div className={styles.clearText}>{text}</div>
     </div>
   );
 }

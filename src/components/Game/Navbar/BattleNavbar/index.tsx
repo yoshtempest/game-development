@@ -4,6 +4,7 @@ import type { ComponentType, LazyExoticComponent } from "react";
 import styles from "./styles.module.css";
 import { useBattleNavbarMenu } from "@/hooks/battle/useBattleNavbarMenu";
 import { useBattleNavbar } from "@/contexts/BattleNavbarContext";
+import { NavbarContainer } from "@/components/Game/Navbar/NavbarContainer";
 import type { BattleNavScreen } from "@/utils/types/player/battleNavbar";
 
 function lazyNamed<K extends string>(
@@ -69,7 +70,9 @@ export function BattleNavbar() {
 
   return (
     <Suspense fallback={null}>
-      <Screen />
+      <NavbarContainer>
+        <Screen />
+      </NavbarContainer>
     </Suspense>
   );
 }
