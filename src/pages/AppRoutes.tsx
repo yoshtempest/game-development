@@ -162,6 +162,9 @@ export function AppRoutes() {
             <Route path="battle/evilmorty" element={<BattlePage />} />
             <Route path="battle/mahoraga" element={<BattlePage />} />
             <Route path="battle/jhowsimar" element={<BattlePage />} />
+            <Route path="battle/vigiaJoao" element={<BattlePage />} />
+            <Route path="battle/vigiaJoaquim" element={<BattlePage />} />
+            <Route path="battle/vigiaLando" element={<BattlePage />} />
             <Route path="battle/piupiu" element={<BattlePage />} />
             <Route path="battle/rice" element={<BattlePage />} />
             <Route path="battle/manim" element={<BattlePage />} />

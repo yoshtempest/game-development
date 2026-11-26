@@ -215,6 +215,36 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
     map: ROCKY_FIELD_MAP,
   },
+  vigiaJoao: {
+    npcType: "vigiaJoao",
+    onVictory: ({ setFlag, navigate }) => {
+      setFlag("vigiaJoao");
+      void navigate(-1);
+    },
+    victoryDescription: "Você derrotou 'João, o Vigia da Sala dos Professores'",
+    background: sceneBackgrounds.JailsonHallBattle,
+    audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+  },
+  vigiaJoaquim: {
+    npcType: "vigiaJoaquim",
+    onVictory: ({ setFlag, navigate }) => {
+      setFlag("vigiaJoaquim");
+      void navigate(-1);
+    },
+    victoryDescription: "Você derrotou 'Joaquim, o Vigia da Biblioteca'",
+    background: sceneBackgrounds.LibraryBattle,
+    audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+  },
+  vigiaLando: {
+    npcType: "vigiaLando",
+    onVictory: ({ setFlag, navigate }) => {
+      setFlag("vigiaLando");
+      void navigate(-1);
+    },
+    victoryDescription: "Você derrotou 'Landô, o Vigia da Passagem Secreta'",
+    background: sceneBackgrounds.LibraryBattle,
+    audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+  },
   hungryDog: {
     npcType: "hungryDog",
     onVictory: ({ navigate }) => {
@@ -351,6 +381,9 @@ export const ROUTE_TO_BATTLE_KEY: Record<string, string> = {
   "/battle/hungry": "hungry",
   "/battle/hungryDog": "hungryDog",
   "/battle/jhowsimar": "jhowsimar",
+  "/battle/vigiaJoao": "vigiaJoao",
+  "/battle/vigiaJoaquim": "vigiaJoaquim",
+  "/battle/vigiaLando": "vigiaLando",
   "/battle/piupiu": "piupiu",
   "/battle/manim": "manim",
   "/battle/rice": "rice",
