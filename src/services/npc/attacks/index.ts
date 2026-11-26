@@ -77,7 +77,7 @@ export const npcAttacks = {
   necromancer: new NecromancerAttack("necromancer"),
   slimita: new SlimitaAttack(),
   hungryKing: new HungryKingAttack(),
-  denis: new DenisAttack("denis"),
+  denis: new DenisAttack(),
   srGuaxinim: new SrGuaxinimAttack(),
   neimito: new NeimitoAttack(),
   planetarySisters: new PlanetarySistersAttack("planetarySisters"),

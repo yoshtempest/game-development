@@ -11,6 +11,7 @@ export const sceneBackgrounds = {
   CombatTutorial: jomasioPath("/battle/tutorial.svg"),
   ToxicSwampBattle: cenariosPath("/toxicWorld/battle.svg"),
   Director: jomasioPath("/director.svg"),
+  DirectorBattle: jomasioPath("/battle/directorOnFire.svg"),
   JomasioEntrance: jomasioPath("/jomasioEntrance.svg"),
   FootballCourt: jomasioPath("/footballCourt.svg"),
   FootballCourtBattle: jomasioPath("/battle/footballCourt.svg"),

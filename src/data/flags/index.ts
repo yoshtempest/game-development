@@ -5,6 +5,7 @@ export const FLAGS = {
   deise: { id: "deise" },
   slimita: { id: "slimita" },
   maugrelo: { id: "maugrelo" },
+  denis: { id: "denis" },
   hungryKing: { id: "hungryKing" },
   hungryDog: { id: "hungryDog" },
   hungryFish: { id: "hungryFish" },

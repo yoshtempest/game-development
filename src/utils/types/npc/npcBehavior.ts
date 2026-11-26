@@ -48,6 +48,10 @@ export type BehaviorContext = {
   onStuckPaperExplode?: () => void;
   onApplyDebuff?: (status: NewPlayerStatus) => void;
   /**
+   * Fala do Sistema durante a batalha (toast). Existe para roteiros em que o
+   * jogo "interrompe" o NPC — ex.: a expansão de domínio cancelada do Denis.
+   */
+  onSystemMessage?: (text: string) => void;
    * Dano de valor absoluto (não escala com os stats do NPC) que passa pelo
    * mesmo funil do laser (`npcFixedHit`): bloqueio e parry continuam valendo.
    * Existe para golpes cujo dano a issue fixa em número — os cálculos e o

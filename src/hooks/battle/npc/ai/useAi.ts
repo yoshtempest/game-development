@@ -105,6 +105,7 @@ export function useNpcAI({
   onProjectileMiss,
   onStuckPaperExplode,
   onApplyDebuff,
+  onSystemMessage,
   onFixedHit,
   onExecutePlayer,
   onBurstHit,
@@ -234,6 +235,7 @@ export function useNpcAI({
   const onProjectileMissRef = useLatestRef(onProjectileMiss);
   const onStuckPaperExplodeRef = useLatestRef(onStuckPaperExplode);
   const onApplyDebuffRef = useLatestRef(onApplyDebuff);
+  const onSystemMessageRef = useLatestRef(onSystemMessage);
   const onFixedHitRef = useLatestRef(onFixedHit);
   const onExecutePlayerRef = useLatestRef(onExecutePlayer);
   const onBurstHitRef = useLatestRef(onBurstHit);
@@ -664,6 +666,7 @@ export function useNpcAI({
         onLaserHit: handleLaserHit,
         onStuckPaperExplode: handleStuckPaperExplode,
         onApplyDebuff: handleApplyDebuff,
+        onSystemMessage: (text) => onSystemMessageRef.current?.(text),
         onFixedHit: handleFixedHit,
         onExecutePlayer: handleExecutePlayer,
       });
@@ -804,6 +807,7 @@ export function useNpcAI({
     handleStuckPaperExplode,
     handleLaserHit,
     handleApplyDebuff,
+    onSystemMessageRef,
     handleFixedHit,
     handleExecutePlayer,
   ]);

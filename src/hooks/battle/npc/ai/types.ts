@@ -56,6 +56,8 @@ export type Props = {
   onProjectileMiss?: (x: number) => void;
   onStuckPaperExplode?: () => void;
   onApplyDebuff?: (status: NewPlayerStatus) => void;
+  /** Fala do Sistema disparada pelo ataque do NPC (ver `BehaviorContext`). */
+  onSystemMessage?: (text: string) => void;
   /** Dano absoluto pelo funil `npcFixedHit` (ver `BehaviorContext.onFixedHit`). */
   onFixedHit?: (amount: number) => void;
   /** Derrota roteirizada: dano igual à vida máxima, sem bloqueio nem parry. */
