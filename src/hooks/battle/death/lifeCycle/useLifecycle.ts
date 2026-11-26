@@ -2,11 +2,13 @@ import type { Props } from "./types";
 import { useEffect, useState } from "react";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { isDead } from "@/gameRules/battle/death";
+import { getNpcPhaseCount } from "@/data/npc";
 
 export function useBattleLifecycle({
   playerHP,
   npcHP,
   npcClass,
+  npcType,
   setNpcPhase,
   npcPhaseRef,
   setNpcHP,
@@ -21,6 +23,7 @@ export function useBattleLifecycle({
   const onPlayerDeathRef = useLatestRef(onPlayerDeath);
   const onNpcDeathRef = useLatestRef(onNpcDeath);
   const npcClassRef = useLatestRef(npcClass);
+  const npcTypeRef = useLatestRef(npcType);
   const npcMaxHpRef = useLatestRef(npcMaxHp);
 
   useEffect(() => {
@@ -41,9 +44,15 @@ export function useBattleLifecycle({
     if (!isDead(npcHP)) return;
     if (holdNpcDeath) return;
 
-    if (npcClassRef.current === "boss" && npcPhaseRef.current === 1) {
-      npcPhaseRef.current = 2;
-      setNpcPhase(2);
+    const phaseCount = getNpcPhaseCount(
+      npcTypeRef.current,
+      npcClassRef.current,
+    );
+    const currentPhase = npcPhaseRef.current;
+    if (currentPhase < phaseCount) {
+      const nextPhase = currentPhase + 1;
+      npcPhaseRef.current = nextPhase;
+      setNpcPhase(nextPhase);
       setNpcHP(npcMaxHpRef.current);
       return;
     }
@@ -63,6 +72,7 @@ export function useBattleLifecycle({
     isEnding,
     npcPhaseRef,
     npcClassRef,
+    npcTypeRef,
     npcMaxHpRef,
     onNpcDeathRef,
   ]);

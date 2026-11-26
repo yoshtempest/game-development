@@ -8,5 +8,6 @@ export * from "./levels";
 export * from "./mauraCalcles";
 export * from "./npc";
 export * from "./statusMultipliers";
+export * from "./phaseCounts";
 export * from "./summonShouts";
 export * from "./pushedSprites";

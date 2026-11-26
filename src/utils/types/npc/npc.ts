@@ -155,6 +155,7 @@ export type NPCBattleState = {
       spinHitCount: number;
     };
     maugrelo?: import("@/services/npc/attacks/maugrelo/state").MaugreloAI;
+    evilMorty?: import("@/services/npc/attacks/evilMorty/state").EvilMortyAI;
     hungryDog?: import("@/services/npc/attacks/hungryDog/state").HungryDogAI;
     planetarySisters?: import("@/services/npc/attacks/planetarySisters/state").PlanetarySistersAI;
     /**

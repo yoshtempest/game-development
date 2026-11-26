@@ -3,6 +3,8 @@ export type Props = {
   npcHP: number;
 
   npcClass: string;
+  /** Tipo do NPC: decide quantas fases ele tem (`getNpcPhaseCount`). */
+  npcType: string;
 
   setNpcPhase: (n: number) => void;
   npcPhaseRef: React.RefObject<number>;

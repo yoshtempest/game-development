@@ -282,6 +282,14 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     background: sceneBackgrounds.PcRoomBattle,
     audioSrc: backgroundAudioPath("/battle/Jojo.m4a"),
   },
+  evilMorty: {
+    npcType: "evilMorty",
+    onVictory: ({ navigate }) => {
+      void navigate(-1);
+    },
+    victoryDescription: "Você derrotou o Evil Morty",
+    background: sceneBackgrounds.PcRoomBattle,
+    audioSrc: backgroundAudioPath("/battle/Jojo.m4a"),
   rickPrime: {
     npcType: "rickPrime",
     onVictory: ({ navigate }) => {
@@ -314,6 +322,7 @@ export const ROUTE_TO_BATTLE_KEY: Record<string, string> = {
   "/battle/technoblade": "technoblade",
   "/battle/vandinhafragment": "vandinha",
   "/battle/truevandinha": "trueVandinha",
+  "/battle/evilmorty": "evilMorty",
   "/battle/mahoraga": "mahoraga",
   "/training": "training",
   "/battle/pvp": "pvp",
