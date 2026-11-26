@@ -1,3 +1,4 @@
+import type { PetBlind } from "@/gameRules/battle/petSkill/blind";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import type { NewPlayerStatus } from "@/utils/types/battle/status";
 
@@ -30,4 +31,9 @@ export type Props = {
   onSummonKilled?: () => void;
   rootedSummonsUntilRef?: React.RefObject<Record<string, number>>;
   honoredFleeRef?: React.RefObject<boolean>;
+  /**
+   * Cegueira do Tornado de Terra (pet Peru) por summon (id → cegueira): o
+   * golpe do summon cego pode sair como "miss".
+   */
+  petBlindRef?: React.RefObject<Record<string, PetBlind>>;
 };

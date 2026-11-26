@@ -16,6 +16,7 @@ import { applyHitstop, getTime, scaleCooldown } from "@/gameRules/battle/time";
 import { clampX } from "@/gameRules/movement/clampX";
 import { SUMMON_SHOUTS } from "@/data/npc";
 import type { NewPlayerStatus } from "@/utils/types/battle/status";
+import { getPetBlindMissChance } from "@/gameRules/battle/petSkill/blind";
 /** Velocidade acima da qual o hungryDog é considerado correndo (usa run.svg). */
 const HUNGRY_DOG_RUN_SPEED = 1.5;
 
@@ -35,6 +36,7 @@ export function useSummonAI({
   freezeUntilRef,
   rootedSummonsUntilRef,
   honoredFleeRef,
+  petBlindRef,
   onSummonKilled,
   applyStatus,
 }: Props) {
@@ -118,6 +120,8 @@ export function useSummonAI({
         attackerX: number;
         status?: NewPlayerStatus;
       }[] = [];
+      const attackEvents: { damage: number; attackerX: number }[] = [];
+      let missEvents = 0;
 
       const next = apply(summonsRef.current, (s) => {
         if (s.isDying || s.hp <= 0) {
@@ -198,7 +202,13 @@ export function useSummonAI({
               playerCharacterRef.current,
             );
 
-            if (damage !== null) {
+            const blindMiss =
+              Math.random() <
+              getPetBlindMissChance(petBlindRef?.current?.[s.id], now);
+
+            if (blindMiss) {
+              missEvents += 1;
+            } else if (damage !== null) {
               attackEvents.push({ damage, attackerX: s.x });
             }
           }
@@ -213,6 +223,16 @@ export function useSummonAI({
       });
 
       for (const { damage, attackerX, status } of attackEvents) {
+      for (let i = 0; i < missEvents; i++) {
+        spawnDamageRef.current?.(
+          0,
+          playerXRef.current,
+          playerYRef.current,
+          "miss",
+        );
+      }
+
+      for (const { damage, attackerX } of attackEvents) {
         damagePlayerRef.current(damage, SUMMON_DAMAGE_KIND, attackerX);
         if (status) applyStatusRef.current?.(status);
         spawnDamageRef.current?.(
@@ -247,6 +267,7 @@ export function useSummonAI({
     rootedSummonsUntilRef,
     honoredFleeRef,
     applyStatusRef,
+    petBlindRef,
   ]);
 
   useEffect(() => {

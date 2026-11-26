@@ -52,7 +52,7 @@ export function MonthlyPassSection({
           <div className={styles.questInfo}>
             <span className={styles.questLabel}>{m.label}</span>
             <span className={styles.questProgress}>
-              {m.completed ? "Completa" : `${m.progress}/${m.requirement}`}
+              {m.completed ? "Completa" : `${m.progress.toFixed(0)}/${m.requirement}`}
             </span>
           </div>
           <div className={styles.questAction}>

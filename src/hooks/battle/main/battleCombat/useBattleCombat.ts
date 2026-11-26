@@ -11,6 +11,7 @@ import { useBattleEntities } from "@/hooks/battle/main/battleEntities/useBattleE
 import { useBattleCombatActions } from "@/hooks/battle/main/battleCombatActions/useBattleCombatActions";
 import { usePhaseTransition } from "@/hooks/battle/death/phaseTransition/usePhaseTransition";
 import { useSigilo } from "@/hooks/battle/player/characters/drika/useSigilo";
+import { useLaricellAbilities } from "@/hooks/battle/player/characters/laricell/useLaricellAbilities";
 import { useBattleSync } from "@/hooks/battle/sync/useSync";
 import { useStatusDots } from "@/hooks/battle/effects/statusDots/useStatusDots";
 import { useTrainingEffects } from "@/hooks/battle/effects/useTrainingEffects";
@@ -38,7 +39,7 @@ import { gainAbilityCharge, gainSpecial } from "@/gameRules/battle/special";
 import { applyCooldownReduction } from "@/gameRules/battle/cooldownReduction";
 import { getWeaponEnchantment } from "@/gameRules/battle/equipment";
 import type { Enchantment } from "@/data/equipment/enchantments";
-import { CHARGE_ATTACK_MIN_LEVEL } from "@/data/battle/charge";
+import { CHARGE_ATTACK_MIN_LEVEL } from "@/data/characters/unlockLevels";
 import { KILLER_QUEEN_COOLDOWN_MS } from "@/data/characters/srGuaxinim/srGuaxinim";
 import { STACK_EXPLOSION_COOLDOWN_MS } from "@/data/characters/laricell/laricell";
 import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
@@ -47,6 +48,8 @@ import {
   useCooldownPauseTick,
 } from "@/hooks/battle/utilities/useCooldowns";
 import { runPetSkill } from "@/gameRules/battle/petSkill/petSkill";
+import { usePetProgress } from "@/contexts/PetProgressContext";
+import { getPetAffinityMultiplier } from "@/gameRules/pets/affinity";
 import type { BabidiTarget } from "@/utils/types/character/babidi";
 import type { BattleCombatProps } from "@/hooks/battle/main/battleCore/types";
 
@@ -102,6 +105,10 @@ export function useBattleCombat({
     saveDataRef,
     npcRootedUntilRef,
     rootedSummonsUntilRef,
+    barrierRef,
+    npcBlindRef,
+    laricellVampireActive,
+    setLaricellVampireActive,
     setModeRef,
     closeInventoryRef,
     closeNavbarRef,
@@ -171,6 +178,8 @@ export function useBattleCombat({
     ematronComboActiveRef,
     ematronComboAirActiveRef,
     ematronComboStepIndexRef,
+    basicComboActiveRef,
+    basicComboStepIndexRef,
     setTimeScale,
     resetTimeScale,
     timeScaleRef,
@@ -379,6 +388,8 @@ export function useBattleCombat({
     ematronComboActiveRef,
     ematronComboAirActiveRef,
     ematronComboStepIndexRef,
+    basicComboActiveRef,
+    basicComboStepIndexRef,
     forcePunchRef,
     babidiFireRef,
     babidiOnHitRef,
@@ -403,11 +414,18 @@ export function useBattleCombat({
   // O projétil especial (esfera do natsuki) dispara o golpe do player ao fundir.
   onFireRef.current = handleSpecialHit;
 
+  const { getPetAffinity } = usePetProgress();
+  const equippedPetInfo = getEquippedInfo(player.character, "pet");
+  const petAffinityMultiplier = getPetAffinityMultiplier(
+    equippedPetInfo ? getPetAffinity(equippedPetInfo.id).value : 0,
+  );
+
   executePetSkillRef.current = () => {
     if (!petSkillDef || battle.isEnding.current) return;
     runPetSkill(petSkillDef, {
       petLevel,
       petStars,
+      affinityMultiplier: petAffinityMultiplier,
       playerLevel,
       groundY: player.groundY,
       beginCoffinSequence,
@@ -429,6 +447,10 @@ export function useBattleCombat({
       rootedSummonsUntilRef,
       rootDurationMs,
       playSound,
+      npcEnchantUntilRef,
+      npcStaggerRef: refs.npcStaggerRef,
+      npcPetBlindRef: battle.npcPetBlindRef,
+      summonsPetBlindRef: battle.summonsPetBlindRef,
     });
   };
 
@@ -447,6 +469,7 @@ export function useBattleCombat({
   });
 
   const {
+    handleAbilityAreaHit,
     handleGenkiDamaExplode,
     handleAtomicBoom,
     handleDomainBurst,
@@ -530,8 +553,6 @@ export function useBattleCombat({
       }
     },
     srGuaxinimOraMultiplierRef,
-    refs,
-    freezeActionsUntilRef,
     onBombProjectiles: (strikes) => {
       npc.strikeProjectiles(strikes);
     },
@@ -768,6 +789,23 @@ export function useBattleCombat({
 
   const cloneDisabledRef = useLatestRef(controlsDisabled);
 
+  const laricell = useLaricellAbilities({
+    player,
+    npc,
+    isPausedRef,
+    cooldownReduction: battle.char.stats.cooldownReduction,
+    playSound,
+    onUsed: onAbilityUsed,
+    freezeActionsUntilRef,
+    disabledRef: cloneDisabledRef,
+    battleEndedRef: battle.isEnding,
+    barrierRef,
+    npcBlindRef,
+    vampireActive: laricellVampireActive,
+    setVampireActive: setLaricellVampireActive,
+    areaHit: handleAbilityAreaHit,
+  });
+
   const {
     cloneVisual: ematronClone,
     press: clonePress,
@@ -942,6 +980,8 @@ export function useBattleCombat({
     playSound,
     onUsed: onAbilityUsed,
     cooldownReduction: battle.char.stats.cooldownReduction,
+    energy: battle.energy,
+    spendEnergy: battle.spendEnergy,
   });
 
   // Expansão de Domínio do marshadow -------------------------------------------
@@ -1228,6 +1268,8 @@ export function useBattleCombat({
     playSound,
     onUsed: onAbilityUsed,
     cooldownReduction: battle.char.stats.cooldownReduction,
+    energy: battle.energy,
+    spendEnergy: battle.spendEnergy,
   });
 
   // Esferas do natsuki (blue/red) ---------------------------------------------
@@ -1381,6 +1423,7 @@ export function useBattleCombat({
     atomicUsable,
     atomicRemaining,
     activeAbilityPress: openActiveAbility,
+    laricell,
     activeAbilityUsable: activeAbilityRemaining <= 0,
     activeAbilityRemaining,
     specialIntroAbility,

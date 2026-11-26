@@ -15,7 +15,6 @@ type Props = {
  */
 const blueSphereClasses: CustomAbilityClasses = {
   button: styles.button,
-  label: styles.label,
   active: styles.active,
 };
 
@@ -28,7 +27,7 @@ export function BlueSphereButton({
     <AbilityButton
       type="custom"
       customClasses={blueSphereClasses}
-      label="Azul"
+      // label="Azul"
       disabled={disabled}
       onClick={onClick}
       extraProps={{ active }}
@@ -37,11 +36,7 @@ export function BlueSphereButton({
           ? "Esfera azul controlada (segure/dirija). Aperte para parar a atração."
           : "Invocar Esfera Azul (atrai inimigos, causa dano mágico contínuo)."
       }
-      style={{
-        backgroundImage: `url("${spriteMap.blueSphere}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      image={spriteMap.blueSphere}
     />
   );
 }

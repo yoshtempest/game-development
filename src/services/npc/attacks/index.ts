@@ -25,6 +25,7 @@ import { JhowsimarAttack } from "./jhowsimar";
 import { LeviathanAttack } from "./leviathan";
 import { LupitaAttack } from "./lupita";
 import { MadameAttack } from "./madame";
+import { MahoragaAttack } from "./mahoraga";
 import { ManimAttack } from "./manim";
 import { MaugreloAttack } from "./maugrelo";
 import { MauraoAttack } from "./maurao";
@@ -44,6 +45,7 @@ import { TheBlackKnightAttack } from "./theBlackKnight";
 import { TheChaosCreatorAttack } from "./theChaosCreator";
 import { TheDevourerOfWorldsAttack } from "./theDevourerOfWorlds";
 import { TheFirstNightmareAttack } from "./theFirstNightmare";
+import { RickPrimeAttack } from "./rickPrime";
 import { TheMasterPieceAttack } from "./theMasterPiece";
 import { TheStrongestManUnderTheHeavensAttack } from "./theStrongestManUnderTheHeavens";
 import { TimAttack } from "./tim";
@@ -122,6 +124,9 @@ export const npcAttacks = {
   hungryPig: new HungryPigAttack("hungryPig"),
   technoblade: new TechnobladeAttack("technoblade"),
 
+  /* Shibuya (evento diário) */
+  mahoraga: new MahoragaAttack("mahoraga"),
+
   /* Training */
   dummy: new DummyAttack(),
 
@@ -136,6 +141,9 @@ export const npcAttacks = {
   theChaosCreator: new TheChaosCreatorAttack("theChaosCreator"),
   theFirstNightmare: new TheFirstNightmareAttack("theFirstNightmare"),
   ouroboros: new OuroborosAttack("ouroboros"),
+
+  /* Conselho dos vilões */
+  rickPrime: new RickPrimeAttack("rickPrime"),
 } satisfies Record<NpcType, NpcAttack>;
 
 /**

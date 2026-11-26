@@ -13,9 +13,7 @@ export function CoopSpectatorOverlay({ visible }: Props) {
   return (
     <div className={styles.banner} role="status">
       <strong className={styles.title}>Você caiu!</strong>
-      <span className={styles.subtitle}>
-        Seu parceiro ainda está lutando…
-      </span>
+      <span className={styles.subtitle}>Seu parceiro ainda está lutando…</span>
     </div>
   );
 }

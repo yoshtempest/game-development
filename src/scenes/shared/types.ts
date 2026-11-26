@@ -18,6 +18,7 @@ import type { useSrGuaxinimKillerQueen } from "@/hooks/battle/player/characters/
 import type { useKokusenAnimation } from "@/hooks/battle/player/characters/natsuki/useKokusenAnimation";
 import type { useBlackFlashAnimation } from "@/hooks/battle/player/characters/natsuki/useBlackFlashAnimation";
 import type { useSpecialIntro } from "@/hooks/battle/modals/specialIntro/useSpecialIntro";
+import type { RewindResurrection } from "@/utils/types/battle/rewind";
 import type { usePlayerSpecialProjectile } from "@/hooks/battle/player/playerSpecialProjectile/usePlayerSpecialProjectile";
 import type { useCoffinAnimation } from "@/hooks/battle/summon/coffinAnimation/useCoffinAnimation";
 import type { useNpcSetup } from "@/hooks/battle/npc/useSetup";
@@ -41,6 +42,7 @@ import type {
   BabidiShieldSides,
 } from "@/utils/types/character/babidi";
 import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
+import type { LaricellAbilitiesApi } from "@/hooks/battle/player/characters/laricell/types";
 
 type Battle = ReturnType<typeof useBattleSystem>;
 type Npc = ReturnType<typeof useNpcAI>;
@@ -145,6 +147,8 @@ export type BattleSceneApi = {
   vastolordRemainingMs: number;
   /** Quadro da transformação do marshadow (0=screamOne … 3=transformated) ou null. */
   vastolordTransformationFrame: number | null;
+  /** Cinemática da passiva "Retrocesso Temporal" (#284) em curso, ou null. */
+  rewindResurrection: RewindResurrection | null;
   specialIntroActive: ReturnType<typeof useSpecialIntro>["specialIntroActive"];
   specialIntroCharacter: ReturnType<
     typeof useSpecialIntro
@@ -191,6 +195,8 @@ export type BattleSceneApi = {
    * "special" universal, que não existe mais.
    */
   activeAbilityPress: () => void;
+  /** Habilidades da Laricell (#517): botões A1–A4 + Mordida e o visual. */
+  laricell: LaricellAbilitiesApi;
   activeAbilityUsable: boolean;
   activeAbilityRemaining: number;
   mugetsuSweep: ReturnType<typeof useMugetsuExpansion>["mugetsuSweep"];
@@ -248,4 +254,8 @@ export type BattleSceneApi = {
   babidiShieldSides: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onBabidiShieldEnd: (side: BabidiShieldSide, nonce: number) => void;
+  /** Retrocesso Temporal do srGuaxinim em reprodução (fundo galáctico). */
+  rewinding: boolean;
+  /** Easter egg de 1%: a Polícia do Tempo observa este retrocesso. */
+  timePoliceVisible: boolean;
 };
