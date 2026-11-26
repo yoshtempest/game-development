@@ -78,6 +78,8 @@ export const npcAttacks = {
   hungryKing: new HungryKingAttack(),
   denis: new DenisAttack("denis"),
   srGuaxinim: new SrGuaxinimAttack(),
+  neimito: new NeimitoAttack(),
+  planetarySisters: new PlanetarySistersAttack("planetarySisters"),
   neimito: new NeimitoAttack("neimito"),
   planetarySisters: new PlanetarySistersAttack(),
   netali: new NetaliAttack(),
