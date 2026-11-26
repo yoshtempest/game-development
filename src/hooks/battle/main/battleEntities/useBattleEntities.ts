@@ -79,11 +79,13 @@ export function useBattleEntities({
     npcLevel,
     difficulty,
     damagePlayer: battle.damagePlayer,
+    applyStatus: battle.applyStatus,
     spawnDamageRef: refs.spawnDamageRef,
     timeRef: refs.timeRef,
     freezeUntilRef: freezeSummonsUntilRef,
     rootedSummonsUntilRef,
     honoredFleeRef,
+    petBlindRef: battle.summonsPetBlindRef,
     onSummonKilled: () => {
       if (vastolordActive) {
         extendVastolordRef.current(VASTOLORD_KILL_EXTEND_MS);

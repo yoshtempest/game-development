@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { useSoundEffects } from "@/contexts/SoundEffectsContext";
-import { PET_PROGRESS_KEY } from "@/data/storageKeys";
+import { PET_AFFINITY_KEY, PET_PROGRESS_KEY } from "@/data/storageKeys";
 import type { PetsProgress } from "@/data/characters/pets/petProgress";
 import {
   PET_DEFAULT_PROGRESS,
@@ -19,6 +19,20 @@ import {
 import { useCompressedStorage } from "@/hooks/useCompressedStorage";
 import { useQueuedSounds } from "@/hooks/audio/useQueuedSounds";
 import { PET_MAX_LEVEL } from "@/data/characters/pets/petProgress";
+import {
+  PET_AFFINITY_DEFAULT_ENTRY,
+  normalizePetAffinity,
+  type PetAffinityEntry,
+  type PetsAffinity,
+} from "@/data/characters/pets/petAffinity";
+import {
+  applyBattleWin,
+  applyPetting,
+  getLocalDateKey,
+} from "@/gameRules/pets/affinity";
+
+/** Resultado de `petPet`, para o menu escolher a mensagem e o som. */
+export type PetPettingOutcome = "affinityUp" | "maxAffinity" | "dailyLimit";
 
 type ContextType = {
   petProgress: PetsProgress;
@@ -28,6 +42,16 @@ type ContextType = {
   ) => { level: number; xp: number };
   addPetXP: (petId: string, stars: number, amount: number) => void;
   resetPetProgress: (petId: string, stars: number) => void;
+  petAffinity: PetsAffinity;
+  getPetAffinity: (petId: string) => PetAffinityEntry;
+  /**
+   * Faz carinho no pet (#74/#418). A decisão (limite diário, teto) é tomada
+   * sobre o estado atual, fora do updater, para o retorno ser síncrono e o
+   * updater continuar puro.
+   */
+  petPet: (petId: string) => PetPettingOutcome;
+  /** Conta uma vitória com o pet equipado para a afinidade. */
+  registerPetBattleWin: (petId: string) => void;
 };
 
 const PetProgressContext = createContext<ContextType | null>(null);
@@ -97,14 +121,59 @@ export function PetProgressProvider({ children }: { children: ReactNode }) {
     [setPetProgress],
   );
 
+  const [petAffinity, setPetAffinity] = useCompressedStorage<PetsAffinity>(
+    PET_AFFINITY_KEY,
+    {},
+    normalizePetAffinity,
+  );
+
+  const getPetAffinity = useCallback(
+    (petId: string) => petAffinity[petId] ?? PET_AFFINITY_DEFAULT_ENTRY,
+    [petAffinity],
+  );
+
+  const petPet = useCallback(
+    (petId: string): PetPettingOutcome => {
+      const current = petAffinity[petId] ?? PET_AFFINITY_DEFAULT_ENTRY;
+      const result = applyPetting(current, getLocalDateKey());
+      if (!result.ok) return "dailyLimit";
+      setPetAffinity((prev) => ({ ...prev, [petId]: result.entry }));
+      return result.entry.value > current.value ? "affinityUp" : "maxAffinity";
+    },
+    [petAffinity, setPetAffinity],
+  );
+
+  const registerPetBattleWin = useCallback(
+    (petId: string) => {
+      setPetAffinity((prev) => ({
+        ...prev,
+        [petId]: applyBattleWin(prev[petId] ?? PET_AFFINITY_DEFAULT_ENTRY),
+      }));
+    },
+    [setPetAffinity],
+  );
+
   const value = useMemo(
     () => ({
       petProgress,
       getPetProgress,
       addPetXP,
       resetPetProgress,
+      petAffinity,
+      getPetAffinity,
+      petPet,
+      registerPetBattleWin,
     }),
-    [petProgress, getPetProgress, addPetXP, resetPetProgress],
+    [
+      petProgress,
+      getPetProgress,
+      addPetXP,
+      resetPetProgress,
+      petAffinity,
+      getPetAffinity,
+      petPet,
+      registerPetBattleWin,
+    ],
   );
 
   return (

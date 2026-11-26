@@ -2,7 +2,6 @@ import type { RewindSnapshot } from "@/utils/types/battle/rewind";
 
 export const REWIND_INTERVAL_MS = 200;
 export const REWIND_BUFFER_MS = 12_000;
-export const REWIND_PLAYBACK_MS = 100;
 
 export type RewindSnap = { at: number; snap: RewindSnapshot };
 

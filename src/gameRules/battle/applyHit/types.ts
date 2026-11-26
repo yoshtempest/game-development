@@ -27,7 +27,7 @@ export type BaseHitParams = {
   >;
   registerHitRef: React.RefObject<(damage: number) => void>;
   timeRef: React.RefObject<TimeEffect[]>;
-  onDamageDealtRef?: React.RefObject<(amount: number) => void>;
+  onDamageDealtRef?: React.RefObject<(amount: number, kind?: DamageKind) => void>;
   onAttackRef?: React.RefObject<() => void>;
   onSpecialRef?: React.RefObject<() => void>;
   onKokusenRef?: React.RefObject<() => void>;

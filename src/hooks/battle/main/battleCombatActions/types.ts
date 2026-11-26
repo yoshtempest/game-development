@@ -30,7 +30,9 @@ export type BattleCombatActionsProps = {
   equipYvelWeapon: (weapon: YvelWeapon) => boolean;
   summons: ReturnType<typeof useBattleStageSetup>["summons"];
   setSummons: ReturnType<typeof useBattleStageSetup>["setSummons"];
-  giveSummonRewards: ReturnType<typeof useBattleStageSetup>["giveSummonRewards"];
+  giveSummonRewards: ReturnType<
+    typeof useBattleStageSetup
+  >["giveSummonRewards"];
   setPlayerState: ReturnType<typeof useBattleStageSetup>["setPlayerState"];
   ematronComboMultiplierRef: ReturnType<
     typeof useBattleStageSetup
@@ -44,6 +46,12 @@ export type BattleCombatActionsProps = {
   ematronComboStepIndexRef: ReturnType<
     typeof useBattleStageSetup
   >["ematronComboStepIndexRef"];
+  basicComboActiveRef: ReturnType<
+    typeof useBattleStageSetup
+  >["basicComboActiveRef"];
+  basicComboStepIndexRef: ReturnType<
+    typeof useBattleStageSetup
+  >["basicComboStepIndexRef"];
   forcePunchRef: ReturnType<typeof useBattleStageSetup>["forcePunchRef"];
   /** Básico do babidi: dispara o projétil de energia no press. */
   babidiFireRef: RefObject<

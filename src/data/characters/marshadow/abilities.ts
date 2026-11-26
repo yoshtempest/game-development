@@ -2,10 +2,11 @@ import type { ActiveAbility } from "@/utils/types/player/abilities";
 
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { createActiveAbility } from "@/data/characters/abilityFactories";
-import { ATOMIC_COOLDOWN_MS } from "./marshadow";
+import { ATOMIC_COOLDOWN_MS, ATOMIC_REIRYOKU_COST } from "./marshadow";
 import {
   GRAN_REY_CERO_AOE_RADIUS,
   GRAN_REY_CERO_COOLDOWN_MS,
+  GRAN_REY_CERO_REIRYOKU_COST,
 } from "./granReyCero";
 
 export const MARSHADOW_ACTIVE_ABILITIES: ActiveAbility[] = [
@@ -22,6 +23,7 @@ export const MARSHADOW_ACTIVE_ABILITIES: ActiveAbility[] = [
     name: "I Am Atomic",
     description:
       "Explosão centrada no inimigo com maior vida máxima, causando dano mágico em todos os inimigos num raio de 300px (2x no alvo).",
+    cost: ATOMIC_REIRYOKU_COST,
     cooldownMs: ATOMIC_COOLDOWN_MS,
     damageType: "magical",
   }),
@@ -41,6 +43,7 @@ export const MARSHADOW_ACTIVE_ABILITIES: ActiveAbility[] = [
     id: "granReyCero",
     name: "Gran Rey Cero",
     description: `Lâmina que percorre grande distância na direção de mira. Ao encostar, para e rasteja, causando dano contínuo e empurrando todo inimigo num raio de ${GRAN_REY_CERO_AOE_RADIUS}px da ponta.`,
+    cost: GRAN_REY_CERO_REIRYOKU_COST,
     cooldownMs: GRAN_REY_CERO_COOLDOWN_MS,
     damageType: "physical",
   }),

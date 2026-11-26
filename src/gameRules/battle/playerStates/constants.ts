@@ -107,8 +107,8 @@ export const DOMAIN_EXPANSION_STATES = stateSet<PlayerDomainExpansionState>(
 /** Expansão de Domínio do natsuki (Muryōkūsho) — pose `rioiki.svg` por 5s. */
 export const NATSUKI_DOMAIN_STATES =
   stateSet<PlayerNatsukiDomainState>("rioiki");
-/** Laser da Forma Vastolord (marshadow). */
-export const LASER_STATES = stateSet<PlayerLaserState>("laser");
+/** Laser da Forma Vastolord (marshadow): carga (`preLaser`) e disparo (`laser`). */
+export const LASER_STATES = stateSet<PlayerLaserState>("preLaser", "laser");
 /** "Gran Rey Cero" (marshadow). */
 export const GRAN_REY_CERO_STATES =
   stateSet<PlayerGranReyCeroState>("granReyCero");
@@ -160,6 +160,7 @@ export const ACTION_LOCK_STATES = unionOf(
     "genkiDamaRising",
     "preparingGenkiDama",
     "throwGenkiDama",
+    "preLaser",
     "laser",
     "granReyCero",
     "chargingKamehameha",

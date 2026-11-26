@@ -1,0 +1,155 @@
+/* Cinemática do "Retrocesso Temporal" (#284). Acima da SceneMap (z50) e das
+   entidades, abaixo da navbar. A duração de cada fase vem de
+   REWIND_RESURRECTION_PHASE_MS via --rr-duration. */
+.layer {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.explosion,
+.launch,
+.enterPortal {
+  position: absolute;
+  width: var(--rr-size);
+  transform: translate(-50%, -100%);
+}
+
+.explosion {
+  width: calc(var(--rr-size) * 2);
+  animation: explosionFade var(--rr-duration) ease-out forwards;
+}
+
+.launch {
+  animation: launchUp var(--rr-duration) cubic-bezier(0.2, 0.7, 0.3, 1)
+    forwards;
+}
+
+.portal {
+  position: absolute;
+  width: calc(var(--rr-size) * 1.8);
+  height: calc(var(--rr-size) * 1.8);
+  transform: translate(-50%, -75%);
+  background-size: contain, 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: portalOpen var(--rr-duration) ease-out forwards;
+}
+
+/* O sprite "entra" no portal: a parte de cima é cortada primeiro (clip-path),
+   como se atravessasse a boca do portal, até sumir por completo. */
+.enterPortal {
+  animation: enterPortal var(--rr-duration) ease-in forwards;
+}
+
+.void {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover, 100% 100%;
+  background-position: center;
+  overflow: hidden;
+}
+
+.zoom,
+.focused {
+  width: calc(var(--rr-size) * 1.2);
+}
+
+/* A "câmera" se aproxima do personagem: o sprite cresce até o enquadramento
+   fechado em que o flash acontece. */
+.zoom {
+  animation: cameraApproach var(--rr-duration) ease-in forwards;
+}
+
+.focused {
+  transform: scale(2.6);
+}
+
+.flash {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  animation: flash var(--rr-duration) ease-out forwards;
+}
+
+@keyframes explosionFade {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(0.6);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -100%) scale(1.4);
+  }
+}
+
+@keyframes launchUp {
+  0% {
+    transform: translate(-50%, -100%) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(-50%, calc(-100% - var(--rr-rise))) rotate(-25deg);
+  }
+}
+
+@keyframes portalOpen {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -75%) scale(0.2) rotate(0deg);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translate(-50%, -75%) scale(1) rotate(90deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -75%) scale(1.1) rotate(220deg);
+  }
+}
+
+@keyframes enterPortal {
+  0%,
+  30% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+
+  100% {
+    clip-path: inset(100% 0 0 0);
+    opacity: 0.4;
+  }
+}
+
+@keyframes cameraApproach {
+  0% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(2.6);
+  }
+}
+
+@keyframes flash {
+  0% {
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

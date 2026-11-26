@@ -8,29 +8,6 @@
   background: var(--gold-35);
 }
 
-.value,
-.label,
-.cost {
-  position: relative;
-  z-index: 1;
-}
-
-.value {
-  font-size: var(--fs-18);
-  font-weight: bold;
-  color: var(--gold);
-}
-
-.label {
-  color: var(--gold-pale);
-}
-
-.cost {
-  font-size: var(--fs-11);
-  font-weight: bold;
-  color: var(--orange-soft);
-}
-
 @keyframes glow {
   0%,
   100% {

@@ -12,6 +12,8 @@ export function useNpcBleedTicks(params: {
   npcBleedXRef: React.RefObject<number>;
   npcBleedYRef: React.RefObject<number>;
   npcBleedUntilRef: React.RefObject<number>;
+  /** Dano por tick do sangramento ativo (definido por quem aplicou). */
+  npcBleedTickDamageRef: React.RefObject<number>;
 }) {
   const {
     isEnding,
@@ -22,6 +24,7 @@ export function useNpcBleedTicks(params: {
     npcBleedXRef,
     npcBleedYRef,
     npcBleedUntilRef,
+    npcBleedTickDamageRef,
   } = params;
 
   useEffect(() => {
@@ -29,9 +32,10 @@ export function useNpcBleedTicks(params: {
       if (isEnding.current || isMenuRef?.current || isPausedRef?.current)
         return;
       if (npcBleedUntilRef.current > Date.now()) {
-        setNpcHP((hp) => Math.max(0, hp - 2));
+        const tick = npcBleedTickDamageRef.current;
+        setNpcHP((hp) => Math.max(0, hp - tick));
         spawnDamageRef.current?.(
-          2,
+          tick,
           npcBleedXRef.current,
           npcBleedYRef.current,
           "bleed",
@@ -47,6 +51,7 @@ export function useNpcBleedTicks(params: {
     npcBleedXRef,
     npcBleedYRef,
     npcBleedUntilRef,
+    npcBleedTickDamageRef,
     spawnDamageRef,
   ]);
 }

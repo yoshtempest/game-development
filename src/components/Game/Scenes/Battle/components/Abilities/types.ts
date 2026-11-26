@@ -43,6 +43,7 @@ type SceneSlice = Pick<
   | "vastolordLaserUsable"
   | "vastolordLaserStacks"
   | "activeAbilityPress"
+  | "laricell"
   | "activeAbilityUsable"
   | "activeAbilityRemaining"
   | "babidiBombDropPress"

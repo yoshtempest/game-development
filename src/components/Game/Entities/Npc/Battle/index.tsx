@@ -13,89 +13,12 @@ import {
   MARSHADOW_CUT_IN_ENEMIE_SRC,
   BLOOD_ICON_SRC,
 } from "@/data/characters/marshadow/marshadowCutIn";
-import type { CutInEnemieOverlay } from "@/utils/types/battle/cutInEnemie";
 import { useHitFlash } from "@/hooks/battle/visuals/useHitFlash";
+import { usePushedPose } from "@/hooks/battle/visuals/usePushedPose";
+import { hasPushedSprite } from "@/data/npc";
 import styles from "./styles.module.css";
+import type { Props } from "./types";
 
-type Props = {
-  x: number;
-  y: number;
-  TILE_SIZE: number;
-  npcType: string;
-  state:
-    | "idle"
-    | "walk"
-    | "default"
-    | "hit"
-    | "jumping"
-    | "attack"
-    | "pitch"
-    | "inAir"
-    | "airAttack"
-    | "preAttack"
-    | "preJump"
-    | "inJump"
-    | "jumpAttack"
-    | "block"
-    | "meleeAttack"
-    | "rangedAttack"
-    | "get"
-    | "throw"
-    | "startDash"
-    | "inDash"
-    | "startThrow"
-    | "throwing"
-    | "throwed"
-    | "startSpin"
-    | "inSpin"
-    | "finishSpin"
-    | "preMove"
-    | "run"
-    | "slap"
-    | "push"
-    | "meditating"
-    | "flying"
-    | "landing"
-    | "laser"
-    | "debuff"
-    | "throwPapers"
-    | "charging"
-    | "invoking"
-    | "dig"
-    | "entering"
-    | "entered"
-    | "fall"
-    | "giveMeMyPower"
-    | "jump"
-    | "falling"
-    | "prePunch"
-    | "punch"
-    | "preKick"
-    | "kick";
-  direction: "left" | "right";
-  piercings?: { id: number; x: number; y: number }[];
-  isExploding?: boolean;
-  isHidden?: boolean;
-  /** Fade-out/in para o NPC underground (alfas cavando): opacity com transição. */
-  isUnderground?: boolean;
-  npcPhase?: number;
-  isDying?: boolean;
-  isAlfa?: boolean;
-  /** CutInEnemie do marshadow sobrepondo o NPC (aparece por 1s no ataque). */
-  cutInEnemie?: CutInEnemieOverlay | null;
-  /** NPC em sangramento: mostra o bloodIcon acima da imagem. */
-  npcBleeding?: boolean;
-  /**
-   * Furo da esfera purple: se a purple matou o NPC, o sprite perde o lado
-   * central-direito no ponto do impacto (em vez de só sumir no fade).
-   */
-  purpleHole?: boolean;
-  /**
-   * HP atual. Quando cai, o sprite pisca em vermelho (`useHitFlash`).
-   * Ausente = sem piscada (pet, aliado e visual remoto não passam HP).
-   */
-  hp?: number;
-};
 
 const HIT_FLASH_CLASS = ["", styles.hitFlashA, styles.hitFlashB] as const;
 
@@ -117,9 +40,12 @@ export function NPCBattle({
   npcBleeding = false,
   purpleHole = false,
   hp,
+  pushCount,
+  outroResult = null,
 }: Props) {
   const { playSound } = useSoundEffects();
   const hitFlash = useHitFlash(hp);
+  const isPushed = usePushedPose(pushCount);
   const prevIsExplodingRef = useRef(isExploding);
 
   const isHungryDeathRunning = npcType === "hungryDeath" && state === "run";
@@ -157,13 +83,22 @@ export function NPCBattle({
   const sizeMultiplier = getBossSizeMultiplier(npcType, npcPhase, isAlfa);
   const yOffset = getNpcSpriteYOffset(npcType);
 
-  const basePath = getSpritePath(npcType, state, npcPhase, isAlfa);
+  const showPushed =
+    isPushed && !isAlfa && !isDying && hasPushedSprite(npcType);
+  const basePath = getSpritePath(
+    npcType,
+    showPushed ? "pushed" : state,
+    npcPhase,
+    isAlfa,
+  );
 
   const src = isExploding
     ? npcPathProjectile("/explosion.svg")
     : isHungryDeathRunning
       ? npcPath(`/hungryDeath/run${runFrame + 1}.svg`)
-      : `${basePath}`;
+      : outroResult
+        ? npcPath(`/${npcType}/${outroResult}.svg`)
+        : `${basePath}`;
 
   // Alguns bosses não possuem o sprite resolvido (ex.: idle.svg na 2ª fase).
   // Fazemos fallback em runtime: idle.svg → default.svg → walk.svg.
@@ -243,7 +178,12 @@ export function NPCBattle({
             decoding="async"
             src={resolvedSrc}
             onError={handleSpriteError}
-            className={HIT_FLASH_CLASS[hitFlash.phase]}
+            className={[
+              HIT_FLASH_CLASS[hitFlash.phase],
+              outroResult === "victory" && !isDying ? styles.outroVictory : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
             onAnimationEnd={hitFlash.endFlash}
             style={{
               width: "100%",

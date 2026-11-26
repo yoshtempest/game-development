@@ -1,5 +1,6 @@
 import { usePWA } from "@/contexts/PWAContext";
 import styles from "./styles.module.css";
+import { Download } from "lucide-react";
 
 /**
  * Returns the install instructions that match the platform the player is on.
@@ -36,7 +37,10 @@ export default function InstallButton() {
 
   return (
     <>
-      <span>Instalar app</span>
+      <div className="navbarContainerRow">
+        <Download />
+        <h2>Instalar app</h2>
+      </div>
       {showInstalledMessage && (
         <div className="overlay" onClick={() => setShowInstalledMessage(false)}>
           <div className={styles.popup} onClick={(e) => e.stopPropagation()}>
