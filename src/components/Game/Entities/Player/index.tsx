@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { playerPath } from "@/utils/paths";
 import { EXPLORE_MOVE_INTERVAL } from "@/gameRules/movement/explore";
 import { HEIGHT_STEP_OFFSET } from "@/gameRules/movement/levels";
@@ -26,6 +26,12 @@ type Props = {
    * selo de profissão), que apareciam sobre o avatar do outro.
    */
   remoteName?: string;
+  /**
+   * Pose de exploração. Sprite esperado em
+   * `player/<personagem>/movement/<emote>.svg`; enquanto o arquivo não existir
+   * o `onError` cai no sprite parado, então a mecânica funciona sem o asset.
+   */
+  emote?: ExploreEmote;
 };
 
 /**
@@ -44,7 +50,10 @@ export const Player = memo(function Player({
   hasPeru,
   moving,
   remoteName,
+  emote,
 }: Props) {
+  const [missingEmoteSrc, setMissingEmoteSrc] = useState<string | null>(null);
+
   const spriteDirection = direction === "left" ? "right" : direction;
   const spriteName = moving
     ? `moving${spriteDirection.charAt(0).toUpperCase() + spriteDirection.slice(1)}`
@@ -54,7 +63,14 @@ export const Player = memo(function Player({
     ? `/${character}/movement/withPeru/${spriteName}.svg`
     : `/${character}/movement/${spriteName}.svg`;
 
-  const src = playerPath(spritePath);
+  const idleSrc = playerPath(spritePath);
+  const emoteSrc =
+    emote && !moving ? playerPath(`/${character}/movement/${emote}.svg`) : null;
+  const src = emoteSrc && emoteSrc !== missingEmoteSrc ? emoteSrc : idleSrc;
+
+  function handleSpriteError() {
+    if (src === emoteSrc) setMissingEmoteSrc(emoteSrc);
+  }
 
   const mapWidth = TILE_SIZE * MAP_GRID_COLS;
   const mapHeight = TILE_SIZE * MAP_GRID_ROWS;
@@ -82,6 +98,7 @@ export const Player = memo(function Player({
           loading="lazy"
           decoding="async"
           src={src}
+          onError={handleSpriteError}
           style={{
             width: "100%",
             height: "100%",
@@ -106,6 +123,7 @@ export const Player = memo(function Player({
       >
         <motion.img
           src={src}
+          onError={handleSpriteError}
           animate={
             moving
               ? {

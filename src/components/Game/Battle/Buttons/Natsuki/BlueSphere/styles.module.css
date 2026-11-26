@@ -11,10 +11,6 @@
   animation: glow 1s ease-in-out infinite;
 }
 
-.label {
-  color: var(--orange-pale);
-}
-
 @keyframes glow {
   0%,
   100% {

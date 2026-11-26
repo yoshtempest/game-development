@@ -1,10 +1,6 @@
 import { PlayerBattle } from "@/components/Game/Entities/Player/Battle";
-import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/blinkAnimation/types";
-import type {
-  BabidiShieldSide,
-  BabidiShieldSides,
-} from "@/utils/types/character/babidi";
-import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
+import { getActivePlayerStatusApplications } from "@/gameRules/battle/status/statusEffects";
+import type { Props } from "./types";
 
 type Props = {
   player: Player;
@@ -31,6 +27,8 @@ type Props = {
   babidiAttackVariant?: BabidiAttackVariant;
   /** Controle do Machine Gama pelo jogador após a expansão de domínio. */
   babidiMachineGamaControl?: boolean;
+  /** Modo Tóxico do babidi em curso. */
+  babidiToxicForm?: boolean;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
   babidiShieldSides?: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
@@ -58,6 +56,7 @@ export function Player({
   mugetsuBlink = null,
   babidiAttackVariant,
   babidiMachineGamaControl = false,
+  babidiToxicForm = false,
   babidiShieldSides,
   onBabidiShieldEnd,
   hakai = false,
@@ -72,8 +71,11 @@ export function Player({
         : "black"
       : null;
 
+  const activeStatuses = getActivePlayerStatusApplications(player);
+
   return (
     <PlayerBattle
+      activeStatuses={activeStatuses}
       character={player.character}
       x={player.x}
       y={player.y}
@@ -94,12 +96,14 @@ export function Player({
       mugetsuBlink={mugetsuBlink}
       babidiAttackVariant={babidiAttackVariant}
       babidiMachineGamaControl={babidiMachineGamaControl}
+      babidiToxicForm={babidiToxicForm}
       babidiShieldSides={babidiShieldSides}
       onBabidiShieldEnd={onBabidiShieldEnd}
       levelUpParticles={levelUpParticles}
       nameTag={nameTag}
       hakai={hakai}
       sigiloPhase={sigiloPhase}
+      basicComboStep={player.basicComboStep}
     />
   );
 }

@@ -1,5 +1,7 @@
 import { motion } from "motion/react";
 
+import styles from "./styles.module.css";
+
 interface BattleSpriteProps {
   src: string;
   className?: string;
@@ -8,6 +10,12 @@ interface BattleSpriteProps {
   transformOrigin?: string;
   onError: () => void;
   isIdle?: boolean;
+  /**
+   * Tinge o sprite de roxo (veneno, issue #42). A camada usa o próprio sprite
+   * como máscara, então só a silhueta do personagem é tingida — um `filter`
+   * no `<img>` brigaria com as animações de blink que já usam `filter`.
+   */
+  poisonTint?: boolean;
 }
 
 export function BattleSprite({
@@ -18,6 +26,7 @@ export function BattleSprite({
   transformOrigin,
   onError,
   isIdle = false,
+  poisonTint = false,
 }: BattleSpriteProps) {
   return (
     <div
@@ -70,6 +79,16 @@ export function BattleSprite({
           animationDuration: blinkDuration,
         }}
       />
+      {poisonTint && (
+        <div
+          aria-hidden
+          className={styles.poisonTint}
+          style={{
+            maskImage: `url("${src}")`,
+            WebkitMaskImage: `url("${src}")`,
+          }}
+        />
+      )}
     </div>
   );
 }

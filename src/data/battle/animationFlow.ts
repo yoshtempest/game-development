@@ -7,6 +7,7 @@ import {
   THREE_HUNDRED_MS,
   FOUR_HUNDRED_MS,
   FIVE_HUNDRED_MS,
+  SIX_HUNDRED_MS,
   EIGHT_HUNDRED_MS,
 } from "@/data/ms";
 
@@ -78,14 +79,20 @@ export const animationFlow: Record<PlayerState, AnimationStep | null> = {
   // heal.svg por 300ms e volta para idle.
   heal: { next: "idle", duration: THREE_HUNDRED_MS },
 
+  // Emote/taunt (sem dano): idle2 → idle3 → idle. Qualquer ação sobrescreve.
+  idle2: { next: "idle3", duration: SIX_HUNDRED_MS },
+  idle3: { next: "idle", duration: SIX_HUNDRED_MS },
+
   // Genki Dama do ematron: estados controlados pelo hold (useEmatronGenkiDama),
   // não avançam sozinhos — o hook troca os sprites conforme a fase.
   genkiDamaRising: null,
   preparingGenkiDama: null,
   throwGenkiDama: null,
 
-  // Laser da Forma Vastolord do marshadow: estado mantido pelo hook por 3s
-  // (useVastolordLaser), que restaura o idle quando o feixe termina.
+  // Laser da Forma Vastolord do marshadow: `preLaser` segura a pose de carga
+  // durante o intro e `laser` a do disparo por 3s; os dois são trocados pelo
+  // hook (useVastolordLaser), que restaura o idle quando o feixe termina.
+  preLaser: null,
   laser: null,
 
   // Kamehameha do ematron: fase de disparo (efeito) mantida pelo hook

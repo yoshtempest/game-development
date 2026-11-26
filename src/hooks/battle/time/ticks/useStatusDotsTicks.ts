@@ -1,9 +1,12 @@
 import { useEffect } from "react";
-import {
-  POISON_TICK_DAMAGE,
-  DOT_TICK_INTERVAL_MS,
-} from "@/gameRules/battle/status/statusEffects";
+import { DOT_TICK_INTERVAL_MS } from "@/gameRules/battle/status/statusEffects";
 
+/**
+ * Ticks de DoT no player (sangramento, queimadura, veneno). O dano de cada
+ * tick chega pronto em parâmetro porque é fração do dano base do NPC
+ * (`getNpcPercentDamage`) e a queimadura ainda passa pela resistência ao
+ * calor — o hook só aplica, não decide quanto.
+ */
 export function useStatusDotTicks(params: {
   isEnding: React.RefObject<boolean>;
   isMenuRef?: React.RefObject<boolean>;
@@ -12,7 +15,9 @@ export function useStatusDotTicks(params: {
   spawnDamageRef: React.RefObject<
     (value: number, x: number, y: number, type: DamageType) => void
   >;
+  bleedTickDamage: number;
   burnTickDamage: number;
+  poisonTickDamage: number;
   bleedXRef: React.RefObject<number>;
   bleedYRef: React.RefObject<number>;
   bleedUntilRef: React.RefObject<number>;
@@ -25,7 +30,9 @@ export function useStatusDotTicks(params: {
     isPausedRef,
     setPlayerHP,
     spawnDamageRef,
+    bleedTickDamage,
     burnTickDamage,
+    poisonTickDamage,
     bleedXRef,
     bleedYRef,
     bleedUntilRef,
@@ -38,9 +45,9 @@ export function useStatusDotTicks(params: {
       if (isEnding.current || isMenuRef?.current || isPausedRef?.current)
         return;
       if (bleedUntilRef.current > Date.now()) {
-        setPlayerHP((hp) => Math.max(0, hp - 2));
+        setPlayerHP((hp) => Math.max(0, hp - bleedTickDamage));
         spawnDamageRef.current?.(
-          2,
+          bleedTickDamage,
           bleedXRef.current,
           bleedYRef.current,
           "bleed",
@@ -56,9 +63,9 @@ export function useStatusDotTicks(params: {
         );
       }
       if (poisonUntilRef.current > Date.now()) {
-        setPlayerHP((hp) => Math.max(0, hp - POISON_TICK_DAMAGE));
+        setPlayerHP((hp) => Math.max(0, hp - poisonTickDamage));
         spawnDamageRef.current?.(
-          POISON_TICK_DAMAGE,
+          poisonTickDamage,
           bleedXRef.current,
           bleedYRef.current,
           "poison",
@@ -71,7 +78,9 @@ export function useStatusDotTicks(params: {
     isEnding,
     isMenuRef,
     isPausedRef,
+    bleedTickDamage,
     burnTickDamage,
+    poisonTickDamage,
     bleedXRef,
     bleedYRef,
     bleedUntilRef,

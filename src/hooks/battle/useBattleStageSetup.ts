@@ -15,7 +15,12 @@ import { useSettings } from "@/hooks/settings/useSetting";
 import { useTombstones } from "@/contexts/TombstoneContext";
 import { useNpcSetup } from "@/hooks/battle/npc/useSetup";
 import { getNpcStatMultiplier } from "@/gameRules/npc/npcStats";
-import { getNpcLevel } from "@/data/npc";
+import {
+  getNpcLevel,
+  getBattleCompanions,
+  COMPANION_SPAWN_GAP,
+} from "@/data/npc";
+import { BATTLE_SPAWN } from "@/gameRules/battle/spawnPoints";
 import { useBattleRewards } from "@/hooks/battle/rewards/useRewards";
 import { useSummons } from "@/hooks/battle/summon/useSummons";
 import { useAllies } from "@/hooks/battle/summon/useAllies";
@@ -27,7 +32,8 @@ import { loadBestTime } from "@/utils/bestTime";
 import { buildSummonWrapper } from "@/gameRules/battle/petSkill/buildSummonWrapper";
 import { useBattleInfo } from "@/contexts/BattleInfoContext";
 import { useBattleIntro } from "@/hooks/battle/modals/useIntro";
-import type { ReplayData, ReplayFrame } from "@/utils/types/replay";
+import type { ReplayData } from "@/utils/types/replay";
+import type { RewindResurrection } from "@/utils/types/battle/rewind";
 
 type Props = {
   npcType: string;
@@ -61,6 +67,8 @@ export function useBattleStageSetup({
     ematronComboActiveRef,
     ematronComboAirActiveRef,
     ematronComboStepIndexRef,
+    basicComboActiveRef,
+    basicComboStepIndexRef,
     setTimeScale,
     resetTimeScale,
     timeScaleRef,
@@ -110,7 +118,8 @@ export function useBattleStageSetup({
 
   const battleStartRef = useRef(Date.now());
   const savedPlayerHPRef = useRef(progress[player.character]?.battleHP ?? null);
-  const [rewindFrames, setRewindFrames] = useState<ReplayFrame[] | null>(null);
+  const [rewindResurrection, setRewindResurrection] =
+    useState<RewindResurrection | null>(null);
   const [victoryElapsed, setVictoryElapsed] = useState(0);
   const [bestTime, setBestTime] = useState(loadBestTime(npcType));
 
@@ -217,6 +226,20 @@ export function useBattleStageSetup({
     summonNpc(npcType);
   }, [isAlfa, npcType, summonNpc]);
 
+  /**
+   * Companheiros (`BATTLE_COMPANIONS`) entram junto com o NPC principal, uma
+   * vez por montagem — o retry respawna no `useDefeatFlow`, depois do
+   * `clearSummons`.
+   */
+  const companionsSpawnedRef = useRef(false);
+  useEffect(() => {
+    if (companionsSpawnedRef.current) return;
+    companionsSpawnedRef.current = true;
+    for (const companion of getBattleCompanions(npcType)) {
+      summonNpc(companion, BATTLE_SPAWN.npc.x - COMPANION_SPAWN_GAP);
+    }
+  }, [npcType, summonNpc]);
+
   const onSummonWrapperRef = useLatestRef(
     buildSummonWrapper({
       npcType,
@@ -258,6 +281,8 @@ export function useBattleStageSetup({
     ematronComboActiveRef,
     ematronComboAirActiveRef,
     ematronComboStepIndexRef,
+    basicComboActiveRef,
+    basicComboStepIndexRef,
     setTimeScale,
     resetTimeScale,
     timeScaleRef,
@@ -300,8 +325,8 @@ export function useBattleStageSetup({
     setIsPhaseTransitioning,
     battleStartRef,
     savedPlayerHPRef,
-    rewindFrames,
-    setRewindFrames,
+    rewindResurrection,
+    setRewindResurrection,
     victoryElapsed,
     setVictoryElapsed,
     bestTime,

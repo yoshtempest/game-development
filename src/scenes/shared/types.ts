@@ -19,6 +19,7 @@ import type { useSrGuaxinimKillerQueen } from "@/hooks/battle/player/characters/
 import type { useKokusenAnimation } from "@/hooks/battle/player/characters/natsuki/useKokusenAnimation";
 import type { useBlackFlashAnimation } from "@/hooks/battle/player/characters/natsuki/useBlackFlashAnimation";
 import type { useSpecialIntro } from "@/hooks/battle/modals/specialIntro/useSpecialIntro";
+import type { RewindResurrection } from "@/utils/types/battle/rewind";
 import type { usePlayerSpecialProjectile } from "@/hooks/battle/player/playerSpecialProjectile/usePlayerSpecialProjectile";
 import type { useCoffinAnimation } from "@/hooks/battle/summon/coffinAnimation/useCoffinAnimation";
 import type { useNpcSetup } from "@/hooks/battle/npc/useSetup";
@@ -29,6 +30,7 @@ import type { useKamehameha } from "@/hooks/battle/player/characters/ematron/kam
 import type { useAtomic } from "@/hooks/battle/player/characters/marshadow/atomic/useAtomic";
 import type { useMugetsuExpansion } from "@/hooks/battle/player/characters/marshadow/mugetsuExpansion/useMugetsuExpansion";
 import type { useGranReyCero } from "@/hooks/battle/player/characters/marshadow/granReyCero/useGranReyCero";
+import type { UnlimitedBladeWorksApi } from "@/hooks/battle/player/characters/yvel/useUnlimitedBladeWorks";
 import type { CameraFocus } from "@/hooks/battle/effects/cameraSequence/useCameraSequence";
 import type { CharacterId } from "@/data/characters/list";
 
@@ -42,6 +44,7 @@ import type {
   BabidiShieldSides,
 } from "@/utils/types/character/babidi";
 import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
+import type { LaricellAbilitiesApi } from "@/hooks/battle/player/characters/laricell/types";
 
 type Battle = ReturnType<typeof useBattleSystem>;
 type Npc = ReturnType<typeof useNpcAI>;
@@ -111,6 +114,8 @@ export type BattleSceneApi = {
   samuelWeapon: SamuelWeapon | undefined;
   /** Abre o grimório e avança a arma do Samuel, pagando stamina. */
   grimoirePress: () => void;
+  /** Unlimited Blade Works (Expansão do yvel): janela + arsenal pausado. */
+  yvelBladeWorks: UnlimitedBladeWorksApi;
   drikaArm?: string;
   sigiloPhase?: string;
   sigiloOpen?: boolean;
@@ -150,6 +155,8 @@ export type BattleSceneApi = {
   vastolordRemainingMs: number;
   /** Quadro da transformação do marshadow (0=screamOne … 3=transformated) ou null. */
   vastolordTransformationFrame: number | null;
+  /** Cinemática da passiva "Retrocesso Temporal" (#284) em curso, ou null. */
+  rewindResurrection: RewindResurrection | null;
   specialIntroActive: ReturnType<typeof useSpecialIntro>["specialIntroActive"];
   specialIntroCharacter: ReturnType<
     typeof useSpecialIntro
@@ -196,6 +203,15 @@ export type BattleSceneApi = {
    * "special" universal, que não existe mais.
    */
   activeAbilityPress: () => void;
+  /**
+   * Emote/taunt sem dano (sprites `idle2`/`idle3`). `emoteAvailable` só é
+   * verdadeiro para quem tem os sprites — os outros não mostram o botão.
+   */
+  emoteAvailable: boolean;
+  emoteUsable: boolean;
+  emotePress: () => void;
+  /** Habilidades da Laricell (#517): botões A1–A4 + Mordida e o visual. */
+  laricell: LaricellAbilitiesApi;
   activeAbilityUsable: boolean;
   activeAbilityRemaining: number;
   mugetsuSweep: ReturnType<typeof useMugetsuExpansion>["mugetsuSweep"];
@@ -235,6 +251,14 @@ export type BattleSceneApi = {
   purplePress: () => void;
   purpleUsable: boolean;
   granReyCeroRemaining: number;
+  /** Bankai do marshadow ativa (multiplicador de dano no funil). */
+  bankaiActive: boolean;
+  /** Tempo restante da Bankai, em ms. */
+  bankaiActiveRemainingMs: number;
+  bankaiPress: () => void;
+  bankaiUsable: boolean;
+  /** Cooldown restante do botão da Bankai, em segundos. */
+  bankaiRemaining: number;
   /** Projéteis de energia do ataque básico do babidi em voo. */
   babidiEnergyProjectiles: BabidiEnergyProjectile[];
   babidiMissileProjectiles: import("@/utils/types/character/babidi").BabidiMissileProjectile[];
@@ -247,10 +271,19 @@ export type BattleSceneApi = {
   babidiBombDropPress: () => void;
   babidiBombDropUsable: boolean;
   babidiBombDropRemaining: number;
+  /** Modo Tóxico do babidi em curso (sprite verde + veneno no básico). */
+  babidiToxicFormActive: boolean;
+  babidiToxicFormPress: () => void;
+  babidiToxicFormUsable: boolean;
+  babidiToxicFormRemaining: number;
   /** Variante de mão do sprite do ataque básico do babidi (pose do golpe atual). */
   babidiAttackVariant: BabidiAttackVariant;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
   babidiShieldSides: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onBabidiShieldEnd: (side: BabidiShieldSide, nonce: number) => void;
+  /** Retrocesso Temporal do srGuaxinim em reprodução (fundo galáctico). */
+  rewinding: boolean;
+  /** Easter egg de 1%: a Polícia do Tempo observa este retrocesso. */
+  timePoliceVisible: boolean;
 };

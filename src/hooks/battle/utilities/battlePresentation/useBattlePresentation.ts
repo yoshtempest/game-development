@@ -15,6 +15,7 @@ import {
 import { useBlinkAnimation } from "@/hooks/battle/player/characters/natsuki/blinkAnimation/useBlinkAnimation";
 import { useDivergentFistAnimation } from "@/hooks/battle/player/characters/natsuki/useDivergentFistAnimation";
 import { getCharacterPassive } from "@/data/characters/passives";
+import { BANKAI_DAMAGE_MULTIPLIER } from "@/data/characters/marshadow/bankai";
 
 export function useBattlePresentation({
   setup,
@@ -58,6 +59,7 @@ export function useBattlePresentation({
   const vastolordActiveRef = useRef(false);
   const vastolordUsedRef = useRef(false);
   const vastolordMultiplierRef = useRef<() => number>(() => 1);
+  const bankaiActiveRef = useRef(false);
 
   const vastolordDurationMs =
     getCharacterPassive(player.character, "vastolordForm")?.effect.durationMs ??
@@ -83,7 +85,8 @@ export function useBattlePresentation({
   });
   vastolordActiveRef.current = vastolordActive;
   vastolordMultiplierRef.current = () =>
-    vastolordActive ? VASTOLORD_MULTIPLIER : 1;
+    (vastolordActive ? VASTOLORD_MULTIPLIER : 1) *
+    (bankaiActiveRef.current ? BANKAI_DAMAGE_MULTIPLIER : 1);
 
   useGameAudio({ src: audioSrc, loop: true, volume: 0.5 });
 
@@ -113,5 +116,6 @@ export function useBattlePresentation({
     vastolordUsedRef,
     vastolordActiveRef,
     vastolordMultiplierRef,
+    bankaiActiveRef,
   };
 }

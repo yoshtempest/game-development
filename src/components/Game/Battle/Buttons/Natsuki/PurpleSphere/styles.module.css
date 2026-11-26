@@ -11,10 +11,6 @@
   animation: purpleGlow 1s ease-in-out infinite;
 }
 
-.label {
-  color: var(--ability-purple-pale);
-}
-
 @keyframes purpleGlow {
   0%,
   100% {

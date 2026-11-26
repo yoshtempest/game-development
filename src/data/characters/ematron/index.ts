@@ -76,8 +76,18 @@ export const GENKI_DAMA_GROW_INTERVAL_MS = 1;
 export const GENKI_DAMA_GROW_MULTIPLIER = 1.0015;
 /** Teto do multiplicador de dano (7x o dano do ataque básico). */
 export const GENKI_DAMA_MAX_DAMAGE_MULTIPLIER = 7;
-/** Duração do voo da Genki Dama até o inimigo. */
-export const GENKI_DAMA_THROW_MS = 500;
+/** Duração do voo da Genki Dama até o inimigo (longo o bastante para o arco aparecer). */
+export const GENKI_DAMA_THROW_MS = 700;
+/**
+ * Gravidade do voo da Genki Dama em px lógicos/s² (y cresce para baixo). É o
+ * que curva a trajetória num arco em vez da reta antiga.
+ */
+export const GENKI_DAMA_GRAVITY_PX_S2 = 1600;
+/**
+ * Coeficiente de resistência do ar (arrasto linear, 1/s): a velocidade decai
+ * por `e^(-k·t)`, então a esfera sai rápida e chega desacelerando.
+ */
+export const GENKI_DAMA_AIR_DRAG_PER_S = 1.5;
 /** Raio de área base (scale unitário); escala com o tamanho da Genki Dama. */
 export const GENKI_DAMA_BASE_RADIUS = 120;
 /** Tempo exibindo idleCrounched ao pousar antes de voltar para idle. */

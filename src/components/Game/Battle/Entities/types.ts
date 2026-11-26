@@ -33,6 +33,7 @@ import type {
   BabidiShieldSides,
 } from "@/utils/types/character/babidi";
 import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
+import type { LaricellVisual } from "@/hooks/battle/player/characters/laricell/types";
 
 export type BattleEntitiesBattle = {
   piercings: { id: number; x: number; y: number }[];
@@ -107,6 +108,11 @@ export type Props = {
   preAtomic?: boolean;
   /** Vitória/derrota: jogador troca para expressions/<tipo>.svg (battleOutro). */
   outroExpression?: "victory" | "defeat" | null;
+  /**
+   * Esconde o sprite do player local: a cinemática do "Retrocesso Temporal"
+   * (#284) desenha a própria cópia dele saindo pelo portal.
+   */
+  hidePlayer?: boolean;
   /** Halo.svg acima do jogador durante preparing/finalizating do "I Am Atomic". */
   atomicHalo?: boolean;
   /** Flash no sprite do jogador na explosão do "I Am Atomic". */
@@ -126,12 +132,16 @@ export type Props = {
   babidiEnergyProjectiles?: BabidiEnergyProjectile[];
   babidiMissileProjectiles?: BabidiMissileProjectile[];
   fishingNet?: { x: number; y: number } | null;
+  /** Efeitos das habilidades da Laricell (parede, brincos, fumaça, forma). */
+  laricellVisual?: LaricellVisual | null;
   babidiClones?: BabidiCloneVisual[];
   /** Portal/bomba/explosão da Energia Dimensional do babidi. */
   babidiBombDrop?: BabidiBombDropVisual | null;
   /** Pose de mão do sprite do ataque básico do babidi. */
   babidiAttackVariant?: BabidiAttackVariant;
   babidiMachineGamaControl?: boolean;
+  /** Modo Tóxico do babidi em curso: sprite `toxicForm/` ou tint verde. */
+  babidiToxicFormActive?: boolean;
   /** Nonces dos shields de bloqueio do babidi por lado (`0` = inativo). */
   babidiShieldSides?: BabidiShieldSides;
   /** Encerra o shield de um lado quando ele termina o fade-out. */
