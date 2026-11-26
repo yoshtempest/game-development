@@ -36,6 +36,7 @@ import type { CharacterId } from "@/data/characters/list";
 
 import type { CharactersProgress } from "@/data/characters/defaultProgress";
 import type { ReplayData } from "@/utils/types/replay";
+import type { BattleOutroResult } from "@/utils/types/battle/outro";
 import type { NavigateFunction } from "react-router";
 import type {
   BabidiBombDropVisual,
@@ -66,9 +67,11 @@ export type BattleSceneApi = {
   lastRewards: unknown;
   showVictory: boolean;
   showDefeat: boolean;
-  showOutro: unknown;
+  showOutro: BattleOutroResult | null;
+  /** Alfa ou classe boss+; controla o modal e os sprites de fim de batalha. */
+  hasBattleOutro: boolean;
   showHighlight: boolean;
-  highlightData: unknown;
+  highlightData: ReplayData | null;
   handleCloseHighlight: () => void;
   handleCloseOutro: () => void;
   handleRetry: () => void;

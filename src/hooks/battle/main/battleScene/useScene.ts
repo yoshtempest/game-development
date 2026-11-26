@@ -33,6 +33,7 @@ import { buildBattleSceneApi } from "@/hooks/battle/utilities/buildBattleSceneAp
 import { useEmote } from "@/hooks/battle/player/emote/useEmote";
 import { getCharacterPassive } from "@/data/characters/passives";
 import { aggregateRewards } from "@/gameRules/battle/loot/buildLootBags";
+import { canHaveBattleOutro } from "@/gameRules/battle/outro";
 import { CHARACTERS } from "@/data/characters/list";
 import type { CharacterId } from "@/data/characters/list";
 import { getAbilityCameraFocus } from "@/data/characters/abilities";
@@ -131,6 +132,10 @@ export function useBattleScene({
     coffins,
   } = setup;
 
+  // A classe do NPC e a flag de alfa definem se esta luta tem direito ao
+  // BattleOutro. Um único cálculo alimenta o modal, a API da cena e os sprites.
+  const hasBattleOutro = canHaveBattleOutro(npcData.class, isAlfa);
+
   const {
     showVictory,
     triggerVictory,
@@ -151,6 +156,7 @@ export function useBattleScene({
     onVictory,
     getReplayData: () => getReplayDataRef.current(),
     showHighlightEnabled,
+    hasBattleOutro,
   });
 
   const refs = useBattleRefs();
@@ -997,6 +1003,7 @@ export function useBattleScene({
     showVictory,
     showDefeat,
     showOutro,
+    hasBattleOutro,
     showClear,
     showHighlight,
     highlightData,

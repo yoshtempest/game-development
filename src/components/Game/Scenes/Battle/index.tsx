@@ -203,6 +203,7 @@ export function BattleScene(props: Props) {
     showVictory: _showVictory,
     showDefeat: _showDefeat,
     showOutro,
+    hasBattleOutro,
     showClear,
     showHighlight,
     highlightData,
@@ -480,15 +481,16 @@ export function BattleScene(props: Props) {
 
   // Com o resultado definido, o sprite do jogador na arena troca para o mesmo
   // retrato do BattleOutro (`expressions/victory|defeat.svg`) e permanece
-  // assim até o retry/ida embora — o modal do outro continua intacto. Treino
-  // não monta o BattleOutro, então não troca (mesma condição do render).
-  const outroExpression: "victory" | "defeat" | null = isTraining
-    ? null
-    : showDefeat
-      ? "defeat"
-      : showVictory
-        ? "victory"
-        : null;
+  // assim até o retry/ida embora — o modal do outro continua intacto. Fora
+  // das lutas com direito ao outro (e no treino), o sprite permanece normal.
+  const outroExpression: "victory" | "defeat" | null =
+    isTraining || !hasBattleOutro
+      ? null
+      : showDefeat
+        ? "defeat"
+        : showVictory
+          ? "victory"
+          : null;
 
   const { setBattleCollision } = usePlayerActions();
 
@@ -1123,6 +1125,7 @@ export function BattleScene(props: Props) {
         showClear={showClear}
         isTraining={isTraining ?? false}
         showOutro={showOutro}
+        hasBattleOutro={hasBattleOutro}
         handleCloseOutro={handleCloseOutro}
         isPvp={isPvp}
         playerCharacter={player.character}

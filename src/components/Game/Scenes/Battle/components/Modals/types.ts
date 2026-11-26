@@ -6,6 +6,8 @@ export type Props = {
   showClear: boolean;
   isTraining: boolean;
   showOutro: "victory" | "defeat" | null;
+  /** Só alfas e bosses (ou acima) montam o BattleOutro. */
+  hasBattleOutro: boolean;
   handleCloseOutro: () => void;
   playerCharacter: CharacterId;
   showHighlight: boolean;

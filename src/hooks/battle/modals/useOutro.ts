@@ -11,6 +11,8 @@ type OutroProps = {
   onVictory?: () => void;
   getReplayData: () => ReplayData | null;
   showHighlightEnabled: boolean;
+  /** Só alfas e bosses (ou acima) têm a sequência Clear → Outro. */
+  hasBattleOutro: boolean;
 };
 
 export function useBattleOutro({
@@ -18,6 +20,7 @@ export function useBattleOutro({
   onVictory,
   getReplayData,
   showHighlightEnabled,
+  hasBattleOutro,
 }: OutroProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -50,9 +53,23 @@ export function useBattleOutro({
     }
   }, [prepareHighlight, getReplayDataRef, showHighlightEnabledRef]);
 
+  // Sem direito ao outro, a vitória pula direto para o highlight (ou para o
+  // modal de vitória, se não houver replay). O estado do outro é limpo para
+  // não sobrar nada de uma batalha anterior com boss.
+  useEffect(() => {
+    if (!hasBattleOutro) {
+      setShowClear(false);
+      setShowOutro(null);
+    }
+  }, [hasBattleOutro]);
+
   // Sequência de vitória: Clear (1.5s) → Outro (2.5s) → Highlight
   useEffect(() => {
     if (!showVictory) return undefined;
+    if (!hasBattleOutro) {
+      prepareAndShowHighlight();
+      return undefined;
+    }
 
     // 1. Mostra Clear imediatamente
     setShowClear(true);
@@ -73,10 +90,14 @@ export function useBattleOutro({
       window.clearTimeout(clearTimeoutId);
       if (outroTimeoutRef.current) window.clearTimeout(outroTimeoutRef.current);
     };
-  }, [showVictory, prepareAndShowHighlight]);
+  }, [showVictory, prepareAndShowHighlight, hasBattleOutro]);
 
   useEffect(() => {
     if (!showDefeat) return undefined;
+    if (!hasBattleOutro) {
+      prepareAndShowHighlight();
+      return undefined;
+    }
 
     setShowOutro("defeat");
     outroTimeoutRef.current = setTimeout(() => {
@@ -84,7 +105,7 @@ export function useBattleOutro({
       prepareAndShowHighlight();
     }, 2500);
     return () => window.clearTimeout(outroTimeoutRef.current);
-  }, [showDefeat, prepareAndShowHighlight]);
+  }, [showDefeat, prepareAndShowHighlight, hasBattleOutro]);
 
   const handleCloseOutro = useCallback(() => {
     if (outroTimeoutRef.current) window.clearTimeout(outroTimeoutRef.current);
