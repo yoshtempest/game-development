@@ -103,6 +103,8 @@ export function useNpcAI({
   onProjectileMiss,
   onStuckPaperExplode,
   onApplyDebuff,
+  onFixedHit,
+  onExecutePlayer,
   onBurstHit,
   playerProjectileRef,
   projectileHpRef,
@@ -230,6 +232,8 @@ export function useNpcAI({
   const onProjectileMissRef = useLatestRef(onProjectileMiss);
   const onStuckPaperExplodeRef = useLatestRef(onStuckPaperExplode);
   const onApplyDebuffRef = useLatestRef(onApplyDebuff);
+  const onFixedHitRef = useLatestRef(onFixedHit);
+  const onExecutePlayerRef = useLatestRef(onExecutePlayer);
   const onBurstHitRef = useLatestRef(onBurstHit);
 
   // ── Roteamento de golpes (co-op) ─────────────────────────────────────────
@@ -383,6 +387,19 @@ export function useNpcAI({
     },
     [routeArea, onLaserHitRef],
   );
+
+  const handleFixedHit = useCallback(
+    (amount: number) => {
+      if (!routeArea({ source: "fixed", amount })) return;
+      onFixedHitRef.current?.(amount);
+    },
+    [routeArea, onFixedHitRef],
+  );
+
+  const handleExecutePlayer = useCallback(() => {
+    if (!routeArea({ source: "execute" })) return;
+    onExecutePlayerRef.current?.();
+  }, [routeArea, onExecutePlayerRef]);
 
   const handleApplyDebuff = useCallback(
     (status: NewPlayerStatus) => {
@@ -636,6 +653,8 @@ export function useNpcAI({
         onLaserHit: handleLaserHit,
         onStuckPaperExplode: handleStuckPaperExplode,
         onApplyDebuff: handleApplyDebuff,
+        onFixedHit: handleFixedHit,
+        onExecutePlayer: handleExecutePlayer,
       });
 
       const now = Date.now();
@@ -774,6 +793,8 @@ export function useNpcAI({
     handleStuckPaperExplode,
     handleLaserHit,
     handleApplyDebuff,
+    handleFixedHit,
+    handleExecutePlayer,
   ]);
 
   const updateNpc = (partial: Partial<NPCBattleState>) => {

@@ -228,6 +228,16 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
     map: TWIN_PLATFORMS_MAP,
   },
+  manim: {
+    npcType: "manim",
+    onVictory: ({ setFlag, navigate }) => {
+      setFlag("manim");
+      void navigate(-1);
+    },
+    victoryDescription: "Você derrotou Manim, tá bom?",
+    background: sceneBackgrounds.HallCenterBattle,
+    audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+  },
   technoblade: {
     npcType: "technoblade",
     onVictory: ({ navigate }) => {
@@ -318,6 +328,7 @@ export const ROUTE_TO_BATTLE_KEY: Record<string, string> = {
   "/battle/hungryDog": "hungryDog",
   "/battle/jhowsimar": "jhowsimar",
   "/battle/piupiu": "piupiu",
+  "/battle/manim": "manim",
   "/battle/rice": "rice",
   "/battle/technoblade": "technoblade",
   "/battle/vandinhafragment": "vandinha",

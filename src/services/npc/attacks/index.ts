@@ -80,6 +80,7 @@ export const npcAttacks = {
   srGuaxinim: new SrGuaxinimAttack(),
   neimito: new NeimitoAttack(),
   planetarySisters: new PlanetarySistersAttack("planetarySisters"),
+  manim: new ManimAttack(),
   neimito: new NeimitoAttack("neimito"),
   planetarySisters: new PlanetarySistersAttack(),
   netali: new NetaliAttack(),
