@@ -18,6 +18,7 @@ type SceneSlice = Pick<
   | "pet"
   | "switchWeapon"
   | "yvelWeapon"
+  | "yvelBladeWorks"
   | "openSigilo"
   | "sphere"
   | "bluePress"
@@ -45,6 +46,7 @@ type SceneSlice = Pick<
   | "vastolordLaserUsable"
   | "vastolordLaserStacks"
   | "activeAbilityPress"
+  | "laricell"
   | "activeAbilityUsable"
   | "activeAbilityRemaining"
   | "babidiBombDropPress"
@@ -68,6 +70,9 @@ type SceneSlice = Pick<
   | "genkiDamaUsable"
   | "kamehamehaPress"
   | "kamehamehaUsable"
+  | "emoteAvailable"
+  | "emoteUsable"
+  | "emotePress"
 >;
 
 export type Props = {

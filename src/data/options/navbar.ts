@@ -8,12 +8,6 @@ export const NAVBAR_OPTIONS = [
     screen: "character",
     confirmSfx: "chooseYourCharacter",
   },
-  { icon: navbarIconPath("status.svg"), label: "Status", screen: "status" },
-  {
-    icon: navbarIconPath("equipments.svg"),
-    label: "Equipamentos",
-    screen: "equipment",
-  },
   {
     icon: navbarIconPath("backpack.svg"),
     label: "Mochila",
@@ -44,4 +38,6 @@ export const NAVBAR_OPTIONS = [
   },
 ] as const;
 
-export type MenuScreen = (typeof NAVBAR_OPTIONS)[number]["screen"];
+export type MenuScreen =
+  | (typeof NAVBAR_OPTIONS)[number]["screen"]
+  | "equipment";

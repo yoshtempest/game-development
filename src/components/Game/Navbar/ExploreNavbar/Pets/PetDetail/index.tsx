@@ -9,6 +9,7 @@ import { PetIdentity } from "./Identity";
 import { PetAbilities } from "./Abilities";
 import { PetAttributes } from "./Attributes";
 import { PetStarSelector } from "./StarSelector";
+import { PetAffinity } from "./Affinity";
 
 type Props = {
   entry: PetEntry;
@@ -23,6 +24,9 @@ export function PetDetail({ entry, onClose }: Props) {
     fusing,
     isEquipped,
     canFuse,
+    evolutionLocked,
+    affinity,
+    petCurrentPet,
     highestEligibleStar,
     ownedQtyByStar,
     getPetStats,
@@ -74,16 +78,25 @@ export function PetDetail({ entry, onClose }: Props) {
               <PetIdentity entry={entry} />
 
               <PetAttributes entry={entry} petNpc={petNpc} stats={stats} />
+
+              <PetAffinity
+                affinity={affinity}
+                owned={entry.owned}
+                onPet={petCurrentPet}
+              />
             </div>
           </section>
 
           <PetAbilities entry={entry} />
 
-          <PetStarSelector
-            selectedStar={selectedStar}
-            setSelectedStar={setSelectedStar}
-            ownedQtyByStar={ownedQtyByStar}
-          />
+          {!evolutionLocked && (
+            <PetStarSelector
+              selectedStar={selectedStar}
+              setSelectedStar={setSelectedStar}
+              ownedQtyByStar={ownedQtyByStar}
+            />
+          )}
+
         </main>
       </div>
 

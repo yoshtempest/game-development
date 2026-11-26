@@ -32,6 +32,11 @@ export type Props = {
   playerMaxHp: number;
   vampirism: VampirismStats;
   weapon?: YvelWeapon;
+  /**
+   * Forja da carga do yvel (issue #217): equipa a arma sorteada ao soltar o
+   * ataque carregado. Ausente para os demais personagens.
+   */
+  equipWeapon?: (weapon: YvelWeapon) => boolean;
   /** Multiplicador da Forma Vastolord aplicado no dano do dash. */
   vastolordMultiplierRef?: React.RefObject<() => number>;
 };

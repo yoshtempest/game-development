@@ -1,0 +1,141 @@
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f9f9f9;
+}
+
+.inputGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.inputGroup input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #26364f;
+  border-radius: 8px;
+  outline: none;
+  background: #121b31;
+  color: #f9f9f9;
+}
+
+.inputGroup input:focus {
+  border-color: #187fc4;
+}
+
+.inputGroup button,
+.roomItem button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #187fc4;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.inputGroup button:hover,
+.roomItem button:hover {
+  background: #0099ff;
+}
+
+.inputGroup button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionHeader button {
+  display: flex;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  background: #121b31;
+  color: #f9f9f9;
+  cursor: pointer;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 28px;
+  border: 1px dashed #26364f;
+  border-radius: 10px;
+  color: #8794a8;
+  text-align: center;
+  margin-bottom: 2vw;
+}
+
+.empty p {
+  color: #f9f9f9;
+}
+
+.empty span {
+  font-size: 13px;
+}
+
+.roomList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.roomItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #26364f;
+  border-radius: 10px;
+  background: #121b31;
+}
+
+.roomInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.roomInfo strong {
+  color: #f9f9f9;
+}
+
+.roomInfo span {
+  color: #8794a8;
+  font-size: 12px;
+}
+
+.error {
+  color: #f87171;
+  font-size: 13px;
+}

@@ -108,14 +108,26 @@ export function useBattleDamage({
     return basic > 0 ? special / basic : 1;
   }, [battle.char.stats.spirit, battle.char.stats.strength, playerClass]);
 
-  const handleGenkiDamaExplode = useCallback(
-    (x: number, y: number, radius: number, multiplier: number) => {
+  /**
+   * Golpe de área de uma habilidade ativa: acerta o NPC principal e cada
+   * summon dentro de `radius` a partir de `(x, y)`. A natureza do dano sai de
+   * `getAbilityDamageType(abilityId)` — o dado é a fonte de verdade, o hook
+   * que dispara não escolhe coluna de armadura.
+   */
+  const handleAbilityAreaHit = useCallback(
+    (
+      abilityId: string,
+      x: number,
+      y: number,
+      radius: number,
+      multiplier: number,
+    ) => {
       if (battle.isEnding.current) return;
 
-      const genkiDamaDamageKind = getAbilityDamageType("genkiDama");
+      const abilityDamageKind = getAbilityDamageType(abilityId);
 
       if (Math.hypot(npc.x - x, npc.y - y) <= radius) {
-        battle.playerHit(multiplier, true, true, genkiDamaDamageKind);
+        battle.playerHit(multiplier, true, true, abilityDamageKind);
       }
 
       for (const summon of summons) {
@@ -124,7 +136,7 @@ export function useBattleDamage({
           target: { id: summon.id, x: summon.x, y: summon.y },
           multiplier,
           source: "other",
-          damageKind: genkiDamaDamageKind,
+          damageKind: abilityDamageKind,
           player,
           playerClass,
           progress,
@@ -154,6 +166,13 @@ export function useBattleDamage({
       summons,
       giveSummonRewards,
     ],
+  );
+
+  /** Genki Dama: o mesmo golpe de área, com a natureza do dado `genkiDama`. */
+  const handleGenkiDamaExplode = useCallback(
+    (x: number, y: number, radius: number, multiplier: number) =>
+      handleAbilityAreaHit("genkiDama", x, y, radius, multiplier),
+    [handleAbilityAreaHit],
   );
 
   const { strikeProjectiles } = npc;
@@ -235,55 +254,66 @@ export function useBattleDamage({
     ],
   );
 
-  // Expansão de Domínio (burst): dano especial em TODOS os inimigos da arena.
-  const handleDomainBurst = useCallback(() => {
-    if (battle.isEnding.current) return;
+  /**
+   * Expansão de Domínio (burst): dano especial em TODOS os inimigos da arena.
+   * Os fatores vêm do `DomainExpansionDefinition` resolvido — variante de forma
+   * (ex.: Vastolord) bate mais forte pelo mesmo funil.
+   */
+  const handleDomainBurst = useCallback(
+    (
+      mainMultiplier: number = DOMAIN_BURST_MAIN_MULTIPLIER,
+      summonMultiplier: number = DOMAIN_BURST_SUMMON_MULTIPLIER,
+    ) => {
+      if (battle.isEnding.current) return;
 
-    const burstKind = getAbilityDamageType("domainBurst");
+      const burstKind = getAbilityDamageType("domainBurst");
 
-    battle.playerHit(
-      DOMAIN_BURST_MAIN_MULTIPLIER * specialDamageRatio,
-      true,
-      true,
-      burstKind,
-    );
+      battle.playerHit(
+        mainMultiplier * specialDamageRatio,
+        true,
+        true,
+        burstKind,
+      );
 
-    for (const summon of summons) {
-      damageSummon({
-        target: { id: summon.id, x: summon.x, y: summon.y },
-        multiplier: DOMAIN_BURST_SUMMON_MULTIPLIER * specialDamageRatio,
-        source: "other",
-        damageKind: burstKind,
-        player,
-        playerClass,
-        progress,
-        playerHP: battle.playerHP,
-        playerMaxHp: battle.playerMaxHp,
-        vampirism: battle.vampirism,
-        summons,
-        setSummons,
-        giveSummonRewards,
-        spawnDamageRef: refs.spawnDamageRef,
-        registerHitRef: refs.registerHitRef,
-        setPlayerHP: battle.setPlayerHP,
-        deliciaSetter: battle.setDelicia,
-        hitsToSpecial: battle.hitsToSpecial,
-      });
-    }
-  }, [
-    battle,
-    giveSummonRewards,
-    player,
-    playerClass,
-    progress,
-    refs,
-    setSummons,
-    summons,
-    specialDamageRatio,
-  ]);
+      for (const summon of summons) {
+        damageSummon({
+          target: { id: summon.id, x: summon.x, y: summon.y },
+          multiplier: summonMultiplier * specialDamageRatio,
+          source: "other",
+          damageKind: burstKind,
+          player,
+          playerClass,
+          progress,
+          playerHP: battle.playerHP,
+          playerMaxHp: battle.playerMaxHp,
+          vampirism: battle.vampirism,
+          summons,
+          setSummons,
+          giveSummonRewards,
+          spawnDamageRef: refs.spawnDamageRef,
+          registerHitRef: refs.registerHitRef,
+          setPlayerHP: battle.setPlayerHP,
+          deliciaSetter: battle.setDelicia,
+          hitsToSpecial: battle.hitsToSpecial,
+        });
+      }
+    },
+    [
+      battle,
+      giveSummonRewards,
+      player,
+      playerClass,
+      progress,
+      refs,
+      setSummons,
+      summons,
+      specialDamageRatio,
+    ],
+  );
 
   return {
     registerHitRef,
+    handleAbilityAreaHit,
     handleGenkiDamaExplode,
     handleAtomicBoom,
     handleDomainBurst,

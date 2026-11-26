@@ -104,7 +104,7 @@ export function runHitPrelude(config: HitPreludeConfig): HitPreludeResult {
 
   const blockResult = onBeforeNpcHitRef?.current?.(() => {
     return calculateDamage(npcElements).damage;
-  });
+  }, source);
 
   if (blockResult?.blocked) {
     resetCooldownRef(cooldownMs, playerCooldown);

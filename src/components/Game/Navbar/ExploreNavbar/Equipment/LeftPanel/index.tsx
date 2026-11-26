@@ -19,15 +19,21 @@ import {
 import styles from "./styles.module.css";
 import { useEquipmentMenu } from "@/hooks/menu/equipment/useEquipment";
 
-export function LeftPanel() {
+type Props = {
+  isActive: boolean;
+  onFocusTabs: () => void;
+};
+
+export function LeftPanel({ isActive, onFocusTabs }: Props) {
   const { player } = usePlayer();
   const character = player.character;
   const leftPanelRef = useRef<HTMLDivElement | null>(null);
   const rightItemsRef = useRef<HTMLDivElement | null>(null);
   const { selectedIndex, equippedItems } = useEquipmentMenu(
-    true,
+    isActive,
     character,
     rightItemsRef,
+    onFocusTabs,
   );
 
   return (
