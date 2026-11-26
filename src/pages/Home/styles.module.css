@@ -23,3 +23,17 @@
   position: relative;
   z-index: 1;
 }
+
+.multiplayerButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #187fc4;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}

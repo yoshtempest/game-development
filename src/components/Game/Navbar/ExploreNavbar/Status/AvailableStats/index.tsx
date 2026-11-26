@@ -1,31 +1,34 @@
-import { usePlayer } from "@/contexts/PlayerContext";
 import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
 import { useEquipment } from "@/contexts/EquipmentContext";
 import { canSpendPoints } from "@/gameRules/menu/validation";
 import { STATS_MENU_ROWS } from "@/data/player/statEffects";
 import { statusIconPath } from "@/utils/paths";
+import { CharacterFaces } from "@/components/Game/Navbar/ExploreNavbar/Status/CharacterFaces";
 import { SelectedStatEffect } from "./SelectedStatEffect";
 
 import styles from "./styles.module.css";
 
 type AvailableStatsProps = {
   /** `null` = nenhum stat marcado; nada é gasto até o jogador escolher. */
+  characterId: CharacterId;
   selectedIndex: number | null;
   onSelectStat: (index: number) => void;
   onConfirmStat: () => void;
+  /** Clique na face troca o personagem inspecionado, sem equipá-lo. */
+  onSelectCharacter: (characterId: CharacterId) => void;
 };
 
 export function AvailableStats({
+  characterId,
   selectedIndex,
   onSelectStat,
   onConfirmStat,
+  onSelectCharacter,
 }: AvailableStatsProps) {
-  const { player } = usePlayer();
-  const character = player.character;
   const { progress } = useCharacterProgress();
   const { getTotalBonus } = useEquipment();
 
-  const stats = progress[character]?.stats ?? {
+  const stats = progress[characterId]?.stats ?? {
     strength: 1,
     technique: 1,
     spirit: 1,
@@ -34,12 +37,16 @@ export function AvailableStats({
     luck: 1,
     points: 0,
   };
-  const bonus = getTotalBonus(character);
+  const bonus = getTotalBonus(characterId);
   const hasPoints = canSpendPoints(stats.points);
   const canConfirm = selectedIndex !== null && hasPoints;
 
   return (
     <div className={`StatusColumn ${styles.container}`}>
+      <CharacterFaces
+        selectedCharacterId={characterId}
+        onSelect={onSelectCharacter}
+      />
       <div className="statusMainContainer">
         <div className="statusHeader">
           <img

@@ -1,6 +1,3 @@
-import { useInventory } from "@/contexts/InventoryContext";
-import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
-import { CHARACTERS } from "@/data/characters/list";
 import styles from "./styles.module.css";
 import { chestPath } from "@/utils/paths";
 import { formatDurationHms } from "@/utils/formatDuration";
@@ -12,57 +9,32 @@ type Props = {
   onOpen: () => void;
 };
 
+/**
+ * Widget do baú diário no cabeçalho da Mochila. Apresentação pura: o estado e
+ * o overlay de recompensa pertencem ao host, que é montado em qualquer aba.
+ */
 export function Chest({ isFocused, isReady, timeLeft, onOpen }: Props) {
-  const { items, maxSlots } = useInventory();
-  const { progress } = useCharacterProgress();
-
-  const totalCoins = CHARACTERS.reduce(
-    (sum, c) => sum + (progress[c]?.coins ?? 0),
-    0,
-  );
-  const totalHyperCoins = CHARACTERS.reduce(
-    (sum, c) => sum + (progress[c]?.hyperCoins ?? 0),
-    0,
-  );
-  const currencyCount =
-    (totalCoins > 0 ? 1 : 0) + (totalHyperCoins > 0 ? 1 : 0);
-  const totalUsed = items.length + currencyCount;
-
-  const slotsLabel =
-    maxSlots === Infinity ? `${totalUsed} / ∞` : `${totalUsed} / ${maxSlots}`;
-
   return (
-    <div className={styles.flexColumn}>
-      <h3>Inventário {slotsLabel}</h3>
-      <div
-        className={`${styles.dailyChest} ${
-          isFocused ? styles.dailyChestFocused : ""
-        }`}
-      >
-        <div className={styles.dailyChestInfo}>
-          <img
-            loading="lazy"
-            decoding="async"
-            className={styles.image}
-            src={chestPath("default.svg")}
-          />
-          <span className={styles.dailyChestTitle}>
-            Baú Diário -{" "}
-            {isReady ? (
-              <span className={styles.dailyChestReady}>Disponível!</span>
-            ) : (
-              <span className={styles.dailyChestTimer}>
-                {formatDurationHms(timeLeft)}
-              </span>
-            )}
-          </span>
-        </div>
-        {isReady && (
-          <button className="dailyButton" onClick={onOpen}>
-            Abrir
-          </button>
-        )}
-      </div>
-    </div>
+    <button
+      onClick={onOpen} disabled={!isReady}
+      className={`${styles.dailyChest} ${
+        isFocused ? styles.dailyChestFocused : ""
+      }`}
+    >
+      <img
+        loading="lazy"
+        decoding="async"
+        className={styles.image}
+        src={chestPath("default.svg")}
+        alt="Baú diário"
+      />
+      {isReady ? (
+        <span className={styles.dailyChestReady}>Disponível!</span>
+      ) : (
+        <span className={styles.dailyChestTimer}>
+          {formatDurationHms(timeLeft)}
+        </span>
+      )}
+    </button>
   );
 }

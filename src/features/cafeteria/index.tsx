@@ -14,6 +14,7 @@ import { useGroundItems } from "@/contexts/GroundItemContext";
 import { usePlayer } from "@/contexts/PlayerContext";
 
 import { useRandomEncounter } from "@/hooks/scene/randomEncounter/useRandomEncounter";
+import { useMahoragaEncounter } from "@/hooks/events/useMahoragaEncounter";
 import { useContainer } from "@/hooks/container/useContainer";
 
 import { Container } from "@/components/Game/Map/Container";
@@ -174,6 +175,8 @@ export function CafeteriaScene({ sceneId }: Props) {
     alfaChance: 0.005,
     locationId: "cafeteria",
   });
+
+  useMahoragaEncounter({ storageKey: CAFETERIA_RETURN_KEY });
 
   if (!scene) {
     return <div>Scene não encontrada</div>;

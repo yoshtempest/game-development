@@ -113,6 +113,8 @@ export function usePlayerBattle({
           ? (srGuaxinimOraMultiplierRef.current() ?? damageMultiplier)
           : damageMultiplier) * vastolordMult;
 
+      const hitCritRate = critRate + (options?.critBonus ?? 0);
+
       const guard = evaluateStatusGuards(player);
       if (guard === "frozen") return;
 
@@ -153,7 +155,7 @@ export function usePlayerBattle({
             char,
             titleDamageBonus,
             elementDamageBonus,
-            critRate,
+            critRate: hitCritRate,
             npcArmor,
             npcElementTypes: targetElements,
             playerHP,
@@ -197,7 +199,7 @@ export function usePlayerBattle({
           behavior,
           titleDamageBonus,
           elementDamageBonus,
-          critRate,
+          critRate: hitCritRate,
           npcArmor,
           npcElementTypes,
           playerHP,
@@ -229,6 +231,7 @@ export function usePlayerBattle({
       const isDivergentFist = divergentFistRef?.current === true;
       notifyMarshadowDefaultHit();
       runBasicHit();
+      options?.onLanded?.();
 
       if (isDivergentFist) {
         divergentFistRef.current = false;

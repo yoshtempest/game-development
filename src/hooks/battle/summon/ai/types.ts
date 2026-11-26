@@ -1,4 +1,6 @@
+import type { PetBlind } from "@/gameRules/battle/petSkill/blind";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
+import type { NewPlayerStatus } from "@/utils/types/battle/status";
 
 export type Props = {
   summons: SummonedNpc[];
@@ -20,8 +22,18 @@ export type Props = {
   >;
   timeRef: React.RefObject<TimeEffect[]>;
   freezeUntilRef?: React.RefObject<number>;
+  /**
+   * Aplica status no player (grito de summon, `SUMMON_SHOUTS`). Opcional: sem
+   * ele o grito ainda causa dano, só não aplica o status.
+   */
+  applyStatus?: (status: NewPlayerStatus) => void;
   /** Chamado quando um summon inimigo morre (hp <= 0) por qualquer fonte. */
   onSummonKilled?: () => void;
   rootedSummonsUntilRef?: React.RefObject<Record<string, number>>;
   honoredFleeRef?: React.RefObject<boolean>;
+  /**
+   * Cegueira do Tornado de Terra (pet Peru) por summon (id → cegueira): o
+   * golpe do summon cego pode sair como "miss".
+   */
+  petBlindRef?: React.RefObject<Record<string, PetBlind>>;
 };

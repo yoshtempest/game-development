@@ -1,0 +1,6 @@
+.elementBadge {
+  width: var(--fs-18);
+  height: var(--fs-18);
+  object-fit: contain;
+  image-rendering: pixelated;
+}

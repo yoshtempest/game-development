@@ -2,9 +2,9 @@ import { BLINK_ENERGY_COST } from "@/gameRules/battle/cursedEnergy";
 
 import styles from "./styles.module.css";
 import { AbilityButton } from "@/components/Game/Battle/Buttons/AbilityButton";
+import { playerPathNatsukiHabilities } from "@/utils/paths/characters/natsuki";
 
 type Props = {
-  energy: number;
   disabled?: boolean;
   onClick: () => void;
 };
@@ -15,23 +15,21 @@ type Props = {
  */
 const blinkClasses: CustomAbilityClasses = {
   button: styles.button,
-  label: styles.label,
-  value: styles.value,
-  cost: styles.cost,
 };
 
-export function BlinkButton({ energy, disabled = false, onClick }: Props) {
+export function BlinkButton({ disabled = false, onClick }: Props) {
   return (
     <AbilityButton
       type="hold"
       customClasses={blinkClasses}
-      label="BLINK"
+      // label="BLINK"
       disabled={disabled}
       onPress={onClick}
       onRelease={() => {}}
       full={false}
-      valueText={Math.round(energy).toString()}
-      costText={`-{BLINK_ENERGY_COST}`}
+      // valueText={Math.round(energy).toString()}
+      // costText={`-{BLINK_ENERGY_COST}`}
+      image={playerPathNatsukiHabilities("blink/blink.svg")}
       title={`Blink: teleporte curto à frente (custa ${BLINK_ENERGY_COST} de energia amaldiçoada)`}
     />
   );

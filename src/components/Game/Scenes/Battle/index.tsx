@@ -25,11 +25,13 @@ import { ChargeParticles } from "@/components/Game/Battle/Effects/ChargeParticle
 import { KokusenAnimation } from "@/components/Game/Battle/Effects/Natsuki/KokusenAnimation";
 import { DivergentFistAnimation } from "@/components/Game/Battle/Effects/Natsuki/DivergentFistAnimation";
 import { BlackFlashAnimation } from "@/components/Game/Battle/Effects/Natsuki/BlackFlashAnimation";
+import { RewindResurrectionAnimation } from "@/components/Game/Battle/Effects/SrGuaxinim/RewindResurrection";
 import { VastolordTimer } from "@/components/Game/Battle/Effects/Marshadow/VastolordTimer";
 import { SkipAnimationButton } from "@/components/Game/Battle/SkipAnimationButton";
 import { SpecialIntro } from "@/components/Game/Battle/Effects/SpecialIntro";
 import { DomainExpansionIntro } from "@/components/Game/Battle/Effects/Domain/DomainExpansionIntro";
 import { DomainExpansionBackground } from "@/components/Game/Battle/Effects/Domain/DomainExpansionBackground";
+import { TimeRewindOverlay } from "@/components/Game/Battle/Effects/SrGuaxinim/TimeRewindOverlay";
 import { DomainBurstOverlay } from "@/components/Game/Battle/Effects/Domain/DomainBurstOverlay";
 import { AlfaAbility } from "@/components/Game/Battle/Effects/Ability/AlfaAbility";
 import { TransformationAura } from "@/components/Game/Battle/Effects/TransformationAura";
@@ -50,6 +52,7 @@ import { TrainingOverlay } from "@/components/Game/Battle/Overlay/Training";
 import { PLAYER_SPRITE_DIVISOR } from "@/data/grid";
 import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { SigiloSelector } from "@/components/Game/Battle/SigiloSelector";
+import { YvelArsenal } from "@/components/Game/Battle/YvelArsenal";
 import { BabidiMachineGama } from "@/components/Game/Battle/Entities/Babidi/MachineGama";
 import { RemoteResultOverlay } from "@/components/Game/Battle/Overlay/RemoteResult";
 import { ConnectionOverlay } from "@/components/Game/Battle/Overlay/Connection";
@@ -229,6 +232,7 @@ export function BattleScene(props: Props) {
     battlePaused,
     showRetry,
     playerProjectile,
+    rewindResurrection,
     killerQueen,
     bombTargets,
     killerQueenSprite,
@@ -238,6 +242,7 @@ export function BattleScene(props: Props) {
     extraPunchSprite,
     yvelWeapon,
     switchWeapon,
+    yvelBladeWorks,
     drikaArm,
     sigiloPhase,
     sigiloOpen,
@@ -290,6 +295,9 @@ export function BattleScene(props: Props) {
     kamehameha,
     kamehamehaPress,
     kamehamehaUsable,
+    emoteAvailable,
+    emoteUsable,
+    emotePress,
     specialIntroAbility,
     specialIntroForm,
     atomicHalo,
@@ -300,6 +308,7 @@ export function BattleScene(props: Props) {
     atomicUsable,
     atomicRemaining,
     activeAbilityPress,
+    laricell,
     activeAbilityUsable,
     activeAbilityRemaining,
     mugetsuSweep,
@@ -342,6 +351,8 @@ export function BattleScene(props: Props) {
     redUsable,
     purplePress,
     purpleUsable,
+    rewinding,
+    timePoliceVisible,
   } = useBattleScene({
     ...props,
     isAlfa,
@@ -601,6 +612,7 @@ export function BattleScene(props: Props) {
       npcBleeding: battle.npcBleeding,
       preAtomic: specialIntroActive,
       outroExpression,
+      hidePlayer: rewindResurrection != null,
       atomicHalo,
       atomicExplosion,
       atomicCuts,
@@ -611,6 +623,7 @@ export function BattleScene(props: Props) {
       babidiEnergyProjectiles,
       babidiMissileProjectiles,
       fishingNet,
+      laricellVisual: laricell.visual,
       babidiBombDrop,
       babidiAttackVariant,
       babidiMachineGamaControl,
@@ -658,6 +671,7 @@ export function BattleScene(props: Props) {
       granReyCeroEffect,
       specialIntroActive,
       outroExpression,
+      rewindResurrection,
       atomicHalo,
       atomicExplosion,
       atomicCuts,
@@ -668,6 +682,7 @@ export function BattleScene(props: Props) {
       babidiEnergyProjectiles,
       babidiMissileProjectiles,
       fishingNet,
+      laricell.visual,
       babidiBombDrop,
       babidiAttackVariant,
       babidiMachineGamaControl,
@@ -908,6 +923,11 @@ export function BattleScene(props: Props) {
         />
       )}
 
+      <TimeRewindOverlay
+        active={rewinding}
+        timePoliceVisible={timePoliceVisible}
+      />
+
       <DomainBurstOverlay
         active={domainBurstActive}
         name={domainConfig.name}
@@ -1060,6 +1080,11 @@ export function BattleScene(props: Props) {
             playerY={player.y}
           />
 
+          <RewindResurrectionAnimation
+            resurrection={rewindResurrection}
+            PLAYER_SIZE={PLAYER_SIZE}
+          />
+
           {vastolordActive && (
             <>
               <VastolordTimer remainingMs={vastolordRemainingMs} />
@@ -1085,6 +1110,7 @@ export function BattleScene(props: Props) {
         isTraining={isTraining ?? false}
         showOutro={showOutro}
         handleCloseOutro={handleCloseOutro}
+        isPvp={isPvp}
         playerCharacter={player.character}
         showHighlight={showHighlight}
         highlightData={highlightData}
@@ -1127,6 +1153,7 @@ export function BattleScene(props: Props) {
           pet,
           switchWeapon,
           yvelWeapon,
+          yvelBladeWorks,
           openSigilo,
           sphere,
           bluePress,
@@ -1151,6 +1178,7 @@ export function BattleScene(props: Props) {
           vastolordLaserUsable,
           vastolordLaserStacks,
           activeAbilityPress,
+          laricell,
           activeAbilityUsable,
           activeAbilityRemaining,
           babidiBombDropPress,
@@ -1174,6 +1202,9 @@ export function BattleScene(props: Props) {
           genkiDamaUsable,
           kamehamehaPress,
           kamehamehaUsable,
+          emoteAvailable,
+          emoteUsable,
+          emotePress,
         }}
         controlsDisabled={controlsDisabled}
         isBattleNavOpen={isBattleNavOpen}
@@ -1191,6 +1222,15 @@ export function BattleScene(props: Props) {
           onNext={tvCutscene.next}
         />
       )}
+
+      <YvelArsenal
+        open={yvelBladeWorks.selectorOpen}
+        currentWeapon={yvelWeapon}
+        accent={domainConfig.accent}
+        title={domainConfig.name}
+        onSelect={yvelBladeWorks.selectWeapon}
+        onClose={yvelBladeWorks.closeSelector}
+      />
 
       <SigiloSelector
         open={!!sigiloOpen}
