@@ -79,6 +79,7 @@ export function useBattleEntities({
     npcLevel,
     difficulty,
     damagePlayer: battle.damagePlayer,
+    applyStatus: battle.applyStatus,
     spawnDamageRef: refs.spawnDamageRef,
     timeRef: refs.timeRef,
     freezeUntilRef: freezeSummonsUntilRef,

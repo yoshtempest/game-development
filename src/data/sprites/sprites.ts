@@ -53,6 +53,7 @@ export const NPC_CATEGORY: Record<string, NpcCategory> = {
   necromancer: "enemies",
   neimito: "enemies",
   planetarySisters: "enemies",
+  netali: "enemies",
   rice: "enemies",
   slimita: "enemies",
   spiritMotocycler: "enemies",

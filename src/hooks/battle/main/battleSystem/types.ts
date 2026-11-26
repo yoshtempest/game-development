@@ -14,6 +14,8 @@ export type BattleSystemProps = {
   npcType: string;
   onPlayerDeath: () => void;
   onNpcDeath: () => void;
+  /** Ver `useBattleLifecycle`: segura a morte do NPC com companheiro vivo. */
+  holdNpcDeath?: boolean;
   playerState: PlayerState;
   difficulty: NpcDifficulty;
   timeRef: React.RefObject<TimeEffect[]>;

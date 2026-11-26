@@ -23,6 +23,7 @@ import { INTRO_MS } from "@/services/npc/attacks/hungryDog/state";
 import { clampX } from "@/gameRules/movement/clampX";
 import { applyPlayerStatus } from "@/gameRules/battle/status/statusEffects";
 import { ProjectileHpConstants } from "@/data/projectile";
+import { hasCompanionAlive } from "@/data/npc";
 import type { DamageKind } from "@/utils/types/battle/damageKind";
 import type { NpcTarget } from "@/gameRules/battle/npc/targeting";
 import type { NewPlayerStatus } from "@/gameRules/battle/status/statusEffects";
@@ -594,6 +595,7 @@ export function useBattleCore({
       }
       onNpcDeathRef.current();
     },
+    holdNpcDeath: hasCompanionAlive(npcType, summons),
     timeRef: refs.timeRef,
     npcStaggerRef: refs.npcStaggerRef,
     playerCooldown: refs.playerCooldown,

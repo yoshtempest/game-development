@@ -14,6 +14,7 @@ export function useBattleLifecycle({
   onPlayerDeath,
   onNpcDeath,
   isEnding,
+  holdNpcDeath = false,
 }: Props) {
   const [isNpcDying, setNpcDying] = useState(false);
 
@@ -38,6 +39,7 @@ export function useBattleLifecycle({
   useEffect(() => {
     if (isEnding.current) return;
     if (!isDead(npcHP)) return;
+    if (holdNpcDeath) return;
 
     if (npcClassRef.current === "boss" && npcPhaseRef.current === 1) {
       npcPhaseRef.current = 2;
@@ -55,6 +57,7 @@ export function useBattleLifecycle({
     return () => clearTimeout(timeout);
   }, [
     npcHP,
+    holdNpcDeath,
     setNpcPhase,
     setNpcHP,
     isEnding,
