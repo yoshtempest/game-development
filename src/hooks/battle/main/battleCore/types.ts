@@ -35,6 +35,11 @@ export type BattleCombatProps = {
   babidiPassiveActive?: boolean;
   honoredRegenActive: boolean;
   vastolordMultiplierRef: RefObject<() => number>;
+  /**
+   * Bankai do marshadow ativa: lida pelo `vastolordMultiplierRef`, então o
+   * hook `useBankai` só precisa manter este espelho em dia.
+   */
+  bankaiActiveRef: RefObject<boolean>;
   vastolordActive: boolean;
   /** Quadro da transformação do marshadow (0=screamOne … 3=transformated) ou null. */
   transformationFrame: number | null;

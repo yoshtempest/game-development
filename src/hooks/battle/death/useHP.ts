@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 
+import { useBattleHealth } from "@/contexts/BattleHealthContext";
+
+import { useLatestRef } from "@/hooks/useLatestRef";
+
 export function useBattleHP(
   playerMaxHp: number,
   npcMaxHp: number,
@@ -46,6 +50,23 @@ export function useBattleHP(
   useEffect(() => {
     setNpcHP(npcMaxHp);
   }, [npcMaxHp]);
+
+  const battleHealth = useBattleHealth();
+  const playerHPRef = useLatestRef(playerHP);
+  const playerMaxHpRef = useLatestRef(playerMaxHp);
+
+  // Poção de cura em batalha: este hook é o dono da vida, então é ele quem
+  // se registra como `healer` para o inventário (irmão da cena) conseguir curar.
+  useEffect(() => {
+    if (!battleHealth) return;
+    return battleHealth.registerHealer((ratio) => {
+      const current = playerHPRef.current;
+      const max = playerMaxHpRef.current;
+      if (current <= 0 || current >= max) return false;
+      setPlayerHP(Math.min(max, current + Math.round(max * ratio)));
+      return true;
+    });
+  }, [battleHealth, playerHPRef, playerMaxHpRef]);
 
   useEffect(() => {
     setPlayerShield(initialShield);

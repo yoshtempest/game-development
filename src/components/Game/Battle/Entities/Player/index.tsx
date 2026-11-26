@@ -1,10 +1,6 @@
 import { PlayerBattle } from "@/components/Game/Entities/Player/Battle";
-import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/blinkAnimation/types";
-import type {
-  BabidiShieldSide,
-  BabidiShieldSides,
-} from "@/utils/types/character/babidi";
-import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
+import { getActivePlayerStatusApplications } from "@/gameRules/battle/status/statusEffects";
+import type { Props } from "./types";
 
 type Props = {
   player: Player;
@@ -75,8 +71,11 @@ export function Player({
         : "black"
       : null;
 
+  const activeStatuses = getActivePlayerStatusApplications(player);
+
   return (
     <PlayerBattle
+      activeStatuses={activeStatuses}
       character={player.character}
       x={player.x}
       y={player.y}
@@ -104,6 +103,7 @@ export function Player({
       nameTag={nameTag}
       hakai={hakai}
       sigiloPhase={sigiloPhase}
+      basicComboStep={player.basicComboStep}
     />
   );
 }

@@ -3,6 +3,7 @@ import type {
   BabidiShieldSides,
 } from "@/utils/types/character/babidi";
 import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
+import type { PlayerStatusApplication } from "@/gameRules/battle/status/statusEffects";
 
 export interface PlayerBattleProps {
   x: number;
@@ -28,6 +29,8 @@ export interface PlayerBattleProps {
   /** Pose de mão do sprite do ataque básico do babidi. */
   babidiAttackVariant?: BabidiAttackVariant;
   sigiloPhase?: string;
+  /** Postura do combo básico genérico em exibição (`Player.basicComboStep`). */
+  basicComboStep?: number;
   /** Nick do jogador remoto acima do sprite (online). */
   nameTag?: string;
   babidiMachineGamaControl?: boolean;
@@ -38,4 +41,6 @@ export interface PlayerBattleProps {
   /** Encerra o shield de um lado quando ele termina o fade-out. */
   onBabidiShieldEnd?: (side: BabidiShieldSide, nonce: number) => void;
   hakai?: boolean;
+  /** Status ativos do player: viram overlay de imagem e tinta no sprite. */
+  activeStatuses?: readonly PlayerStatusApplication[];
 }

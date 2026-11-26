@@ -19,14 +19,20 @@ import {
 import { RANK_COLORS, RANK_LABELS } from "@/data/equipment/definitions";
 import styles from "./styles.module.css";
 
-export function RightPanel() {
+type Props = {
+  isActive: boolean;
+  onFocusTabs: () => void;
+};
+
+export function RightPanel({ isActive, onFocusTabs }: Props) {
   const { player } = usePlayer();
   const character = player.character;
   const rightItemsRef = useRef<HTMLDivElement | null>(null);
   const { selectedIndex, filteredItems, filter } = useEquipmentMenu(
-    true,
+    isActive,
     character,
     rightItemsRef,
+    onFocusTabs,
   );
 
   return (

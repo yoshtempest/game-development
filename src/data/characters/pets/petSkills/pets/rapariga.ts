@@ -13,9 +13,10 @@ export const pet_rapariga: PetSkillDefinition = def(
     cooldownMs: PET_SKILL_COOLDOWN_MS,
   },
   {
-    name: "Bola de Pelo",
-    description: "Recupera a vida do jogador.",
+    name: "Chamado dos Gatos",
+    description:
+      "Invoca um gato aleatório (Schrödinger, de Botas, Garfield, Tom, Meowth, Hello Kitty, Nyan Cat, Maneki-Neko ou Gato de Bruxo), cada um com um efeito próprio.",
     cooldownMs: PET_SKILL_COOLDOWN_MS,
   },
-  { kind: "heal", amount: 20 },
+  { kind: "summonCat" },
 );

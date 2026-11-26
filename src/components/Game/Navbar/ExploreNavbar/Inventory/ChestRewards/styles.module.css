@@ -1,3 +1,8 @@
+.chestRewardsContainer { 
+  display: flex;
+  flex-direction: column;
+}
+
 .section {
   margin: var(--smaller) 0;
 }

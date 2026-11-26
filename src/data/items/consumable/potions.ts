@@ -1,4 +1,4 @@
-import { manaPotionPath, xpPotionPath } from "@/utils/paths";
+import { itemPath, manaPotionPath, xpPotionPath } from "@/utils/paths";
 
 import { createPotions } from "@/utils/items/createItem";
 
@@ -43,6 +43,55 @@ export const POTIONS = createPotions({
     image: manaPotionPath("great.svg"),
     name: "Poção de Mana Grande",
     description: "Poção de mana reforçada. Recupera 100 de mana em batalha.",
+    type: "consumable",
+  },
+  healing_potion: {
+    image: itemPath("healingPotion.svg"),
+    name: "Poção de Cura",
+    description:
+      "Poção vermelha. Recupera 30% da vida máxima, em batalha ou explorando.",
+    type: "consumable",
+  },
+  assopra: {
+    image: itemPath("assopra.svg"),
+    name: "Assopra",
+    description:
+      "Um sopro gelado na ferida. Cura queimadura e dá imunidade a ela por 60s.",
+    type: "consumable",
+  },
+  cha_camomila: {
+    image: itemPath("chaCamomila.svg"),
+    name: "Chá de Camomila",
+    description:
+      "Chá quentinho que acalma o estômago. Cura veneno e dá imunidade a ele por 60s.",
+    type: "consumable",
+  },
+  beterraba: {
+    image: itemPath("beterraba.svg"),
+    name: "Beterraba",
+    description:
+      "Repõe o sangue. Cura sangramento e dá imunidade a ele por 60s.",
+    type: "consumable",
+  },
+  freeze_resistance: {
+    image: itemPath("freezeResistance.svg"),
+    name: "Poção Anticongelante",
+    description:
+      "Esquenta por dentro. Cura congelamento e dá imunidade a ele por 60s.",
+    type: "consumable",
+  },
+  paralyze_resistance: {
+    image: itemPath("paralyzeResistance.svg"),
+    name: "Poção Antiparalisia",
+    description:
+      "Solta os músculos. Cura paralisia e dá imunidade a ela por 60s.",
+    type: "consumable",
+  },
+  all_resistance: {
+    image: itemPath("allResistance.svg"),
+    name: "Poção Panaceia",
+    description:
+      "Remédio para tudo. Cura todos os status e dá imunidade a eles por 60s.",
     type: "consumable",
   },
 } as const);

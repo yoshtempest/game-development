@@ -1,0 +1,12 @@
+.detailTop {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--size-10);
+  align-items: start;
+}
+
+.detailCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-8);
+}

@@ -13,8 +13,10 @@
   width: var(--size-46);
   height: var(--size-46);
   font-size: var(--fs-120vw);
+  border-radius: 5px;
   font-weight: bold;
   align-items: center;
+  border: 1px solid rgb(126, 126, 126);
   justify-content: center;
   touch-action: manipulation;
   user-select: none;
@@ -42,6 +44,7 @@
   touch-action: manipulation;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  border: 1px solid rgb(126, 126, 126);
 }
 
 .open:active {

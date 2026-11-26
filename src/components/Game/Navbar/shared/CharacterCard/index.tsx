@@ -1,6 +1,6 @@
 import styles from "./styles.module.css";
 import { ProgressBar } from "@/components/Game/ProgressBar";
-import { playerPath, elementBadgePath, rankBadgePath } from "@/utils/paths";
+import { playerPath, elementBadgePath, rankBadgePath, navbarIconPath } from "@/utils/paths";
 import { getRank, formatRank, srcRank } from "@/gameRules/rank";
 import { getCharacterElementTypes } from "@/data/types/characterElementTypes";
 import { usePlayer } from "@/contexts/PlayerContext";
@@ -16,15 +16,15 @@ type CharacterCardProps = {
   character: CharacterOption;
   isSelected: boolean;
   progress: CharacterProgress;
-  /** Abre a lista de habilidades deste personagem. */
-  onShowAbilities?: (characterId: CharacterId) => void;
+  /** Abre o Status deste personagem. */
+  onShowStatus?: (characterId: CharacterId) => void;
 };
 
 export function CharacterCard({
   character,
   isSelected,
   progress,
-  onShowAbilities,
+  onShowStatus,
 }: CharacterCardProps) {
   const { player } = usePlayer();
   const isEquipped = player.character === character.image;
@@ -93,10 +93,8 @@ export function CharacterCard({
           {progress.xp} / {xpNeeded} XP
         </p>
         {isEquipped && <p className={styles.inUse}>Em uso</p>}
-        {onShowAbilities && character.selectable && (
-          <button onClick={() => onShowAbilities(character.image)}>
-            Habilidades
-          </button>
+        {onShowStatus && character.selectable && (
+          <button onClick={() => onShowStatus(character.image)}><img src={navbarIconPath("status.svg")}/>Status</button>
         )}
       </div>
     </div>

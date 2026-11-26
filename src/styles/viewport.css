@@ -43,7 +43,8 @@
     height: 100vw;
   }
 
-  .containerOfNavbar {
+  /* Wrapper do menu: o card é flex:1 dentro dele. */
+  .navbarContainerWrapper {
     height: 90vw;
   }
 

@@ -29,5 +29,6 @@ export const BABIDI_ACTIVE_ABILITIES: ActiveAbility[] = [
     name: "Autodestruição",
     description:
       "Autodestrói o Machine Gama, causando dano em área ao redor dele.",
+    requires: "Machine Gama sob controle",
   }),
 ];

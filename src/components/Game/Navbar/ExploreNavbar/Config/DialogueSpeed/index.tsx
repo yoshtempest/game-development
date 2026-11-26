@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, MessageCircleMore } from "lucide-react";
 import styles from "@/components/Game/Navbar/ExploreNavbar/Config/styles.module.css";
 import { SPEED_LABEL } from "@/utils/settings";
 import type { DialogueSpeed } from "@/utils/settings";
@@ -22,7 +22,10 @@ export function DialogueSpeedSection({
 
   return (
     <div className={styles.compactContainer}>
-      <h2 className={styles.marginTop}>Diálogo:</h2>
+      <div className="navbarContainerRow sectionHeader">
+        <MessageCircleMore />
+        <h2>Diálogo</h2>
+      </div>
 
       <div className={styles.compactSelector}>
         {isSelected && <span className={styles.cursor}>▼</span>}
