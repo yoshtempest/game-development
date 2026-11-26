@@ -326,6 +326,7 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou o Rick Tóxico",
     background: sceneBackgrounds.ToxicSwampBattle,
     audioSrc: backgroundAudioPath("/battle/StreetFighter5KenTheme.m4a"),
+  },
   mahoraga: {
     npcType: "mahoraga",
     onVictory: ({ navigate }) => {
@@ -353,6 +354,7 @@ export const BATTLE_CONFIGS: Record<string, BattleConfig> = {
     victoryDescription: "Você derrotou o Evil Morty",
     background: sceneBackgrounds.PcRoomBattle,
     audioSrc: backgroundAudioPath("/battle/Jojo.m4a"),
+  },
   rickPrime: {
     npcType: "rickPrime",
     onVictory: ({ navigate }) => {

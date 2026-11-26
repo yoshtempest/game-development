@@ -120,7 +120,6 @@ export function useSummonAI({
         attackerX: number;
         status?: NewPlayerStatus;
       }[] = [];
-      const attackEvents: { damage: number; attackerX: number }[] = [];
       let missEvents = 0;
 
       const next = apply(summonsRef.current, (s) => {
@@ -222,7 +221,6 @@ export function useSummonAI({
         };
       });
 
-      for (const { damage, attackerX, status } of attackEvents) {
       for (let i = 0; i < missEvents; i++) {
         spawnDamageRef.current?.(
           0,
@@ -232,7 +230,7 @@ export function useSummonAI({
         );
       }
 
-      for (const { damage, attackerX } of attackEvents) {
+      for (const { damage, attackerX, status } of attackEvents) {
         damagePlayerRef.current(damage, SUMMON_DAMAGE_KIND, attackerX);
         if (status) applyStatusRef.current?.(status);
         spawnDamageRef.current?.(

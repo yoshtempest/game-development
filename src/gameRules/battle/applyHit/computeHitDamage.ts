@@ -1,7 +1,6 @@
 import { getCharacterElementTypes } from "@/data/types/characterElementTypes";
 import { combatService } from "@/services/combat";
 import { atLeastMinDamage } from "@/gameRules/battle/damage/minDamage";
-import { isSamurionBerserkActive } from "@/gameRules/player/samurionBerserk";
 import { getPlayerBerserkMultiplier } from "@/gameRules/battle/damage/berserk";
 import type { ComputeHitDamageParams } from "./types";
 
@@ -40,10 +39,6 @@ export function computeHitDamage({
   );
   const dmgWithHpBonus = rawDmg + maxHpBonus;
   const berserkDmg =
-    isSamurionBerserkActive(player.character, char.level)
-      ? dmgWithHpBonus *
-        combatService.getBerserkMultiplier(playerHP, playerMaxHp)
-      : dmgWithHpBonus;
     dmgWithHpBonus *
     getPlayerBerserkMultiplier(
       player.character,

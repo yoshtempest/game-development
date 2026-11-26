@@ -573,12 +573,6 @@ export function useBattleSystem(props: BattleSystemProps) {
     isPausedRef,
   });
 
-  const applyNpcBleed = useCallback((durationMs: number) => {
-    npcBleedUntilRef.current = Math.max(
-      npcBleedUntilRef.current,
-      Date.now() + durationMs,
-    );
-  }, []);
   /**
    * Aplica sangramento no NPC principal. Com um sangramento ainda ativo, o
    * tick mais forte prevalece: reaplicar um sangramento fraco (marshadow) não

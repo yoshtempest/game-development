@@ -1,6 +1,11 @@
 import { PlayerBattle } from "@/components/Game/Entities/Player/Battle";
 import { getActivePlayerStatusApplications } from "@/gameRules/battle/status/statusEffects";
-import type { Props } from "./types";
+import type { BlinkVisual } from "@/hooks/battle/player/characters/natsuki/blinkAnimation/types";
+import type {
+  BabidiShieldSide,
+  BabidiShieldSides,
+} from "@/utils/types/character/babidi";
+import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack";
 
 type Props = {
   player: Player;

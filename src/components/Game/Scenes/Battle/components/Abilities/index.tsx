@@ -9,7 +9,6 @@ import {
 import { YVEL_WEAPON_SWITCH_MANA_COST } from "@/gameRules/battle/mana";
 import { SAMUEL_GRIMOIRE_STAMINA_COST } from "@/data/characters/samurion/stamina";
 import { SAMUEL_WEAPON_LABELS } from "@/data/characters/samurion/grimoire";
-import { DOMAIN_EXPANSIONS } from "@/data/characters/domainExpansions";
 import { getDomainExpansion } from "@/data/characters/domainExpansions";
 import { npcPath, playerAbilityBackgroundPath } from "@/utils/paths";
 import { PetSkillButton } from "@/components/Game/Battle/Buttons/PetSkill";
@@ -214,17 +213,13 @@ export function BattleAbilities({
         (() => {
           const weaponSwitchDisabled =
             controlsDisabled ||
+            isLocked("weaponSwitch") ||
             (!yvelBladeWorks.active &&
               battleMana != null &&
               battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST);
           abilitySlotsRef.current.push({
             click: switchWeapon,
             disabled: weaponSwitchDisabled,
-            disabled:
-              controlsDisabled ||
-              isLocked("weaponSwitch") ||
-              (battleMana != null &&
-                battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST),
             hold: false,
             abilityId: "weaponSwitch",
           });
@@ -232,12 +227,6 @@ export function BattleAbilities({
             <WeaponSwitchButton
               weapon={yvelWeapon}
               disabled={weaponSwitchDisabled}
-              disabled={
-                controlsDisabled ||
-                isLocked("weaponSwitch") ||
-                (battleMana != null &&
-                  battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST)
-              }
               onClick={switchWeapon}
             />
           );

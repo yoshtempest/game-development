@@ -165,7 +165,6 @@ export function useBattleCore({
 
   const { showToast } = useToast();
 
-  const { weapon: yvelWeapon, switchWeapon } = useYvelWeaponSwitch({
   const {
     weapon: yvelWeapon,
     switchWeapon,
@@ -545,6 +544,18 @@ export function useBattleCore({
     );
   });
 
+  /**
+   * Defesa do jogador contra cada golpe que passa pelo `runHitPrelude`.
+   *
+   * Rick Tóxico: a passiva do frasco reage ao ataque básico e é resolvida aqui
+   * porque este é o único gancho comum a todo golpe antes do dano no NPC.
+   * Evil Morty: rola teleporte (vira "miss" e ele reaparece atrás do jogador)
+   * e, se falhar, o escudo (anula tudo). Os dois resolvem sem dano, então o
+   * resultado é `blocked` com `remainingDamage: 0` — o prelúdio rearma o
+   * cooldown do golpe como em qualquer bloqueio.
+   *
+   * Piupiu: bloqueio por gauge, só de perto.
+   */
   targeting.onBeforeNpcHitRef.current = (getDamage, source) => {
     if (
       npcType === "rickToxico" &&
@@ -553,17 +564,7 @@ export function useBattleCore({
     ) {
       setPlayer((p) => applyPlayerStatus(p, "poison"));
     }
-  /**
-   * Defesa do jogador contra cada golpe que passa pelo `runHitPrelude`.
-   *
-   * Evil Morty: rola teleporte (vira "miss" e ele reaparece atrás do jogador)
-   * e, se falhar, o escudo (anula tudo). Os dois resolvem sem dano, então o
-   * resultado é `blocked` com `remainingDamage: 0` — o prelúdio rearma o
-   * cooldown do golpe como em qualquer bloqueio.
-   *
-   * Piupiu: bloqueio por gauge, só de perto.
-   */
-  targeting.onBeforeNpcHitRef.current = (getDamage) => {
+
     if (npcType === "evilMorty") {
       const evasion = rollEvilMortyEvasion(npcPhaseRef.current);
       if (evasion === "teleport") {

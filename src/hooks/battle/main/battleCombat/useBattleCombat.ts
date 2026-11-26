@@ -281,14 +281,6 @@ export function useBattleCombat({
     battle.setDelicia((d) => gainSpecial(d, battle.hitsToSpecial));
   }, [battle]);
 
-  const handleWeaponSwitch = useCallback(() => {
-    const mana = battleManaRef.current;
-    if (mana && !mana.consumeMana(YVEL_WEAPON_SWITCH_MANA_COST)) return;
-    if (!switchWeapon()) return;
-    // Troca de arma é habilidade do Yvel: concede carga da Expansão.
-    onAbilityUsed();
-  }, [battleManaRef, onAbilityUsed, switchWeapon]);
-
   /**
    * Grimório do Samuel: a stamina só sai se a troca acontecer. O inverso do
    * Yvel (que cobra antes) porque a stamina regenera rápido e é gasta o tempo

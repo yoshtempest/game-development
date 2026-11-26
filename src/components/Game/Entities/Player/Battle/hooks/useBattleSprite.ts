@@ -37,6 +37,7 @@ function toBabidiToxicSprite(src: string): string | null {
   if (!src.includes(marker)) return null;
   return src.replace(marker, `${marker}toxicForm/`);
 }
+/**
  * Sprites de postura do combo básico que já deram 404. Os assets `attackN.svg`
  * ainda não existem para a maioria dos personagens (issue #380); sem este
  * cache cada golpe tentaria o arquivo de novo e piscaria a imagem quebrada
