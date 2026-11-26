@@ -29,6 +29,7 @@ export function useBattleCombatActions({
   npcLevel,
   progress,
   weapon,
+  equipYvelWeapon,
   summons,
   setSummons,
   giveSummonRewards,
@@ -175,6 +176,7 @@ export function useBattleCombatActions({
     playerMaxHp: battle.playerMaxHp,
     vampirism: battle.vampirism,
     weapon,
+    equipWeapon: equipYvelWeapon,
     vastolordMultiplierRef,
   });
 

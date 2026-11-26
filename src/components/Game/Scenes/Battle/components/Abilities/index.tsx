@@ -57,6 +57,7 @@ export function BattleAbilities({
     pet,
     switchWeapon,
     yvelWeapon,
+    yvelBladeWorks,
     openSigilo,
     sphere,
     bluePress,
@@ -192,8 +193,14 @@ export function BattleAbilities({
 
       {player.character === "yvel" &&
         (() => {
+          const weaponSwitchDisabled =
+            controlsDisabled ||
+            (!yvelBladeWorks.active &&
+              battleMana != null &&
+              battleMana.playerMana < YVEL_WEAPON_SWITCH_MANA_COST);
           abilitySlotsRef.current.push({
             click: switchWeapon,
+            disabled: weaponSwitchDisabled,
             disabled:
               controlsDisabled ||
               isLocked("weaponSwitch") ||
@@ -205,6 +212,7 @@ export function BattleAbilities({
           return (
             <WeaponSwitchButton
               weapon={yvelWeapon}
+              disabled={weaponSwitchDisabled}
               disabled={
                 controlsDisabled ||
                 isLocked("weaponSwitch") ||
