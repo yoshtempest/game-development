@@ -13,6 +13,13 @@ import {
   ONLINE_GUILD_SESSION_KEY,
   ONLINE_ROOM_SESSION_KEY,
 } from "@/data/storageKeys";
+import {
+  GAMEROOM_BASE_URL,
+  GAMEROOM_GAME_SLUG,
+  getGameRoomGame,
+  resolveGameRoomWebSocketUrl,
+} from "@/services/gameroom";
+import type { GameRoomPlayer } from "@/services/gameroom";
 
 export type OnlinePlayer = {
   id: string;
@@ -64,13 +71,14 @@ type OnlineContextValue = {
 const OnlineContext = createContext<OnlineContextValue | null>(null);
 
 const PLAYER_ID_KEY = "jomasio_online_player_id";
+const GAMEROOM_RESUME_KEY = "jomasio_gameroom_resume_token";
 
-/**
- * sessionStorage (e não localStorage): sala e guilda são da aba. Duas abas no
- * mesmo navegador — o jeito comum de testar host/guest — não podem herdar a
- * sala uma da outra. O acesso pode lançar (modo privado/bloqueado), e online é
- * opcional, então a falha vira "sem sessão".
- */
+type GameRoomSession = {
+  playerId: string;
+  resumeToken: string;
+  roomCode: string;
+};
+
 function readSession(key: string): string | null {
   try {
     return sessionStorage.getItem(key);
@@ -88,6 +96,34 @@ function writeSession(key: string, value: string | null): void {
   }
 }
 
+function readGameroomSession(): GameRoomSession | null {
+  try {
+    const raw = sessionStorage.getItem(GAMEROOM_RESUME_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<GameRoomSession>;
+    if (
+      typeof parsed.playerId === "string" &&
+      typeof parsed.resumeToken === "string" &&
+      typeof parsed.roomCode === "string"
+    ) {
+      return parsed as GameRoomSession;
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+function writeGameroomSession(session: GameRoomSession | null): void {
+  try {
+    if (session)
+      sessionStorage.setItem(GAMEROOM_RESUME_KEY, JSON.stringify(session));
+    else sessionStorage.removeItem(GAMEROOM_RESUME_KEY);
+  } catch {
+    // ignore
+  }
+}
+
 function getPlayerId(): string {
   let id = localStorage.getItem(PLAYER_ID_KEY);
   if (!id) {
@@ -97,18 +133,53 @@ function getPlayerId(): string {
   return id;
 }
 
+function mapRoom(
+  room: {
+    code: string;
+    host_id: string | null;
+    players: GameRoomPlayer[];
+  },
+  prev: OnlineRoom | null,
+  playerState: Record<string, Partial<OnlinePlayer>>,
+): OnlineRoom {
+  const prevPlayers = new Map((prev?.players ?? []).map((p) => [p.id, p]));
+  return {
+    id: room.code,
+    name: prev?.id === room.code ? prev.name : `Sala ${room.code}`,
+    hostId: room.host_id ?? "",
+    createdAt: prev?.id === room.code ? prev.createdAt : Date.now(),
+    players: room.players.map((p) => {
+      const old = prevPlayers.get(p.player_id);
+      const state = playerState[p.player_id] ?? {};
+      return {
+        ...old,
+        ...state,
+        // gameroom é a fonte de verdade para presença/identidade
+        id: p.player_id,
+        name: p.name,
+        updatedAt: Date.now(),
+      };
+    }),
+  };
+}
+
 export function OnlineProvider({ children }: { children: ReactNode }) {
-  const playerId = useMemo(getPlayerId, []);
+  const localPlayerId = useMemo(getPlayerId, []);
   const [playerName] = useState(
     () => localStorage.getItem("playerName") ?? "Jogador",
   );
+  const [gameroomPlayerId, setGameroomPlayerId] = useState<string | null>(
+    () => readGameroomSession()?.playerId ?? null,
+  );
+  const playerId = gameroomPlayerId ?? localPlayerId;
   const [roomId, setRoomId] = useState<string | null>(null);
   const [room, setRoom] = useState<OnlineRoom | null>(null);
   const [rooms, setRooms] = useState<OnlineRoom[]>([]);
   const [guildId, setGuildId] = useState<string | null>(() =>
     readSession(ONLINE_GUILD_SESSION_KEY),
   );
-  const stateRef = useRef<{
+  const stateRef = useRef<Record<string, Partial<OnlinePlayer>>>({});
+  const localStateRef = useRef<{
     scene?: string;
     x?: number;
     y?: number;
@@ -119,90 +190,318 @@ export function OnlineProvider({ children }: { children: ReactNode }) {
     guildId?: string | null;
   }>({});
 
-  const refreshRooms = useCallback(async () => {
-    try {
-      const res = await fetch("/api/online/rooms");
-      if (!res.ok) return;
-      const data = (await res.json()) as OnlineRoom[];
-      setRooms(data);
-    } catch {
-      // backend opcional: silencioso
+  const wsRef = useRef<WebSocket | null>(null);
+  const shouldConnectRef = useRef(false);
+  const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retriesRef = useRef(0);
+  const connectRequestRef = useRef(0);
+  const roomRef = useRef<OnlineRoom | null>(null);
+  roomRef.current = room;
+
+  const clearReconnectTimer = useCallback(() => {
+    if (reconnectTimerRef.current) {
+      clearTimeout(reconnectTimerRef.current);
+      reconnectTimerRef.current = null;
     }
+  }, []);
+
+  const applyRoomMessage = useCallback(
+    (msg: Record<string, unknown>) => {
+      const roomPayload = msg.room as
+        | { code: string; host_id: string | null; players: GameRoomPlayer[] }
+        | undefined;
+      if (roomPayload && typeof roomPayload.code === "string") {
+        const mapped = mapRoom(
+          roomPayload,
+          roomRef.current,
+          stateRef.current,
+        );
+        setRoomId(mapped.id);
+        setRoom(mapped);
+        writeSession(ONLINE_ROOM_SESSION_KEY, mapped.id);
+        const pid = typeof msg.player_id === "string" ? msg.player_id : null;
+        const token =
+          typeof msg.resume_token === "string" ? msg.resume_token : null;
+        if (pid && token) {
+          setGameroomPlayerId(pid);
+          writeGameroomSession({
+            playerId: pid,
+            resumeToken: token,
+            roomCode: mapped.id,
+          });
+        }
+        return;
+      }
+
+      if (msg.type === "player_joined") {
+        const p = msg.player as GameRoomPlayer | undefined;
+        if (!p) return;
+        setRoom((prev) => {
+          if (!prev) return prev;
+          if (prev.players.some((x) => x.id === p.player_id)) return prev;
+          const next = {
+            ...prev,
+            players: [
+              ...prev.players,
+              {
+                ...(stateRef.current[p.player_id] ?? {}),
+                id: p.player_id,
+                name: p.name,
+                updatedAt: Date.now(),
+              },
+            ],
+          };
+          roomRef.current = next;
+          return next;
+        });
+        return;
+      }
+
+      if (msg.type === "player_left") {
+        const leftId = typeof msg.player_id === "string" ? msg.player_id : null;
+        if (!leftId) return;
+        setRoom((prev) => {
+          if (!prev) return prev;
+          const next = {
+            ...prev,
+            players: prev.players.filter((p) => p.id !== leftId),
+          };
+          roomRef.current = next;
+          return next;
+        });
+        return;
+      }
+
+      if (msg.type === "host_changed") {
+        const hostId = typeof msg.host_id === "string" ? msg.host_id : "";
+        setRoom((prev) => {
+          if (!prev) return prev;
+          const next = { ...prev, hostId };
+          roomRef.current = next;
+          return next;
+        });
+        return;
+      }
+
+      if (msg.type === "left") {
+        writeSession(ONLINE_ROOM_SESSION_KEY, null);
+        writeGameroomSession(null);
+        setRoomId(null);
+        setRoom(null);
+        roomRef.current = null;
+      }
+    },
+    [],
+  );
+
+  const connectWs = useCallback(async () => {
+    if (!shouldConnectRef.current) return;
+    const requestId = ++connectRequestRef.current;
+    try {
+      const game = await getGameRoomGame(GAMEROOM_BASE_URL, GAMEROOM_GAME_SLUG);
+      if (requestId !== connectRequestRef.current || !shouldConnectRef.current) {
+        return;
+      }
+      const url = resolveGameRoomWebSocketUrl(
+        GAMEROOM_BASE_URL,
+        game.websocket_path,
+      );
+      const ws = new WebSocket(url);
+      wsRef.current = ws;
+      ws.onopen = () => {
+        if (wsRef.current !== ws) return;
+        retriesRef.current = 0;
+        const session = readGameroomSession();
+        const storedRoom = readSession(ONLINE_ROOM_SESSION_KEY);
+        if (session && storedRoom && session.roomCode === storedRoom) {
+          ws.send(
+            JSON.stringify({
+              type: "resume",
+              player_id: session.playerId,
+              resume_token: session.resumeToken,
+            }),
+          );
+        }
+      };
+      ws.onmessage = (event) => {
+        if (wsRef.current !== ws) return;
+        try {
+          const msg = JSON.parse(String(event.data)) as Record<string, unknown>;
+          applyRoomMessage(msg);
+        } catch {
+          // ignore
+        }
+      };
+      ws.onclose = () => {
+        if (wsRef.current !== ws) return;
+        wsRef.current = null;
+        if (!shouldConnectRef.current) return;
+        if (retriesRef.current >= 6) return;
+        const delay = Math.min(1000 * 2 ** retriesRef.current, 10000);
+        retriesRef.current += 1;
+        clearReconnectTimer();
+        reconnectTimerRef.current = setTimeout(() => {
+          void connectWs();
+        }, delay);
+      };
+    } catch {
+      if (requestId !== connectRequestRef.current || !shouldConnectRef.current) {
+        return;
+      }
+      if (retriesRef.current >= 6) return;
+      const delay = Math.min(1000 * 2 ** retriesRef.current, 10000);
+      retriesRef.current += 1;
+      clearReconnectTimer();
+      reconnectTimerRef.current = setTimeout(() => {
+        void connectWs();
+      }, delay);
+    }
+  }, [applyRoomMessage, clearReconnectTimer]);
+
+  useEffect(() => {
+    shouldConnectRef.current = true;
+    void connectWs();
+    return () => {
+      shouldConnectRef.current = false;
+      connectRequestRef.current += 1;
+      clearReconnectTimer();
+      const ws = wsRef.current;
+      wsRef.current = null;
+      if (ws) {
+        ws.onopen = null;
+        ws.onmessage = null;
+        ws.onclose = null;
+        ws.onerror = null;
+        if (
+          ws.readyState === WebSocket.OPEN ||
+          ws.readyState === WebSocket.CONNECTING
+        ) {
+          ws.close();
+        }
+      }
+    };
+  }, [connectWs, clearReconnectTimer]);
+
+  const sendWs = useCallback((msg: Record<string, unknown>) => {
+    const ws = wsRef.current;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(msg));
+      return true;
+    }
+    return false;
+  }, []);
+
+  const waitForWelcome = useCallback(
+    (code?: string) =>
+      new Promise<OnlineRoom | null>((resolve) => {
+        const ws = wsRef.current;
+        if (!ws) {
+          resolve(null);
+          return;
+        }
+        const timeout = setTimeout(() => {
+          ws.removeEventListener("message", onMessage);
+          resolve(null);
+        }, 6000);
+        const onMessage = (event: MessageEvent) => {
+          try {
+            const msg = JSON.parse(String(event.data)) as Record<string, unknown>;
+            if (msg.type === "welcome") {
+              const roomPayload = msg.room as
+                | {
+                    code: string;
+                    host_id: string | null;
+                    players: GameRoomPlayer[];
+                  }
+                | undefined;
+              if (!code || roomPayload?.code === code) {
+                clearTimeout(timeout);
+                ws.removeEventListener("message", onMessage);
+                const mapped = roomPayload
+                  ? mapRoom(roomPayload, roomRef.current, stateRef.current)
+                  : null;
+                if (mapped) {
+                  setRoomId(mapped.id);
+                  setRoom(mapped);
+                  roomRef.current = mapped;
+                  writeSession(ONLINE_ROOM_SESSION_KEY, mapped.id);
+                  const pid =
+                    typeof msg.player_id === "string" ? msg.player_id : null;
+                  const token =
+                    typeof msg.resume_token === "string"
+                      ? msg.resume_token
+                      : null;
+                  if (pid && token) {
+                    setGameroomPlayerId(pid);
+                    writeGameroomSession({
+                      playerId: pid,
+                      resumeToken: token,
+                      roomCode: mapped.id,
+                    });
+                  }
+                }
+                resolve(mapped);
+              }
+            }
+            if (msg.type === "error") {
+              clearTimeout(timeout);
+              ws.removeEventListener("message", onMessage);
+              resolve(null);
+            }
+          } catch {
+            // ignore
+          }
+        };
+        ws.addEventListener("message", onMessage);
+      }),
+    [],
+  );
+
+  const refreshRooms = useCallback(() => {
+    // Gameroom não expõe listagem de salas; mantemos a sala atual como referência.
+    setRooms((prev) => {
+      if (roomRef.current) return [roomRef.current];
+      return prev.length ? prev : [];
+    });
+    return Promise.resolve();
   }, []);
 
   const createRoom = useCallback(
     async (name: string) => {
-      try {
-        const res = await fetch("/api/online/rooms", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, hostId: playerId, playerName }),
-        });
-        if (!res.ok) return null;
-        const data = (await res.json()) as OnlineRoom;
-        setRoomId(data.id);
-        setRoom(data);
-        return data;
-      } catch {
-        return null;
+      const ok = sendWs({ type: "create", name: playerName || name });
+      if (!ok) return null;
+      const created = await waitForWelcome();
+      if (created) {
+        const named = { ...created, name: name || created.name };
+        setRoom(named);
+        roomRef.current = named;
+        return named;
       }
+      return null;
     },
-    [playerId, playerName],
+    [sendWs, waitForWelcome, playerName],
   );
 
   const joinRoom = useCallback(
     async (id: string) => {
-      try {
-        const res = await fetch(`/api/online/rooms/${id}/join`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ playerId, playerName }),
-        });
-        if (!res.ok) return null;
-        const data = (await res.json()) as OnlineRoom;
-        setRoomId(data.id);
-        setRoom(data);
-        return data;
-      } catch {
-        return null;
-      }
+      const code = id.trim().toUpperCase();
+      const ok = sendWs({ type: "join", code, name: playerName });
+      if (!ok) return null;
+      return waitForWelcome(code);
     },
-    [playerId, playerName],
+    [sendWs, waitForWelcome, playerName],
   );
 
-  const leaveRoom = useCallback(async () => {
-    if (!roomId) return;
-    try {
-      await fetch(`/api/online/rooms/${roomId}/leave`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ playerId }),
-      });
-    } catch {
-      // ignore
-    }
+  const leaveRoom = useCallback(() => {
+    sendWs({ type: "leave" });
     writeSession(ONLINE_ROOM_SESSION_KEY, null);
+    writeGameroomSession(null);
     setRoomId(null);
     setRoom(null);
+    roomRef.current = null;
     setGuildId(null);
-  }, [roomId, playerId]);
-
-  // Reload (retry, troca de slot, F5) apagava sala e guilda da memória e o
-  // jogador saía da partida sem perceber. O socket fechado já o tirou da sala
-  // no servidor, então a volta é um `join` de novo; sala que sumiu limpa tudo.
-  const restoredRef = useRef(false);
-  useEffect(() => {
-    if (restoredRef.current) return;
-    restoredRef.current = true;
-    const storedRoom = readSession(ONLINE_ROOM_SESSION_KEY);
-    if (!storedRoom) return;
-    void joinRoom(storedRoom).then((joined) => {
-      if (joined) return;
-      writeSession(ONLINE_ROOM_SESSION_KEY, null);
-      writeSession(ONLINE_GUILD_SESSION_KEY, null);
-      setGuildId(null);
-    });
-  }, [joinRoom]);
+    return Promise.resolve();
+  }, [sendWs]);
 
   useEffect(() => {
     if (roomId) writeSession(ONLINE_ROOM_SESSION_KEY, roomId);
@@ -213,7 +512,7 @@ export function OnlineProvider({ children }: { children: ReactNode }) {
   }, [guildId]);
 
   useEffect(() => {
-    stateRef.current = { ...stateRef.current, guildId };
+    localStateRef.current = { ...localStateRef.current, guildId };
   }, [guildId]);
 
   const updateState = useCallback(
@@ -227,49 +526,26 @@ export function OnlineProvider({ children }: { children: ReactNode }) {
       hasPeru?: boolean;
       guildId?: string | null;
     }) => {
-      stateRef.current = { ...stateRef.current, ...state };
+      localStateRef.current = { ...localStateRef.current, ...state };
+      const id = gameroomPlayerId ?? localPlayerId;
+      stateRef.current[id] = { ...(stateRef.current[id] ?? {}), ...state };
+      setRoom((prev) => {
+        if (!prev) return prev;
+        const next = {
+          ...prev,
+          players: prev.players.map((p) =>
+            p.id === id ? { ...p, ...state, updatedAt: Date.now() } : p,
+          ),
+        };
+        roomRef.current = next;
+        return next;
+      });
     },
-    [],
+    [gameroomPlayerId, localPlayerId],
   );
 
-  // polling de sala + envio de estado
-  useEffect(() => {
-    if (!roomId) return;
-    let cancelled = false;
-    const tick = async () => {
-      try {
-        const res = await fetch(`/api/online/rooms/${roomId}`);
-        if (res.ok) {
-          const data = (await res.json()) as OnlineRoom;
-          if (!cancelled) setRoom(data);
-        }
-      } catch {
-        // ignore
-      }
-      // envia estado atual
-      try {
-        await fetch(`/api/online/rooms/${roomId}/state`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ playerId, ...stateRef.current }),
-        });
-      } catch {
-        // ignore
-      }
-    };
-    void tick();
-    const interval = setInterval(() => void tick(), 1000);
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-    };
-  }, [roomId, playerId]);
-
-  // polling de salas disponíveis
   useEffect(() => {
     void refreshRooms();
-    const interval = setInterval(() => void refreshRooms(), 3000);
-    return () => clearInterval(interval);
   }, [refreshRooms]);
 
   const value = useMemo<OnlineContextValue>(

@@ -1,14 +1,23 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  acquireGameRoomSocket,
+  sendGameRoomMessage,
+  subscribeGameRoomAny,
+  subscribeGameRoomStatus,
+} from "@/services/gameroom/socket";
 
 export type BattleSocketMessage = {
   type: string;
   [key: string]: unknown;
 };
 
-const MAX_RETRIES = 6;
-
 type BattleSocketListener = (msg: BattleSocketMessage) => void;
 
+/**
+ * Socket de sala/batalha via tempest-gameroom.
+ * Usa socket compartilhado por `roomId` para evitar múltiplas conexões
+ * derrubarem a sessão anterior no gameroom.
+ */
 export function useBattleSocket(
   roomId: string | null,
   playerId: string | null,
@@ -18,99 +27,45 @@ export function useBattleSocket(
   const [lastMessage, setLastMessage] = useState<BattleSocketMessage | null>(
     null,
   );
-  const wsRef = useRef<WebSocket | null>(null);
-  const retriesRef = useRef(0);
-  const shouldConnectRef = useRef(true);
-  // `lastMessage` guarda só a última mensagem; eventos de dano não podem ser
-  // engolidos por um snapshot que chegou logo depois. Quem precisa de todos os
-  // eventos assina por tipo.
+
+  const entryRef = useRef<ReturnType<typeof acquireGameRoomSocket> | null>(null);
   const listenersRef = useRef(new Map<string, Set<BattleSocketListener>>());
 
-  const connect = useCallback(() => {
-    if (!roomId || !playerId) return;
-    if (!shouldConnectRef.current) return;
-
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const host = window.location.hostname;
-    const port = "3001";
-    const url = `${protocol}//${host}:${port}/ws`;
-    const ws = new WebSocket(url);
-    wsRef.current = ws;
-
-    ws.onopen = () => {
-      setConnected(true);
-      setReconnecting(false);
-      retriesRef.current = 0;
-      ws.send(
-        JSON.stringify({
-          type: "joinRoom",
-          roomId,
-          playerId,
-          playerName: "Jogador",
-        }),
-      );
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const msg = JSON.parse(String(event.data)) as BattleSocketMessage;
-        setLastMessage(msg);
-        const listeners = listenersRef.current.get(msg.type);
-        if (listeners) {
-          for (const listener of listeners) listener(msg);
-        }
-      } catch {
-        // ignore
-      }
-    };
-
-    ws.onclose = () => {
+  useEffect(() => {
+    if (!roomId || !playerId) {
       setConnected(false);
-      wsRef.current = null;
-      if (!shouldConnectRef.current) return;
-      if (retriesRef.current >= MAX_RETRIES) {
-        setReconnecting(false);
-        return;
-      }
-      setReconnecting(true);
-      const delay = Math.min(1000 * 2 ** retriesRef.current, 10000);
-      retriesRef.current += 1;
-      setTimeout(() => {
-        if (shouldConnectRef.current) connect();
-      }, delay);
-    };
+      setReconnecting(false);
+      return;
+    }
 
-    ws.onerror = () => {
-      // onclose will handle reconnect
+    const acquired = acquireGameRoomSocket(roomId);
+    entryRef.current = acquired;
+    const { entry } = acquired;
+
+    const syncStatus = () => {
+      setConnected(entry.connected);
+      setReconnecting(entry.reconnecting);
+    };
+    syncStatus();
+    const offStatus = subscribeGameRoomStatus(entry, syncStatus);
+    const offAny = subscribeGameRoomAny(entry, (msg) => {
+      setLastMessage(msg);
+      const listeners = listenersRef.current.get(msg.type);
+      if (listeners) for (const l of listeners) l(msg);
+    });
+
+    return () => {
+      offStatus();
+      offAny();
+      entryRef.current = null;
+      acquired.release(false);
     };
   }, [roomId, playerId]);
 
-  useEffect(() => {
-    shouldConnectRef.current = true;
-    retriesRef.current = 0;
-    connect();
-    return () => {
-      shouldConnectRef.current = false;
-      const ws = wsRef.current;
-      if (ws) {
-        try {
-          ws.send(JSON.stringify({ type: "leaveRoom", roomId, playerId }));
-        } catch {
-          // ignore
-        }
-        ws.close();
-        wsRef.current = null;
-      }
-      setConnected(false);
-      setReconnecting(false);
-    };
-  }, [connect, roomId, playerId]);
-
   const send = useCallback((msg: BattleSocketMessage) => {
-    const ws = wsRef.current;
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(msg));
-    }
+    const acquired = entryRef.current;
+    if (!acquired) return;
+    sendGameRoomMessage(acquired.entry, msg);
   }, []);
 
   const subscribe = useCallback(
@@ -122,12 +77,18 @@ export function useBattleSocket(
       }
       listeners.add(listener);
       return () => {
-        listeners?.delete(listener);
-        if (listeners?.size === 0) listenersRef.current.delete(type);
+        listeners.delete(listener);
+        if (listeners.size === 0) listenersRef.current.delete(type);
       };
     },
     [],
   );
 
-  return { connected, reconnecting, send, subscribe, lastMessage };
+  return {
+    connected,
+    reconnecting,
+    lastMessage,
+    send,
+    subscribe,
+  };
 }

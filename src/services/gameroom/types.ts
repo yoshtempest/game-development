@@ -62,8 +62,60 @@ export type GameRoomError = {
   field?: string | null;
 };
 
-/** Envelope genérico: o protocolo real do WS fica a cargo do consumidor. */
+/** Envelope genérico de mensagem WS. */
 export type GameRoomWsMessage = {
   type: string;
   [key: string]: unknown;
+};
+
+/** Mensagens observadas no WS do tempest-gameroom (jomasio-adventures). */
+export type GameRoomHelloMessage = GameRoomWsMessage & {
+  type: "hello";
+  protocol_version: string | null;
+  max_players: number;
+  reconnect_grace_seconds: number;
+  heartbeat_seconds: number;
+  requires_identity: boolean;
+};
+
+export type GameRoomWelcomeMessage = GameRoomWsMessage & {
+  type: "welcome";
+  player_id: string;
+  resume_token: string;
+  slot: number;
+  resumed: boolean;
+  room: GameRoom;
+};
+
+export type GameRoomPlayerJoinedMessage = GameRoomWsMessage & {
+  type: "player_joined";
+  player: GameRoomPlayer;
+};
+
+export type GameRoomPlayerLeftMessage = GameRoomWsMessage & {
+  type: "player_left";
+  player_id: string;
+  slot: number;
+};
+
+export type GameRoomHostChangedMessage = GameRoomWsMessage & {
+  type: "host_changed";
+  host_id: string;
+};
+
+export type GameRoomStateMessage = GameRoomWsMessage & {
+  type: "room_state";
+  state: GameRoom["state"];
+};
+
+export type GameRoomLeftMessage = GameRoomWsMessage & {
+  type: "left";
+  code: string;
+};
+
+export type GameRoomErrorMessage = GameRoomWsMessage & {
+  type: "error";
+  code: string;
+  message: string;
+  request?: string | null;
 };
