@@ -29,7 +29,6 @@ import { DomainExpansionButton } from "@/components/Game/Battle/Buttons/DomainEx
 import { GenericAbilityButton } from "@/components/Game/Battle/Buttons/GenericAbilityButton";
 import { GranReyCeroButton } from "@/components/Game/Battle/Buttons/Marshadow/GranReyCero";
 import { BankaiButton } from "@/components/Game/Battle/Buttons/Marshadow/Bankai";
-import { EmoteButton } from "@/components/Game/Battle/Buttons/Emote";
 import { useRef } from "react";
 import { useAbilityShortcuts } from "@/hooks/battle/useAbilityShortcuts";
 import { useCharacterProgress } from "@/contexts/CharacterProgressContext";
@@ -118,9 +117,6 @@ export function BattleAbilities({
     genkiDamaUsable,
     kamehamehaPress,
     kamehamehaUsable,
-    emoteAvailable,
-    emoteUsable,
-    emotePress,
   } = scene;
 
   const battleMana = useBattleMana();
@@ -691,20 +687,8 @@ export function BattleAbilities({
         );
       })()}
 
-      {emoteAvailable &&
-        (() => {
-          abilitySlotsRef.current.push({
-            click: emotePress,
-            disabled: controlsDisabled || !emoteUsable,
-            hold: false,
-          });
-          return (
-            <EmoteButton
-              disabled={controlsDisabled || !emoteUsable}
-              onClick={emotePress}
-            />
-          );
-        })()}
+      {/* O emote/taunt saiu daqui: é uma opção do menu flutuante de animações,
+          disponível somente enquanto a batalha está montada. */}
     </div>
   );
 }

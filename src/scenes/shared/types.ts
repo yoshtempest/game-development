@@ -206,13 +206,6 @@ export type BattleSceneApi = {
    * "special" universal, que não existe mais.
    */
   activeAbilityPress: () => void;
-  /**
-   * Emote/taunt sem dano (sprites `idle2`/`idle3`). `emoteAvailable` só é
-   * verdadeiro para quem tem os sprites — os outros não mostram o botão.
-   */
-  emoteAvailable: boolean;
-  emoteUsable: boolean;
-  emotePress: () => void;
   /** Habilidades da Laricell (#517): botões A1–A4 + Mordida e o visual. */
   laricell: LaricellAbilitiesApi;
   activeAbilityUsable: boolean;

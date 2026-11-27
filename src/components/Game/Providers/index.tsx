@@ -16,6 +16,7 @@ import { ProfessionBadgeProvider } from "@/contexts/ProfessionBadgeContext";
 import { TombstoneProvider } from "@/contexts/TombstoneContext";
 import { GroundItemProvider } from "@/contexts/GroundItemContext";
 import { PlayerProvider } from "@/contexts/PlayerContext";
+import { BattleEmoteProvider } from "@/contexts/BattleEmoteContext";
 import { BattleNavbarProvider } from "@/contexts/BattleNavbarContext";
 import { GameControlsProvider } from "@/contexts/GameControlsContext";
 import { CharacterUnlockProvider } from "@/contexts/CharacterUnlockContext";
@@ -38,15 +39,17 @@ export function GameProviders({ children }: { children: ReactNode }) {
                               <TitleProvider>
                                 <BestiaryProvider>
                                   <PlayerProvider>
-                                    <PlayTimeProvider>
-                                      <BattleNavbarProvider>
-                                        <GameControlsProvider>
-                                          <CharacterUnlockProvider>
-                                            {children}
-                                          </CharacterUnlockProvider>
-                                        </GameControlsProvider>
-                                      </BattleNavbarProvider>
-                                    </PlayTimeProvider>
+                                    <BattleEmoteProvider>
+                                      <PlayTimeProvider>
+                                        <BattleNavbarProvider>
+                                          <GameControlsProvider>
+                                            <CharacterUnlockProvider>
+                                              {children}
+                                            </CharacterUnlockProvider>
+                                          </GameControlsProvider>
+                                        </BattleNavbarProvider>
+                                      </PlayTimeProvider>
+                                    </BattleEmoteProvider>
                                   </PlayerProvider>
                                 </BestiaryProvider>
                               </TitleProvider>

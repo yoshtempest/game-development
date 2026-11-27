@@ -11,6 +11,7 @@ import { useBattleLoot } from "@/hooks/battle/loot/battleLoot/useBattleLoot";
 import { useLootNotifications } from "@/hooks/battle/loot/useLootNotifications";
 import { useBattleRefs } from "@/hooks/battle/utilities/useRefs";
 import { useBattleOutro } from "@/hooks/battle/modals/useOutro";
+import { useBattleEmoteRegistration } from "@/hooks/battle/player/emote/useBattleEmoteRegistration";
 import { useBattleStageSetup } from "@/hooks/battle/useBattleStageSetup";
 import { useBattleCombat } from "@/hooks/battle/main/battleCombat/useBattleCombat";
 import { useBattlePresentation } from "@/hooks/battle/utilities/battlePresentation/useBattlePresentation";
@@ -984,6 +985,15 @@ export function useBattleScene({
     blocked: vastolordActive,
   });
 
+  // O emote saiu da barra de habilidades: a cena apenas publica a ação já
+  // validada para o menu flutuante de animações, que a oferece enquanto esta
+  // batalha estiver montada.
+  useBattleEmoteRegistration({
+    available: emoteAvailable,
+    usable: emoteUsable,
+    trigger: emotePress,
+  });
+
   return buildBattleSceneApi({
     player,
     npc,
@@ -1163,9 +1173,6 @@ export function useBattleScene({
     redUsable,
     purplePress,
     purpleUsable,
-    emoteAvailable,
-    emoteUsable,
-    emotePress,
     rewinding: rewindResurrection != null,
     timePoliceVisible,
   });
