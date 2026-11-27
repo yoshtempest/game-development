@@ -644,6 +644,7 @@ export function BattleScene(props: Props) {
       sphere,
       purpleHole,
       hakai,
+      divergentFistActive,
     }),
     [
       isPvp,
@@ -704,6 +705,7 @@ export function BattleScene(props: Props) {
       sphere,
       purpleHole,
       hakai,
+      divergentFistActive,
     ],
   );
 

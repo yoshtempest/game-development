@@ -43,4 +43,6 @@ export interface PlayerBattleProps {
   hakai?: boolean;
   /** Status ativos do player: viram overlay de imagem e tinta no sprite. */
   activeStatuses?: readonly PlayerStatusApplication[];
+  /** Punho Divergente do natsuki: sprite de `habilities/divergentFist/`. */
+  divergentFistActive?: boolean;
 }

@@ -59,6 +59,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     hakai = false,
     basicComboStep,
     activeStatuses = NO_ACTIVE_STATUSES,
+    divergentFistActive = false,
   } = props;
 
   const poisonTint = activeStatuses.some(({ status }) =>
@@ -90,6 +91,7 @@ export function PlayerBattle(props: PlayerBattleProps) {
     hakai,
     sigiloPhase,
     basicComboStep,
+    divergentFistActive,
   });
 
   const isMostHonored = state === "mostHonored";

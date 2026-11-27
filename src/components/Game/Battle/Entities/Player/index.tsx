@@ -43,6 +43,8 @@ type Props = {
   /** Partículas de level-up do personagem local; o avatar remoto não as tem. */
   levelUpParticles?: boolean;
   nameTag?: string;
+  /** Punho Divergente do natsuki: sprite de `habilities/divergentFist/`. */
+  divergentFistActive?: boolean;
 };
 
 export function Player({
@@ -68,6 +70,7 @@ export function Player({
   sigiloPhase,
   levelUpParticles = true,
   nameTag,
+  divergentFistActive = false,
 }: Props) {
   const blinkSilhouette =
     player.character === "natsuki" && blinkVisual
@@ -109,6 +112,7 @@ export function Player({
       hakai={hakai}
       sigiloPhase={sigiloPhase}
       basicComboStep={player.basicComboStep}
+      divergentFistActive={divergentFistActive}
     />
   );
 }

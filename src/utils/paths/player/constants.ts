@@ -98,6 +98,31 @@ export const NATSUKI_ATTACK_SPRITES = {
   fallingAttack: "kick",
 } as const;
 
+/**
+ * Sprites do Punho Divergente do natsuki (`inFight/habilities/divergentFist/`).
+ *
+ * Só entram aqui os estados que têm arquivo na pasta — os demais (jump,
+ * falling, blocked, stun…) continuam resolvendo normalmente em `inFight/`,
+ * que é o fallback pedido para estado sem arte própria. Os nomes divergem do
+ * básico: o windup é `prePunch.svg` e o golpe é `punch.svg`.
+ */
+export const DIVERGENT_FIST_SPRITES: Partial<Record<PlayerState, string>> = {
+  idle: "idle",
+  walk: "walk",
+  preWalk: "walk",
+  run: "run",
+  preRun: "run",
+  dash: "run",
+  preAttack: "prePunch",
+  preKick: "prePunch",
+  attack: "punch",
+  punch: "punch",
+  kick: "punch",
+  crit: "punch",
+  blockAttack: "punch",
+  fallingAttack: "punch",
+};
+
 export const MARSHADOW_ATTACK_SPRITES = {
   blockAttack: "dash",
   fallingAttack: "attack",

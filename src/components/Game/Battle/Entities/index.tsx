@@ -98,6 +98,7 @@ export function BattleEntities({
   hideMainNpc = false,
   layer = "full",
   playerNameTag,
+  divergentFistActive = false,
 }: Props & {
   sphere?: import("@/utils/types/character/natsuki").NatsukiSphere | null;
 }) {
@@ -218,6 +219,7 @@ export function BattleEntities({
         sigiloPhase={sigiloPhase}
         levelUpParticles={layer === "full"}
         nameTag={playerNameTag}
+        divergentFistActive={divergentFistActive}
       />
       {!hidePlayer && (
         <Player
@@ -242,6 +244,7 @@ export function BattleEntities({
           sigiloPhase={sigiloPhase}
           levelUpParticles={layer === "full"}
           nameTag={playerNameTag}
+          divergentFistActive={divergentFistActive}
         />
       )}
 

@@ -163,4 +163,9 @@ export type Props = {
   layer?: "full" | "remotePlayer";
   /** Nick acima do avatar (só a camada do jogador remoto usa). */
   playerNameTag?: string;
+  /**
+   * Punho Divergente do natsuki: troca o sprite para `habilities/divergentFist/`
+   * nos estados que têm arte. Viaja no `battleVisuals` para o outro cliente.
+   */
+  divergentFistActive?: boolean;
 };

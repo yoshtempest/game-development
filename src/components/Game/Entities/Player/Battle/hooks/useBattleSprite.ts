@@ -5,6 +5,7 @@ import {
   idleFrameSprite,
   playerAbilityPath,
   resolveBattleSprite,
+  resolveDivergentFistSprite,
 } from "@/utils/paths";
 import { resolveSpriteState } from "@/gameRules/battle/playerStates";
 import {
@@ -26,6 +27,31 @@ import type { BabidiAttackVariant } from "@/utils/types/character/babidi/attack"
  * adicionada depois aparece no próximo reload, sem precisar de flag.
  */
 const MISSING_TOXIC_SPRITES = new Set<string>();
+
+/**
+ * Sprites do Punho Divergente que já deram 404 nesta sessão. A pasta do
+ * natsuki não cobre todo estado (não tem `jump.svg`, por exemplo), e um arquivo
+ * removido depois do mapeamento não pode piscar a imagem quebrada a cada frame.
+ * Guardar a falha evita repetir o 404; o fallback é o sprite normal do estado.
+ */
+const MISSING_DIVERGENT_FIST_SPRITES = new Set<string>();
+
+/**
+ * Estados do básico que continuam usando `divergentFist/` depois que o golpe
+ * conectou. O dano sendo aplicado no próprio press (e não no fim da animação)
+ * faz `divergentFistActive` cair antes do `punch.svg` aparecer; sem esta trava a
+ * sequência `prePunch` → `punch` seria interrompida pelo sprite normal.
+ */
+const DIVERGENT_FIST_ATTACK_STATES: ReadonlySet<PlayerState> = new Set([
+  "preAttack",
+  "attack",
+  "punch",
+  "crit",
+  "preKick",
+  "kick",
+  "blockAttack",
+  "fallingAttack",
+]);
 
 /**
  * Caminho esperado do sprite do Modo Tóxico: a mesma árvore de `inFight/`
@@ -61,6 +87,8 @@ interface UseBattleSpriteParams {
   hakai?: boolean;
   sigiloPhase?: string;
   basicComboStep?: number;
+  /** Punho Divergente do natsuki ativo: sprite de `habilities/divergentFist/`. */
+  divergentFistActive?: boolean;
 }
 
 export function useBattleSprite({
@@ -78,8 +106,27 @@ export function useBattleSprite({
   hakai = false,
   sigiloPhase,
   basicComboStep,
+  divergentFistActive = false,
 }: UseBattleSpriteParams) {
   const resolvedState = resolveSpriteState(state);
+
+  // Trava o sprite da habilidade até o fim da animação de ataque: vira true no
+  // activation e só volta a false quando o personagem sai de um estado de
+  // ataque — ou seja, depois que `prePunch` → `punch` já foi exibido. Um ataque
+  // comum posterior não reativa a trava porque `divergentFistActive` está false.
+  const [divergentFistSpriteOn, setDivergentFistSpriteOn] = useState(false);
+
+  useEffect(() => {
+    if (divergentFistActive) {
+      setDivergentFistSpriteOn(true);
+      return;
+    }
+    if (!DIVERGENT_FIST_ATTACK_STATES.has(state)) {
+      setDivergentFistSpriteOn(false);
+    }
+  }, [divergentFistActive, state]);
+
+  const useDivergentSprites = divergentFistActive || divergentFistSpriteOn;
 
   const plainSrc = resolvePlayerSprite({
     character,
@@ -151,12 +198,30 @@ export function useBattleSprite({
     baseSrc = toxicCandidate;
   }
 
+  // Punho Divergente: a pasta própria só é usada nos estados que têm arte.
+  // Sem sprite mapeado (jump/falling/blocked…), `plainSrc` já é o fallback
+  // normal da pasta do estado.
+  const requestedDivergentSprite =
+    character === "natsuki" && useDivergentSprites && !outroExpression
+      ? resolveDivergentFistSprite(resolvedState)
+      : null;
+  const divergentCandidate =
+    requestedDivergentSprite !== null &&
+    !MISSING_DIVERGENT_FIST_SPRITES.has(requestedDivergentSprite)
+      ? requestedDivergentSprite
+      : null;
+  if (divergentCandidate !== null) {
+    baseSrc = divergentCandidate;
+  }
+
   // Sequência idle do personagem (e forma):1 frame = parado, >1 = animado.
   const idleFrames = getIdleFrames(character, form);
 
-  // Só o idle "verdadeiro" anima: agachado (`idleCrounched`), carga, ataque e
-  // qualquer outro estado usam o sprite base como antes da animação existir.
-  const animateIdle = state === "idle" && idleFrames.length > 1;
+  // O `divergentFist/` só tem `idle.svg` (sem idle2/idle3): animar a sequência
+  // do personagem ali geraria 404 a cada ciclo. No sprite normal a animação
+  // continua como antes.
+  const animateIdle =
+    state === "idle" && baseSrc !== divergentCandidate && idleFrames.length > 1;
   const [idleFrame, setIdleFrame] = useState(0);
 
   useEffect(() => {
@@ -177,13 +242,23 @@ export function useBattleSprite({
   // monitora para limpar o estado quando o estado do personagem muda.
   const [errorSrc, setErrorSrc] = useState<string | null>(null);
 
+  // O mesmo arquivo pode servir a estados diferentes (`walk`/`preWalk`,
+  // `attack`/`punch`), então o estado também faz parte da chave do fallback.
   useEffect(() => {
     setErrorSrc(null);
-  }, [baseSrc]);
+  }, [baseSrc, resolvedState]);
 
   const src = errorSrc ?? idleFrameSprite(baseSrc, idleFrames, idleFrame);
 
   const handleSpriteError = () => {
+    if (divergentCandidate !== null && baseSrc === divergentCandidate) {
+      MISSING_DIVERGENT_FIST_SPRITES.add(divergentCandidate);
+      // Volta exatamente ao sprite do estado atual — por exemplo `jump` cai em
+      // `inFight/jump/jump.svg`, não no idle genérico.
+      setErrorSrc(plainSrc);
+      return;
+    }
+
     if (toxicCandidate !== null && !toxicPlaceholder) {
       MISSING_TOXIC_SPRITES.add(toxicCandidate);
       setErrorSrc(
