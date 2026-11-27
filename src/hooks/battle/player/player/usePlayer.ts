@@ -228,7 +228,11 @@ export function usePlayerBattle({
           HITS_TO_SPECIAL,
         });
 
-      const isDivergentFist = divergentFistRef?.current === true;
+      // O Punho Divergente só se consome no ataque básico. `playerHit` também
+      // recebe dano de habilidades, esferas e efeitos de campo — esses não podem
+      // gastar a habilidade nem disparar a animação.
+      const isDivergentFist =
+        options?.isBasicAttack === true && divergentFistRef?.current === true;
       notifyMarshadowDefaultHit();
       runBasicHit();
       options?.onLanded?.();

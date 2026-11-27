@@ -4,6 +4,13 @@
  */
 export type BasicHitOptions = {
   /**
+   * Marca o golpe como ataque básico de fato. `playerHit` é o funil compartilhado
+   * por básico, habilidades, esferas e dano de efeito em campo; sem esta marca o
+   * Punho Divergente do natsuki seria consumido por qualquer dano, e não só pelo
+   * ataque normal. Ausente = não é básico.
+   */
+  isBasicAttack?: boolean;
+  /**
    * Rende +1 de carga da Expansão de Domínio, como todo golpe básico? O dano
    * contínuo da esfera azul do natsuki passa `false`: a esfera já pagou os +5
    * do uso da habilidade e, ferindo de 100ms em 100ms, encheria a barra sozinha.

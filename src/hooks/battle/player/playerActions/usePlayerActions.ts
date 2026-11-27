@@ -129,7 +129,7 @@ export function usePlayerBattleActions({
   if (babidiOnHitRef) {
     babidiOnHitRef.current = (target) => {
       if (target.id === "main") {
-        battle.playerHit(1, true, true);
+        battle.playerHit(1, true, true, "physical", { isBasicAttack: true });
         return;
       }
       const summon = summons.find((s) => s.id === target.id);
@@ -140,7 +140,7 @@ export function usePlayerBattleActions({
   if (babidiMissileOnHitRef) {
     babidiMissileOnHitRef.current = (target) => {
       if (target.id === "main") {
-        battle.playerHit(1, true, true);
+        battle.playerHit(1, true, true, "physical", { isBasicAttack: true });
         return;
       }
       const summon = summons.find((s) => s.id === target.id);
@@ -167,7 +167,9 @@ export function usePlayerBattleActions({
             battle.specialHit(multiplier, true, { bypassCharge });
           } else {
             onNpcPush?.(npc.x + pushDir * BLOCK_ATTACK_PUSH_DISTANCE);
-            battle.playerHit(multiplier, true);
+            battle.playerHit(multiplier, true, false, "physical", {
+              isBasicAttack: true,
+            });
           }
           continue;
         }
@@ -296,19 +298,24 @@ export function usePlayerBattleActions({
         const pushDir = player.battleDirection === "right" ? 1 : -1;
         onNpcPush?.(npc.x + pushDir * step.pushDistance);
         onComboAdvance?.(step.forwardDistance, mainTarget.x);
-        battle.playerHit(comboMultiplier, false, true);
+        battle.playerHit(comboMultiplier, false, true, "physical", {
+          isBasicAttack: true,
+        });
       } else if (player.state === "falling" && !fallingAttackUsedRef.current) {
         fallingAttackUsedRef.current = true;
-        battle.playerHit(1.2);
+        battle.playerHit(1.2, false, false, "physical", {
+          isBasicAttack: true,
+        });
       } else if (basicComboStep) {
         const { bleedMs } = basicComboStep;
         battle.playerHit(basicComboStep.multiplier, false, false, "physical", {
+          isBasicAttack: true,
           critBonus: basicComboStep.critBonus,
           onLanded:
             bleedMs > 0 ? () => battle.applyNpcBleed(bleedMs) : undefined,
         });
       } else {
-        battle.playerHit();
+        battle.playerHit(1, false, false, "physical", { isBasicAttack: true });
       }
       return;
     }
