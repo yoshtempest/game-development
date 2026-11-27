@@ -667,10 +667,13 @@ export function BattleAbilities({
           );
         })()}
 
+      {/* Botão único: a variante da Forma Vastolord substitui o domínio base,
+          não convive com ele. O gate de nível vem do mesmo registro usado pelo
+          atalho e pelo menu de Status. */}
       {(() => {
         abilitySlotsRef.current.push({
           click: domainExpansionPress,
-          disabled: controlsDisabled,
+          disabled: controlsDisabled || domainLocked,
           hold: false,
           abilityId:
             domainConfig.kind === "mugetsu" ? "domainExpansion" : "domainBurst",
@@ -682,34 +685,11 @@ export function BattleAbilities({
             accent={domainConfig.accent}
             background={domainBackground}
             ready={domainExpansionUsable}
-            disabled={controlsDisabled}
+            disabled={controlsDisabled || domainLocked}
             onClick={domainExpansionPress}
           />
         );
       })()}
-      {!vastolordActive &&
-        (() => {
-          abilitySlotsRef.current.push({
-            click: domainExpansionPress,
-            disabled: controlsDisabled || domainLocked,
-            hold: false,
-            abilityId:
-              player.character === "marshadow"
-                ? "domainExpansion"
-                : "domainBurst",
-          });
-          return (
-            <DomainExpansionButton
-              name={domainConfig.name}
-              description={domainConfig.description}
-              accent={domainConfig.accent}
-              background={domainBackground}
-              ready={domainExpansionUsable}
-              disabled={controlsDisabled || domainLocked}
-              onClick={domainExpansionPress}
-            />
-          );
-        })()}
 
       {emoteAvailable &&
         (() => {
